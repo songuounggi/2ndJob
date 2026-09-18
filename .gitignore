@@ -1,0 +1,10 @@
+# 생성물 -- scripts/build_planner.py 로 언제든 다시 뽑는다
+output/
+src/
+
+# 검수용 임시 렌더
+scratch_*.png
+
+# 캐시
+__pycache__/
+*.pyc
