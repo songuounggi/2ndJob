@@ -85,7 +85,33 @@ python -c "import PIL, numpy, pikepdf, pypdf, pypdfium2; print('ok')"
 
 ---
 
-## 3. Chrome 경로 확인
+## 3. 커밋 신원 (PC마다 한 번, clone 직후)
+
+`2ndJob` 안에서.
+
+**이건 clone으로 따라오지 않는다.** git은 저장소 설정(`.git/config`)을
+복제하지 않기 때문에, 새 PC에서는 매번 다시 넣어야 한다. 빠뜨리면 그 PC의
+전역 설정(회사 계정일 수 있다)으로 커밋이 찍힌다.
+
+```bash
+git config --local user.email "s5worth@gmail.com"
+git config --local user.name "ygSong"
+```
+
+`--local` 이 핵심이다. `--global` 로 하면 그 PC의 회사 저장소까지 개인
+메일로 바뀐다. **이 프로젝트는 개인 프로젝트라 회사 설정과 섞이면 안 된다.**
+
+확인:
+
+```bash
+git config --local --get user.email
+```
+
+`s5worth@gmail.com` 이 나오면 된다.
+
+---
+
+## 4. Chrome 경로 확인
 
 `2ndJob` 안에서.
 
@@ -98,7 +124,7 @@ grep -n "^CHROME" scripts/build_planner.py
 
 ---
 
-## 4. 빌드
+## 5. 빌드
 
 `2ndJob` 안에서. `output/` 과 `src/` 는 git에 없다 — 생성물이라 여기서
 다시 만들어진다.
@@ -133,7 +159,7 @@ python scripts/dedupe_pdf.py output/planner_v8-undated.pdf output/planner_v8-und
 
 ---
 
-## 5. 검수
+## 6. 검수
 
 `2ndJob` 안에서.
 
@@ -166,9 +192,9 @@ d.close(); print('ok')
 
 ---
 
-## 6. Etsy 리스팅 이미지
+## 7. Etsy 리스팅 이미지
 
-`2ndJob` 안에서. **5단계의 PNG 렌더가 먼저 있어야 한다.**
+`2ndJob` 안에서. **6단계의 PNG 렌더가 먼저 있어야 한다.**
 
 ```bash
 python scripts/build_mockups.py
@@ -178,7 +204,7 @@ python scripts/build_mockups.py
 
 ---
 
-## 7. 다른 버전 뽑기
+## 8. 다른 버전 뽑기
 
 `2ndJob` 안에서. 버전 이름만 바꾸면 된다. 기존 버전은 지우지 않는다.
 
@@ -209,9 +235,9 @@ git pull
 규칙(그림자 사양, 빌드가 조용히 실패하는 경우 등)을 그대로 알고 시작한다.
 
 **주의** — `output/` 은 git에 없다. 완성 PDF를 집 노트북으로 옮기고 싶으면
-파일을 직접 복사하거나, 위 4단계로 다시 뽑으면 된다. 내용은 같지만
+파일을 직접 복사하거나, 위 5단계로 다시 뽑으면 된다. 내용은 같지만
 **바이트 단위로 같지는 않다** — Chrome이 `/CreationDate` 와 `/ModDate` 에
 빌드 시각을 박아넣기 때문이다. 페이지 수·링크 수·용량으로 검증할 것.
 
 Etsy에 이미 올린 파일을 다시 뽑을 필요는 없다. 판매 중인 PDF를 바꿀 때만
-다시 빌드하고, 5단계 검수를 통과한 뒤 교체한다.
+다시 빌드하고, 6단계 검수를 통과한 뒤 교체한다.
