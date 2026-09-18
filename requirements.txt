@@ -1,0 +1,13 @@
+# 빌드에 필요한 것
+pillow>=12.0            # bloom PNG 합성, 검수 렌더 저장
+numpy>=2.2              # bloom 그라데이션 계산
+
+# 후처리
+pikepdf>=10.0           # 중복 스트림 접기 (494p 25.9MB -> 18.3MB)
+
+# 검수
+pypdf>=6.0              # 링크/목적지 검사
+pypdfium2>=5.0          # 페이지를 PNG로 렌더
+
+# 구버전 프로토타입에만 필요 (scripts/build_planner_prototype.py)
+reportlab>=4.0
