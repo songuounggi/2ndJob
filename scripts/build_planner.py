@@ -268,17 +268,28 @@ THEMES = {
         ],
         "undated": True,
         "student": True,
+        # 학생용만 채도를 올린다. 색상(hue)은 v8/v9 그대로라 숍은 한 브랜드로
+        # 남고, 매대에서만 덜 묻힌다. 이유는 "학생이 알록달록을 좋아해서"가
+        # 아니라 경쟁 썸네일 사이에서 눈에 띄어야 하기 때문이다.
+        #
+        # OKLCh 로 계산했다. HLS 채도는 지각적이지 않아서 같은 배율을 먹이면
+        # 그린만 형광으로 튀었다. 원래 팔레트는 채도가 제각각이었고
+        # (블루 C=0.066, 머스터드 C=0.130) 그래서 네 색이 한 세트로 안 보였다.
+        # 지금은 장식 C=0.135, 글자 C=0.130 으로 통일했다.
+        #
+        # 글자용은 카드/field/bg/칩 네 배경 전부에서 4.5:1 을 넘긴다(최저 4.65).
+        # 칩 배경 위 대비를 빠뜨리지 말 것 -- .chip 은 틴트 위에 글자색을 얹는다.
         "sections": {
-            "index":    ("#7FA8C9", "#EAF2F8", "#3E6E93"),
-            "semester": ("#7FA8C9", "#EAF2F8", "#3E6E93"),
-            "week":     ("#7FA8C9", "#EAF2F8", "#3E6E93"),
-            "day":      ("#7FA8C9", "#EAF2F8", "#3E6E93"),
-            "classes":  ("#E08A73", "#FBEDE8", "#AC5038"),
-            "work":     ("#E08A73", "#FBEDE8", "#AC5038"),
-            "study":    ("#7FA37C", "#ECF3EB", "#4A7248"),
-            "focus":    ("#7FA37C", "#ECF3EB", "#4A7248"),
-            "life":     ("#D9A441", "#FBF1DC", "#8A6415"),
-            "notes":    ("#D9A441", "#FBF1DC", "#8A6415"),
+            "index":    ("#4BABF0", "#E4F3FE", "#026FAB"),
+            "semester": ("#4BABF0", "#E4F3FE", "#026FAB"),
+            "week":     ("#4BABF0", "#E4F3FE", "#026FAB"),
+            "day":      ("#4BABF0", "#E4F3FE", "#026FAB"),
+            "classes":  ("#EB8367", "#FEECE5", "#AD4F36"),
+            "work":     ("#EB8367", "#FEECE5", "#AD4F36"),
+            "study":    ("#62AC5D", "#E2F8DF", "#30782F"),
+            "focus":    ("#62AC5D", "#E2F8DF", "#30782F"),
+            "life":     ("#DBA339", "#FEF1D4", "#8C6305"),
+            "notes":    ("#DBA339", "#FEF1D4", "#8C6305"),
         },
     },
     # Concept C -- "ink line". Lines and planes only: no pills, no rounded
