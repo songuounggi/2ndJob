@@ -149,8 +149,35 @@ Pricing & Shipping / How It's Made / Settings)은 같은 페이지의 앵커다.
 
 가격을 넣으면 **Estimated earnings** 가 바로 뜬다. 이게 수수료 실측값이다.
 
-런칭 세일 40%는 리스팅 폼이 아니라 **Marketing → Sales & discounts** 에서
-따로 건다. 발행 후에 설정할 것.
+런칭 세일 40%는 리스팅 폼이 아니라 **Marketing → Sales & discounts →
+`Run a sale`** 에서 따로 건다. 발행 후에 설정한다.
+
+**2026-09-21 설정한 값**
+
+| 칸 | 값 |
+|---|---|
+| Discount amount | `Percentage off` / **40** |
+| Where valid | `Everywhere` |
+| Sale duration | `2026-09-21 ~ 2026-10-20` (Etsy 상한 30일) |
+| Terms and conditions | 비움 — 상품 페이지에 그대로 노출되는데 걸 조건이 없다 |
+| Sale name | `LAUNCH40` (영문·숫자만, 구매자에겐 안 보임) |
+| Which listings | **`Select listings`** → 플래너 1개만 |
+
+> **`All listings` 를 고르지 않는다.** "includes all current **and future**
+> listings" 라서, 세일 기간에 새 상품을 올리면 그것도 자동으로 40% 가 된다.
+> 할인은 매번 의식적으로 결정해야 한다.
+
+> 화면은 25% 를 권하지만 40% 로 간다. **지금 목표는 마진이 아니라 첫 리뷰다.**
+> 리뷰 0개가 전환율의 최대 병목이고 $10 아래가 "일단 질러볼까" 문턱을 넘는다.
+> 25%(=$12.74, 수령 약 $10.7) 대비 건당 $2 남짓 손해지만, 그걸로 첫 리뷰를
+> 몇 주 앞당기면 남는 장사다. 리뷰 10개 뒤 정가 $19.99 / 세일가 $12~13 으로 조정.
+
+**세일 중에는 다른 프로모션을 켜지 않는다** — Promo code 는 구매자가 코드를
+입력해야 하고 배지도 안 붙는다. Interested shopper / Abandoned cart /
+Favorited item 류는 기존 트래픽이 있어야 발동하므로 조회 0 인 지금은 대상이 없다.
+
+**Cyber Specials (2026-11-23 ~ 12-01)** — Etsy 공식 세일 이벤트. 연말은
+플래너 최대 성수기다. 달력에 적어둘 것.
 
 ### E. GPSR manufacturer and safety information
 
