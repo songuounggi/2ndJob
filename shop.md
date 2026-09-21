@@ -29,9 +29,20 @@
 
 리스팅 원고보다 먼저 확인할 것. **미설정이면 리스팅을 다 써놓고 막힌다.**
 
-- [ ] **입금 계좌 (Etsy Payments)** — Settings → Finances → Payment settings.
-      한국 은행 계좌 + 본인 명의. 신분증 확인을 요구할 수 있어 **시간이 가장
-      오래 걸리는 항목**이다. 제일 먼저 시작할 것
+- [x] **입금 수단 — 한국은 Payoneer 경유다** (2026-09-21 승인 완료)
+
+      한국 셀러는 Etsy Payments 로 은행계좌를 직접 연결하는 방식이 아니라
+      **Payoneer 계정을 거쳐** 입금받는다. 순서는:
+
+      1. Payoneer 가입 → 심사 → **"계정이 승인되었습니다"**
+      2. Payoneer 가 한국 계좌로 **소액 입금(100원)** 을 보내 계좌를 인증
+      3. Payoneer 에 USD / EUR / GBP 수취 계좌가 열린다
+      4. Etsy → Finances → Payment settings 에서 이 Payoneer 가 입금 수단으로
+         잡혀 있는지 확인
+
+      심사에 시간이 걸리므로 **제일 먼저 시작할 것.** 판매 대금은
+      Etsy → Payoneer(USD) → 원화 출금 순으로 오고, 마지막 단계에서
+      환전 수수료가 붙는다.
 - [ ] **청구 수단** — Settings → Finances → Billing. 리스팅 수수료·거래
       수수료가 여기서 빠진다. 입금 계좌와 별개다
 - [ ] **Location** — Shop Home에서 설정. 검색 지역 필터에 쓰이고,
