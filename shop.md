@@ -402,6 +402,32 @@ I usually reply within a day.
 
 ---
 
+## 5-1. Etsy search visibility 의 빨간 배지 (무시해도 됨)
+
+발행 직후 좌측 `Etsy search visibility` 에 빨간 `1` 이 떴다. 열어보면
+**오류가 아니라 제목 제안**이다 — 리스팅 에디터에서 Dismiss 했던 그
+"Suggested" 배너가 여기로 옮겨온 것뿐이다.
+
+Etsy 제안: `ADHD Wellness Digital Planner, Undated GoodNotes Journal (PDF)`
+
+짧고 읽기 쉽지만 **`iPad` / `Hyperlinked` / `Neurodivergent` /
+`Adult ADHD Tools` 를 전부 버린다.** 특히 `iPad` 는 구매자가 가장 많이
+치는 단어다.
+
+**결정: 2026-09-21 기준 우리 제목을 유지한다.** 다만 확신은 아니다 —
+최근 Etsy 는 "사람이 읽기 좋은 제목"을 밀고 있고, 어느 쪽이 실제로 더
+팔리는지는 데이터 없이 알 수 없다.
+
+**검증 방법**
+1. 2~3주간 현재 제목으로 두고 `Stats → Views` 를 모은다
+2. 조회가 안 나오면 그때 Etsy 제안으로 바꿔본다. 되돌릴 수 있는 실험이다
+3. **한 번에 하나씩만 바꾼다.** 제목·사진·가격을 동시에 건드리면 무엇이
+   원인인지 영영 알 수 없다
+
+나머지 항목(`Your shop`, `Service standards`)은 초록불이다.
+
+---
+
 ## 6. 발행 순서
 
 1. **입금 계좌 + 청구 수단** ← 승인에 시간이 걸리므로 제일 먼저
