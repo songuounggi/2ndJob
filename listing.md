@@ -66,19 +66,22 @@ adhd gift
 
 ## 상품 설명 (Description)
 
+**문단 안에서 줄바꿈하지 마세요.** Etsy 는 보낸 줄바꿈을 그대로 살린 뒤
+자기 칸 너비에 맞춰 한 번 더 접습니다. 원고를 72자로 접어두면 상품
+페이지에서 문장이 중간중간 끊겨 보이고, 좁은 모바일에서 특히 심합니다
+(2026-09-21 Preview 에서 확인).
+
+한 문단 = 한 줄로 둡니다. 줄을 나누는 것은 **불릿·단계·WHAT'S INSIDE 항목**
+처럼 원래 한 줄이 하나의 항목인 경우뿐입니다.
+
 ```
 Start any day. Skip a week. Nothing to catch up on.
 
-This is an undated ADHD planner. There is not a single date printed
-anywhere in it, so it never expires and you never open it to a wall of
-blank days you "missed".
+This is an undated ADHD planner. There is not a single date printed anywhere in it, so it never expires and you never open it to a wall of blank days you "missed".
 
 WHAT MAKES IT DIFFERENT
 
-Most big planners are one page copied three hundred times. This one has 58
-genuinely different page designs, built around the things that actually get
-in the way: starting, deciding, remembering, and not beating yourself up
-about it.
+Most big planners are one page copied three hundred times. This one has 58 genuinely different page designs, built around the things that actually get in the way: starting, deciding, remembering, and not beating yourself up about it.
 
 Tools you will not find in a normal planner:
 • Guess vs actual – what you thought it would take, what it took
@@ -93,47 +96,30 @@ Tools you will not find in a normal planner:
 
 WHAT'S INSIDE
 
-Plan – 12 monthly grids, 52 Monday-start weekly spreads, and 372 daily
-       pages: one thing today, a timed day from 7am, meds and water, a mood
-       row, and room to dump your head out
+Plan – 12 monthly grids, 52 Monday-start weekly spreads, and 372 daily pages: one thing today, a timed day from 7am, meds and water, a mood row, and room to dump your head out
 Year – quarterly, goals, vision, project planner, weekly and monthly review
-Focus – task breakdown, brain dump, focus sessions, obstacle plan, stuck on
-        deciding, mind map, screen time, hyperfocus, estimating, avoidance,
-        working backwards
-Feelings – Stop/Think/Act, the worry loop, rejection sensitivity, the inner
-           critic, D.O.S.E., gratitude, reframing, naming it, boundaries,
-           energy budget
+Focus – task breakdown, brain dump, focus sessions, obstacle plan, stuck on deciding, mind map, screen time, hyperfocus, estimating, avoidance, working backwards
+Feelings – Stop/Think/Act, the worry loop, rejection sensitivity, the inner critic, D.O.S.E., gratitude, reframing, naming it, boundaries, energy budget
 Habits – 31-day tracker, morning and evening routines
-Health – medication log, sleep, symptoms, doctor visits, therapy notes,
-         water and food, movement, cycle tracker
-Life – meals and groceries, wheel of life, cleaning, budget, impulse check,
-       reading log, dates to remember, subscriptions, trips, who does what
+Health – medication log, sleep, symptoms, doctor visits, therapy notes, water and food, movement, cycle tracker
+Life – meals and groceries, wheel of life, cleaning, budget, impulse check, reading log, dates to remember, subscriptions, trips, who does what
 Notes – dot grid
 
 FINDING THINGS
 
-Ten tabs run down the side of all 494 pages. You are never more than two
-taps from any tool, or three from any specific day. Every page but the
-cover is a link destination. Nothing in it is a dead end.
+Ten tabs run down the side of all 494 pages. You are never more than two taps from any tool, or three from any specific day. Every page but the cover is a link destination. Nothing in it is a dead end.
 
 ABOUT THE MONTH PAGES
 
-Because it is undated, "Month 1" is whichever month you start in. Write the
-month name in the space at the top.
+Because it is undated, "Month 1" is whichever month you start in. Write the month name in the space at the top.
 
-The month grids are positional rather than weekday-aligned – slot 1 is the
-1st, whichever weekday that falls on. That is exactly what lets one grid fit
-every month. Each grid has thirty-one numbered slots, so in a shorter month
-you simply leave the spare ones blank.
+The month grids are positional rather than weekday-aligned – slot 1 is the 1st, whichever weekday that falls on. That is exactly what lets one grid fit every month. Each grid has thirty-one numbered slots, so in a shorter month you simply leave the spare ones blank.
 
 CALM ON PURPOSE
 
-No neon, no full-colour blocks, no busy borders. Just four muted accent
-colors and a soft sky wash – because a planner you find visually loud is a
-planner you stop opening.
+No neon, no full-colour blocks, no busy borders. Just four muted accent colors and a soft sky wash – because a planner you find visually loud is a planner you stop opening.
 
-It is also a light file, under 20MB for 494 pages, so it scrolls smoothly
-in GoodNotes instead of stuttering the way big planners often do.
+It is also a light file, under 20MB for 494 pages, so it scrolls smoothly in GoodNotes instead of stuttering the way big planners often do.
 
 HOW IT WORKS
 
@@ -143,26 +129,17 @@ HOW IT WORKS
 
 WHAT YOU NEED
 
-A tablet and a note-taking app that opens PDFs. GoodNotes and Notability
-are the most common. Works on iPad, Android tablets, and Windows. You can
-also print it at home – the pages are US Letter, and fit A4 with "scale to
-fit" turned on.
+A tablet and a note-taking app that opens PDFs. GoodNotes and Notability are the most common. Works on iPad, Android tablets, and Windows. You can also print it at home – the pages are US Letter, and fit A4 with "scale to fit" turned on.
 
 A NOTE ON THE LINKS
 
-The side tabs and the month grids are real PDF links. They work in
-GoodNotes, Notability, Xodo, Adobe Acrobat and most tablet readers. Some
-basic in-browser PDF viewers ignore internal links – open it in a proper
-note app and they work.
+The side tabs and the month grids are real PDF links. They work in GoodNotes, Notability, Xodo, Adobe Acrobat and most tablet readers. Some basic in-browser PDF viewers ignore internal links – open it in a proper note app and they work.
 
 PLEASE NOTE
 
-This is a planner and a set of writing prompts. It is not medical advice
-and not a substitute for care from a professional.
+This is a planner and a set of writing prompts. It is not medical advice and not a substitute for care from a professional.
 
-This is a digital download. No physical item will be shipped. Because the
-file is delivered instantly, returns and exchanges are not accepted – but
-if anything is wrong with the file, message me and I will fix it.
+This is a digital download. No physical item will be shipped. Because the file is delivered instantly, returns and exchanges are not accepted – but if anything is wrong with the file, message me and I will fix it.
 
 For personal use. Please do not resell or redistribute the file.
 ```
