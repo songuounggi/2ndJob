@@ -247,6 +247,40 @@ THEMES = {
             "notes":  ("#D9A441", "#FBF1DC", "#8A6415"),
         },
     },
+    # Product 2. Same sky wash as v8, but on cool paper so it reads as a
+    # separate product on the shelf. The four accents are deliberately
+    # unchanged -- the shop has to look like one brand. Contrast was
+    # re-measured on the new field colour; the worst case is 4.71:1
+    # (rust on #EDF2F8), so every coloured word still clears 4.5:1.
+    "v9-student": {
+        "font": "Nunito", "weights": "400;600;700;800", "display": None,
+        "radius": "14pt", "tab_dots": True,
+        "bg": "#F4F7FA", "card": "#FFFFFF", "ink": "#333A42",
+        "mid": "#64707C", "soft": "#7C8792", "line": "#E2E8EF",
+        "field": "#EDF2F8",
+        "photo": "../assets/sky.jpg",
+        "photo_cover": 0.14, "photo_page": 0.0,
+        "bloom_cover": 0.42, "bloom_page": 0.55, "bloom_lift": 0.38,
+        "bloom_cool": [
+            (-104, -14, 138, 100, "#AFC9DF", .34),
+            (-152, -22, 158, 108, "#A3C4E2", .30),
+            (-206, -30, 172, 112, "#B6D2EC", .22),
+        ],
+        "undated": True,
+        "student": True,
+        "sections": {
+            "index":    ("#7FA8C9", "#EAF2F8", "#3E6E93"),
+            "semester": ("#7FA8C9", "#EAF2F8", "#3E6E93"),
+            "week":     ("#7FA8C9", "#EAF2F8", "#3E6E93"),
+            "day":      ("#7FA8C9", "#EAF2F8", "#3E6E93"),
+            "classes":  ("#E08A73", "#FBEDE8", "#AC5038"),
+            "work":     ("#E08A73", "#FBEDE8", "#AC5038"),
+            "study":    ("#7FA37C", "#ECF3EB", "#4A7248"),
+            "focus":    ("#7FA37C", "#ECF3EB", "#4A7248"),
+            "life":     ("#D9A441", "#FBF1DC", "#8A6415"),
+            "notes":    ("#D9A441", "#FBF1DC", "#8A6415"),
+        },
+    },
     # Palette B from the research: parents + teens. Sunset range, higher
     # saturation, rounder type -- reads as "made for me", not clinical.
     "v3-sunset": {
@@ -505,6 +539,11 @@ BUCKET = {"index": "plan", "year": "plan", "month": "plan", "week": "plan",
           "focus": "focus", "feel": "care", "habits": "care",
           "health": "care", "life": "free", "notes": "free"}
 BUCKET_KEY = {"plan": "index", "focus": "tasks", "care": "meds", "free": "notes"}
+# The student build names the same four buckets after its own tabs, so the
+# palette can be read next to that product's tab list. The colours are
+# identical to v8's -- only the keys differ.
+STUDENT_BUCKET_KEY = {"plan": "index", "focus": "work", "care": "study",
+                      "free": "notes"}
 
 
 def section_colors(key):
@@ -516,7 +555,8 @@ def section_colors(key):
     """
     group = GROUP_OF.get(key, key)
     bucket = BUCKET.get(group, "plan")
-    return T["sections"][BUCKET_KEY[bucket]]
+    keys = STUDENT_BUCKET_KEY if T.get("student") else BUCKET_KEY
+    return T["sections"][keys[bucket]]
 
 
 def rail(active):
