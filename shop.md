@@ -87,64 +87,101 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 
 ## 2. 리스팅 입력 항목 — 칸별로 넣을 값
 
-Etsy 리스팅 폼 순서대로. **★ = 필수**
+**2026-09-21에 실제로 작성하며 확인한 화면 기준.** 폼은 한 페이지에 전부
+펼쳐져 있고 위쪽 탭(Photo & Video / Item Details / Item Options /
+Pricing & Shipping / How It's Made / Settings)은 같은 페이지의 앵커다.
 
-### A. 사진 / 비디오
+**★ = 필수**
 
-| 칸 | 값 |
-|---|---|
-| ★ **Photos** (최대 10장) | `output/listing/` 의 9장을 **01→09 번호 순서대로** 업로드 |
-| **Video** (선택, 5~15초) | **만들 것을 권함.** GoodNotes에서 옆 탭을 눌러 페이지가 이동하는 화면 녹화. 이 상품의 핵심 기능이 링크 이동인데 정지 이미지로는 전달이 안 된다 |
-
-첫 번째 사진(`01_hero.png`)이 검색 결과에 나오는 썸네일이다. 여기서 클릭이
-갈리므로 다른 건 미뤄도 이건 미루지 말 것.
-
-### B. 기본 정보
-
-| 칸 | 값 | 비고 |
-|---|---|---|
-| ★ **Title** | `listing.md` 제목 그대로 (124자) | 140자 상한. 예전 144자 안은 잘렸다 |
-| ★ **Who made it** | `I did` | |
-| ★ **What is it** | `A finished product` | |
-| ★ **When did you make it** | `2020 – 2026` (최근 제작) | `Made to order` 아님 — 즉시 다운로드다 |
-| ★ **Category** | 검색창에 `planner` 입력 → Paper & Party Supplies 하위의 Calendars & Planners 계열 선택 | 경로명은 Etsy가 수시로 바꾸므로 화면에서 확인할 것 |
-| ★ **Type** | **`Digital`** | **가장 중요.** Physical로 두면 배송 설정을 요구하고 파일 업로드 칸이 안 나온다 |
-| **Renewal** | `Automatic` | 4개월마다 $0.20 자동 갱신 |
-| **Production partners** | 없음 | |
-| **Section** | `ADHD Planners` 새로 만들기 | 상품이 늘 때를 대비 |
-
-### C. 설명 / 태그
+### A. Photo and video
 
 | 칸 | 값 |
 |---|---|
-| ★ **Description** | `listing.md` 상품 설명 블록 전체 |
-| **Tags** (13개, 각 20자) | `listing.md` 태그 13개 그대로 |
-| **Materials** | 비워도 됨 |
+| ★ **Photos** | **최대 20장** (10장이 아니다). `output/listing/` 의 9장을 01→09 순서로 |
+| **Videos** | 최대 2개. 지금은 생략. GoodNotes에서 탭을 눌러 이동하는 10초 녹화는 효과가 확실하므로 나중에 추가할 것 |
 
-### D. 가격 / 재고
+첫 번째 사진(`01_hero.png`)이 검색 결과 썸네일이다.
+
+### B. Item details
+
+| 칸 | 값 |
+|---|---|
+| ★ **Category** | `planner` 검색 → **`Planner Templates`** 선택. 드롭다운의 `Physical or digital` / `Digital` 배지는 **그 카테고리가 디지털을 허용하는지**를 뜻한다 |
+| ★ **What type of item is it?** | **`Digital`** ← 카테고리를 고르면 바로 아래 나타난다 |
+| ★ **Title** | `listing.md` 제목 (119자). **대문자 단어 3개 제한**에 걸린 이력 있음 |
+| ★ **Digital files** | `output/planner_v8-undated-FINAL.pdf`. 최대 5개 |
+| ★ **Description** | `listing.md` 의 상품 설명 블록 전체 (약 4,100자) |
+
+> **Title 위에 뜨는 "Suggested" 배너는 `Dismiss`.** `Apply suggestion` 을
+> 누르면 Etsy 가 제안하는 짧은 제목으로 덮어쓰는데, 우리 제목이 키워드가
+> 더 많고 대문자 규칙까지 맞춰둔 것이다.
+
+> **`This digital item is made to order` 체크박스는 비워둔다.** 체크하면
+> 즉시 다운로드가 아니라 제작 대기 상품이 된다.
+
+**Digital 로 바뀌면 화면이 이렇게 변한다** — 셋 다 확인되어야 제대로 된 것:
+1. `Digital files` 섹션이 생긴다
+2. Shipping 섹션이 `Buyers will download your uploaded files immediately
+   after purchase.` 한 줄로 바뀐다 (배송 설정 사라짐)
+3. Variations 가 `Variations are unavailable for digital items.` 가 된다
+
+### C. Item options / Attributes
+
+| 칸 | 값 |
+|---|---|
+| Variations | 디지털은 불가. 건너뜀 |
+| Custom options | 건너뜀 |
+| **Tags** | `listing.md` 태그 13개. **Description 칸과 헷갈리지 말 것** |
+
+> 2026-09-21에 **태그 목록을 Description 칸에 붙여넣는 실수**를 했다.
+> 그대로 발행하면 상품 설명란이 검색어 나열이 되고, 키워드 스터핑으로
+> 보일 수 있다. 두 칸은 화면에서 멀리 떨어져 있다 —
+> Description 은 **Item details** 안, Tags 는 **Attributes** 안이다.
+
+### D. Price and inventory
 
 | 칸 | 값 |
 |---|---|
 | ★ **Price** | `16.99` (USD) |
-| **Quantity** | 디지털은 무제한이라 신경 쓸 필요 없음 |
-| **SKU** | 비워도 됨 |
-| **Personalization** | **Off** |
+| ★ **Quantity** | `999` — 디지털은 차감되지 않는다. 범위는 1~999 |
+| SKU | 비워둠 |
+| Add estimated US tariff cost | 디지털은 관세 없음. 건너뜀 |
+
+가격을 넣으면 **Estimated earnings** 가 바로 뜬다. 이게 수수료 실측값이다.
 
 런칭 세일 40%는 리스팅 폼이 아니라 **Marketing → Sales & discounts** 에서
-따로 건다. 발행 후에 설정할 것. 정가를 걸고 할인 배지를 띄우는 게
-처음부터 $10에 거는 것보다 유리하다.
+따로 건다. 발행 후에 설정할 것.
 
-### E. 디지털 파일 ★
+### E. GPSR manufacturer and safety information
+
+**건너뜀.** "trader" 로 EU·북아일랜드에 파는 사업자용이다. 우리는
+`Private individual` 이다.
+
+### F. How it's made
 
 | 칸 | 값 |
 |---|---|
-| **Upload** | `output/planner_v8-undated-FINAL.pdf` |
+| ★ **Who made it?** | `I did` |
+| ★ **What is it?** | `A finished product` |
+| ★ **How is this digital content created?** | **`With an AI generator`** |
+| Production partners | 없음 |
 
-> ⚠️ **파일당 20MB 상한. 현재 19,227,515 bytes = 19.2MB로 여유가 약 4%뿐이다.**
-> 재빌드 후에는 반드시 바이트 수를 다시 확인할 것. 페이지를 더 넣을 여유는 없다.
-> (MiB로 재면 18.3이라 안전해 보이지만 **Etsy 기준은 그 쪽이 아니라고 보고 움직인다.**)
+> `When was it made?` 는 **디지털 상품에는 나오지 않는다.** 대신 위의
+> AI 고지 질문이 뜬다.
 
-**배송(Shipping) 칸은 나오지 않는다.** 나온다면 Type이 Digital이 아니라는 뜻이다.
+> **AI 고지를 `Created by me` 로 하지 않은 이유** — 페이지 문구(도구 이름과
+> 안내문), 레이아웃 설계, 생성 스크립트를 AI 가 실질적으로 만들었다.
+> 방향 설정·판단·반려·검수·상품화는 전부 사람이 했지만, Etsy 가 이 질문을
+> 넣은 목적은 그 관여 여부를 아는 것이다. Etsy 는 AI 활용 자체가 아니라
+> **숨기는 것**을 문제 삼는다. 고지하고 파는 셀러가 많다.
+
+### G. Settings
+
+| 칸 | 값 |
+|---|---|
+| **Shop section** | `ADHD Planners` 새로 만들기 |
+| Feature this listing | 꺼둠 |
+| ★ **Renewal options** | `Automatic` (4개월마다 $0.20) |
 
 ---
 
