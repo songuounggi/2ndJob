@@ -170,10 +170,14 @@ Policy settings 화면은 탭이 **4개**다. 2026-09-21에 Privacy 를 빠뜨�
 
 | 탭 | 상태 |
 |---|---|
-| Returns & exchanges | `No returns or exchanges` + 문의 안내 |
-| Cancellations | `before item has shipped` (즉시 전달이라 실질적으로 취소 창 없음) |
-| **Privacy** | **직접 만들어야 한다. 아래 참조** |
-| Fixed policies | 수정 불가. 배송·관세 문구가 보이지만 디지털 리스팅에는 표시 안 됨 |
+| Returns & exchanges | ✅ `No returns or exchanges` + 문의 안내 |
+| Cancellations | ✅ `before item has shipped` (즉시 전달이라 실질적으로 취소 창 없음) |
+| **Privacy** | ✅ 아래 원문으로 등록 (2026-09-21) |
+| Fixed policies | ✅ 수정 불가. 배송·관세 문구가 보이지만 디지털 리스팅에는 표시 안 됨 |
+
+> 저장 후 목록 카드에서는 소제목과 빈 줄이 **한 덩어리로 뭉쳐 보인다.**
+> 카드가 미리보기라 공백을 접는 것뿐이고, 연필(Edit)로 열면 원문 그대로다.
+> 놀라서 다시 쓰지 말 것.
 
 ### 3-3-1. Privacy policy — EU 구매자가 있으면 필수
 
