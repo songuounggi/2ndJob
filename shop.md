@@ -55,6 +55,16 @@
 - [x] **Shop currency = USD** — Finances → Payment settings → Currency.
       2026-09-21 확인. `$16.99 / $10.19` 가격 전략이 USD 기준이라 KRW 로
       두면 환산된 어정쩡한 숫자가 되어 심리적 가격대가 깨진다
+- [x] **Payment Methods** — Etsy Payments 활성, Payoneer 가 입금 계정으로
+      연결됨(Payee ID / Payoneer Customer ID 발급). 구매자 결제수단은
+      Visa·Mastercard·Amex·Apple Pay·Google Pay·Klarna·PayPal 등 기본값 전부
+      켜진 상태로 **그대로 둔다** — 쓰던 수단이 없어서 이탈하는 걸 막아준다.
+      입금 주기 `Once per week` 도 그대로. 2026-09-21 확인
+
+> **수수료가 붙는 구간을 헷갈리지 말 것.**
+> `Etsy → Payoneer` 주간 입금은 자동이고 보통 수수료가 없다.
+> 수수료·환전이 걸리는 건 `Payoneer → 원화 계좌` 출금이고, 이건 직접 누를
+> 때만 일어난다. **건건이 빼지 말고 모아서 한 번에 뺄 것.**
 
 **수수료 감안** — 리스팅 등록 $0.20(4개월) + 거래 수수료 + 결제 처리 수수료.
 
