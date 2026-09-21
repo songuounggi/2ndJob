@@ -127,6 +127,20 @@ def tools(name, kicker, title, sub, pages):
     return shoot(name, body)
 
 
+def everyday():
+    body = f"""<div class="wrap">
+      <span class="kicker">THE PAGES YOU OPEN EVERY DAY</span>
+      <h1>424 daily &amp; weekly pages</h1>
+      <div class="sub">A timed day from 7am, meds and water, a mood row.
+        Weeks start on Monday.</div>
+      <div class="grow" style="gap:50px">
+        <div class="tab"><img src="{img(60)}"></div>
+        <div class="tab"><img src="{img(444)}"></div>
+      </div>
+    </div>"""
+    return shoot("09_everyday", body)
+
+
 def numbers():
     stats = [("58", "unique page designs", "not one page copied 300 times"),
              ("494", "pages in total", "12 months, 52 weeks, 372 days"),
@@ -181,7 +195,7 @@ if __name__ == "__main__":
         tools("06_life", "THE ADMIN THAT EATS THE WEEK", "Health &amp; life",
               "Medication, sleep, meals, money, the things that slip.",
               [38, 39, 47, 50, 51, 54]),
-        numbers(), howto(),
+        everyday(), numbers(), howto(),
     ]
     for m in made:
         print("saved", os.path.basename(m))

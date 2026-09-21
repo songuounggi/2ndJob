@@ -107,7 +107,7 @@ THEMES = {
         "sections": {k: ("#12855C", "#E7F2EC", "#0F6E4C") for k, _ in TABS},
     },
     "v2-warm": {
-        "font": "Nunito", "weights": "400;600;700;800", "display": "Caveat",
+        "font": "Nunito", "weights": "400;600;700;800", "display": None,
         "radius": "14pt", "tab_dots": True,
         "bg": "#FBF8F3", "card": "#FFFFFF", "ink": "#3A3A3A",
         "mid": "#6E6A64", "soft": "#827D75", "line": "#EAE4DA",
@@ -131,7 +131,7 @@ THEMES = {
     # Cards stay fully opaque so writing areas keep their contrast; only the
     # paper behind them carries the image.
     "v5-sky": {
-        "font": "Nunito", "weights": "400;600;700;800", "display": "Caveat",
+        "font": "Nunito", "weights": "400;600;700;800", "display": None,
         "radius": "14pt", "tab_dots": True,
         "bg": "#FBF8F3", "card": "#FFFFFF", "ink": "#3A3A3A",
         "mid": "#6E6A64", "soft": "#827D75", "line": "#EAE4DA",
@@ -159,7 +159,7 @@ THEMES = {
     # v5 with the cool side of the bloom carried further left: the sky blue
     # builds over three stops and thins out toward the page edge.
     "v6-skyblue": {
-        "font": "Nunito", "weights": "400;600;700;800", "display": "Caveat",
+        "font": "Nunito", "weights": "400;600;700;800", "display": None,
         "radius": "14pt", "tab_dots": True,
         "bg": "#FBF8F3", "card": "#FFFFFF", "ink": "#3A3A3A",
         "mid": "#6E6A64", "soft": "#827D75", "line": "#EAE4DA",
@@ -190,7 +190,7 @@ THEMES = {
     # darker than the cream paper, so the wash pulled the page down; blending
     # each stop toward white raises it without touching the hue relations.
     "v7-bright": {
-        "font": "Nunito", "weights": "400;600;700;800", "display": "Caveat",
+        "font": "Nunito", "weights": "400;600;700;800", "display": None,
         "radius": "14pt", "tab_dots": True,
         "bg": "#FBF8F3", "card": "#FFFFFF", "ink": "#3A3A3A",
         "mid": "#6E6A64", "soft": "#827D75", "line": "#EAE4DA",
@@ -221,7 +221,7 @@ THEMES = {
     # v7's look, but undated and bulked out with the repeated daily and
     # weekly sets. `undated` swaps the calendar pages for positional ones.
     "v8-undated": {
-        "font": "Nunito", "weights": "400;600;700;800", "display": "Caveat",
+        "font": "Nunito", "weights": "400;600;700;800", "display": None,
         "radius": "14pt", "tab_dots": True,
         "bg": "#FBF8F3", "card": "#FFFFFF", "ink": "#3A3A3A",
         "mid": "#6E6A64", "soft": "#827D75", "line": "#EAE4DA",
@@ -241,8 +241,8 @@ THEMES = {
             "month":  ("#7FA8C9", "#EAF2F8", "#3E6E93"),
             "week":   ("#7FA8C9", "#EAF2F8", "#3E6E93"),
             "day":    ("#7FA8C9", "#EAF2F8", "#3E6E93"),
-            "tasks":  ("#E08A73", "#FBEDE8", "#B4543A"),
-            "habits": ("#E08A73", "#FBEDE8", "#B4543A"),
+            "tasks":  ("#E08A73", "#FBEDE8", "#AC5038"),
+            "habits": ("#E08A73", "#FBEDE8", "#AC5038"),
             "meds":   ("#7FA37C", "#ECF3EB", "#4A7248"),
             "notes":  ("#D9A441", "#FBF1DC", "#8A6415"),
         },
@@ -1111,11 +1111,23 @@ def p_wheel():
 
 # ------------------------------------------------------------- batch two --
 def p_quarterly():
-    qs = ["Jan \u2013 Mar", "Apr \u2013 Jun", "Jul \u2013 Sep", "Oct \u2013 Dec"]
+    # Undated builds must not name months. "Jan - Mar" here was the only
+    # place a month name survived the undated conversion, and it broke the
+    # product's main claim -- a buyer starting in June met a page labelled
+    # "Jan - Mar". Positional labels, with a field to write the span into.
+    qs = (["Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"]
+          if T.get("undated") else
+          ["Jan \u2013 Mar", "Apr \u2013 Jun", "Jul \u2013 Sep", "Oct \u2013 Dec"])
+    span = ('<div class="field" style="height:15pt;margin:0 0 8pt"></div>'
+            if T.get("undated") else "")
+    nlines = 5 if T.get("undated") else 6
     def card(q):
         return (f'<div class="card" style="flex:1">'
-                f'<div class="label">{q}</div>{lines(6)}</div>')
-    return (head("Year", "Quarterly", "Long enough to matter, short enough to picture.")
+                f'<div class="label">{q}</div>{span}{lines(nlines)}</div>')
+    sub = ("Long enough to matter, short enough to picture. "
+           "Write the months in yourself." if T.get("undated")
+           else "Long enough to matter, short enough to picture.")
+    return (head("Year", "Quarterly", sub)
             + '<div class="body">'
             + f'<div class="row">{card(qs[0])}{card(qs[1])}</div>'
             + f'<div class="row">{card(qs[2])}{card(qs[3])}</div>'
