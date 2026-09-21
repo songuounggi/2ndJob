@@ -229,7 +229,8 @@ Etsy는 할인 표시가 클릭률에 크게 작용합니다. 정가를 걸고 �
 **발행 전 (10분)**
 - **Shop policies** — "Try it now" 템플릿. 디지털 다운로드는 반품 정책을
   명시하지 않으면 분쟁 시 불리합니다. 건너뛰지 마세요
-- **Tagline** — `Undated ADHD & wellness planners for iPad`
+- **Tagline** — `Undated ADHD & wellness planners, iPad & Android`
+  (`for iPad` 단독은 쓰지 않습니다 — 안드로이드·윈도우에서도 동작합니다)
 - **Location** — 검색 필터에 쓰입니다. 비워두면 걸러집니다
 
 **리스팅 발행 직후**
