@@ -125,7 +125,24 @@ Undated ADHD & wellness planners, iPad & Android
 
 ### 3-2. Location
 
-위 1번 참조. 필수.
+필수. 위 1번 참조.
+
+**국가가 아니라 도시를 넣는다.** `South Korea` 를 치면 드롭다운에 South
+Moravian / South Africa / South Carolina 같은 것만 뜨고 저장하면
+`Must select city from suggestions.` 로 막힌다(2026-09-21에 실제로 겪음).
+
+```
+Seoul
+```
+
+부산 `Busan`, 인천 `Incheon`, 성남 `Seongnam`, 대전 `Daejeon`,
+대구 `Daegu`, 수원 `Suwon`, 고양 `Goyang`, 용인 `Yongin`.
+
+- 타이핑만 하고 Save 를 누르면 같은 에러가 난다. **드롭다운 항목을
+  클릭해서 선택**해야 한다
+- 내 동네가 목록에 없으면 가장 가까운 큰 도시를 고른다(다이얼로그 안내대로)
+- 이 값은 숍 페이지에 **공개**된다. 동네를 드러내기 싫으면 근처 광역시로
+- 화면 하단의 `South Korea` 는 계정 지역(통화·세금)이라 이것과 별개다
 
 ### 3-3. Shop policies — 이 화면에서 제일 중요
 
