@@ -281,6 +281,39 @@ THEMES = {
             "notes":    ("#D9A441", "#FBF1DC", "#8A6415"),
         },
     },
+    # Concept C -- "ink line". Lines and planes only: no pills, no rounded
+    # corners, no photographic wash. The brief was an East-Asian ink-painting
+    # feel that still reads modern, so the vocabulary is borrowed literally:
+    # asymmetric negative space, one tapering brush rule under each title,
+    # and a soft ink bleed in a single corner.
+    #
+    # The four category colours survive -- the recall research still applies --
+    # but they are swapped for traditional pigment tones (vermilion, azurite,
+    # malachite, ochre). Desaturated, so they read as pigment rather than UI.
+    "v10-ink": {
+        "font": "Inter", "weights": "400;500;600;700",
+        "display": "Playfair Display",
+        "radius": "0pt", "tab_dots": False,
+        "bg": "#F2F1EB", "card": "#FDFCF9", "ink": "#1E2321",
+        "mid": "#4E5651", "soft": "#6E7771", "line": "#D9DBD3",
+        "field": "#ECEAE2",
+        "ink_style": True,
+        "ink_wash": "#1B2428",
+        "undated": True,
+        "student": True,
+        "sections": {
+            "index":    ("#5B87A8", "#E4ECF2", "#2E5C7A"),   # 群靑 azurite
+            "semester": ("#5B87A8", "#E4ECF2", "#2E5C7A"),
+            "week":     ("#5B87A8", "#E4ECF2", "#2E5C7A"),
+            "day":      ("#5B87A8", "#E4ECF2", "#2E5C7A"),
+            "classes":  ("#C2564A", "#F5E6E2", "#9B3226"),   # 朱 vermilion
+            "work":     ("#C2564A", "#F5E6E2", "#9B3226"),
+            "study":    ("#6E9B82", "#E6EFE9", "#3F6B54"),   # 石綠 malachite
+            "focus":    ("#6E9B82", "#E6EFE9", "#3F6B54"),
+            "life":     ("#C2A050", "#F5EEDD", "#7E6118"),   # 黃土 ochre
+            "notes":    ("#C2A050", "#F5EEDD", "#7E6118"),
+        },
+    },
     # Palette B from the research: parents + teens. Sunset range, higher
     # saturation, rounder type -- reads as "made for me", not clinical.
     "v3-sunset": {
@@ -312,6 +345,7 @@ ROOT_VARS = f""":root{{
   --bg:{T['bg']}; --card:{T['card']}; --ink:{T['ink']}; --mid:{T['mid']};
   --soft:{T['soft']}; --line:{T['line']}; --field:{T['field']};
   --radius:{T['radius']}; --font:'{T['font']}';
+  --display:'{T['display'] or T['font']}';
   --accent:#12855C; --chip:#E7F2EC; --accent-text:#0F6E4C;
 }}"""
 
@@ -405,6 +439,9 @@ h1{font-size:23pt;font-weight:800;margin:11pt 0 0;letter-spacing:-.01em}
       font-size:7.5pt;font-weight:800;padding:3pt 9pt;border-radius:99pt;
       letter-spacing:.03em}
 .field{background:var(--field);border-radius:6pt;height:19pt;flex:none}
+.coverrule{width:28pt;height:2.6pt;background:var(--accent);margin-bottom:18pt}
+.dot{width:5pt;height:5pt;border-radius:99pt;background:var(--accent);flex:none}
+.dot.sm{width:4pt;height:4pt}
 .box{width:12pt;height:12pt;border:1.2px solid var(--line);border-radius:3pt;
      flex:none}
 
@@ -440,7 +477,85 @@ h1{font-size:23pt;font-weight:800;margin:11pt 0 0;letter-spacing:-.01em}
       background-size:14pt 14pt;background-position:8pt 8pt}
 """
 
-CSS = ROOT_VARS + BASE_CSS
+
+# Concept C only. Kept as an overlay rather than branches inside BASE_CSS so
+# the shipped themes (v7/v8/v9) render byte-identically to before.
+INK_CSS = """
+/* ---------- lines and planes ---------- */
+/* Every pill becomes a plane. Rounded corners are the single strongest
+   "friendly app" signal in the old look, so they all go to 0. */
+.card,.field,.box,.chip,.rail a{border-radius:0}
+.card{border-color:rgba(30,35,33,.15)}
+
+/* An input is a plane closed by a line -- the plane says "write here", the
+   heavier bottom rule gives it the baseline a brush would sit on. */
+.field{border-bottom:1pt solid rgba(30,35,33,.30)}
+.box{border-width:1pt;border-color:rgba(30,35,33,.32)}
+.chip{background:transparent;border:0.7pt solid var(--accent-text);
+      letter-spacing:.08em;padding:3pt 8pt}
+
+/* ---------- the brush rule ---------- */
+/* One tapering stroke under every title: thick at the start, dissolving to
+   nothing. A gradient, so it stays vector -- a real brush texture would be
+   an image on all 434 pages. */
+h1{font-family:var(--display),Georgia,serif;font-weight:700;font-size:31pt;
+   letter-spacing:0;line-height:1.05}
+h1::after{content:"";display:block;width:54pt;height:2.6pt;margin-top:11pt;
+   background:linear-gradient(90deg,var(--ink) 0%,var(--ink) 55%,
+   rgba(30,35,33,.10) 100%)}
+.titlerow h1::after{margin-bottom:0}
+
+/* Section marks are strokes, not bars: thinner, taller, square-cut. */
+.eyebrow{font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;
+   font-weight:600}
+.eyebrow::before{width:1.5pt;height:13pt;border-radius:0}
+.label::before{width:1.5pt;height:11pt;border-radius:0}
+.sub{font-size:9.5pt;letter-spacing:.01em}
+
+/* ---------- the rail ---------- */
+/* The active tab is a solid ink plane with paper-coloured type -- the one
+   place a full field of colour is allowed, and it is neutral, not a category
+   hue, so the "no solid accent fields" rule still holds. */
+.rail{border-right:0.7pt solid rgba(30,35,33,.20)}
+.rail a span{letter-spacing:.16em;font-weight:600}
+.rail a.on{background:var(--ink);border:none}
+.rail a.on span{color:var(--bg);font-weight:600}
+.rail a.on::before{left:0;top:0;transform:none;width:100%;height:2.4pt;
+   background:var(--acc);border-radius:0}
+.rail a.on::after{background:radial-gradient(ellipse 62% 100% at 50% 0%,
+   rgba(0,0,0,.09), rgba(0,0,0,0) 72%)}
+
+/* ---------- points become strokes ---------- */
+/* The brief was lines and planes, so the list bullets stop being dots. A
+   short rule reads as the same "item starts here" mark without adding a
+   third shape language to the page. */
+.dot{width:10pt;height:1.5pt;border-radius:0}
+.dot.sm{width:8pt;height:1.5pt}
+.coverrule{width:44pt;height:2.6pt;
+   background:linear-gradient(90deg,var(--ink) 0%,var(--ink) 52%,
+   rgba(30,35,33,.10) 100%)}
+
+/* ---------- the cover ---------- */
+/* Playfair's default figures are lining, but force it: the daily pages run
+   "Day 1" through "Day 31" and oldstyle numerals there read as roman. */
+.covertitle{font-family:var(--display),Georgia,serif;font-size:38pt;
+   letter-spacing:0;line-height:1.14;font-weight:700}
+h1,.covertitle{font-variant-numeric:lining-nums tabular-nums;
+   font-feature-settings:"lnum" 1,"tnum" 1}
+
+/* The seal. One small vermilion plane in the empty corner, opposite the
+   bleed -- the counterweight that stops the asymmetry reading as a mistake. */
+.page#cover::after{content:"";position:absolute;right:56pt;top:74pt;
+   width:26pt;height:26pt;border:2pt solid #9B3226;
+   box-shadow:inset 0 0 0 2.4pt rgba(0,0,0,0),0 0 0 0 rgba(0,0,0,0);
+   background:linear-gradient(135deg,rgba(155,50,38,.14),rgba(155,50,38,.05))}
+
+/* ---------- the ink bleed ---------- */
+.bg-ink{position:absolute;inset:0;background-size:cover;
+   background-repeat:no-repeat;background-position:center;pointer-events:none}
+"""
+
+CSS = ROOT_VARS + BASE_CSS + (INK_CSS if T.get("ink_style") else "")
 
 
 def lift(col, amount):
@@ -526,6 +641,66 @@ def bloom_png(path, cx=306, cy=250, scale=0.5, blur=52):
     base = Image.fromarray(
         np.concatenate([np.clip(rgb, 0, 255), out_a], axis=2).astype(np.uint8),
         "RGBA")
+    if scale != 1.0:
+        base = base.resize((int(W * scale), int(H * scale)), Image.LANCZOS)
+    base.save(path, optimize=True)
+    return path
+
+
+INK_SPOTS = {
+    # Asymmetric on purpose. The bleed hugs one corner and runs off the edge;
+    # the rest of the sheet is left empty, because in this idiom the empty
+    # part is the composition, not what is left over after filling the page.
+    #
+    # Each spot carries its own blur. One radius for all of them just yields a
+    # smooth grey gradient -- it read as a printing smudge, not ink. A tight
+    # dark core under a wide faint halo is what gives it the "soaked in and
+    # spread" structure.
+    # Anchored ON the page edge, not inside it, so most of the mass falls
+    # outside the trim. A blob sitting fully in view reads as a toner smudge
+    # however soft it is; a sweep entering from the corner reads as ink.
+    # Alphas are roughly half what looked right on screen -- at 434 pages this
+    # sits behind everything and only has to be felt, not seen.
+    "page":  [(612, 8, 132, 52, .070, 16),
+              (588, 40, 192, 82, .048, 40),
+              (558, 70, 252, 118, .026, 78)],
+    "cover": [(26, 32, 152, 62, .075, 18),
+              (84, 68, 212, 96, .050, 44),
+              (140, 96, 282, 140, .027, 84),
+              (566, 648, 152, 84, .022, 70)],
+}
+
+
+def ink_wash_png(path, spots, scale=0.5):
+    """Bake one ink bleed to a shared PNG.
+
+    Same reasoning as bloom_png: a wash built from stacked CSS gradients
+    measured ~3s per page to rasterise, which stutters in GoodNotes at this
+    page count. One file, referenced by every page, costs nothing.
+    """
+    from PIL import Image, ImageDraw, ImageFilter
+    import numpy as np
+    W, H = 612, 792
+    col = T.get("ink_wash", "#1B2428")
+    r, g, b = (int(col[i:i + 2], 16) for i in (1, 3, 5))
+    base = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    for x, y, rx, ry, a, blur in spots:
+        layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        ImageDraw.Draw(layer).ellipse(
+            [x - rx, y - ry, x + rx, y + ry], fill=(r, g, b, int(a * 255)))
+        # Premultiply before blurring, exactly as bloom_png does -- otherwise
+        # the black RGB of fully transparent pixels bleeds into the edge and
+        # darkens the whole wash.
+        arr = np.asarray(layer).astype(np.float64)
+        arr[..., :3] *= arr[..., 3:4] / 255.0
+        bl = np.asarray(Image.fromarray(arr.astype(np.uint8), "RGBA")
+                        .filter(ImageFilter.GaussianBlur(blur))).astype(np.float64)
+        out_a = bl[..., 3:4]
+        rgb = np.divide(bl[..., :3] * 255.0, np.maximum(out_a, 1e-6))
+        layer = Image.fromarray(
+            np.concatenate([np.clip(rgb, 0, 255), out_a], axis=2).astype(np.uint8),
+            "RGBA")
+        base = Image.alpha_composite(base, layer)
     if scale != 1.0:
         base = base.resize((int(W * scale), int(H * scale)), Image.LANCZOS)
     base.save(path, optimize=True)
@@ -626,6 +801,10 @@ def page(key, body):
     acc, tint, txt = section_colors(key)
     style = f"--accent:{acc};--chip:{tint};--accent-text:{txt}"
     layers = ""
+    if T.get("ink_wash"):
+        name = "ink_cover" if key == "cover" else "ink_page"
+        layers += ('<div class="bg-ink" style="background-image:'
+                   f"url('../assets/{name}_{VERSION}.png')\"></div>")
     if T.get("photo"):
         cover = key == "cover"
         name = "bloom_cover" if cover else "bloom_page"
@@ -682,8 +861,7 @@ def p_cover():
     rows = "".join(
         f'<div style="display:flex;align-items:center;gap:12pt;padding:11pt 0;'
         f'{"" if i == len(items) - 1 else "border-bottom:1px solid var(--line)"}">'
-        f'<div style="width:5pt;height:5pt;border-radius:99pt;background:var(--accent);'
-        f'flex:none"></div>'
+        f'<div class="dot"></div>'
         f'<div style="flex:1"><div style="font-size:10pt;font-weight:700">{t}</div>'
         f'<div style="font-size:8.5pt;color:var(--soft);margin-top:2pt">{d}</div></div>'
         f'<span class="chip">{c}</span></div>'
@@ -691,10 +869,10 @@ def p_cover():
     return f"""
     <div class="head" style="flex:1;display:flex;flex-direction:column;
          align-items:center;justify-content:center;text-align:center">
-      <div style="width:28pt;height:2.6pt;background:var(--accent);margin-bottom:18pt"></div>
+      <div class="coverrule"></div>
       <span class="chip">UNDATED &middot; NO-GUILT</span>
-      <div style="font-size:31pt;font-weight:700;line-height:1.18;margin-top:20pt;
-                  letter-spacing:-.02em">{"" if T.get("undated") else f"{YEAR} "}ADHD &amp;<br>Wellness Planner</div>
+      <div class="covertitle" style="font-size:31pt;font-weight:700;
+                  line-height:1.18;margin-top:20pt;letter-spacing:-.02em">{"" if T.get("undated") else f"{YEAR} "}ADHD &amp;<br>Wellness Planner</div>
       <div style="color:var(--mid);font-size:11pt;margin-top:12pt">
         Start any day. Skip a week. Nothing to catch up on.</div>
     </div>
@@ -719,7 +897,7 @@ def p_index():
             f'<a href="#{k}" style="display:flex;align-items:center;gap:10pt;flex:1;'
             f'text-decoration:none;color:var(--ink);'
             f'{"" if i == len(links) - 1 else "border-bottom:1px solid var(--line)"}">'
-            f'<div style="width:4pt;height:4pt;border-radius:99pt;'
+            f'<div class="dot sm" style="'
             f'background:{section_colors(k)[0]}"></div>'
             f'<div style="flex:1;font-size:10pt;font-weight:600">{n}</div>'
             f'<div style="color:var(--soft);font-size:11pt">&rsaquo;</div></a>'
@@ -943,8 +1121,7 @@ def p_group(key, title, sub=""):
         f'<a href="#{k}" style="display:flex;align-items:center;gap:12pt;flex:1;'
         f'padding:6pt 0;text-decoration:none;color:var(--ink);'
         f'{"" if i == len(items) - 1 else "border-bottom:1px solid var(--line)"}">'
-        f'<div style="width:5pt;height:5pt;border-radius:99pt;'
-        f'background:var(--accent);flex:none"></div>'
+        f'<div class="dot"></div>'
         f'<div style="flex:1"><div style="font-size:10.5pt;font-weight:700">{n}</div>'
         f'<div style="font-size:8.5pt;color:var(--soft);margin-top:2pt">{d}</div></div>'
         f'<div style="color:var(--soft);font-size:11pt">&rsaquo;</div></a>'
@@ -1741,10 +1918,15 @@ def font_url():
 
 def build_bloom_assets():
     """Bake the two bloom positions once per theme."""
-    if not T.get("photo"):
-        return
     d = os.path.join(ROOT, "assets")
     os.makedirs(d, exist_ok=True)
+    if T.get("ink_wash"):
+        ink_wash_png(os.path.join(d, f"ink_page_{VERSION}.png"),
+                     INK_SPOTS["page"])
+        ink_wash_png(os.path.join(d, f"ink_cover_{VERSION}.png"),
+                     INK_SPOTS["cover"])
+    if not T.get("photo"):
+        return
     bloom_png(os.path.join(d, f"bloom_cover_{VERSION}.png"), 306, 250, scale=0.5)
     bloom_png(os.path.join(d, f"bloom_page_{VERSION}.png"), 330, 92, scale=0.5)
 
