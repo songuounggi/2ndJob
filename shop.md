@@ -165,6 +165,66 @@ version at no charge.
 > 권리 및 Etsy Purchase Protection 과 충돌할 수 있다. `listing.md` 의 영문
 > 설명도 같은 말로 맞춰져 있다 — **한쪽만 고치지 말 것.**
 
+Policy settings 화면은 탭이 **4개**다. 2026-09-21에 Privacy 를 빠뜨린 채
+"정책 완료"로 넘어갈 뻔했다.
+
+| 탭 | 상태 |
+|---|---|
+| Returns & exchanges | `No returns or exchanges` + 문의 안내 |
+| Cancellations | `before item has shipped` (즉시 전달이라 실질적으로 취소 창 없음) |
+| **Privacy** | **직접 만들어야 한다. 아래 참조** |
+| Fixed policies | 수정 불가. 배송·관세 문구가 보이지만 디지털 리스팅에는 표시 안 됨 |
+
+### 3-3-1. Privacy policy — EU 구매자가 있으면 필수
+
+Etsy 화면이 직접 명시한다: *"If you ship to the European Union or offer your
+listings to EU buyers, you're required to have a GDPR-compliant privacy
+policy."* 디지털 다운로드는 기본이 전 세계 판매라 **해당된다.**
+
+Privacy 탭 → `Create policy`:
+
+```
+WHAT I COLLECT
+
+To fulfil your order I receive information from Etsy: your name, email
+address, and billing or delivery details. I do not collect anything beyond
+what Etsy passes to me, and I do not ask you for extra information.
+
+WHY I NEED IT
+
+I use it only to deliver your order, to reply to messages you send me, and
+to keep the records that tax and accounting law require.
+
+WHO I SHARE IT WITH
+
+Nobody, for marketing purposes. I never sell your information. Etsy
+processes the order and the payment. I may disclose information only where
+the law requires it.
+
+HOW LONG I KEEP IT
+
+I keep order records for as long as tax and accounting law requires, then
+delete them.
+
+YOUR RIGHTS
+
+If you are in the European Union or the United Kingdom you can ask me to
+see, correct, or delete the personal information I hold about you, or to
+restrict how it is used. Message me through Etsy and I will respond. You
+also have the right to complain to your local data protection authority.
+
+CONTACT
+
+The fastest way to reach me is an Etsy message. I usually reply within a day.
+```
+
+> 법률 자문이 아니다. 개인이 디지털 상품만 파는 전형적인 경우에 맞춘
+> 출발점이며, 실제와 다른 부분(별도 메일링 리스트 운영 등)이 생기면 고칠 것.
+>
+> **집 주소를 여기 적지 않는다.** 연락 수단은 Etsy 메시지로 충분하다.
+> 주소가 걸리는 곳은 Shop Home 하단의 "Add more details for buyers"(EU DSA)
+> 이고, `Private individual` 이면 필수가 아닐 가능성이 높다(4번 참조).
+
 ### 3-4. Shop announcement — 발행 직후
 
 앞 ~160자만 펼쳐 보이고 나머지는 "Read more"로 접힌다.
