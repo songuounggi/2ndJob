@@ -12,6 +12,10 @@
 
 ## 0. 현황
 
+**발행 전 준비 완료 (2026-09-21)** — Payoneer 승인 / Etsy-Payoneer 연결 /
+Billing 카드+Autobilling / Currency USD / Policy 4개 탭 / Location `Seoul,
+South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
+
 | 항목 | 값 |
 |---|---|
 | 숍 이름 | `SongAndParkStudio` |
