@@ -12,10 +12,30 @@
 Etsy 제목은 **140자 제한**이고, 앞 40자가 검색에서 가장 큰 비중을 차지합니다.
 
 ```
-ADHD Digital Planner Undated, GoodNotes iPad Planner, ADHD Journal Hyperlinked PDF, Neurodivergent Planner, Adult ADHD Tools
+ADHD Digital Planner Undated, GoodNotes iPad Planner, Hyperlinked PDF Journal, Neurodivergent Planner, Adult ADHD Tools
 ```
 
-124자. 예전 안은 144자라 Etsy가 저장을 거부하거나 뒤를 잘라냈습니다.
+119자 / 대문자 단어 3개.
+
+**Etsy 제목에는 제약이 두 개 있습니다. 둘 다 실제로 걸렸습니다.**
+
+| 규칙 | 겪은 일 |
+|---|---|
+| 140자 이내 | 첫 안이 144자였습니다 |
+| **전부 대문자인 단어는 3개까지** | `ADHD`×3 + `PDF` = 4개라 `Your title can't have more than 3 words in all caps.` 로 막혔습니다 (2026-09-21) |
+
+세 번째 덩어리를 `ADHD Journal Hyperlinked PDF` → `Hyperlinked PDF Journal` 로
+바꿔 `ADHD` 하나를 덜어냈습니다. **맨 앞 `ADHD Digital Planner Undated` 는
+건드리지 않습니다** — 검색에서 앞 40자가 가장 큰 비중을 차지합니다.
+
+제목을 고칠 때 검사:
+
+```python
+import re
+t = "..."
+caps = [w for w in re.findall(r"[A-Za-z][A-Za-z&']*", t) if len(w) > 1 and w.isupper()]
+assert len(t) <= 140 and len(caps) <= 3, (len(t), caps)
+```
 
 - 앞쪽에 `ADHD Digital Planner` + `Undated` 배치 — 검색량이 가장 큰 조합
 - `GoodNotes`, `iPad`, `Hyperlinked PDF` 는 구매자가 실제로 검색하는 기능어
