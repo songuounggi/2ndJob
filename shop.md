@@ -47,12 +47,6 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
       심사에 시간이 걸리므로 **제일 먼저 시작할 것.** 판매 대금은
       Etsy → Payoneer(USD) → 원화 출금 순으로 오고, 마지막 단계에서
       환전 수수료가 붙는다.
-- [ ] **청구 수단** — Settings → Finances → Billing. 리스팅 수수료·거래
-      수수료가 여기서 빠진다. 입금 계좌와 별개다
-- [ ] **Location** — Shop Home에서 설정. 검색 지역 필터에 쓰이고,
-      **비워두면 그 필터에서 통째로 빠진다.** 디지털이라 배송이 없어도 동일
-- [ ] **Shop policies** — 아래 2-C 참조. 디지털은 정책이 분쟁의 유일한 근거다
-
 - [x] **청구 수단 (Billing)** — Finances → Payment settings → Billing.
       카드 등록 + Default 지정 + Autobilling ON. 2026-09-21 완료.
       **입금 계좌와 완전히 별개 칸이다** — 리스팅 등록비와 수수료가 여기서 나간다
@@ -64,6 +58,12 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
       Visa·Mastercard·Amex·Apple Pay·Google Pay·Klarna·PayPal 등 기본값 전부
       켜진 상태로 **그대로 둔다** — 쓰던 수단이 없어서 이탈하는 걸 막아준다.
       입금 주기 `Once per week` 도 그대로. 2026-09-21 확인
+- [x] **Location** — Shop Home. `Seoul, South Korea`. 검색 지역 필터에 쓰이고
+      **비워두면 그 필터에서 통째로 빠진다.** 디지털이라 배송이 없어도 동일.
+      입력 방법은 3-2 참조 (국가가 아니라 도시다)
+- [x] **Shop policies** — 4개 탭 전부. 3-3 참조. 디지털은 정책이 분쟁의
+      유일한 근거다
+- [x] **Tagline** — 3-1 참조
 
 > **수수료가 붙는 구간을 헷갈리지 말 것.**
 > `Etsy → Payoneer` 주간 입금은 자동이고 보통 수수료가 없다.
