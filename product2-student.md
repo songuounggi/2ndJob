@@ -180,6 +180,129 @@ v8 의 따뜻한 크림(`#FBF8F3`)과 구분되는 **쿨 페이퍼**로 간다. 
 
 ---
 
+## 새 세션을 위한 인계 (대화 없이 이것만 보고 시작할 수 있게)
+
+이 절은 **우리 대화를 모르는 세션**이 바로 작업에 들어갈 수 있도록 코드 수준
+으로 적었다. 위의 기획 내용과 `CLAUDE.md` 를 먼저 읽고 오라.
+
+### 1차 — 테마 추가
+
+`scripts/build_planner.py` 의 `THEMES` 딕셔너리에 아래를 그대로 추가한다.
+`"v8-undated"` 항목 **바로 뒤**가 자연스럽다.
+
+```python
+    # 상품 2. v8 의 하늘 워시는 그대로 쓰되 배경을 쿨 톤으로 바꿔
+    # 별개 상품으로 읽히게 한다. 액센트 4색은 v8 과 동일 -- 숍 전체가
+    # 한 브랜드로 보여야 한다. 새 field 위 대비는 전부 재측정했고
+    # 최저 4.71:1 로 통과했다(측정값은 이 문서 "테마" 절).
+    "v9-student": {
+        "font": "Nunito", "weights": "400;600;700;800", "display": None,
+        "radius": "14pt", "tab_dots": True,
+        "bg": "#F4F7FA", "card": "#FFFFFF", "ink": "#333A42",
+        "mid": "#64707C", "soft": "#7C8792", "line": "#E2E8EF",
+        "field": "#EDF2F8",
+        "photo": "../assets/sky.jpg",
+        "photo_cover": 0.14, "photo_page": 0.0,
+        "bloom_cover": 0.42, "bloom_page": 0.55, "bloom_lift": 0.38,
+        "bloom_cool": [
+            (-104, -14, 138, 100, "#AFC9DF", .34),
+            (-152, -22, 158, 108, "#A3C4E2", .30),
+            (-206, -30, 172, 112, "#B6D2EC", .22),
+        ],
+        "undated": True,
+        "student": True,
+        "sections": {
+            "index":    ("#7FA8C9", "#EAF2F8", "#3E6E93"),
+            "semester": ("#7FA8C9", "#EAF2F8", "#3E6E93"),
+            "week":     ("#7FA8C9", "#EAF2F8", "#3E6E93"),
+            "day":      ("#7FA8C9", "#EAF2F8", "#3E6E93"),
+            "classes":  ("#E08A73", "#FBEDE8", "#AC5038"),
+            "work":     ("#E08A73", "#FBEDE8", "#AC5038"),
+            "study":    ("#7FA37C", "#ECF3EB", "#4A7248"),
+            "focus":    ("#7FA37C", "#ECF3EB", "#4A7248"),
+            "life":     ("#D9A441", "#FBF1DC", "#8A6415"),
+            "notes":    ("#D9A441", "#FBF1DC", "#8A6415"),
+        },
+    },
+```
+
+빌드해서 색감만 먼저 눈으로 본다. 이 단계에서는 페이지 구성이 v8 과 같아도
+된다 — 목적은 쿨 배경 위에서 하늘 번짐과 액센트가 어떻게 보이는지 확인하는 것.
+
+```bash
+PLANNER_VERSION=v9-student python scripts/build_planner.py
+```
+
+### 2차 — 탭과 그룹을 학생용으로
+
+`TABS` 와 `GROUPS` 는 현재 v8 전용으로 하드코딩돼 있다. `T.get("student")`
+로 분기하거나 별도 상수를 둔다. **탭은 10개를 유지한다**(v8 과 같은 리듬).
+
+| 탭 | 하위 페이지 |
+|---|---|
+| `INDEX` | 목차 |
+| `SEMESTER` | 학기 개요 8장 |
+| `WEEK` | 주간 128장 |
+| `DAY` | 일간 248장 |
+| `CLASSES` | 시간표, 과목별 페이지, 오피스아워 질문 |
+| `WORK` | **Syllabus unpack**, 과제 트래커, 마감 역산, 조별과제, 시간 추정 |
+| `STUDY` | 시험 계획, 코넬 노트, 읽기 기록, 학습 세션, 성적 트래커 |
+| `FOCUS` | v8 재사용 |
+| `LIFE` | 복약, 수면, 에너지 |
+| `NOTES` | 점자 노트 |
+
+**v8 에서 그대로 가져올 페이지 함수** (이름 바꾸지 말 것):
+
+| 페이지 | 함수 |
+|---|---|
+| Brain dump | `p_braindump` |
+| Focus session | `p_session` |
+| Obstacle plan | `p_obstacle` |
+| Stuck on deciding | `p_paralysis` |
+| Why I am avoiding it | `p_avoiding` |
+| Guess vs actual | `p_estimate` |
+| **Working backwards** | `p_deadline` |
+| Energy budget | `p_energy` |
+| Medication log | `p_meds` |
+| Sleep | `p_sleep` |
+| Notes (dot grid) | `p_notes` |
+
+`p_deadline`(마감 역산)과 `p_estimate`(시간 추정)는 **학생 타겟에서 오히려
+더 강력하다** — 이 타겟의 1·2번 고통이 정확히 그것이다.
+
+### 3차 — 반복 세트
+
+v8 의 `build_html()` 안에 있는 `if T.get("undated"):` 블록이 본보기다.
+같은 패턴으로:
+
+```
+s1..s8            학기 개요 8
+s{n}-w1..w16      주간 128  (학기당 16주)
+s{n}-d1..d31      일간 248  (학기당 31장)
+```
+
+`rail_key()` 에 새 정규식을 추가해야 한다. **v8 에서 이걸 빠뜨려 48페이지가
+탭 하이라이트 없이 나간 이력이 있다**(`CLAUDE.md` 500페이지 절 5번).
+
+### 검수
+
+`scripts/verify_v8.py` 를 복사해 `verify_v9.py` 로 만들고 기대값을 고친다.
+13개 항목(페이지 수·용량·링크·죽은 앵커·도달 불가·탭 10개·탭 하이라이트·
+월이름 0·연도 0·한글 0)은 그대로 쓴다.
+
+**용량을 반드시 확인한다.** 434페이지 예상이고 20MB 상한에 여유가 15%뿐이다.
+넘치면 6학기(338p / 13.2MB)로 줄인다.
+
+```bash
+python scripts/dedupe_pdf.py output/planner_v9-student.pdf output/planner_v9-student-FINAL.pdf
+python scripts/verify_v9.py
+```
+
+시각 검수는 `design-critic` 에이전트에 맡긴다. 상품 1에서 그림자 이음매와
+대비 미달을 잡아낸 실적이 있다.
+
+---
+
 ## 제작 배치
 
 v8 도 3차 배치로 만들었다. 같은 방식으로 간다.
