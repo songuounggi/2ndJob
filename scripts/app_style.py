@@ -60,6 +60,22 @@ THICK_PT = 0.75           # 선 두께 (pt)
 THICK = "1px"             # = 0.75pt, CSS 쪽
 
 
+RAIL_TEXT_DARKEN = 0.82   # 레일 글자만 진하게. 본문 색은 건드리지 않는다
+RAIL_DIM = "#5B5375"      # 비선택 탭 글자
+
+
+def darken(hexcol, f=RAIL_TEXT_DARKEN):
+    """색상은 두고 명도만 낮춘다.
+
+    유리 알약은 페이지 배경보다 밝아서, 본문에서 4.5:1 을 넘기던 글자색이
+    레일에서는 3.9~4.0 으로 떨어진다(실측). 레일에서만 18% 어둡게 하면
+    5.3~5.4 가 된다. 비선택 탭은 2.59 -> 5.05.
+    """
+    r, g, b = (int(hexcol[i:i + 2], 16) for i in (1, 3, 5))
+    return "#%02X%02X%02X" % tuple(max(0, int(round(v * f)))
+                                   for v in (r, g, b))
+
+
 def split(total, n, fixed=()):
     """total 을 n 칸으로. 반올림 오차는 마지막 칸이 흡수한다."""
     rest = total - sum(fixed)
@@ -265,6 +281,7 @@ h1{color:#241E3A}
 
 /* 선택 탭 = 표지 카드와 같은 유리 레시피.
    불투명 흰 알약은 페이지에서 유일한 불투명 개체라 혼자 튀었다. */
+.rail a span{color:@DIM@}
 .rail a.on{background:rgba(255,255,255,.09);
     border:.8pt solid rgba(255,255,255,.19);
     border-top-color:rgba(255,255,255,.34);box-shadow:none}
@@ -329,6 +346,7 @@ def css():
            .replace("@ROW@", "%g" % ROW_H)
            .replace("@INSET2@", "%g" % (2 * INSET))
            .replace("@INSET@", "%g" % INSET)
+           .replace("@DIM@", RAIL_DIM)
            .replace("@SHEETR@", "%g" % SHEET_R)
            .replace("@SHEET@", "%g" % SHEET))
     # 좌표는 여기 한 곳에서만 나온다.

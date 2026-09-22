@@ -86,8 +86,12 @@ CLASSES = 8                    # 과목별 페이지
 
 # --------------------------------------------------------------- 조각들
 def card(label, inner, flex="none", pad=""):
-    return (f'<div class="card" style="flex:{flex};{pad}">'
-            f'<div class="label">{label}</div>{inner}</div>')
+    """라벨이 비면 라벨 줄을 아예 만들지 않는다. 빈 문자열을 넘겨도
+    .label 의 색 바(2.6pt)는 그려져, 제목 아래에 의미 없는 색 조각이
+    떠 있었다(brain dump / notes)."""
+    head = '<div class="label">%s</div>' % label if label else ""
+    return ('<div class="card" style="flex:%s;%s">%s%s</div>'
+            % (flex, pad, head, inner))
 
 
 def tbl(kind, cols, rows, check_last=False):
@@ -138,15 +142,16 @@ def p_syllabus():
                          check_last=True)),
                 card("Reading &mdash; what has to be read before class",
                      tbl("t4", ["READING", "FOR WEEK", "PAGES", "DONE"], 4,
-                         check_last=True), flex="1")))
+                         check_last=True)),
+                card("Anything else", fill(), flex="1")))
 
 
 def p_assignments():
     return (bp.head("Work", "Assignment tracker",
                     "Everything with a deadline, in one place")
             + body(card("This term",
-                        tbl("t4", ["ASSIGNMENT", "CLASS", "DUE", "DONE"], 12,
-                            check_last=True), flex="1")))
+                        tbl("t4", ["ASSIGNMENT", "CLASS", "DUE", "DONE"], 22,
+                            check_last=True))))
 
 
 def p_group_project():
@@ -167,7 +172,7 @@ def p_exam():
             + body(
                 card("Exam", field(24)),
                 card("The scope, in pieces",
-                     tbl("t4", ["PIECE", "SOURCE", "DAY", "DONE"], 8,
+                     tbl("t4", ["PIECE", "SOURCE", "DAY", "DONE"], 12,
                          check_last=True)),
                 card("What I keep getting wrong", fill(), flex="1")))
 
@@ -181,9 +186,9 @@ def p_cornell():
                 + card("Cue", fill(), flex="1")
                 + card("Notes", fill(), flex="2.1")
                 + '</div>',
-                card("Summary &mdash; three lines, in your own words",
-                     '<div class="lines" style="height:%gpt">%s</div>'
-                     % (4 * A.ROW_H, A.lines_svg()))))
+                card("Summary &mdash; in your own words",
+                     '<div class="lines" style="flex:none;height:%gpt">%s'
+                     '</div>' % (3 * A.ROW_H, A.lines_svg()))))
 
 
 def p_grades():
@@ -192,16 +197,17 @@ def p_grades():
             + body(
                 card("Class", field(24)),
                 card("Pieces",
-                     tbl("t4", ["PIECE", "WEIGHT", "SCORE", "DONE"], 10,
-                         check_last=True), flex="1"),
-                card("Where I stand", field(36))))
+                     tbl("t4", ["PIECE", "WEIGHT", "SCORE", "DONE"], 14,
+                         check_last=True)),
+                card("Where I stand", field(36)),
+                card("Anything else", fill(), flex="1")))
 
 
 def p_reading():
     return (bp.head("Study", "Reading log", "To read, and read")
             + body(card("Readings",
-                        tbl("t4", ["READING", "CLASS", "BY", "READ"], 12,
-                            check_last=True), flex="1")))
+                        tbl("t4", ["READING", "CLASS", "BY", "READ"], 22,
+                            check_last=True))))
 
 
 def p_session():
@@ -209,8 +215,7 @@ def p_session():
                     "Notice when it works, and do that again")
             + body(card("Sessions",
                         tbl("t4", ["WHAT I STUDIED", "WHERE", "HOW LONG",
-                                   "IT WORKED"], 11, check_last=True),
-                        flex="1")))
+                                   "IT WORKED"], 22, check_last=True))))
 
 
 def p_office():
@@ -224,7 +229,8 @@ def p_office():
 
 def p_timetable():
     days = ["MON", "TUE", "WED", "THU", "FRI"]
-    hours = ["08", "09", "10", "11", "12", "13", "14", "15", "16", "17"]
+    hours = ["08", "09", "10", "11", "12", "13", "14", "15", "16",
+             "17", "18", "19", "20"]
     widths = A.T6
     hd = ('<tr><td style="width:%.2fpt"></td>' % widths[0]
           + "".join('<td style="width:%.2fpt">%s</td>' % (widths[i + 1], d)
@@ -233,8 +239,10 @@ def p_timetable():
                    for h in hours)
     return (bp.head("Classes", "Class schedule",
                     "Write it once, in week one")
-            + body('<div class="tbwrap"><table class="tb t6">%s%s</table>%s'
-                   '</div>' % (hd, rows, A.rules_svg(widths, len(hours), head_h=24.0))))
+            + body('<div class="tbwrap" style="flex:none">'
+                   '<table class="tb t6">%s%s</table>%s</div>'
+                   % (hd, rows, A.rules_svg(widths, len(hours), head_h=24.0)),
+                   card("Notes for the week", fill(), flex="1")))
 
 
 def p_contacts():
@@ -242,7 +250,7 @@ def p_contacts():
                     "The name you will need at 11pm the night before")
             + body(card("Professors &amp; TAs",
                         tbl("t4", ["NAME", "CLASS", "OFFICE HOURS", "ASKED"],
-                            10, check_last=True), flex="1")))
+                            22, check_last=True))))
 
 
 def p_class(n):
@@ -251,7 +259,7 @@ def p_class(n):
                     "Everything about one class, on one page")
             + body(
                 card("Class", field(24)),
-                '<div class="row" style="gap:14pt">'
+                '<div class="row" style="flex:none;gap:14pt">'
                 + card("Professor / TA", field(24), flex="1")
                 + card("Room &amp; time", field(24), flex="1")
                 + '</div>',
@@ -266,7 +274,8 @@ def p_terms():
     return (bp.head("Semester", "All eight terms", "Four years, one page")
             + body(card("Terms",
                         tbl("t4", ["TERM", "WHAT IT IS FOR", "CREDITS",
-                                   "DONE"], 8, check_last=True), flex="1")))
+                                   "DONE"], 8, check_last=True)),
+                   card("Notes on the four years", fill(), flex="1")))
 
 
 def p_term(n):
@@ -280,9 +289,11 @@ def p_term(n):
                                           "CLEAR"]))
     return (bp.head("Semester", "Term %d" % n,
                     "Sixteen weeks. Fill in the heavy ones first.")
-            + body('<div class="tbwrap"><table class="tb t4"><tr>%s</tr>%s'
-                   '</table>%s</div>'
-                   % (hd, rows, A.rules_svg(widths, WEEKS_PER_TERM, head_h=24.0))))
+            + body('<div class="tbwrap" style="flex:none">'
+                   '<table class="tb t4"><tr>%s</tr>%s</table>%s</div>'
+                   % (hd, rows,
+                      A.rules_svg(widths, WEEKS_PER_TERM, head_h=24.0)),
+                   card("What this term is really about", fill(), flex="1")))
 
 
 def p_week(n):
@@ -360,9 +371,10 @@ def p_backwards():
             + body(
                 card("Due", field(24)),
                 card("Steps, in reverse",
-                     tbl("t4", ["STEP", "NEEDS", "BY WHEN", "DONE"], 8,
-                         check_last=True), flex="1"),
-                card("So I start on", field(36))))
+                     tbl("t4", ["STEP", "NEEDS", "BY WHEN", "DONE"], 14,
+                         check_last=True)),
+                card("So I start on", field(36)),
+                card("Anything else", fill(), flex="1")))
 
 
 def p_estimate():
@@ -370,7 +382,7 @@ def p_estimate():
                     "You are not bad at this. You just have no data yet.")
             + body(card("Tasks",
                         tbl("t4", ["TASK", "I GUESSED", "IT TOOK", "DONE"],
-                            11, check_last=True), flex="1")))
+                            22, check_last=True))))
 
 
 def p_obstacle():
@@ -405,15 +417,15 @@ def p_term_review():
 def p_meds():
     return (bp.head("Life", "Medication log", "What you took, and when")
             + body(card("This month",
-                        tbl("t4", ["DAY", "WHAT", "TIME", "TAKEN"], 12,
-                            check_last=True), flex="1")))
+                        tbl("t4", ["DAY", "WHAT", "TIME", "TAKEN"], 22,
+                            check_last=True))))
 
 
 def p_sleep():
     return (bp.head("Life", "Sleep log", "Hours in bed, hours asleep")
             + body(card("This month",
-                        tbl("t4", ["DAY", "IN BED", "ASLEEP", "OK"], 12,
-                            check_last=True), flex="1")))
+                        tbl("t4", ["DAY", "IN BED", "ASLEEP", "OK"], 22,
+                            check_last=True))))
 
 
 def p_mood():

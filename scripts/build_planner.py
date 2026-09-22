@@ -787,6 +787,9 @@ def rail(active):
             if not (T.get("undated") and not student_pages and t[0] == "day")]
     for k, lb in tabs:
         acc, _, txt = section_colors(k)
+        if app_style:
+            # 유리 알약 위에서는 본문용 글자색이 4.5:1 에 못 미친다
+            txt = app_style.darken(txt)
         dot = f'<i style="background:{acc}"></i>' if T["tab_dots"] else ""
         out.append(f'<a class="{"on" if k == active else ""}" href="#{k}" '
                    f'style="--acc:{acc};--acc-text:{txt}">{dot}<span>{lb}</span></a>')
@@ -942,7 +945,10 @@ def p_app_index():
         for i, (n, d) in enumerate(APP_GROUPS))
     return (head("Index", "Where to?", "Use the side tabs, or pick here")
             + '<div class="body"><div class="card" style="flex:none;'
-              f'padding:8pt 22pt">{rows}</div></div>')
+              f'padding:12pt 22pt">{rows}</div>'
+            + '<div class="card" style="flex:1">'
+              '<div class="label">Anything else</div>'
+            + student_pages.fill() + '</div></div>')
 
 
 def p_cover():
