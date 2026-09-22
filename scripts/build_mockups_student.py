@@ -4,15 +4,21 @@
     PLANNER_VERSION=student-v0.1 python scripts/build_planner.py
     python scripts/build_mockups_student.py
 
-상품 1의 `build_mockups.py` 를 건드리지 않고 따로 둔다. 톤이 다르고
-(크림/블루 vs 다크 오로라/유리) 파는 이야기도 다르기 때문이다.
+상품 1의 `build_mockups.py` 는 건드리지 않는다. 톤도 파는 이야기도 다르다.
+다만 그 방에서 얻은 교훈은 그대로 가져온다:
 
-Etsy 는 리스팅 이미지를 정사각으로 보여준다. 2000x2000 으로 짜고
-헤드리스 Chrome 으로 찍는다. 원본은 build 가 만든 페이지 PNG 다.
-
-> **검색 결과에서는 440px 폭으로 줄어든다.** 2000px 에서 40px 인 글자는
->   거기서 9px 이 되어 안 읽힌다. 첫 장의 핵심 문구는 최소 70px 로 둘 것.
->   (상품 1 에서 한 번 갈아엎은 이유다)
+  1. **검색 결과에서는 위아래가 잘린다.** 카드가 정사각을 가로로 길게
+     크롭하기 때문에, 맨 위에 둔 제목은 잘려 나간다. 핵심 문구는
+     세로 가운데 4:3 띠(y 250~1750) 안에 둔다. -> SAFE
+  2. **리스팅 페이지에서는 440x440 으로 줄어든다.** 2000px 기준 40px 글자는
+     거기서 9px 이라 안 읽힌다. 핵심 문구는 최소 70px.
+  3. **원칙은 "적게, 크게".** 경쟁자가 화면 4개씩 넣는 건 색이 강해서다.
+     우리 파스텔은 작아지면 전부 같은 색이 된다.
+  4. **아홉 장이 서로 달라 보여야 한다.** 상품 1 에서 3x2 격자 세 장이
+     갤러리에서 같은 이미지 세 번으로 보였다. 다크/라이트, 기기/평면,
+     클로즈업/전체를 번갈아 쓴다.
+  5. **썰렁하면 싸구려로 보인다.** 빈 자리에는 숫자 칩·라벨·기기 그림자를
+     넣어 밀도를 올린다.
 """
 import os
 import subprocess
@@ -23,61 +29,76 @@ SRC = os.path.join(ROOT, "output", "preview", "listing_src")
 OUT = os.path.join(ROOT, "output", "listing_student")
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 SIZE = 2000
+SAFE = 250          # 위아래 이만큼은 검색 결과에서 잘린다고 보고 비운다
 
-# 상품의 색 그대로. 표지 오로라에서 뽑았다.
-INK = "#17133E"
 VIOLET = "#7C4DFF"
 PINK = "#F45D9B"
 ORANGE = "#FF8A3D"
 CYAN = "#22D3EE"
-PAPER = "#F7F4FD"
+GREEN = "#3FBF7F"
+PAPER = "#F6F3FD"
+INKC = "#241E3A"
 
 CSS = """
 *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact}
-body{width:2000px;height:2000px;overflow:hidden;color:#241E3A;
+body{width:2000px;height:2000px;overflow:hidden;color:%(INKC)s;
      font-family:'Nunito',system-ui,sans-serif;background:%(PAPER)s}
-.wrap{width:100%%;height:100%%;padding:120px;display:flex;
-      flex-direction:column}
-/* 오로라 위에 불투명 배경을 깔면 오로라가 통째로 가려진다.
-   다크 장면은 색만 바꾸고 배경은 <img> 가 맡는다. */
-.dark{color:#F4F1FF}
+
+/* 검색 결과가 잘라 가는 띠. 핵심 문구는 이 안에 둔다. */
+.wrap{width:100%%;height:100%%;padding:%(SAFE)spx 130px;display:flex;
+      flex-direction:column;position:relative;z-index:1}
 .aurora{position:absolute;inset:0;z-index:0}
 .aurora img{width:100%%;height:100%%;object-fit:cover}
-.on{position:relative;z-index:1;width:100%%;height:100%%;display:flex;
-    flex-direction:column;padding:120px}
+.dark{color:#F4F1FF}
 
-.kicker{display:inline-block;font-size:34px;font-weight:800;
-        letter-spacing:.14em;padding:16px 34px;border-radius:99px;
-        align-self:flex-start;background:rgba(255,255,255,.14);
-        color:rgba(244,241,255,.92)}
-.kicker.lt{background:#E9E3FB;color:#5A3FB8}
-h1{font-size:118px;font-weight:800;line-height:1.06;margin-top:40px;
-   letter-spacing:-.02em}
-h2{font-size:86px;font-weight:800;line-height:1.1;letter-spacing:-.02em}
-.sub{font-size:44px;line-height:1.4;margin-top:28px;opacity:.72}
+.kicker{display:inline-block;font-size:36px;font-weight:800;
+        letter-spacing:.14em;padding:18px 36px;border-radius:99px;
+        align-self:flex-start;background:#E9E3FB;color:#5A3FB8}
+.dark .kicker{background:rgba(255,255,255,.16);color:#FFF}
+h1{font-size:132px;font-weight:800;line-height:1.04;margin-top:36px;
+   letter-spacing:-.025em}
+h2{font-size:92px;font-weight:800;line-height:1.08;margin-top:36px;
+   letter-spacing:-.022em}
+.sub{font-size:46px;line-height:1.38;margin-top:26px;opacity:.74}
 .grow{flex:1;display:flex;align-items:center;justify-content:center;
-      min-height:0;gap:40px;overflow:hidden}
-.foot{font-size:34px;text-align:center;margin-top:34px;opacity:.55}
+      min-height:0;gap:40px;overflow:hidden;position:relative}
+.foot{font-size:36px;text-align:center;margin-top:28px;opacity:.6}
 
-/* 기기 틀 -- 사진 없이 깔끔한 베젤 */
-.tab{background:#221E33;border-radius:60px;padding:28px;
-     box-shadow:0 50px 110px rgba(20,10,60,.40)}
-.tab img{display:block;border-radius:34px;height:var(--tab,1120px);
-         width:auto}
+.tab{background:#1C1830;border-radius:54px;padding:24px;position:relative;
+     box-shadow:0 60px 120px rgba(20,10,60,.45)}
+.tab img{display:block;border-radius:32px;height:var(--tab,860px);width:auto}
 
-.grid{display:grid;gap:28px;width:100%%;justify-items:center}
-.grid img{height:var(--cell,420px);width:auto;border-radius:16px;
-          box-shadow:0 18px 44px rgba(40,28,90,.18);display:block}
+.chips{display:flex;gap:22px;margin-top:34px;flex-wrap:wrap}
+.chip{background:#FFF;border-radius:99px;padding:20px 40px;font-size:42px;
+      font-weight:800;box-shadow:0 12px 30px rgba(40,28,90,.12)}
+.chip i{font-style:normal;font-weight:700;font-size:32px;opacity:.55;
+        margin-left:12px}
+.dark .chip{background:rgba(255,255,255,.14);color:#FFF;box-shadow:none}
 
-.card{background:#FFF;border-radius:32px;padding:44px 48px;flex:1;
-      box-shadow:0 18px 44px rgba(40,28,90,.12)}
-.card b{display:block;font-size:50px;font-weight:800}
-.card span{display:block;font-size:31px;color:#6B6480;margin-top:12px;
-           line-height:1.35}
-.row{display:flex;gap:34px;align-items:stretch;width:100%%}
-.big{font-size:176px;font-weight:800;line-height:1}
-.dot{width:26px;height:26px;border-radius:99px;flex:none}
-""" % {"PAPER": PAPER, "INK": INK}
+.shelf{display:flex;gap:32px;align-items:flex-end;justify-content:center;
+       width:100%%}
+.pg{display:flex;flex-direction:column;align-items:center;gap:20px}
+.pg img{border-radius:18px;box-shadow:0 24px 56px rgba(40,28,90,.20);
+        display:block;height:var(--cell,700px);width:auto}
+.pg b{font-size:38px;font-weight:800}
+.pg span{font-size:28px;opacity:.6;text-align:center;line-height:1.3}
+
+.tags{display:flex;flex-wrap:wrap;gap:18px;max-width:780px}
+.tag{border-radius:99px;padding:16px 32px;font-size:34px;font-weight:800;
+     background:rgba(255,255,255,.14);color:#FFF}
+
+.note{display:flex;gap:22px;align-items:flex-start;margin-top:26px}
+.note .dot{width:22px;height:22px;border-radius:99px;flex:none;margin-top:14px}
+/* 일부만 보여 주는 그림은 잘린 쪽을 페이드로 마감한다.
+   그냥 자르면 "실수로 잘렸다"로 보인다. */
+.cut{display:block;border-radius:26px}
+.cut.r{-webkit-mask-image:linear-gradient(to right,#000 68%%,transparent 99%%)}
+.cut.rb{-webkit-mask-image:linear-gradient(to right,#000 72%%,transparent 99%%),
+        linear-gradient(to bottom,#000 80%%,transparent 99%%);
+        -webkit-mask-composite:source-in}
+.note b{font-size:42px;font-weight:800;display:block}
+.note span{font-size:30px;opacity:.62;display:block;margin-top:6px}
+""" % {"PAPER": PAPER, "INKC": INKC, "SAFE": SAFE}
 
 
 def html(body, extra=""):
@@ -90,8 +111,7 @@ def html(body, extra=""):
 def img(name):
     p = os.path.join(SRC, name + ".png")
     if not os.path.exists(p):
-        raise SystemExit("페이지 PNG 가 없다: %s\n"
-                         "  먼저 빌드하고 listing_src 를 렌더할 것" % p)
+        raise SystemExit("페이지 PNG 가 없다: %s" % p)
     return "file:///" + p.replace("\\", "/")
 
 
@@ -106,7 +126,7 @@ def shoot(name, body, extra=""):
     r = subprocess.run(
         [CHROME, "--headless=new", "--disable-gpu",
          "--user-data-dir=%s" % profile, "--hide-scrollbars",
-         "--window-size=%d,%d" % (SIZE, SIZE), "--virtual-time-budget=5000",
+         "--window-size=%d,%d" % (SIZE, SIZE), "--virtual-time-budget=6000",
          "--screenshot=%s" % dest, "file:///" + src.replace("\\", "/")],
         capture_output=True, text=True, encoding="utf-8", errors="replace")
     if not os.path.exists(dest) or os.path.getmtime(dest) <= before:
@@ -116,159 +136,209 @@ def shoot(name, body, extra=""):
 
 
 def dark(body):
-    """표지 오로라를 배경으로 깐 다크 장면."""
     return ('<div class="aurora"><img src="%s"></div>'
-            '<div class="on dark">%s</div>'
-            % (img("cover_bg"), body))
+            '<div class="wrap dark">%s</div>' % (img("cover_bg"), body))
 
 
-# --------------------------------------------------------------- 9장 --
+def light(body):
+    return '<div class="wrap">%s</div>' % body
+
+
+def page(name, label, note, cell=700):
+    return ('<div class="pg" style="--cell:%dpx"><img src="%s">'
+            '<b>%s</b><span>%s</span></div>' % (cell, img(name), label, note))
+
+
+def chips(items, dark_=False):
+    return '<div class="chips">%s</div>' % "".join(
+        '<div class="chip">%s<i>%s</i></div>' % (a, b) for a, b in items)
+
+
+# ------------------------------------------------------------------ 9장 --
 def s1_hero():
-    """검색 결과에서 보이는 단 한 장. 440px 로 줄어도 읽혀야 한다."""
+    """검색 결과에서 보이는 단 한 장.
+
+    자리 계산을 먼저 한다. 폭 2000 - 좌우 패딩 260 - 글 단 700 - 간격 60
+    = 980px 이 기기 몫이다. 태블릿 한 대(높이 1100 -> 폭 약 900)는 들어가고
+    두 대는 안 들어간다. 안 맞는 걸 억지로 넣으면 글자를 덮거나 잘린다.
+    """
     return dark(
-        '<div class="kicker">UNDATED &middot; GOODNOTES READY</div>'
-        '<h1 style="font-size:150px">ADHD Student<br>Planner</h1>'
-        '<div class="sub" style="font-size:52px">Syllabus, assignments and '
-        'exams &mdash;<br>broken into pieces you can actually start.</div>'
-        '<div class="grow" style="--tab:880px;align-items:flex-end;'
-        'overflow:hidden"><div class="tab"><img src="%s"></div></div>'
-        '<div class="foot" style="font-size:40px">428 pages &nbsp;&middot;&nbsp; '
-        '33 unique templates &nbsp;&middot;&nbsp; four years</div>'
-        % img("d1"))
+        '<div style="flex:1;display:flex;align-items:center;gap:60px;'
+        'min-height:0">'
+        '<div style="flex:0 0 700px">'
+        '<div class="kicker">UNDATED &middot; ADHD STUDENT</div>'
+        '<h1 style="font-size:96px">ADHD<br>Student<br>Planner</h1>'
+        '<div class="sub" style="font-size:42px">Syllabus, assignments and '
+        'exams &mdash; broken into pieces you can actually start.</div>'
+        + chips([("428", "pages"), ("33", "templates")])
+        + chips([("4", "years"), ("10", "tabs")])
+        + '</div>'
+          '<div style="flex:1;display:flex;justify-content:center;'
+          'min-width:0">'
+          '<div class="tab" style="--tab:1120px;transform:rotate(2deg)">'
+          '<img src="%s"></div></div></div>' % img("syllabus"))
 
 
 def s2_syllabus():
-    """핵심 셀링 포인트 한 장. 이 상품을 사는 이유다."""
-    return ('<div class="wrap"><div class="kicker lt">THE ONE THAT MATTERS'
-            '</div><h1>One handout,<br>broken into dates.</h1>'
-            '<div class="sub">The syllabus arrives, you skim it, and nothing '
-            'moves to your calendar. This page does that in one sitting.</div>'
-            '<div class="grow"><img src="%s" style="height:940px;'
-            'border-radius:20px;box-shadow:0 30px 70px rgba(40,28,90,.22)">'
-            '</div></div>' % img("syllabus"))
+    """이 상품을 사는 이유 한 장."""
+    notes = [("Assignments", "what is due, and when", VIOLET),
+             ("Exams &amp; quizzes", "the dates you keep forgetting", PINK),
+             ("Reading", "what has to be read before class", CYAN)]
+    n = "".join('<div class="note"><div class="dot" style="background:%s">'
+                '</div><div><b>%s</b><span>%s</span></div></div>'
+                % (c, t, d) for t, d, c in notes)
+    return light(
+        '<div class="kicker">THE PAGE YOU BUY THIS FOR</div>'
+        '<h2>One handout,<br>broken into dates.</h2>'
+        '<div class="grow" style="gap:90px">'
+        '<div style="flex:none;max-width:640px">%s</div>'
+        '<div class="tab" style="--tab:1000px"><img src="%s"></div></div>' %
+        (n, img("syllabus")))
 
 
 def s3_templates():
-    cells = ["syllabus", "assignments", "exam", "cornell", "grades", "reading",
-             "timetable", "c1", "backwards", "group", "braindump", "energy"]
-    g = "".join('<img src="%s">' % img(c) for c in cells)
-    return ('<div class="wrap"><div class="kicker lt">33 UNIQUE TEMPLATES</div>'
-            '<h2 style="margin-top:34px">Not the same page<br>printed 400 times.'
-            '</h2>'
-            '<div class="grow"><div class="grid" '
-            'style="grid-template-columns:repeat(4,1fr);--cell:380px">%s</div>'
-            '</div></div>' % g)
+    """구조가 한눈에 다른 것만 고른다. 글자는 이 크기에서 안 읽힌다."""
+    cells = [("timetable", "Class schedule", "the week, hour by hour"),
+             ("cornell", "Lecture notes", "cue &middot; notes &middot; summary"),
+             ("grades", "Grade tracker", "what each piece is worth"),
+             ("braindump", "Brain dump", "no order, no rules")]
+    return light(
+        '<div class="kicker">33 UNIQUE TEMPLATES</div>'
+        '<h2>Not one page,<br>printed four hundred times.</h2>'
+        '<div class="grow"><div class="shelf">%s</div></div>'
+        % "".join(page(k, t, d, 640) for k, t, d in cells))
 
 
 def s4_navigation():
-    return ('<div class="wrap"><div class="kicker lt">TAP, DO NOT SCROLL</div>'
-            '<h2 style="margin-top:34px">Ten tabs down the side.<br>'
-            'Every page is one tap away.</h2>'
-            '<div class="sub">The tab you are on lights up, so you always know '
-            'where you are. 4,700 working links inside.</div>'
-            '<div class="grow"><img src="%s" style="height:820px;'
-            'border-radius:20px;box-shadow:0 30px 70px rgba(40,28,90,.22)">'
-            '<img src="%s" style="height:820px;border-radius:20px;'
-            'box-shadow:0 30px 70px rgba(40,28,90,.22)"></div></div>'
-            % (img("index"), img("work")))
+    """'탭 10개'가 핵심인데 그림에서 실오라기면 주장과 그림이 따로 논다."""
+    tabs = ["INDEX", "SEMESTER", "WEEK", "DAY", "CLASSES",
+            "WORK", "STUDY", "FOCUS", "LIFE", "NOTES"]
+    t = "".join('<div class="tag">%s</div>' % x for x in tabs)
+    return dark(
+        '<div class="kicker">TAP, DO NOT SCROLL</div>'
+        '<h2>Ten tabs down the side.<br>Every page is one tap away.</h2>'
+        '<div class="grow" style="gap:90px">'
+        '<img class="cut r" src="%s" style="height:1060px;flex:none">'
+        '<div style="flex:none;max-width:820px"><div class="tags">%s</div>'
+        '<div class="sub" style="font-size:40px;margin-top:34px">'
+        '4,700 working links inside. The tab you are on lights up, so you '
+        'never lose your place.</div></div></div>'
+        % (img("rail_zoom"), t))
 
 
 def s5_structure():
-    cards = [("8 terms", "four years of study, one file", VIOLET),
-             ("16 weeks each", "a week page for every week", PINK),
-             ("31 day pages a term", "for the days you need one", ORANGE)]
-    row = "".join(
-        '<div class="card"><div class="dot" style="background:%s"></div>'
-        '<b style="margin-top:22px">%s</b><span>%s</span></div>'
-        % (c, t, d) for t, d, c in cards)
-    return ('<div class="wrap"><div class="kicker lt">UNDATED</div>'
-            '<h2 style="margin-top:34px">Start any week.<br>Skip a week.</h2>'
-            '<div class="sub">Nothing is dated, so a gap costs you nothing. '
-            'The page is not keeping score.</div>'
-            '<div class="grow"><img src="%s" style="height:760px;'
-            'border-radius:20px;box-shadow:0 30px 70px rgba(40,28,90,.22)">'
-            '</div><div class="row">%s</div></div>' % (img("t1"), row))
+    cards = "".join(
+        '<div style="flex:1;background:#FFF;border-radius:28px;padding:34px;'
+        'text-align:center;box-shadow:0 16px 40px rgba(40,28,90,.10)">'
+        '<div style="font-size:30px;font-weight:800;letter-spacing:.1em;'
+        'color:%s">TERM %d</div>'
+        '<div style="font-size:26px;opacity:.55;margin-top:10px">16 weeks'
+        '</div></div>' % (c, i + 1)
+        for i, c in enumerate([VIOLET, VIOLET, PINK, PINK,
+                               ORANGE, ORANGE, CYAN, CYAN]))
+    return light(
+        '<div class="kicker">UNDATED &middot; FOUR YEARS</div>'
+        '<h2>Start any week.<br>Skip a week.</h2>'
+        '<div class="sub">Nothing is dated, so a gap costs you nothing. '
+        'The page is not keeping score.</div>'
+        + chips([("8", "terms"), ("128", "week pages"), ("248", "day pages")])
+        + '<div class="grow" style="flex-direction:column;gap:34px">'
+          '<div style="display:flex;gap:18px;width:100%%">%s</div>'
+          '<img src="%s" style="height:720px;border-radius:20px;'
+          'box-shadow:0 30px 70px rgba(40,28,90,.22)"></div>'
+          % (cards, img("t1")))
 
 
 def s6_work():
-    return ('<div class="wrap"><div class="kicker lt">WORK</div>'
-            '<h2 style="margin-top:34px">From the deadline,<br>'
-            'not from today.</h2>'
-            '<div class="sub">Working backwards, assignment tracking, and '
-            'group projects where your part is written down.</div>'
-            '<div class="grow"><div class="grid" '
-            'style="grid-template-columns:repeat(3,1fr);--cell:680px">'
-            '<img src="%s"><img src="%s"><img src="%s"></div></div>'
-            % (img("backwards"), img("assignments"), img("group")))
+    cells = [("backwards", "Working backwards", "from the deadline"),
+             ("assignments", "Assignment tracker", "due, started, handed in"),
+             ("group", "Group project", "who does what, by when")]
+    return light(
+        '<div class="kicker">WORK</div>'
+        '<h2>From the deadline,<br>not from today.</h2>'
+        '<div class="grow"><div class="shelf">%s</div></div>'
+        % "".join(page(k, t, d, 780) for k, t, d in cells))
 
 
 def s7_study():
-    return ('<div class="wrap"><div class="kicker lt">STUDY</div>'
-            '<h2 style="margin-top:34px">Split the scope first.<br>'
-            'Then give each piece a day.</h2>'
-            '<div class="sub">Exam plans, Cornell notes, and a grade tracker '
-            'that shows what each piece is actually worth.</div>'
-            '<div class="grow"><div class="grid" '
-            'style="grid-template-columns:repeat(3,1fr);--cell:680px">'
-            '<img src="%s"><img src="%s"><img src="%s"></div></div>'
-            % (img("exam"), img("cornell"), img("grades")))
+    """클로즈업 한 장. 다른 장들이 전신 샷이라 여기서 결을 보여 준다."""
+    return dark(
+        '<div class="kicker">STUDY</div>'
+        '<h2>Split the scope first.<br>Then give each piece a day.</h2>'
+        '<div class="grow" style="gap:50px">'
+        '<img class="cut rb" src="%s" style="height:900px">'
+        '<div style="display:flex;flex-direction:column;gap:30px">'
+        '<img src="%s" style="height:430px;border-radius:18px;'
+        'box-shadow:0 30px 70px rgba(10,5,40,.45)">'
+        '<img src="%s" style="height:430px;border-radius:18px;'
+        'box-shadow:0 30px 70px rgba(10,5,40,.45)"></div></div>'
+        '<div class="foot" style="font-size:38px">Exam plans &middot; '
+        'Cornell notes &middot; Reading log &middot; Grade tracker &middot; '
+        'Study session log &middot; Office hours</div>'
+        % (img("exam_zoom"), img("cornell"), img("grades")))
 
 
 def s8_focus():
-    return ('<div class="wrap"><div class="kicker lt">FOR THE HARD PART</div>'
-            '<h2 style="margin-top:34px">Starting is the problem.<br>'
-            'These pages are for that.</h2>'
-            '<div class="sub">Brain dump, focus sessions, stuck on deciding, '
-            'why I am avoiding it, energy budget.</div>'
-            '<div class="grow"><div class="grid" '
-            'style="grid-template-columns:repeat(3,1fr);--cell:680px">'
-            '<img src="%s"><img src="%s"><img src="%s"></div></div>'
-            % (img("braindump"), img("avoiding"), img("energy")))
+    cells = [("braindump", "Brain dump", "empty your head first"),
+             ("avoiding", "Why I am avoiding it", "name it and it shrinks"),
+             ("energy", "Energy budget", "what you actually have today")]
+    return light(
+        '<div class="kicker">WHEN STARTING IS THE HARD PART</div>'
+        '<h2>Eleven pages for the<br>part nobody sells you.</h2>'
+        '<div class="grow"><div class="shelf">%s</div></div>'
+        % "".join(page(k, t, d, 780) for k, t, d in cells))
 
 
 def s9_howto():
+    apps = ["GoodNotes", "Notability", "Noteshelf", "Xodo", "Adobe Acrobat"]
+    tags = "".join('<div class="tag">%s</div>' % a for a in apps)
     steps = [("1", "Buy and download", "one PDF, instantly"),
-             ("2", "Open in GoodNotes", "or Notability, or any PDF app"),
+             ("2", "Open in your notes app", "iPad, Android tablet, or print"),
              ("3", "Tap the side tabs", "no scrolling through 400 pages")]
-    row = "".join(
-        '<div class="card"><div class="big" style="font-size:96px;color:%s">'
-        '%s</div><b style="margin-top:18px">%s</b><span>%s</span></div>'
-        % (c, n, t, d)
-        for (n, t, d), c in zip(steps, (VIOLET, PINK, CYAN)))
-    return ('<div class="wrap"><div class="kicker lt">HOW IT WORKS</div>'
-            '<h2 style="margin-top:34px">iPad, Android tablet,<br>'
-            'or print it.</h2>'
-            '<div class="sub">A digital file &mdash; nothing is shipped. '
-            'Works with any app that opens a PDF.</div>'
-            '<div class="grow"><img src="%s" style="height:700px;'
-            'border-radius:20px;box-shadow:0 30px 70px rgba(40,28,90,.22)">'
-            '</div><div class="row">%s</div></div>' % (img("timetable"), row))
+    st = "".join(
+        '<div class="note"><div class="dot" style="background:%s;width:44px;'
+        'height:44px;margin-top:6px;color:#FFF;font-size:26px;'
+        'font-weight:800;display:flex;align-items:center;'
+        'justify-content:center">%s</div>'
+        '<div><b>%s</b><span>%s</span></div></div>'
+        % (c, n, t, d) for (n, t, d), c in zip(steps, (VIOLET, PINK, CYAN)))
+    return dark(
+        '<div class="kicker">HOW IT WORKS</div>'
+        '<h2>Works in the app<br>you already use.</h2>'
+        '<div class="grow" style="justify-content:space-between;gap:60px">'
+        '<div style="flex:none;max-width:820px">%s'
+        '<div class="tags" style="margin-top:44px">%s</div></div>'
+        '<div class="tab" style="--tab:860px"><img src="%s"></div></div>'
+        '<div class="foot">A digital download &mdash; nothing is shipped.</div>'
+        % (st, tags, img("timetable")))
 
 
-SHOTS = [
-    ("1_hero", s1_hero),
-    ("2_syllabus", s2_syllabus),
-    ("3_templates", s3_templates),
-    ("4_navigation", s4_navigation),
-    ("5_structure", s5_structure),
-    ("6_work", s6_work),
-    ("7_study", s7_study),
-    ("8_focus", s8_focus),
-    ("9_howto", s9_howto),
-]
+SHOTS = [("1_hero", s1_hero), ("2_syllabus", s2_syllabus),
+         ("3_templates", s3_templates), ("4_navigation", s4_navigation),
+         ("5_structure", s5_structure), ("6_work", s6_work),
+         ("7_study", s7_study), ("8_focus", s8_focus), ("9_howto", s9_howto)]
 
 
-def make_cover_bg():
-    """표지에서 레일과 글자를 뺀 배경. 다크 장면의 바닥으로 쓴다."""
+def prep():
+    """합성에 필요한 원본 몇 장을 만든다."""
     from PIL import Image
-    src = os.path.join(ROOT, "assets", "app_cover_student-v0.1.png")
-    dst = os.path.join(SRC, "cover_bg.png")
-    Image.open(src).convert("RGB").resize((SIZE, SIZE),
-                                          Image.LANCZOS).save(dst)
-    return dst
+    # 다크 장면 바닥이 될 오로라
+    cov = Image.open(os.path.join(ROOT, "assets",
+                                  "app_cover_student-v0.1.png")).convert("RGB")
+    cov.resize((SIZE, SIZE), Image.LANCZOS).save(
+        os.path.join(SRC, "cover_bg.png"))
+    # 레일 클로즈업 -- '탭 10개'를 실제로 보이게
+    d1 = Image.open(os.path.join(SRC, "d1.png")).convert("RGB")
+    w, h = d1.size
+    d1.crop((0, 0, int(w * 0.34), h)).save(os.path.join(SRC, "rail_zoom.png"))
+    # 시험 계획 표 클로즈업 -- 결을 보여 주는 한 장
+    ex = Image.open(os.path.join(SRC, "exam.png")).convert("RGB")
+    w, h = ex.size
+    ex.crop((int(w * 0.10), int(h * 0.20), w, int(h * 0.72))).save(
+        os.path.join(SRC, "exam_zoom.png"))
 
 
 if __name__ == "__main__":
-    make_cover_bg()
+    prep()
     for name, fn in SHOTS:
         print("찍음:", shoot(name, fn()))
