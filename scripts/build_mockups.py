@@ -179,6 +179,44 @@ def everyday():
     return shoot("09_everyday", body)
 
 
+# At the size Etsy actually shows these (440x440 on the listing page) a
+# grid of six page thumbnails is six pale rectangles -- the buyer cannot
+# read a single word of the product whose whole value is what the pages
+# say. This one shows ONE page big enough to read, cropped to the part
+# that carries the idea.
+CLOSEUP_CSS = """
+.close{width:100%;height:100%;padding:86px 90px;display:flex;
+       flex-direction:column;align-items:center;text-align:center}
+.close .kicker{align-self:center}
+.close h1{font-size:92px;font-weight:800;line-height:1.08;margin-top:26px;
+          letter-spacing:-.025em}
+.close .sub{font-size:36px;color:#6E6A64;margin-top:18px;line-height:1.35}
+.close .frame{flex:1;min-height:0;margin-top:34px;width:100%;
+              border-radius:26px;overflow:hidden;background:#FFF;
+              box-shadow:0 22px 54px rgba(0,0,0,.13);position:relative}
+.close .frame img{position:absolute;left:50%;top:var(--top,-8%);
+                  transform:translateX(-50%);width:var(--w,150%);
+                  max-width:none;display:block}
+"""
+
+
+def closeup():
+    """A readable crop of Guess vs actual -- the page that names the problem
+    ADHD buyers search for (time blindness) in words they recognise."""
+    src = "file:///" + os.path.join(
+        PREVIEW, "big_p20.png").replace("\\", "/")
+    body = f"""<div class="close">
+      <span class="kicker">INSIDE ONE PAGE</span>
+      <h1>Guess first.<br>Then check.</h1>
+      <div class="sub">You thought it would take an hour. It took three.
+        Do that ten times and you know your multiplier.</div>
+      <div class="frame" style="--w:132%;--top:-4%">
+        <img src="{src}">
+      </div>
+    </div>"""
+    return shoot("10_closeup", body, CLOSEUP_CSS)
+
+
 def numbers():
     stats = [("58", "unique page designs", "not one page copied 300 times"),
              ("494", "pages in total", "12 months, 52 weeks, 372 days"),
@@ -233,7 +271,7 @@ if __name__ == "__main__":
         tools("06_life", "THE ADMIN THAT EATS THE WEEK", "Health &amp; life",
               "Medication, sleep, meals, money, the things that slip.",
               [38, 39, 47, 50, 51, 54]),
-        everyday(), numbers(), howto(),
+        everyday(), closeup(), numbers(), howto(),
     ]
     for m in made:
         print("saved", os.path.basename(m))
