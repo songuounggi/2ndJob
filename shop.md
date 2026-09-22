@@ -421,6 +421,76 @@ I usually reply within a day.
 
 ---
 
+## 5-3. 검색 순위 기준선 (2026-09-22 실측)
+
+Claude 브라우저로 Etsy 검색을 직접 돌려 리스팅 `4579443848` 이 나오는지
+확인했다. **9/28 에 다시 재서 움직였는지 비교할 기준선이다.**
+
+### 나온다
+
+| 검색어 | 위치 |
+|---|---|
+| `adhd journal hyperlinked pdf undated` | 1페이지 2번째 |
+| `hyperlinked pdf journal neurodivergent planner` | 1페이지 2번째 |
+| `hyperlinked pdf neurodivergent` | 1페이지 3번째 |
+| `adhd digital planner undated goodnotes ipad neurodivergent` | 1페이지 3번째 |
+
+### 안 나온다
+
+```
+adhd planner                     25페이지까지 확인, 없음
+adhd digital planner
+undated adhd planner
+undated adhd planner goodnotes
+neurodivergent planner
+hyperlinked pdf journal
+```
+
+### 읽는 법 — 이 결과는 좋은 소식이 아니다
+
+패턴은 **`hyperlinked` + `neurodivergent` 가 동시에 들어간 질의에서만
+나온다**는 것이다. 둘 중 하나만으로는 사라진다.
+
+**그런 검색어를 치는 사람은 없다.** 5단어짜리에 `hyperlinked` 같은 단어를
+굳이 넣는 구매자는 존재하지 않는다. 즉 **검색량이 있는 말로는 안 나오고,
+안 나오는 말로만 나온다.**
+
+> 이 결과를 "롱테일에서 1위"로 읽으면 안 된다. 경쟁자가 0인 구석에서
+> 1위인 것이고, 트래픽 가치는 0에 가깝다.
+
+**건진 것은 하나** — SEO 자체는 망가지지 않았다. `hyperlinked` /
+`neurodivergent` / `undated` 가 전부 색인에 제대로 등록돼 있다. **제목과
+태그의 문제가 아니라 숍 권위가 0인 문제다.** 그러므로 제목을 만지작거릴
+이유가 없다. `shop.md` 5-1 의 "제목 제안을 받지 않는다"는 결정도 이걸로
+뒷받침된다.
+
+### 다시 잴 때
+
+같은 검색어 목록으로 재고, **`adhd planner` 에서 몇 페이지에 나오는지**가
+유일하게 의미 있는 지표다. 롱테일 순위는 변해도 의미가 없다.
+
+---
+
+## 5-4. 리스팅을 수정하면 순위가 초기화되는가
+
+**지금은 신경 쓰지 않아도 되는 걱정이다.**
+
+수정하면 재평가된다는 얘기가 셀러들 사이에 있고 Etsy 는 리스팅 나이와
+품질 점수가 유지된다고 한다. **어느 쪽이 맞는지 확인하지 못했다.**
+
+다만 2026-09-22 현재 우리 상태는:
+
+```
+조회 0 / 판매 0 / 리뷰 0 / 찜 0 / adhd planner 25페이지 밖
+```
+
+**초기화될 신호가 0이다.** 잃을 것이 없으므로 지금은 자유롭게 고친다.
+
+> **반대로, 조회와 판매가 붙기 시작하면 그때부터는 조심한다.** 그 시점부터
+> 리스팅 수정은 한 번에 하나씩, 그리고 바꾼 날짜를 여기 적는다.
+
+---
+
 ## 5-2. 앱의 Shop stats 는 믿지 말 것 (숫자가 줄어든다)
 
 2026-09-22, 발행 이틀째에 겪은 일. **같은 `Last 7 days` 기간인데 조회수가
