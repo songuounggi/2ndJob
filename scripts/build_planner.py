@@ -11,6 +11,7 @@ import re
 import tempfile
 import urllib.parse
 import subprocess
+import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
@@ -581,7 +582,8 @@ else:
     app_style = None
 
 CSS = (ROOT_VARS + BASE_CSS + (INK_CSS if T.get("ink_style") else "")
-       + (app_style.css() if app_style else ""))
+       + (app_style.css() if app_style else "")
+       + os.environ.get("TRIM_CSS", ""))
 
 
 def lift(col, amount):
@@ -747,6 +749,22 @@ STUDENT_BUCKET_KEY = {"plan": "index", "focus": "work", "care": "study",
                       "free": "notes"}
 
 
+if T.get("app"):
+    import student_pages
+    student_pages.init(sys.modules[__name__])
+    TABS = student_pages.TABS
+    GROUPS = student_pages.GROUPS
+    GROUP_OF = {sub: g for g, items in GROUPS.items() for sub, *_ in items}
+    # 네 색 버킷. 색 자체는 v8 과 같고 어느 탭이 어느 색인지만 다르다.
+    BUCKET = {"index": "plan", "semester": "plan", "week": "plan",
+              "day": "plan", "cover": "plan",
+              "classes": "focus", "work": "focus",
+              "study": "care", "focus": "care",
+              "life": "free", "notes": "free"}
+else:
+    student_pages = None
+
+
 def section_colors(key):
     """(decorative accent, tint, text tone) for any page.
 
@@ -765,7 +783,8 @@ def rail(active):
     # In the undated build the dailies are split into d{month}-{day}, so a
     # single "#day" target does not exist. Leaving the tab in would render a
     # link Chrome silently drops -- a tab that looks live and does nothing.
-    tabs = [t for t in TABS if not (T.get("undated") and t[0] == "day")]
+    tabs = [t for t in TABS
+            if not (T.get("undated") and not student_pages and t[0] == "day")]
     for k, lb in tabs:
         acc, _, txt = section_colors(k)
         dot = f'<i style="background:{acc}"></i>' if T["tab_dots"] else ""
@@ -789,6 +808,15 @@ def rail_key(key):
     """Which tab lights up. Neither the repeated pages nor the group
     sub-pages are tabs themselves, so they borrow the tab you reached them
     from -- without this nothing is highlighted and you lose your place."""
+    if student_pages:
+        m = re.fullmatch(r"([a-z])(\d+)", key)
+        if m:
+            for pre, tab in student_pages.REPEAT_TAB:
+                if m.group(1) == pre:
+                    return tab
+        if key in TAB_KEYS:
+            return key
+        return SUB_OF.get(key, key)
     if re.fullmatch(r"[md]\d+(-\d+)?", key):
         return "month"
     if re.fullmatch(r"w\d+", key):
@@ -829,9 +857,12 @@ def page(key, body):
     layers = ""
     if app_style:
         dark = key in ("cover", "index")
-        name = "app_cover" if dark else "app_page"
+        base = "app_cover" if dark else "app_under"
         layers = ('<div class="bgimg" style="background-image:'
-                  f"url('../assets/{name}_{VERSION}.png')\"></div>")
+                  f"url('../assets/{base}_{VERSION}.png')\"></div>")
+        if not dark:
+            layers += ('<div class="sheet" style="background-image:'
+                       f"url('../assets/app_sheet_{VERSION}.png')\"></div>")
         return (f'<section class="page{" dk" if dark else ""}" id="{key}" '
                 f'style="{style}">{layers}'
                 f'{rail(rail_key(key))}<div class="content">{body}</div></section>')
@@ -2053,7 +2084,9 @@ def build_html():
         ("travel", p_travel), ("chores", p_chores),
         ("notes", p_notes),
     ]
-    if T.get("undated"):
+    if student_pages:
+        specs = student_pages.specs()
+    elif T.get("undated"):
         # the repeated sets: twelve month grids, each month's days, the weeks
         for m in range(1, MONTHS + 1):
             specs.append((f"m{m}", (lambda mm: lambda: p_month_n(mm))(m)))

@@ -15,6 +15,7 @@ v1~v8 은 이 파일을 아예 불러오지 않으므로 출력이 변하지 않
 쉬우니 고치기 전에 그 절을 읽을 것.
 """
 import os
+import re
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
@@ -48,8 +49,15 @@ PERIOD = 8.0              # 선분 + 틈
 FADE = 3 * PERIOD         # 양 끝 페이드. 주기보다 짧으면 아예 안 보인다
 INSET = 8.0               # 가로선을 칸 좌우에서 띄우는 거리
 INSET_V = 2.0             # 세로선을 칸 위아래에서 띄우는 거리
+# 필기 괘선의 양 끝 페이드는 포기했다. SVG mask 하나가 428페이지에서
+# 4.1MB 를 먹는다(실측) -- 20MB 상한 안에 들어가려면 감당이 안 된다.
+# 표의 점선 페이드는 유지한다: 칸이 짧아 페이드가 눈에 띄게 일하고,
+# 비용은 0.5MB 뿐이다. 괘선은 500pt 짜리 긴 선이라 페이드가 있으나
+# 없으나 거의 같아 보인다.
+LINES_FADE = False
 ROW_H = 24.0              # 표/괘선 한 줄 높이
-THICK = "1px"             # = 0.75pt
+THICK_PT = 0.75           # 선 두께 (pt)
+THICK = "1px"             # = 0.75pt, CSS 쪽
 
 
 def split(total, n, fixed=()):
@@ -66,37 +74,106 @@ def prop(total, parts):
     return w + [round(total - sum(w), 2)]
 
 
-def dline(sel, axis, length, box):
-    """점선 하나. 길이(pt)를 받아 페이드 길이까지 같이 계산한다.
-
-    세 곳에 손으로 복사돼 있던 것을 여기로 모았다. 열 폭이 바뀌면 페이드도
-    같이 바뀌어야 하는데 복사본은 그걸 따라오지 못했다.
-    """
-    d = "right" if axis == "x" else "bottom"
+def _stops(name, x1, y1, x2, y2, length):
+    """양 끝이 흐려지는 stroke 용 그라데이션. userSpaceOnUse 여야 한다 --
+    가로선은 bounding box 높이가 0 이라 objectBoundingBox 그라데이션이
+    통째로 무시되고, 선이 아예 안 그려진다(실제로 겪음)."""
     f = min(FADE, length / 3.0)
-    g = ("linear-gradient(to %s,transparent,#000 %.2fpt,"
-         "#000 %.2fpt,transparent)" % (d, f, length - f))
-    return "".join([
-        "%s{" % sel,
-        'content:"";position:absolute;%s;pointer-events:none;' % box,
-        "background-image:repeating-linear-gradient(to %s,%s 0,%s %.2fpt,"
-        "transparent %.2fpt,transparent %.2fpt);" % (d, C, C, DASH, DASH, PERIOD),
-        "-webkit-mask-image:%s;" % g,
-        "mask-image:%s}" % g,
-    ])
+    p = 100.0 * f / length
+    return ('<linearGradient id="%s" gradientUnits="userSpaceOnUse" '
+            'x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f">'
+            '<stop offset="0" stop-color="%s" stop-opacity="0"/>'
+            '<stop offset="%.3f%%" stop-color="%s"/>'
+            '<stop offset="%.3f%%" stop-color="%s"/>'
+            '<stop offset="100%%" stop-color="%s" stop-opacity="0"/>'
+            '</linearGradient>'
+            % (name, x1, y1, x2, y2, C, p, C, 100 - p, C, C))
 
 
-HBOX = "left:%.2fpt;right:%.2fpt;bottom:0;height:%s" % (INSET, INSET, THICK)
-VBOX = "top:%.2fpt;bottom:%.2fpt;right:0;width:%s" % (INSET_V, INSET_V, THICK)
+def rules_svg(widths, n_rows, head_h=24.0):
+    """표 한 장의 구분선 전부를 SVG 한 장으로.
+
+    CSS 의사요소로 그리면 Chrome 이 요소마다 타일 패턴 객체를 내보내
+    표 하나에 40~50개가 생긴다. 40페이지 실측으로 592KB/page 였고
+    SVG 로 몰아 그리니 95KB/page 가 됐다. 덤으로 진짜 stroke 라
+    뷰어가 얇은 선을 픽셀에 맞춰 스냅해 준다.
+    """
+    w_tot = sum(widths)
+    h = head_h + n_rows * ROW_H
+    defs = []
+    # 가로선: 열마다 그 열 안에서 페이드
+    x = 0.0
+    for i, w in enumerate(widths):
+        L = w - 2 * INSET
+        defs.append(_stops("h%d" % i, x + INSET, 0, x + w - INSET, 0, L))
+        x += w
+    # 세로선: 칸 한 줄 안에서 페이드. 줄마다 g 로 옮겨 쓴다
+    defs.append(_stops("vh", 0, INSET_V, 0, head_h - INSET_V,
+                       head_h - 2 * INSET_V))
+    defs.append(_stops("vr", 0, INSET_V, 0, ROW_H - INSET_V,
+                       ROW_H - 2 * INSET_V))
+
+    body = []
+    x = 0.0
+    for i, w in enumerate(widths):
+        # 한 열의 가로선 전부를 <path> 하나에 넣는다. 선마다 요소를 만들면
+        # 그라데이션 stroke 가 선마다 셰이딩 객체로 나간다 -- 표 하나에
+        # 44개. 서브패스로 묶으면 열당 1개다.
+        d = "".join("M%.2f %.2fH%.2f" % (x + INSET, head_h + r * ROW_H,
+                                         x + w - INSET)
+                    for r in range(1, n_rows))
+        if d:
+            body.append('<path stroke="url(#h%d)" d="%s"/>' % (i, d))
+        x += w
+    # 세로 구분선 (마지막 열 뒤에는 긋지 않는다)
+    bounds = []
+    x = 0.0
+    for w in widths[:-1]:
+        x += w
+        bounds.append(x)
+    if bounds:
+        d = "".join("M%.2f %.2fV%.2f" % (bx, INSET_V, head_h - INSET_V)
+                    for bx in bounds)
+        body.append('<path stroke="url(#vh)" d="%s"/>' % d)
+        d = "".join("M%.2f %.2fV%.2f" % (bx, INSET_V, ROW_H - INSET_V)
+                    for bx in bounds)
+        for r in range(n_rows):
+            body.append('<path transform="translate(0,%.2f)" '
+                        'stroke="url(#vr)" d="%s"/>'
+                        % (head_h + r * ROW_H, d))
+
+    if os.environ.get("FLAT_STROKE"):          # 비용 측정용
+        body = [re.sub(r'url\(#[hv][^)]*\)', C, b) for b in body]
+    return ('<svg class="rules" viewBox="0 0 %.2f %.2f" width="%.2fpt" '
+            'height="%.2fpt" xmlns="http://www.w3.org/2000/svg" '
+            'fill="none" stroke-width="%.2f" stroke-dasharray="%g %g">'
+            '<defs>%s</defs>%s</svg>'
+            % (w_tot, h, w_tot, h, THICK_PT, DASH, PERIOD - DASH,
+               "".join(defs), "".join(body)))
 
 
-def table_cols(name, widths):
-    """표 한 종류의 가로 구분선. 열 수가 다르면 반드시 따로 만들어야 한다 --
-    4열에 맞춰 두고 6열 시간표를 돌렸다가 THU/FRI 에 선이 없었다."""
-    return "".join(
-        dline(".tb.%s tr:not(:last-child) td:nth-child(%d)::before" % (name, i),
-              "x", w - 2 * INSET, HBOX)
-        for i, w in enumerate(widths, 1))
+def lines_svg(width=None):
+    """필기 괘선. 면 높이가 유동적이라 SVG <pattern> 으로 깐다.
+
+    data: URI 를 background 로 깔았더니 페이지당 156KB 였다 -- 요소마다
+    래스터화된다. <pattern> 은 객체 하나로 끝나고 높이가 얼마든 타일된다.
+    타일 폭은 점 하나가 아니라 2048px 로 크게 잡는다 -- 점 단위로 잡으면
+    가로로 60여 번 타일되고 Chrome 이 그만큼 펼쳐 낸다(+2MB).
+    줄을 <path> 서브패스로 직접 찍어 보기도 했는데 62MB 가 됐다.
+    선의 y 는 줄 경계에서 반 두께만큼 올려 픽셀 한 칸에 딱 맞춘다.
+    경계 한가운데로 내려 보았더니 아래 줄이 잘리고 더 나빠졌다.
+    단위는 px(사용자 단위). viewBox 를 두면 늘어나므로 두지 않는다.
+    """
+    k = 4.0 / 3.0                       # pt -> px
+    return ('<svg class="rules rows" xmlns="http://www.w3.org/2000/svg">'
+            '<defs><pattern id="lp" width="2048" height="%.4f" '
+            'patternUnits="userSpaceOnUse">'
+            '<path d="M0 %.4fH2048" stroke="%s" stroke-width="%.4f" '
+            'stroke-dasharray="%.4f %.4f"/>'
+            '</pattern></defs>'
+            '<rect width="100%%" height="100%%" fill="url(#lp)"/></svg>'
+            % (ROW_H * k, (ROW_H - THICK_PT / 2) * k, C, THICK_PT * k,
+               DASH * k, (PERIOD - DASH) * k))
 
 
 # 표 종류. 열 폭은 본문 폭에서 비율로 계산한다(손으로 적지 않는다).
@@ -109,6 +186,11 @@ BASE = """
    페이지당 3초씩 걸려 뷰어에서 스크롤이 멈춘다(실측 2,973ms vs 49ms). */
 .bgimg{position:absolute;inset:0;background-size:cover;pointer-events:none;
        z-index:0}
+/* 내지. 이미지에 굽지 않고 여기서 자른다 -- 저해상도 배경에 구우면
+   모서리가 뭉개지는데, CSS 로 자르면 경계가 벡터라 선명하다. */
+.sheet{position:absolute;left:@SHEET@pt;top:@SHEET@pt;right:@SHEET@pt;
+       bottom:@SHEET@pt;border-radius:@SHEETR@pt;background-size:cover;
+       pointer-events:none;z-index:1}
 .content{z-index:2}
 .rail{z-index:3;border-right:none;height:auto}
 .page{background:#17133E !important}
@@ -116,36 +198,70 @@ h1{color:#241E3A}
 .eyebrow{color:#4A4260}
 .sub{color:#5B5375}
 .label{color:#2B2540;margin-bottom:9pt}
-.card{background:none;border:none;padding:0 0 6pt}
+/* 12pt 세로 격자. 면의 페이지 상 y 가 어긋나면 같은 페이지의 표끼리
+   점선 두께가 1px/2px 로 갈린다(실측: syllabus 표마다 위치가 0.25pt 씩
+   달랐다). 두 조건을 동시에 만족해야 한다:
+     · 3의 배수 pt  -- Chrome 이 px 격자(1px = 0.75pt)에 눕히므로
+     · 4의 배수 pt  -- 뷰어 배율 1.5/2/2.5/3배에서 정수 픽셀이 되도록
+   최소공배수가 12pt(=16px)다. 세로 방향 길이는 전부 12의 배수로 둔다. */
+.content{padding:48pt 0 36pt}
+.head{flex:none;height:72pt;overflow:hidden}
+.label{height:12pt;margin-bottom:12pt}
+.card{background:none;border:none;padding:0 0 12pt}
 .card::after{display:none}
-.body{gap:20pt}
+.body{gap:24pt}
 
 /* 유리 -- 필기면·표·선택 탭이 전부 같은 재질이어야 한다.
    흰 테두리(0.7pt)를 줬더니 2px 짜리 흰 선으로 보여서 뺐다. 경계는
    그림자가 맡는다. */
 .field, .lines, .tbwrap{position:relative;border-radius:13pt;
-    background:rgba(255,255,255,.55);border:none;
-    box-shadow:0 1.5pt 9pt rgba(40,28,90,.16)}
-.tbwrap{overflow:hidden}
+    background:rgba(255,255,255,.55);border:none}
+/* 그림자는 box-shadow 로 내지 않는다 -- 요소마다 이미지로 래스터화돼
+   면 하나에 25.8KB 를 먹는다(40페이지 실측). ::after 타원 그라데이션은
+   벡터 패턴으로 남는다. CLAUDE.md 에 v8 에서 겪은 같은 사고가 있다. */
+/* 윗변 하이라이트. 위에서 빛을 받는 면으로 읽혀 하단 그림자와 합쳐
+   "떠 있는" 느낌을 만든다. 원래 쓰던 사방 box-shadow 는 428페이지에서
+   +19.3MB 라 쓸 수 없었다(실측 18.60 -> 37.87MB).
+   표는 머리띠가 자기 배경으로 윗변을 덮으므로 z-index 로 위에 얹는다.
+   좌우를 모서리 반경만큼 비워야 둥근 모서리 밖으로 삐져나오지 않는다. */
+.field::before, .lines::before, .tbwrap::before{content:"";position:absolute;
+    left:13pt;right:13pt;top:0;height:.7pt;z-index:4;pointer-events:none;
+    background:rgba(255,255,255,.95)}
+.field::after, .lines::after, .tbwrap::after{content:"";position:absolute;
+    left:3%;right:3%;top:100%;height:11pt;pointer-events:none;z-index:-1;
+    background:radial-gradient(ellipse 64% 100% at 50% 0%,
+    rgba(40,28,90,.15),rgba(40,28,90,0) 72%)}
+/* overflow:hidden 을 쓰면 위 ::after 가 잘린다. 머리띠 모서리만 따로 둥글린다 */
+.tb tr:first-child td:first-child{border-top-left-radius:13pt}
+.tb tr:first-child td:last-child{border-top-right-radius:13pt}
+.rules{position:absolute;left:0;top:0;pointer-events:none}
 .tb{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;
     background:transparent}
 .tb td{height:@ROW@pt;padding:0 10pt;font-size:8.5pt;background:transparent;
     border:none;position:relative}
-.tb tr:first-child td{height:21pt;font-size:6.6pt;letter-spacing:.14em;
+.tb tr:first-child td{height:24pt;font-size:6.6pt;letter-spacing:.14em;
     font-weight:800;color:#403A5C;text-align:center;
     background:rgba(232,227,247,.62)}
 .tb .bx{text-align:center}
-.tb .bx i{display:inline-block;width:10pt;height:10pt;border-radius:3pt;
+/* 체크박스와 탭 점은 각지게. border-radius 하나가 요소마다 호 4개를
+   만들고, 428페이지에서 둘이 합쳐 3.3MB 였다(실측). */
+.tb .bx i{display:inline-block;width:10pt;height:10pt;border-radius:0;
     border:.9pt solid rgba(120,110,160,.42);background:rgba(255,255,255,.75)}
+.rail a i{border-radius:0}
 
 /* 괘선 면은 줄을 넉넉히 넣고 잘라 쓴다. 줄 높이가 고정이라 면 높이와 딱
    떨어지지 않는데, 줄 수를 면에 맞춰 세면 레이아웃이 조금만 바뀌어도
    아래쪽이 텅 빈다(줄 높이를 27->24pt 로 바꾸자 68pt 가 비었다). */
-.lines{overflow:hidden;padding:0 @INSET@pt}
-.lines>div{border:none;position:relative;flex:none;height:@ROW@pt}
-/* 마지막 줄의 구분선은 뺀다. 면의 아래 가장자리와 맞닿아 테두리처럼
-   보이고, 그 아래로는 쓸 칸이 없어 구분할 것도 없다. */
-.lines>div:last-child::after{display:none}
+/* overflow:hidden 을 쓰면 ::after 그림자(top:100%)가 잘린다.
+   brain dump 만 그림자가 없던 원인이 이것이었다. 줄은 이제 SVG
+   pattern 이 그리므로 넘치는 <div> 를 자를 일도 없다. */
+.lines{overflow:visible;padding:0 @INSET@pt}
+/* <svg> 는 대체 요소라 width/height 가 auto 면 고유 크기(300x150px)로
+   눕는다. left/right 만 줘서는 늘어나지 않는다 -- brain dump 가
+   4줄짜리 반쪽으로 나온 원인이 이것이었다. 길이를 명시한다. */
+.rules.rows{left:@INSET@pt;top:0;width:calc(100% - @INSET2@pt);height:100%}
+/* 괘선은 타일 배경이 그린다. 줄 <div> 는 높이만 잡는다 */
+.lines>div{border:none;flex:none;height:@ROW@pt}
 
 /* 선택 탭 = 표지 카드와 같은 유리 레시피.
    불투명 흰 알약은 페이지에서 유일한 불투명 개체라 혼자 튀었다. */
@@ -204,16 +320,17 @@ _cv_side = (PAGE_W - RAIL_R - CV_W) / 2.0
 
 def css():
     """이 테마가 BASE_CSS 뒤에 덧붙이는 전부."""
-    out = (BASE
+    global BASE
+    b = BASE
+    if os.environ.get("NOSHADOW"):
+        b = b.replace("box-shadow:0 1.5pt 9pt rgba(40,28,90,.16)",
+                      "border:.4pt solid rgba(120,110,160,.20)")
+    out = (b
            .replace("@ROW@", "%g" % ROW_H)
-           .replace("@INSET@", "%g" % INSET))
-    # 점선: 아래는 전부 dline() 이 만든다. 손으로 고치지 말 것.
-    out += dline(".tb td:not(:last-child)::after", "y",
-                 ROW_H - 2 * INSET_V, VBOX)
-    out += table_cols("t4", T4)
-    out += table_cols("t6", T6)
-    out += dline(".lines>div::after", "x", CW - 2 * INSET,
-                 "left:0;right:0;bottom:0;height:%s" % THICK)
+           .replace("@INSET2@", "%g" % (2 * INSET))
+           .replace("@INSET@", "%g" % INSET)
+           .replace("@SHEETR@", "%g" % SHEET_R)
+           .replace("@SHEET@", "%g" % SHEET))
     # 좌표는 여기 한 곳에서만 나온다.
     out += ("\n.content{left:%.2fpt;right:%.2fpt}"
             "\n.rail{left:%.2fpt;width:%.2fpt;top:%.2fpt;bottom:%.2fpt}\n"
@@ -221,13 +338,22 @@ def css():
     out += (DARK
             .replace("@CVL@", "%.2f" % (RAIL_R + _cv_side - CONTENT_L))
             .replace("@CVR@", "%.2f" % (_cv_side - CONTENT_R)))
-    return out
+    # 주석은 소스에만 남긴다. 그대로 실으면 산출물에 한글이 들어가고
+    # 428페이지어치 바이트를 차지한다.
+    out = re.sub(r"/\*.*?\*/", "", out, flags=re.S)
+    return re.sub(chr(92) + "n" + r"\s*" + chr(92) + "n", chr(10), out)
 
 
 # ------------------------------------------------------------------- 배경
-PT = 3                              # 배경 PNG 의 pt 당 픽셀
-_W, _H = int(PAGE_W) * PT, int(PAGE_H) * PT
+# 배경 PNG 의 pt 당 픽셀. 낮을수록 좋다 -- Chrome 은 큰 배경 이미지를
+# 페이지마다 복사본으로 넣는다(1836x2376 일 때 페이지당 38.4KB, 1/4 로
+# 줄이면 7.5KB, 40페이지 실측). 부드러운 오로라라 해상도는 안 아쉽다.
+# 대신 내지의 둥근 모서리는 이미지에 굽지 않고 CSS 로 자른다 -- 저해상도
+# 이미지에 구우면 경계가 뭉개진다.
+PT = 0.75
+_W, _H = int(PAGE_W * PT), int(PAGE_H * PT)
 _SS = 4                             # 둥근 모서리용 수퍼샘플링
+SHEET_R = 20.0                      # 내지 모서리 반경 (pt)
 
 # 표지의 blob 하나짜리 원본. 내지는 이 목록을 그대로 쓰고 색만 밝힌다 --
 # 좌표까지 새로 잡으면 "내지가 표지를 톤다운한 것"으로 안 읽힌다.
@@ -275,32 +401,41 @@ def _rounded(box, radius):
     return m.resize((_W, _H), Image.LANCZOS)
 
 
-def bake(path, cover_only=False, w=0.62, s=0.58):
-    """배경 PNG 한 장. 표지를 깔고, 같은 그림을 밝힌 내지를 얹는다."""
-    if cover_only:
+def bake(kind, path, w=0.62, s=0.58):
+    """배경 세 장. 셋 다 저해상도다 -- 경계는 CSS 가 만든다.
+
+    cover : 표지·목차용 오로라
+    under : 내지 아래에 깔리는 오로라 + 내지가 드리우는 그림자
+    sheet : 밝힌 오로라를 내지 영역만큼 잘라낸 것
+    """
+    if kind == "cover":
         _mesh((0x14, 0x10, 0x3A)).convert("RGB").save(path, optimize=True)
         return path
-    gap = SHEET * PT
-    box = [gap, gap, _W - 1 - gap, _H - 1 - gap]
-    r = 20 * PT
+    if kind == "sheet":
+        g = SHEET * PT
+        (_mesh((0xF9, 0xF6, 0xFE), w=w, s=s).convert("RGB")
+         .crop((int(g), int(g), int(_W - g), int(_H - g)))
+         .save(path, optimize=True))
+        return path
+    g = SHEET * PT
+    box = [g, g, _W - 1 - g, _H - 1 - g]
     out = _mesh((0x14, 0x10, 0x3A))
-    sm = _rounded([box[0], box[1] + 7, box[2], box[3] + 7], r)
-    sm = sm.filter(ImageFilter.GaussianBlur(16))
+    sm = _rounded([box[0], box[1] + 7 * PT / 3, box[2], box[3] + 7 * PT / 3],
+                  SHEET_R * PT)
+    sm = sm.filter(ImageFilter.GaussianBlur(16 * PT / 3))
     sh = Image.new("RGBA", (_W, _H), (8, 4, 28, 0))
     sh.putalpha(sm.point(lambda v: int(v * .55)))
-    out = Image.alpha_composite(out, sh)
-    out.paste(_mesh((0xF9, 0xF6, 0xFE), w=w, s=s), (0, 0), _rounded(box, r))
-    out.convert("RGB").save(path, optimize=True)
+    Image.alpha_composite(out, sh).convert("RGB").save(path, optimize=True)
     return path
 
 
 def build_assets(version, force=False):
-    """배경 두 장. 이미 있으면 다시 굽지 않는다(한 장에 ~20초)."""
+    """배경 세 장. 이미 있으면 다시 굽지 않는다."""
     os.makedirs("assets", exist_ok=True)
     made = []
-    for name, cover in (("app_cover", True), ("app_page", False)):
-        p = "assets/%s_%s.png" % (name, version)
+    for kind in ("cover", "under", "sheet"):
+        p = "assets/app_%s_%s.png" % (kind, version)
         if force or not os.path.exists(p):
-            bake(p, cover_only=cover)
+            bake(kind, p)
             made.append(p)
     return made
