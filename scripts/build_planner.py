@@ -268,6 +268,8 @@ THEMES = {
         ],
         "undated": True,
         "student": True,
+        # 앱 UI 풍(유리). 켜면 scripts/app_style.py 가 CSS 와 배경을 맡는다.
+        "app": True,
         # 학생용만 채도를 올린다. 색상(hue)은 v8/v9 그대로라 숍은 한 브랜드로
         # 남고, 매대에서만 덜 묻힌다. 이유는 "학생이 알록달록을 좋아해서"가
         # 아니라 경쟁 썸네일 사이에서 눈에 띄어야 하기 때문이다.
@@ -347,7 +349,14 @@ THEMES = {
     },
 }
 
+# 상품 2 는 상품 1 의 시안 번호(v1~v8)를 이어받지 않는다. 별개 제품이므로
+# 제품 기준으로 센다: 개발 중 v0.x, 출시하면 v1.0, 이후 수정은 v1.1 ...
+# v9-student 는 이 이름이 정해지기 전에 쓰던 키라 별칭으로만 남긴다.
+THEMES["student-v0.1"] = THEMES["v9-student"]
+
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
+if VERSION == "v9-student":
+    VERSION = "student-v0.1"
 T = THEMES[VERSION]
 SRC = os.path.join(ROOT, "src", f"planner_{VERSION}.html")
 OUT = os.path.join(ROOT, "output", f"planner_{VERSION}.pdf")
@@ -566,7 +575,13 @@ h1,.covertitle{font-variant-numeric:lining-nums tabular-nums;
    background-repeat:no-repeat;background-position:center;pointer-events:none}
 """
 
-CSS = ROOT_VARS + BASE_CSS + (INK_CSS if T.get("ink_style") else "")
+if T.get("app"):
+    import app_style
+else:
+    app_style = None
+
+CSS = (ROOT_VARS + BASE_CSS + (INK_CSS if T.get("ink_style") else "")
+       + (app_style.css() if app_style else ""))
 
 
 def lift(col, amount):
@@ -812,6 +827,14 @@ def page(key, body):
     acc, tint, txt = section_colors(key)
     style = f"--accent:{acc};--chip:{tint};--accent-text:{txt}"
     layers = ""
+    if app_style:
+        dark = key in ("cover", "index")
+        name = "app_cover" if dark else "app_page"
+        layers = ('<div class="bgimg" style="background-image:'
+                  f"url('../assets/{name}_{VERSION}.png')\"></div>")
+        return (f'<section class="page{" dk" if dark else ""}" id="{key}" '
+                f'style="{style}">{layers}'
+                f'{rail(rail_key(key))}<div class="content">{body}</div></section>')
     if T.get("ink_wash"):
         name = "ink_cover" if key == "cover" else "ink_page"
         layers += ('<div class="bg-ink" style="background-image:'
@@ -849,7 +872,51 @@ def checkrow(field_flex=1):
 
 
 # ------------------------------------------------------------------ pages --
+APP_ORBS = ["linear-gradient(140deg,#7C4DFF,#B388FF)",
+            "linear-gradient(140deg,#F45D9B,#FF8A3D)",
+            "linear-gradient(140deg,#22D3EE,#4DA3FF)",
+            "linear-gradient(140deg,#FF8A3D,#FFD166)"]
+
+APP_GROUPS = [("Semester", "eight terms, sixteen weeks each"),
+              ("Classes", "timetable, one page per class"),
+              ("Work", "syllabus, assignments, group projects"),
+              ("Study", "exams, lecture notes, grades")]
+
+
+def p_app_cover():
+    """표지. 카드에 적는 것은 실제로 들어 있는 것이어야 한다 -- 리스팅의
+    대표 이미지로 쓰이므로 페이지를 늘리면 여기도 같이 고친다."""
+    items = [("Semester at a glance", "sixteen weeks on one sheet"),
+             ("Syllabus unpack", "one handout, broken into dates"),
+             ("Assignment tracker", "due, started, handed in"),
+             ("Working backwards", "from the deadline, not from today")]
+    rows = "".join(
+        f'<div class="crow"><div class="orb" style="background:{APP_ORBS[i]}">'
+        f'</div><div class="cn">{n}<div class="cd">{d}</div></div></div>'
+        for i, (n, d) in enumerate(items))
+    return ('<div class="cv"><div class="cv-eye">UNDATED &nbsp;&middot;&nbsp; '
+            'FOR THE ADHD STUDENT</div>'
+            '<div class="cv-t">Semester<br>Planner</div>'
+            '<div class="cv-sub">Start any week. Skip a week.<br>'
+            'The page is not keeping score.</div></div>'
+            f'<div class="cv-card">{rows}</div>')
+
+
+def p_app_index():
+    rows = "".join(
+        f'<a class="crow" href="#index"><div class="orb" '
+        f'style="background:{APP_ORBS[i]}"></div>'
+        f'<div class="cn">{n}<div class="cd">{d}</div></div>'
+        f'<span class="cq">&rsaquo;</span></a>'
+        for i, (n, d) in enumerate(APP_GROUPS))
+    return (head("Index", "Where to?", "Use the side tabs, or pick here")
+            + '<div class="body"><div class="card" style="flex:none;'
+              f'padding:8pt 22pt">{rows}</div></div>')
+
+
 def p_cover():
+    if app_style:
+        return p_app_cover()
     # The cover card is the listing's hero shot, so it has to describe the
     # build it actually ships. The counts below are the real section sizes --
     # if a page is added to GROUPS, update them.
@@ -893,6 +960,8 @@ def p_cover():
 
 
 def p_index():
+    if app_style:
+        return p_app_index()
     groups = [
         ("Plan", [("year", "The long view"), ("month", "Months &amp; days" if T.get("undated")
                    else "Monthly overview"),
@@ -2032,6 +2101,9 @@ def to_pdf():
 
 
 if __name__ == "__main__":
+    if app_style:
+        for f in app_style.build_assets(VERSION):
+            print("baked:", f)
     build_bloom_assets()
     build_html()
     to_pdf()
