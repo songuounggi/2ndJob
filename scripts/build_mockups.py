@@ -78,14 +78,52 @@ def shoot(name, body, extra=""):
 
 
 # ------------------------------------------------------------------ shots --
+# Etsy crops the square listing image to a narrower box for the search grid,
+# taking roughly 140px off each side of a 2000px image. The first hero had
+# left-aligned text starting at x=112, so the grid thumbnail read
+# "DHD & Wellness / igital Planner" -- the first letter of every line was
+# eaten. Keep everything that must survive inside SAFE on both sides.
+SAFE = 260
+
+HERO_CSS = """
+.hero{width:100%;height:100%;padding:96px SAFEpx;display:flex;
+      flex-direction:column;align-items:center;text-align:center}
+/* the shared .kicker pins itself left; override it or it sits off-axis
+   while everything else is centred */
+.hero .kicker{align-self:center}
+.hero h1{font-size:112px;font-weight:800;line-height:1.06;margin-top:30px;
+         letter-spacing:-.025em}
+.hero .sub{font-size:42px;color:#6E6A64;margin-top:22px;line-height:1.35}
+.hero .stats{display:flex;gap:16px;margin-top:30px;flex-wrap:wrap;
+             justify-content:center}
+.hero .stats b{background:#FFF;border-radius:99px;padding:14px 30px;
+               font-size:30px;font-weight:800;color:#3E6E93;
+               box-shadow:0 8px 22px rgba(0,0,0,.07)}
+/* two devices, the back one peeking out so the inside is visible at
+   thumbnail size -- a single centred tablet read as empty next to the
+   competition, which all show three or four screens */
+.hero .stage{flex:1;display:flex;align-items:center;justify-content:center;
+             min-height:0;position:relative;margin-top:16px}
+.hero .stage .tab{position:absolute}
+.hero .stage .back{transform:translateX(188px) scale(.87);z-index:1;
+                   opacity:.97}
+.hero .stage .front{transform:translateX(-150px);z-index:2}
+.hero .stage img{height:960px}
+""".replace("SAFEpx", f"{SAFE}px")
+
+
 def hero():
-    body = f"""<div class="wrap">
+    body = f"""<div class="hero">
       <span class="kicker">UNDATED &middot; NO-GUILT</span>
       <h1>ADHD &amp; Wellness<br>Digital Planner</h1>
-      <div class="sub">Start any day. Skip a week.<br>Nothing to catch up on.</div>
-      <div class="grow"><div class="tab"><img src="{img(1)}"></div></div>
+      <div class="sub">Start any day. Skip a week. Nothing to catch up on.</div>
+      <div class="stats"><b>494 pages</b><b>58 unique</b><b>10 tabs</b></div>
+      <div class="stage">
+        <div class="tab back"><img src="{img(60)}"></div>
+        <div class="tab front"><img src="{img(1)}"></div>
+      </div>
     </div>"""
-    return shoot("01_hero", body)
+    return shoot("01_hero", body, HERO_CSS)
 
 
 def templates():
