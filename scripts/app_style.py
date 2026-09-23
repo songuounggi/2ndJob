@@ -16,6 +16,7 @@ v1~v8 은 이 파일을 아예 불러오지 않으므로 출력이 변하지 않
 """
 import os
 import re
+import zlib
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
@@ -116,17 +117,25 @@ def rules_svg(widths, n_rows, head_h=24.0):
     """
     w_tot = sum(widths)
     h = head_h + n_rows * ROW_H
+    # 그라데이션 id 는 문서 전체에서 하나의 이름공간이다. 전에는 표마다
+    # h0~h5/vh/vr 을 똑같이 붙여 두 가지가 깨졌다(2026-09-23):
+    #  · 페이지 id h1~h5(시간표)와 겹쳐 Chrome 이 명명 목적지를 첫 표의
+    #    <linearGradient> 에 걸었다 -- 시간표 칩을 누르면 1페이지로 갔다
+    #  · url(#h1) 은 문서의 첫 정의로 풀린다. 열 폭이 다른 표가 첫 표의
+    #    페이드 좌표를 빌려 썼다
+    # 표 모양에서 id 를 만든다. 같은 모양이면 같은 정의라 겹쳐도 무해하다.
+    tag = "rg%08x" % (zlib.crc32(repr((list(widths), head_h)).encode()))
     defs = []
     # 가로선: 열마다 그 열 안에서 페이드
     x = 0.0
     for i, w in enumerate(widths):
         L = w - 2 * INSET
-        defs.append(_stops("h%d" % i, x + INSET, 0, x + w - INSET, 0, L))
+        defs.append(_stops("%sh%d" % (tag, i), x + INSET, 0, x + w - INSET, 0, L))
         x += w
     # 세로선: 칸 한 줄 안에서 페이드. 줄마다 g 로 옮겨 쓴다
-    defs.append(_stops("vh", 0, INSET_V, 0, head_h - INSET_V,
+    defs.append(_stops(tag + "vh", 0, INSET_V, 0, head_h - INSET_V,
                        head_h - 2 * INSET_V))
-    defs.append(_stops("vr", 0, INSET_V, 0, ROW_H - INSET_V,
+    defs.append(_stops(tag + "vr", 0, INSET_V, 0, ROW_H - INSET_V,
                        ROW_H - 2 * INSET_V))
 
     body = []
@@ -139,7 +148,7 @@ def rules_svg(widths, n_rows, head_h=24.0):
                                          x + w - INSET)
                     for r in range(1, n_rows))
         if d:
-            body.append('<path stroke="url(#h%d)" d="%s"/>' % (i, d))
+            body.append('<path stroke="url(#%sh%d)" d="%s"/>' % (tag, i, d))
         x += w
     # 세로 구분선. 칸마다 끊어 그리면 표 하나에 (행수+1)개의 셰이딩이
     # 생긴다(22행이면 23개). 경계마다 한 줄로 긋고, 대시 위상을 밀어
@@ -157,13 +166,11 @@ def rules_svg(widths, n_rows, head_h=24.0):
         body.append('<path stroke="%s" stroke-dashoffset="%.2f" d="%s"/>'
                     % (C, PERIOD - DASH / 2 - INSET_V, d))
 
-    # 마감선 -- 표는 닫는다(LINES.md 2 절). 헤더 아래 선이 전 폭을
-    # 가로지르는데 바닥이 열려 있으면 "표가 끝나지 않은" 것으로 읽히고,
-    # 마지막 행만 높이가 달라 보인다. 카드 안 필기 괘선은 반대로 열어 둔다.
-    # 열마다 긋지 않고 전 폭 한 줄로 긋는다 -- 열별로 그으면 셰이딩
-    # 객체가 열 수만큼 늘어 428페이지에서 +0.41MB 였다(상한 초과).
-    body.append('<path stroke="%s" d="M%.2f %.2fH%.2f"/>'
-                % (C, INSET, head_h + n_rows * ROW_H, w_tot - INSET))
+    # 마감선은 긋지 않는다(2026-09-24). 학생용은 표가 곧 유리 면이라
+    # 면의 둥근 가장자리가 표를 닫는다. 가장자리 위에 점선을 겹쳤더니
+    # 점선 테두리처럼 애매하게 보였다. 마지막 행은 면 바닥까지 딱 한 행
+    # 높이로 끝난다 -- Prod 1 필기면과 같은 마감이다. LINES.md 2 절의
+    # "표는 닫는다"는 카드 안에 표가 따로 떠 있는 v8 의 .trk 이야기다.
 
     return ('<svg class="rules" viewBox="0 0 %.2f %.2f" width="%.2fpt" '
             'height="%.2fpt" xmlns="http://www.w3.org/2000/svg" '
@@ -197,12 +204,12 @@ def lines_svg(width=None):
     """
     k = 4.0 / 3.0                       # pt -> px
     return ('<svg class="rules rows" xmlns="http://www.w3.org/2000/svg">'
-            '<defs><pattern id="lp" width="2048" height="%.4f" '
+            '<defs><pattern id="rl-lp" width="2048" height="%.4f" '
             'patternUnits="userSpaceOnUse">'
             '<path d="M0 %.4fH2048" stroke="%s" stroke-width="%.4f" '
             'stroke-dasharray="%.4f %.4f"/>'
             '</pattern></defs>'
-            '<rect width="100%%" height="100%%" fill="url(#lp)"/></svg>'
+            '<rect width="100%%" height="100%%" fill="url(#rl-lp)"/></svg>'
             % (ROW_H * k, (ROW_H - THICK_PT / 2) * k, C, THICK_PT * k,
                DASH * k, (PERIOD - DASH) * k))
 
@@ -290,7 +297,11 @@ h1{color:#241E3A}
 /* <svg> 는 대체 요소라 width/height 가 auto 면 고유 크기(300x150px)로
    눕는다. left/right 만 줘서는 늘어나지 않는다 -- brain dump 가
    4줄짜리 반쪽으로 나온 원인이 이것이었다. 길이를 명시한다. */
-.rules.rows{left:@INSET@pt;top:0;width:calc(100% - @INSET2@pt);height:100%}
+/* 높이를 한 행 모자라게 -- 패턴은 행마다 바닥에 선을 긋는데, 맨 아래
+   행의 선은 면 가장자리와 겹친다. 면 높이는 snap_lines() 가 24pt
+   배수로 고정하므로 마지막 행은 가장자리까지 딱 한 행이다. */
+.rules.rows{left:@INSET@pt;top:0;width:calc(100% - @INSET2@pt);
+    height:calc(100% - @HALF@pt)}
 /* 괘선은 타일 배경이 그린다. 줄 <div> 는 높이만 잡는다 */
 .lines>div{border:none;flex:none;height:@ROW@pt}
 @DASHB@
@@ -363,6 +374,7 @@ def css():
     out = (b
            .replace("@ROW@", "%g" % ROW_H)
            .replace("@INSET2@", "%g" % (2 * INSET))
+           .replace("@HALF@", "%g" % (ROW_H / 2))
            .replace("@INSET@", "%g" % INSET)
            .replace("@DASHB@",
                     ".lines>div{border-bottom:%.2fpt dashed %s}"
@@ -478,3 +490,61 @@ def build_assets(version, force=False):
             bake(kind, p)
             made.append(p)
     return made
+
+
+# ---------------------------------------------------------------- snap ----
+SNAP_JS = """
+const out = [];
+document.querySelectorAll('.lines').forEach(L =>
+  out.push(L.getBoundingClientRect().height * 0.75));
+document.body.setAttribute('data-probe', JSON.stringify(out));
+"""
+
+
+def snap_lines(src, chrome):
+    """필기면 높이를 행 높이(24pt)의 배수로 내림해 고정한다.
+
+    v8 의 build_planner.snap_cards() 는 줄 <div> 를 세는데, 학생용은 줄을
+    SVG 패턴이 그려 <div> 가 없다. 그래서 한 곳도 고정하지 못했고(pinned 0)
+    필기면 369개의 바닥 나머지가 0~22pt 로 제각각이었다 -- 마지막 괘선이
+    가장자리 위에 애매하게 떠 있었다(2026-09-24 지적).
+
+    면을 재서 내림한 높이를 박는다. 카드는 배경이 없으므로 flex 로 늘어난
+    채 두어도 보이지 않는다 -- 보이는 것은 면(.lines)뿐이다. 남는 높이는
+    면 아래로 빠져 페이지 여백이 된다. 허용치 0.5pt: Chrome 의 반올림은
+    흡수하고 정말 모자란 행은 버린다(LINES.md 1-3 절 함정 3).
+    """
+    import io, json, subprocess, tempfile
+    html = io.open(src, encoding="utf-8").read()
+    tmp = os.path.join(tempfile.gettempdir(), "snap_lines_probe.html")
+    io.open(tmp, "w", encoding="utf-8").write(
+        html.replace("</body>", "<script>%s</script></body>" % SNAP_JS))
+    r = subprocess.run(
+        [chrome, "--headless=new", "--disable-gpu",
+         "--user-data-dir=" + os.path.join(tempfile.gettempdir(),
+                                          "planner-snap-profile"),
+         "--virtual-time-budget=25000", "--dump-dom",
+         "file:///" + tmp.replace(chr(92), "/")],
+        capture_output=True, text=True, encoding="utf-8", errors="replace")
+    m = re.search(r'data-probe="([^"]*)"', r.stdout or "")
+    if not m:
+        raise RuntimeError("snap_lines 측정 실패 " + (r.stderr or "")[-400:])
+    hs = json.loads(m.group(1).replace("&quot;", '"'))
+    marks = list(re.finditer(r'class="lines" style="([^"]*)"', html))
+    if len(marks) != len(hs):
+        raise RuntimeError("snap_lines: 면 %d개를 쟀는데 마크업은 %d개"
+                           % (len(hs), len(marks)))
+    parts, last, n = [], 0, 0
+    for mk, hpt in zip(marks, hs):
+        k = int((hpt + 0.5) // ROW_H)
+        if k < 1:
+            raise RuntimeError("snap_lines: 한 행도 안 들어가는 면 (%.1fpt)"
+                               % hpt)
+        style = re.sub(r"flex:[^;]*;?|height:[^;]*;?", "", mk.group(1))
+        style = "flex:none;height:%gpt;%s" % (k * ROW_H, style)
+        n += style != mk.group(1)
+        parts.append(html[last:mk.start(1)] + style)
+        last = mk.end(1)
+    parts.append(html[last:])
+    io.open(src, "w", encoding="utf-8").write("".join(parts))
+    return n

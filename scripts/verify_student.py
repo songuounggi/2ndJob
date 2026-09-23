@@ -31,8 +31,16 @@ from pypdf import PdfReader
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION = sys.argv[1] if len(sys.argv) > 1 else "student-v0.1"
-PDF = os.path.join(ROOT, "output", "planner_%s.pdf" % VERSION)
+RAW = os.path.join(ROOT, "output", "planner_%s.pdf" % VERSION)
 HTML = os.path.join(ROOT, "src", "planner_%s.html" % VERSION)
+# 검사 대상은 파는 파일(dedupe 후)이다. 2026-09-23 까지 빌드 직후 파일을
+# 재서 21.21MB "상한 초과"로 판정했는데, 실제 판매본은 14.94MB 였다.
+# 빌드보다 오래된 FINAL 은 낡은 결과를 재는 것이므로 거부한다.
+PDF = os.path.join(ROOT, "output", "planner_%s-FINAL.pdf" % VERSION)
+if not os.path.exists(PDF) or os.path.getmtime(PDF) < os.path.getmtime(RAW):
+    sys.exit("FINAL 이 없거나 빌드보다 오래됐다. 먼저:\n"
+             "  python scripts/dedupe_pdf.py %s %s" % (
+                 os.path.relpath(RAW, ROOT), os.path.relpath(PDF, ROOT)))
 
 LIMIT = 20_000_000          # Etsy 디지털 파일 상한
 ZOOMS = (1.5, 2.0, 2.5, 3.0)
@@ -90,7 +98,7 @@ tabbad = [m.group(1) for m in
 prose = re.sub(r"<svg.*?</svg>", "", h, flags=re.S)
 prose = re.sub(r"https?://" + chr(92) + "S+", "", prose)
 months = Counter(re.findall(MONTHS, prose))
-years = re.findall(r"(?:19|20)\d{2}", prose)
+years = re.findall(r"\b(?:19|20)\d{2}\b", prose)
 korean = re.findall(r"[가-힣]", h)
 nbytes = os.path.getsize(PDF)
 
@@ -103,6 +111,21 @@ add("목적지", len(nd), len(ids) - 1, len(nd) == len(ids) - 1)
 add("링크 주석", links, "> 0", links > 0)
 add("끊어진 링크", broken, 0, broken == 0)
 add("목적지 없는 앵커", len(dead), 0, not dead)
+# 페이지 id 를 다른 요소(SVG 그라데이션 등)가 같이 쓰면 Chrome 이 명명
+# 목적지를 문서에서 먼저 나온 쪽에 건다. 링크는 살아 있고 목적지도 있어서
+# 위 두 항목은 통과한다 -- h1~h5 가 전부 1페이지로 가던 사례(2026-09-23).
+_all_ids = Counter(re.findall(r'\bid="([^"]+)"', h))
+clash = sorted(k for k in ids if _all_ids[k] > 1)
+add("다른 요소와 겹친 페이지 id", len(clash), 0, not clash)
+# url(#x) 는 문서의 첫 정의로 풀린다. 같은 id 에 정의가 둘 이상이면 뒤쪽
+# 표가 앞 표의 좌표를 빌려 쓴다 -- 시간표 월~수 열의 가로 괘선이 통째로
+# 투명했던 사례(2026-09-23). 같은 id 가 같은 정의로 반복되는 것은 무해하다.
+_defs = {}
+for m in re.finditer(r'<(linearGradient|radialGradient|pattern) id="([^"]+)"'
+                     r'.*?</\1>', h, re.S):
+    _defs.setdefault(m.group(2), set()).add(m.group(0))
+redef = sorted(k for k, v in _defs.items() if len(v) > 1)
+add("정의가 여럿인 SVG id", len(redef), 0, not redef)
 add("도달 불가 페이지", len(set(range(2, len(r.pages) + 1)) - reach), 0,
     not (set(range(2, len(r.pages) + 1)) - reach))
 add("탭 %d개가 아닌 페이지" % n_tabs, len(norail), 0, not norail)
@@ -110,6 +133,18 @@ add("탭 하이라이트 오류", len(tabbad), 0, not tabbad)
 add("HTML 속 월 이름", sum(months.values()), 0, not months)
 add("HTML 속 연도", len(years), 0, not years)
 add("HTML 속 한글", len(korean), 0, not korean)
+# 행이 딱 떨어지게 끝나는가 (LINES.md 1-3 절). 필기면 높이가 flex 로
+# 정해지면 나머지(0~22pt)만큼 마지막 괘선이 바닥 위에 애매하게 뜬다.
+# 높이는 24pt 배수로 고정되어야 하고, 맨 아래 괘선은 그리지 않는다.
+# 표는 면이 곧 카드라 가장자리가 표를 닫는다 -- 가장자리에 겹친 마감선은
+# 점선 테두리처럼 보였다(2026-09-24 지적).
+_lh = re.findall(r'class="lines" style="([^"]*)"', h)
+_off = [st for st in _lh
+        if not re.search(r"height:([0-9.]+)pt", st)
+        or float(re.search(r"height:([0-9.]+)pt", st).group(1)) % 24]
+add("24pt 배수가 아닌 필기면", len(_off), 0, not _off)
+_close = len(re.findall(r'<path stroke="[^"]*" d="M[0-9.]+ [0-9.]+H[0-9.]+"/></svg>', h))
+add("표 가장자리의 마감선", _close, 0, not _close)
 
 
 # ------------------------------------------------------------------ 시각
@@ -266,6 +301,8 @@ if tabbad:
     print("   탭이 잘못된 페이지:", tabbad[:8])
 if months:
     print("   월 이름:", dict(months))
+if clash or redef:
+    print("   겹친 id:", clash[:10], "정의 여럿:", redef[:10])
 if bad_uniform:
     print("   점선 불균일:", bad_uniform[:6])
 if weak:

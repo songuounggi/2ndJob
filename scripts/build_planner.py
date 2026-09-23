@@ -2496,5 +2496,7 @@ if __name__ == "__main__":
         print(f"snap pass {_pass}: pinned {n}")
         if not n:
             break
+    if app_style:           # 학생용 면은 SVG 괘선이라 위 측정이 못 본다
+        print("snap lines: pinned", app_style.snap_lines(SRC, CHROME))
     to_pdf()
     print("Saved:", OUT)

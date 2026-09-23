@@ -36,6 +36,18 @@ Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
   집 PC     C:\Users\sBrain\2ndJob
 ```
 
+**Python 도 PC 마다 정해 둔다** (2026-09-24). 집 PC 에는 3.10·3.11 이 둘 다
+있어 PATH 순서가 바뀌자 패키지 없는 쪽이 잡혔다(`No module named pypdfium2`).
+
+| PC | Python | 고정 방법 |
+|---|---|---|
+| 집 `DESKTOP-0UH3004` | **3.10.11** (`...\Programs\Python\Python310`) | `~/.bashrc` 가 PC 이름을 보고 PATH 맨 앞에 넣는다. PowerShell 은 실행 정책상 프로필이 안 돌므로 `py -3.10` |
+| 회사 | **미기록** -- 복귀하면 `python --version` 을 여기 적는다 | |
+
+버전 차이는 산출물에 영향이 없다. PDF 는 Chrome 이 만든다. 같은 코드를
+3.10/3.11 로 빌드해 1바이트 차이(생성 ID). 문제는 **패키지가 없는 쪽이
+잡히는 것**뿐이다 -- 빌드 전에 `python -c "import pypdfium2, pikepdf"`.
+
 **한 PC 안에서는 방이 나뉘어도 폴더는 하나다.** Prod 1 과 Prod 2 는 같은
 파일을 본다. 방 이름 끝의 `(Home)` / `(Office)` 가 어느 PC 의 방인지 나타낸다.
 

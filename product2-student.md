@@ -710,7 +710,7 @@ python scripts/verify_student.py
 python scripts/check_lines.py src/planner_student-v0.1.html    # Prod 1 검사기
 ```
 
-### 지금 상태 — **빌드는 되지만 상한을 넘었다**
+### 지금 상태 — **빌드는 되지만 상한을 넘었다** (→ 오해였다. 맨 아래 "집 PC 에서 이어서" 절)
 
 | | 값 |
 |---|---|
@@ -757,7 +757,7 @@ python scripts/check_lines.py src/planner_student-v0.1.html    # Prod 1 검사�
 "Week 36" 이 나와 잘못 눌렀다고 판단하게 됐다. 이제 eyebrow 가 `Term 3`,
 제목이 `Week 4` 다(`student_pages.head()`).
 
-### 남은 문제 두 개 — 이어서 할 일
+### 남은 문제 두 개 — 이어서 할 일 (**둘 다 해결.** 맨 아래 절)
 
 **1. 용량 21.21MB → 20MB 아래로.** 표가 많은 페이지(syllabus·class·exam)가
 일간보다 페이지당 두 배쯤 비싸서, 장수를 맞췄는데 용량이 늘었다.
@@ -790,3 +790,78 @@ PDF 링크 주석에도 `/h1`~`/h8` 이 다 있는데, 검사기는 272~276 페�
 | F | 리스팅 문구 3건이 방어 불가 — `Every page is one tap away`(거짓), `33 UNIQUE TEMPLATES`(실제 30 또는 40), `Not one page printed four hundred times`(실제 반복 비중이 더 높다) |
 | G | 인쇄 주장 — 잉크 커버리지 9.2%(v8 은 2.7%), 괘선 대비 1.14:1. `or print it` 을 빼거나 printable 별도 파일 |
 | H | 검사기에 추가할 3항목: 자기 페이지로 가는 링크 = 실패 / 마지막 섹션 라벨 아래 내지 ≥72pt / 링크처럼 생긴 행 개수 == 링크 주석 개수 |
+
+---
+
+## 2026-09-23 밤 — 집 PC 에서 이어서 (여기가 최신)
+
+빌드 순서가 바뀌었다. **검사기는 이제 `-FINAL` 을 잰다.** dedupe 를
+빼먹으면 검사기가 멈추고 명령을 알려준다.
+
+```bash
+PLANNER_VERSION=student-v0.1 python scripts/build_planner.py
+python scripts/dedupe_pdf.py output/planner_student-v0.1.pdf output/planner_student-v0.1-FINAL.pdf
+python scripts/verify_student.py
+python scripts/check_lines.py src/planner_student-v0.1.html
+```
+
+| | 값 |
+|---|---|
+| 페이지 | 428 |
+| 용량 (FINAL) | **14.88 MB** — 여유 25% |
+| verify_student | 18항목 중 17 통과. 남은 것은 `d1` 점선 균일 3건(위 "알고 넘어가는 것") |
+| check_lines | 넘침 0. "여유 0px 369개"는 **오탐** -- v8 의 div 괘선을 전제로 한 규칙이고, 학생용 SVG 패턴은 마지막 줄이 면 가장자리 4pt 위에 온전히 있다(4배 확대로 확인) |
+
+### 고친 것
+
+1. **용량 21.21MB 는 오해였다.** `verify_student.py` 가 dedupe **전** 파일을
+   쟀다. 판매본(FINAL)은 14.94MB. 장수는 줄이지 않았다. 검사기가 FINAL 을
+   재도록 바꾸고, FINAL 이 빌드보다 오래됐으면 거부한다(낡은 파일 측정 방지).
+2. **`h1`~`h5` 도달 불가 — 원인은 SVG 그라데이션 id.** `app_style.rules_svg()`
+   가 표마다 `id="h0"~"h5"` 를 붙여 시간표 페이지 id 와 겹쳤고, Chrome 이
+   명명 목적지를 1페이지의 `<linearGradient>` 에 걸었다. 시간표 칩을 누르면
+   표지로 갔다. id 를 표 모양의 crc32 로 만든다(`rg%08x`).
+3. **덤으로 드러난 결함: 시간표 월·화·수 열에 가로 괘선이 없었다.** 같은
+   id 라 `url(#h1)` 이 문서의 첫 표(4열) 정의로 풀려, 6열 표가 남의 좌표를
+   빌려 썼고 좌표 밖이라 투명했다. 2번 수정으로 같이 고쳐졌다. 다른 표는
+   픽셀 변화 0.
+4. **Syllabus / Grade tracker / Working backwards 하단 잘림**(위 C 항목 일부).
+   "Anything else" 라벨만 남고 면이 페이지 밖이었다. 셋 다 그 카드를 뺐다.
+   Grade·Backwards 는 빈자리를 표 14→16행으로 채웠다.
+5. **검사기의 `\b` 가 백스페이스 문자(0x08)로 저장돼 있었다.** "HTML 속 연도"
+   검사는 한 번도 아무것도 못 잡는 상태였다. 고쳤고 지금 0건으로 통과.
+   Claude 도구 입력에서 역슬래시가 풀리는 탓으로 보인다 -- 정규식을 파일에
+   쓸 땐 `chr(92)` 를 쓰거나 저장 후 제어문자를 확인할 것.
+
+### 추가한 검사 (`verify_student.py`)
+
+| 항목 | 고치기 전 버전에서 |
+|---|---|
+| 다른 요소와 겹친 페이지 id | `h1`~`h5` 5건 걸림 |
+| 정의가 여럿인 SVG id | 옛 `app_style` 로 표 3개 만들면 `h0`~`h3` 걸림 |
+
+### 아직 남은 것
+
+위 "그 다음" 표의 A·B·D·E·F·G·H 전부, 그리고 C 중 `focus-session` 의
+`.row` `flex:none` 누락.
+
+### 2026-09-24 — 맨 아래 선 정리 (집 PC, 사용자 검수 반영)
+
+"표나 섹션 맨 아래 가로 점선이 애매하게 끝에 있다"는 지적.
+
+| | 전 | 후 |
+|---|---|---|
+| 필기면 369곳 | 바닥 나머지 0~22pt, 마지막 괘선이 가장자리 근처에 뜸 | 24pt 배수로 고정, 맨 아래 괘선 없음 |
+| 표 483곳 | 마감선이 둥근 가장자리에 겹침 | 마감선 없음. 가장자리가 닫는다 (LINES.md 2 절 예외) |
+| Work·Study 목차 "Anything else" | 고정 후 1행(괘선 0개) | 칩 격자 행 간격 6->4.5pt 로 12pt 확보해 2행. Classes 목차도 6->7행 |
+
+- `app_style.snap_lines()` 가 빌드 끝에 면을 재서 높이를 박는다.
+  `build_planner.py` 에 앱 테마일 때만 호출하는 두 줄을 넣었다(Prod 1 영향 없음)
+- Anything else 를 빼는 안도 렌더해 봤으나 아래가 크게 비어 기각(사용자 결정)
+- `verify_student.py` 에 "24pt 배수가 아닌 필기면"(전 368), "표 가장자리의
+  마감선"(전 483) 추가. `check_lines.py` 는 이제 실패 0
+- 결과: 428p / **14.44MB** / verify 20항목 중 19 통과(`d1` 점선 균일 2, 알고 넘어감)
+
+**아직 남은 것:** 검사기가 빌드 실패로 남은 **낡은 PDF 를 통과시킨다**
+(FINAL 이 RAW 보다 새것인지만 본다. RAW 가 HTML 보다 오래됐는지도 봐야 한다).
+그 다음은 위 A·B·C(focus-session)·D·E·F·G·H.

@@ -159,8 +159,10 @@ def p_syllabus(term=1, i=1):
                          check_last=True)),
                 card("Reading &mdash; what has to be read before class",
                      tbl("t4", ["READING", "FOR WEEK", "PAGES", "DONE"], 4,
-                         check_last=True)),
-                card("Anything else", fill(), flex="1")))
+                         check_last=True))))
+    # "Anything else" 필기면은 뺐다(2026-09-23). 표 셋 아래에 남는 높이가
+    # 라벨 한 줄뿐이라 면 전체가 페이지 밖으로 밀려 라벨만 떠 있었다.
+    # 살리려면 표에서 4행을 덜어야 하는데, 이 페이지의 값은 표에 있다.
 
 
 def p_assignments(term=1, i=1):
@@ -216,10 +218,11 @@ def p_grades(term=1, i=1):
             + body(
                 card("Class", field(24)),
                 card("Pieces",
-                     tbl("t4", ["PIECE", "WEIGHT", "SCORE", "DONE"], 14,
+                     tbl("t4", ["PIECE", "WEIGHT", "SCORE", "DONE"], 16,
                          check_last=True)),
-                card("Where I stand", field(36)),
-                card("Anything else", fill(), flex="1")))
+                card("Where I stand", field(36))))
+    # "Anything else" 는 뺐다(2026-09-23). 표와 입력칸 아래로 라벨만
+    # 남고 면이 페이지 밖으로 밀렸다 -- p_syllabus 와 같은 사례.
 
 
 def p_reading():
@@ -390,10 +393,11 @@ def p_backwards():
             + body(
                 card("Due", field(24)),
                 card("Steps, in reverse",
-                     tbl("t4", ["STEP", "NEEDS", "BY WHEN", "DONE"], 14,
+                     tbl("t4", ["STEP", "NEEDS", "BY WHEN", "DONE"], 16,
                          check_last=True)),
-                card("So I start on", field(36)),
-                card("Anything else", fill(), flex="1")))
+                card("So I start on", field(36))))
+    # "Anything else" 는 뺐다(2026-09-23). 표와 입력칸 아래로 라벨만
+    # 남고 면이 페이지 밖으로 밀렸다 -- p_syllabus 와 같은 사례.
 
 
 def p_estimate():
@@ -489,7 +493,7 @@ def chip_card(label, prefix, per_term, cols=16):
             for i in range(1, per_term + 1))
         blocks.append(
             '<div style="display:flex;align-items:center;gap:8pt;'
-            'margin-bottom:6pt">'
+            'margin-bottom:4.5pt">'
             '<div style="font-size:6.6pt;letter-spacing:.12em;font-weight:800;'
             'color:#4A4260;width:34pt;flex:none">TERM %d</div>'
             '<div style="flex:1;display:grid;'
