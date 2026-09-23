@@ -46,10 +46,23 @@ document.querySelectorAll('section.page').forEach(sec => {
     if (!one) return;
     const card = L.closest('.card');
     if (!card) return;
+    // How much room is left under the last rule that actually renders. A
+    // rule sitting exactly on the clip boundary is a coin toss in the
+    // rasteriser: "Worth it?" measured three rules here and printed two.
+    const lb = L.getBoundingClientRect();
+    let vis = 0, lastBottom = lb.top;
+    for (const d of L.children) {
+      const b = d.getBoundingClientRect().bottom;
+      if (b <= lb.bottom + 0.5) { vis++; lastBottom = b; } else break;
+    }
     out.cards.push({
       page: sec.id,
       h: Math.round(card.getBoundingClientRect().height),
-      vis: Math.floor(L.clientHeight / one + 0.01),
+      vis: vis,
+      // Only meaningful where the box is actually clipping. When the
+      // rules set the box height there is no boundary to fall off.
+      slack: (L.scrollHeight > L.clientHeight + 1)
+             ? Math.round((lb.bottom - lastBottom) * 100) / 100 : null,
       label: (card.querySelector('.label') || {}).textContent || ''
     });
   });
@@ -216,6 +229,21 @@ def main():
             print(f"   ... 외 {len(uneven)-8}묶음")
     else:
         print("   OK    같은 높이 = 같은 줄 수")
+
+    # --- 4-2. 마지막 줄이 잘림 경계에 붙어 있는가 ----------------------
+    # 0.2px, set from measurement, not taste. A card pinned to exactly k*P
+    # (slack 0) lost its last rule in the raster -- hyperfocus "Worth it?"
+    # and gratitude "Someone I should tell". A card at 0.42px printed every
+    # rule. The failure is the border landing on or past the clip edge.
+    tight = [c for c in cards if c.get("slack") is not None
+             and c["slack"] < 0.2 and c["vis"] > 0]
+    if tight:
+        fails.append(f"마지막 줄이 잘림 경계에 붙은 카드: {len(tight)}개")
+        for c in tight[:8]:
+            print(f"   FAIL  {c['page']:<14} 여유 {c['slack']}px  "
+                  f"{c['label'].strip()[:22]}")
+    else:
+        print("   OK    마지막 줄 아래 여유 있음")
 
     # --- 5. 카드를 넘치는 내용 --------------------------------------------
     if over:

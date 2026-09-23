@@ -2240,11 +2240,22 @@ document.querySelectorAll('.lines[data-ln]').forEach(L=>{
     if(d.getBoundingClientRect().bottom<=lb.bottom+0.5) kk++; else break;
   }
   if(kk<1) return;
-  const r=H-kk*P;
-  if(r<2) return;                         // close enough; pinning would churn
+  // Nothing is being clipped, so the box already ends where its rules do --
+  // that is the spare=0 case, and there is no slack to win or lose.
+  if(L.scrollHeight<=L.clientHeight+1) return;
+  // Aim for one pixel under the last rule rather than zero. On the boundary
+  // the rasteriser may or may not keep that rule: "Worth it?" measured three
+  // in the DOM and printed two, and Gratitude lost its ninth the same way.
+  const want=kk*P+1;
+  const d=H-want;
+  if(Math.abs(d)<0.5) return;             // already right; pinning would churn
   const parent=card.parentElement;
+  // +1px of slack. Pinning to exactly k*P puts the last rule's border on
+  // the clip boundary, and it is a coin toss whether it survives
+  // rasterisation -- "Worth it?" measured three rules in the DOM and
+  // printed two. One pixel is invisible and keeps the rule inside.
   out.push({id:L.getAttribute('data-ln'),
-            h:Math.round((card.getBoundingClientRect().height-r)*100)/100,
+            h:Math.round((card.getBoundingClientRect().height-d)*100)/100,
             row:parent && parent.classList.contains('row')});
 });
 document.body.setAttribute('data-probe',JSON.stringify(out));
