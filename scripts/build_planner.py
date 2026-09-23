@@ -374,6 +374,8 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.10-undated 2026-09-23  주 번호 격자 마지막 줄 정렬
 #   v8.11-undated 2026-09-23  NOTES 를 1장에서 인덱스+20장으로
 #   v8.12-undated 2026-09-23  NOTES 인덱스 칩이 카드 밖으로 잘리던 것
+#   v8.13-undated 2026-09-23  접근성 태그 유지 + 노트 8장
+#   v8.14-undated 2026-09-23  NOTES 인덱스 카드가 내용만큼만 차지하도록
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
@@ -386,6 +388,8 @@ THEMES["v8.9-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.10-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.11-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.12-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.13-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.14-undated"] = dict(THEMES["v8-undated"])
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -1309,9 +1313,12 @@ def p_meds():
 # Twenty pages of paper, not one. A tab that reads like a section but holds
 # a single sheet feels short next to FOCUS or LIFE, which carry ten each.
 # Three kinds, because which paper you want depends on what you are writing.
-NOTE_KINDS = [("Dot grid", "dots", 8),
-              ("Ruled", "ruled", 8),
-              ("Plain", "plain", 4)]
+# Eight, not twenty. Twenty needed 1.0MB and the only place to find it was
+# the accessibility tag tree; keeping the tags is worth more than twelve
+# extra blank pages.
+NOTE_KINDS = [("Dot grid", "dots", 3),
+              ("Ruled", "ruled", 3),
+              ("Plain", "plain", 2)]
 NOTE_TOTAL = sum(c for _, _, c in NOTE_KINDS)
 
 
@@ -1341,16 +1348,17 @@ def p_notes():
         # Five columns at 74pt, the same grid the 52-week index uses. Eight
         # across at 58pt came to 534pt and ran off the card, which is only
         # about 461pt wide inside its padding -- chips 8 and 16 were cut.
-        groups += (f'<div class="label" style="margin:16pt 0 10pt">{label}</div>'
+        top = "0" if not groups else "18pt"
+        groups += (f'<div class="label" style="margin:{top} 0 10pt">{label}</div>'
                    f'<div style="display:grid;'
                    f'grid-template-columns:repeat(5,74pt);gap:11pt;'
                    f'justify-content:start">{chips}</div>')
     return (head("Notes", "Blank space",
                  f"{NOTE_TOTAL} pages. Pick the paper you want.")
-            + f'<div class="body"><div class="card" style="flex:1">'
-              f'<div style="display:flex;flex-direction:column;'
-              f'justify-content:center;height:100%">{groups}</div>'
-              f'</div></div>')
+            # The card hugs its rows. Stretched to the page with eight chips
+            # in it, it read as a mostly empty box.
+            + f'<div class="body"><div class="card" style="flex:none">'
+              f'{groups}</div></div>')
 
 
 def p_note(label, kind, n):

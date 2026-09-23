@@ -64,20 +64,13 @@ def dedupe(src, dst):
             repoint(obj)
     repoint(pdf.Root)
 
-    # Chrome writes an accessibility tag tree: 33,710 StructElem objects
-    # here, 753,508 bytes, 3.7% of the file. In a planner those tags mark
-    # decorative divs -- the pages are mostly blank writing area. Text stays
-    # selectable, copyable and searchable without them; what is lost is the
-    # reading-order hint a screen reader would use. Dropped deliberately on
-    # 2026-09-23 to fit the twenty Notes pages under Etsy's 20MB cap.
-    root = pdf.Root
-    for k in ("/StructTreeRoot", "/MarkInfo"):
-        if k in root:
-            del root[k]
-    for pg in pdf.pages:
-        for k in ("/StructParents", "/Tabs"):
-            if k in pg:
-                del pg[k]
+    # The accessibility tag tree stays. Chrome writes 33,710 StructElem
+    # objects here, 753,508 bytes, 3.7% of the file, and stripping them was
+    # tried on 2026-09-23 to make room for twenty Notes pages. The user chose
+    # to keep them and ship eight Notes pages instead: without tags a screen
+    # reader loses heading navigation, and a planner for ADHD readers is not
+    # the place to spend that. Reading order and text extraction survive
+    # either way -- it is the jump-to-heading list that goes.
 
     pdf.save(dst, object_stream_mode=pikepdf.ObjectStreamMode.generate,
              compress_streams=True, linearize=False)

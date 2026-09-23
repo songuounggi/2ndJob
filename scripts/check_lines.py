@@ -116,9 +116,19 @@ document.querySelectorAll('section.page').forEach(sec => {
   if (body) {
     const kids = [...body.children];
     if (kids.length) {
-      const last = kids[kids.length - 1].getBoundingClientRect().bottom;
-      out.tail.push({page: sec.id,
-        d: Math.round((body.getBoundingClientRect().bottom - last) * 10) / 10});
+      // Only when the last item was meant to stretch. A card the page
+      // author left on flex:none is supposed to hug its content -- the
+      // Notes index is a short card with eight links and 522px of page
+      // under it on purpose. Flagging that is judging the design, not
+      // measuring a defect. What this catches is an item that should have
+      // filled the page and did not.
+      const lastEl = kids[kids.length - 1];
+      const grow = parseFloat(getComputedStyle(lastEl).flexGrow) || 0;
+      if (grow > 0) {
+        const last = lastEl.getBoundingClientRect().bottom;
+        out.tail.push({page: sec.id,
+          d: Math.round((body.getBoundingClientRect().bottom - last) * 10) / 10});
+      }
       // The space BETWEEN body items must be the stylesheet's gap and
       // nothing more. A wider one is a hole: that is how the slack from
       // pinning cards inside a row showed up on 32p Boundaries, sitting
