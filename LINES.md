@@ -70,7 +70,7 @@ Prod 2 가 v9 에서 찾은 것과 같은 원인이다. 테두리 선은 벡터�
 ```
 바깥 4변   없음
 안쪽 구분선 있음
-헤더 아래  첫 칸에 글자가 있으면 선이 있고, 비어 있으면 없다
+헤더 아래  전 폭을 가로지른다 (첫 칸이 비어 있어도)
 ```
 
 집 규칙이 "테두리 선 없이 그림자만으로 층을 표현한다"(`CLAUDE.md`)이므로
@@ -82,8 +82,7 @@ Prod 2 가 v9 에서 찾은 것과 같은 원인이다. 테두리 선은 벡터�
 /* 전 */
 .trk tr:first-child .nm{border-bottom:none}
 
-/* 후 */
-.trk tr:first-child .nm:empty{border-bottom:none}
+/* 후 — 예외를 아예 없앴다 */
 .trk td:last-child{border-right:none}
 .trk tr:last-child td{border-bottom:none}
 ```
@@ -95,6 +94,11 @@ Prod 2 가 v9 에서 찾은 것과 같은 원인이다. 테두리 선은 벡터�
 
 **증상 2 — 좌우 비대칭.** 라벨 칸(`.nm`)이 `border:none` 이라 왼쪽 바깥선이
 없는데, 마지막 칸은 테두리가 있어 오른쪽만 선이 있었다.
+
+**증상 3 — 라벨 칸이 비어 있을 때도 같은 일이 난다.** 처음엔 `:empty` 일 때만
+선을 빼는 예외를 뒀는데, 그러면 `screen`·`sleep`·`symptoms`·`movement`·
+`cycle`·`habits-grid` 등 **7개 표**에서 헤더 아래 선이 둘째 열부터 시작했다.
+예외를 통째로 없애 전 폭을 가로지르게 했다.
 
 > **한 표에 맞춘 셀렉터가 다른 표를 깨뜨린다.** Prod 2 도 같은 함정을 겪었다
 > — 4열 표에 맞춘 `nth-child` 규칙 때문에 6열 시간표의 THU·FRI 에 선이
@@ -112,7 +116,8 @@ Prod 2 가 v9 에서 찾은 것과 같은 원인이다. 테두리 선은 벡터�
 눈으로 보는 검수로는 위 둘 다 놓쳤다. **자동으로 잰다.**
 
 ```bash
-python scripts/check_lines.py output/planner_v8-undated-FINAL.pdf src/planner_v8-undated.html
+python scripts/check_lines.py src/planner_v8-undated.html
+python scripts/check_lines.py src/planner_v9-student.html   # Prod 2 도 그대로
 ```
 
 `scripts/check_lines.py` 가 브라우저 DOM 에서 실제 렌더 높이를 읽어
@@ -120,8 +125,13 @@ python scripts/check_lines.py output/planner_v8-undated-FINAL.pdf src/planner_v8
 
 1. 한 페이지 안에 괘선 높이가 2종 이상인가
 2. 문서 전체에서 괘선 높이가 몇 종인가
-3. `.trk` 표의 바깥 테두리가 남아 있는가
-4. 헤더 첫 칸에 글자가 있는데 아래 선이 없는가
+3. `.trk` 표의 바깥 테두리(우/하)가 남아 있는가
+4. 헤더 아래 선이 **열마다 유무가 다른가**
+
+> 4번을 처음엔 "헤더 칸 자신의 `border-bottom` 이 있는가"로 짰는데 오판이
+> 났다. `border-collapse` 에서 그 선은 **아래 행의 `border-top`** 에서 올 수도
+> 있다. 정상인 `subs` 표가 실패로 잡혔다. 결함은 선의 출처가 아니라
+> **열 사이의 불일치**다.
 
 **픽셀을 세지 않는다.** 처음에 렌더 이미지에서 어두운 행을 찾는 방식으로
 재봤더니 표 테두리·카드 경계·점자까지 섞여 14~119px 이 나왔다. 쓸 수 없는
