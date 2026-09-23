@@ -28,7 +28,7 @@ CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 # 페이지 안에서 실제로 재는 코드. 여기만 고치면 검사 항목이 바뀐다.
 PROBE = r"""
-const out = {pages:{}, trk:[], cards:[], over:[], uneven:[]};
+const out = {pages:{}, trk:[], cards:[], over:[], uneven:[], short:[], tail:[], holes:[]};
 document.querySelectorAll('section.page').forEach(sec => {
   const rules = [...sec.querySelectorAll('.lines > div')];
   if (rules.length) {
@@ -90,6 +90,48 @@ document.querySelectorAll('section.page').forEach(sec => {
     }
     if (d > 2) out.over.push({page: sec.id, i, d: Math.round(d)});
   });
+  // A box that its rules cannot fill. This is the LINE_SPARE class of
+  // defect: lines(7) printed 15 rules into a box that fits 21, and the
+  // leftover showed up as a hole once card heights followed the rules
+  // (19p Screen time, 32p Boundaries). Every rule visible AND a full pitch
+  // of room still left over means the card is short of rules.
+  sec.querySelectorAll('.lines').forEach(L => {
+    const k = [...L.children];
+    if (!k.length) return;
+    const P = k[0].getBoundingClientRect().height;
+    if (!P) return;
+    const room = L.clientHeight - k.length * P;
+    if (room >= P) {
+      const card = L.closest('.card');
+      out.short.push({page: sec.id, have: k.length,
+                      miss: Math.floor(room / P),
+                      label: card ? ((card.querySelector('.label') || {})
+                                     .textContent || '').trim().slice(0, 22) : ''});
+    }
+  });
+  // How much of the page the body leaves empty at the bottom. Dropping
+  // justify-content:space-between moved the slack here, so it is worth
+  // watching that it stays small and even.
+  const body = sec.querySelector('.body');
+  if (body) {
+    const kids = [...body.children];
+    if (kids.length) {
+      const last = kids[kids.length - 1].getBoundingClientRect().bottom;
+      out.tail.push({page: sec.id,
+        d: Math.round((body.getBoundingClientRect().bottom - last) * 10) / 10});
+      // The space BETWEEN body items must be the stylesheet's gap and
+      // nothing more. A wider one is a hole: that is how the slack from
+      // pinning cards inside a row showed up on 32p Boundaries, sitting
+      // between the row and the card under it.
+      const want = parseFloat(getComputedStyle(body).rowGap) || 0;
+      for (let i = 1; i < kids.length; i++) {
+        const g = kids[i].getBoundingClientRect().top
+                  - kids[i-1].getBoundingClientRect().bottom;
+        if (g - want > 4) out.holes.push({page: sec.id, i,
+          g: Math.round(g*10)/10, want: Math.round(want*10)/10});
+      }
+    }
+  }
   // The two sides of a row must end level. Pinning cards inside a row
   // instead of the row itself broke this: Meals & groceries had a short
   // right card, and every daily page had a short right column.
@@ -186,6 +228,8 @@ def main():
     pages, trk = d["pages"], d["trk"]
     cards, over = d.get("cards", []), d.get("over", [])
     uneven_rows = d.get("uneven", [])
+    short, tail = d.get("short", []), d.get("tail", [])
+    holes = d.get("holes", [])
     fails = []
 
     # --- 1. 한 페이지 안에서 섞였는가 -------------------------------------
@@ -291,6 +335,43 @@ def main():
             print(f"   FAIL  {u['page']:<14} 행#{u['i']}  {u['d']}px 어긋남")
     else:
         print("   OK    행의 좌우가 같은 높이에서 끝남")
+
+    # --- 7. 줄이 모자라 상자를 못 채우는 카드 ----------------------------
+    if short:
+        seen, uniq = set(), []
+        for x in short:
+            key = re.sub(r"\d+", "N", x["page"]) + x["label"]
+            if key in seen:
+                continue
+            seen.add(key)
+            uniq.append(x)
+        fails.append(f"줄이 모자란 카드: {len(short)}개 (형태별 {len(uniq)})")
+        for x in sorted(uniq, key=lambda y: -y["miss"])[:8]:
+            print(f"   FAIL  {x['page']:<14} {x['label'][:20]:<20} "
+                  f"줄 {x['have']}개, {x['miss']}줄분 남음")
+    else:
+        print("   OK    줄이 상자를 채운다")
+
+    # --- 7-2. 본문 요소 사이에 뚫린 구멍 ---------------------------------
+    if holes:
+        pages_h = sorted({h["page"] for h in holes})
+        fails.append(f"본문 사이에 뚫린 구멍: {len(holes)}개 "
+                     f"({len(pages_h)}페이지)")
+        for h in sorted(holes, key=lambda x: -x["g"])[:8]:
+            print(f"   FAIL  {h['page']:<14} 사이#{h['i']}  "
+                  f"{h['g']}px (규정 {h['want']}px)")
+    else:
+        print("   OK    본문 사이 간격이 규정대로")
+
+    # --- 8. 페이지 하단 여백 ----------------------------------------------
+    if tail:
+        ds = [t["d"] for t in tail]
+        worst = max(tail, key=lambda t: t["d"])
+        print(f"   본문 아래 여백  최소 {min(ds)}px  최대 {max(ds)}px "
+              f"({worst['page']})")
+        if max(ds) > 120:
+            fails.append(f"본문 아래 여백이 {max(ds)}px "
+                         f"({worst['page']}) -- 120px 초과")
 
     print()
     if fails:
