@@ -8,3 +8,9 @@ scratch_*.png
 # 캐시
 __pycache__/
 *.pyc
+
+# 검수하며 만든 임시 파일. 지우지는 않되 추적하지 않는다.
+# 이것들이 git status 를 가려서 한 번은 git add -A 로 다른 방의
+# 작업까지 쓸어담은 적이 있다.
+scratchpad_*
+dom_tmp.html
