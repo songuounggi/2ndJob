@@ -68,7 +68,7 @@ Undated ADHD Planner for GoodNotes — no dates to fall behind on
 
 **Description**
 ```
-An undated ADHD planner with no dates printed anywhere, so it never expires and you never open it to a wall of blank days you missed. 494 pages, 58 unique page designs, ten tabs on every page. Works in GoodNotes and Notability on iPad, on Android tablets, and prints at home. Instant download.
+An undated ADHD planner with no dates printed anywhere, so it never expires and you never open it to a wall of blank days you missed. 502 pages, 61 unique page designs, ten tabs on every page. Works in GoodNotes and Notability on iPad, on Android tablets, and prints at home. Instant download.
 ```
 
 ### 02_tools → 보드 `Focus & Executive Function`
@@ -87,12 +87,12 @@ Guess vs actual for time blindness. Why I am avoiding it, with six reasons to ti
 
 **Title**
 ```
-58 genuinely different planner pages, not one page copied 300 times
+61 genuinely different planner pages, not one page copied 300 times
 ```
 
 **Description**
 ```
-Most big digital planners are one daily page repeated hundreds of times. This one has 58 unique page designs across focus, feelings, habits, health and life admin, plus monthly grids, weekly spreads and daily pages. Undated hyperlinked PDF for iPad and Android.
+Most big digital planners are one daily page repeated hundreds of times. This one has 61 unique page designs across focus, feelings, habits, health and life admin, plus monthly grids, weekly spreads and daily pages. Undated hyperlinked PDF for iPad and Android.
 ```
 
 ### 04_navigation → 보드 `Digital Planning`
@@ -104,7 +104,7 @@ Ten tabs on every page — never lose your place in a big planner
 
 **Description**
 ```
-The most common complaint about big digital planners is not being able to find anything. Ten side tabs run down all 494 pages, and every page but the cover is a link destination. Real PDF links that work in GoodNotes, Notability, Xodo and Acrobat.
+The most common complaint about big digital planners is not being able to find anything. Ten side tabs run down all 502 pages, and every page but the cover is a link destination. Real PDF links that work in GoodNotes, Notability, Xodo and Acrobat.
 ```
 
 ### 05_everyday → 보드 `Digital Planning`

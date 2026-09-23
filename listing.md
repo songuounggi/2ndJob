@@ -1,7 +1,8 @@
 # Etsy 리스팅 원고
 
 복사해서 붙여넣기용. 영문은 그대로 쓰시면 됩니다.
-**v8-undated FINAL (494p / 고유 58p / 19.2MB) 기준으로 실측 검증된 수치입니다.**
+**v8.18-undated FINAL (502p / 고유 61종 / 19.6MB) 기준으로 실측 검증된 수치입니다.**
+(2026-09-23 교체. 그 이전은 v8-undated 494p / 58종)
 
 숍 계정 설정은 `shop.md`, 상품 제작 규칙은 `CLAUDE.md`.
 
@@ -120,7 +121,7 @@ This is an undated ADHD planner. There is not a single date printed anywhere in 
 
 WHAT MAKES IT DIFFERENT
 
-Most big planners are one page copied three hundred times. This one has 58 genuinely different page designs, built around the things that actually get in the way: starting, deciding, remembering, and not beating yourself up about it.
+Most big planners are one page copied three hundred times. This one has 61 genuinely different page designs, built around the things that actually get in the way: starting, deciding, remembering, and not beating yourself up about it.
 
 Tools you will not find in a normal planner:
 • Guess vs actual – what you thought it would take, what it took
@@ -142,11 +143,11 @@ Feelings – Stop/Think/Act, the worry loop, rejection sensitivity, the inner cr
 Habits – 31-day tracker, morning and evening routines
 Health – medication log, sleep, symptoms, doctor visits, therapy notes, water and food, movement, cycle tracker
 Life – meals and groceries, wheel of life, cleaning, budget, impulse check, reading log, dates to remember, subscriptions, trips, who does what
-Notes – dot grid
+Notes – eight blank pages: dot grid, ruled, plain
 
 FINDING THINGS
 
-Ten tabs run down the side of all 494 pages. You are never more than two taps from any tool, or three from any specific day. Every page but the cover is a link destination. Nothing in it is a dead end.
+Ten tabs run down the side of all 502 pages. You are never more than two taps from any tool, or three from any specific day. Every page but the cover is a link destination. Nothing in it is a dead end.
 
 ABOUT THE MONTH PAGES
 
@@ -158,7 +159,7 @@ CALM ON PURPOSE
 
 No neon, no full-colour blocks, no busy borders. Just four muted accent colors and a soft sky wash – because a planner you find visually loud is a planner you stop opening.
 
-It is also a light file, under 20MB for 494 pages, so it scrolls smoothly in GoodNotes instead of stuttering the way big planners often do.
+It is also a light file, under 20MB for 502 pages, so it scrolls smoothly in GoodNotes instead of stuttering the way big planners often do.
 
 HOW IT WORKS
 
@@ -205,7 +206,7 @@ For personal use. Please do not resell or redistribute the file.
 불만이 "너무 많은데 쓸 건 없다"였습니다. 우리는 반복 페이지(436장)와 고유
 디자인(58종)을 **분리해서 명시**합니다.
 
-*내부 메모* — 고유 58종 중 10장은 표지·목차·그룹 인덱스라서 **실제로 쓰는
+*내부 메모* — 고유 61종 중 10장은 표지·목차·그룹 인덱스라서 **실제로 쓰는
 템플릿은 48종**입니다. 영문은 "page designs"라 58로 방어 가능하지만, 경쟁사의
 "고유 190페이지"와 비교하는 자리에서는 48을 기준으로 말하는 게 안전합니다.
 
@@ -215,15 +216,15 @@ For personal use. Please do not resell or redistribute the file.
 일반 웰니스 플래너에 없습니다. 당사자가 검색하는 단어이기도 합니다.
 
 **4. 길을 잃지 않는다 — #1 불만에 대한 직접적인 답**
-494페이지 전부에 10개 탭이 있고, 링크 주석 5,805개 중 **깨진 것 0개**,
-커버를 뺀 493페이지 전부가 링크 목적지입니다. 어떤 도구든 2탭 이내,
+502페이지 전부에 10개 탭이 있고, 링크 주석 5,893개 중 **깨진 것 0개**,
+커버를 뺀 501페이지 전부가 링크 목적지입니다. 어떤 도구든 2탭 이내,
 특정 날짜는 3탭.
 
 **5. 조용한 디자인**
 원색 면 채우기 없음, 액센트 색 4개 상한(그 이상은 오히려 기억을 방해한다는
 조사 근거), 글자에 쓰는 색은 전부 대비 기준 통과(최저 4.75:1).
 
-**6. 가볍다 — 19.2MB / 494페이지**
+**6. 가볍다 — 19.6MB / 502페이지**
 경쟁 상품 상당수가 80MB를 넘어 GoodNotes에서 스크롤이 끊깁니다. 우리도 같은
 문제를 겪고 고쳤기 때문에 근거가 있는 차별점입니다.
 
@@ -242,7 +243,7 @@ For personal use. Please do not resell or redistribute the file.
 
 Etsy는 할인 표시가 클릭률에 크게 작용합니다. 정가를 걸고 세일하는 게 처음부터 $10에 거는 것보다 유리합니다.
 
-**근거** — 조사상 중간 티어가 $8~15(300~500페이지), 카테고리 1위 Future ADHD가 $19(고유 190페이지)입니다. 우리는 494페이지 / 고유 58페이지(실사용 템플릿 48종)라 페이지 수는 중간 티어, 고유 수는 그 아래입니다. $10~12 구간이 정직한 위치입니다.
+**근거** — 조사상 중간 티어가 $8~15(300~500페이지), 카테고리 1위 Future ADHD가 $19(고유 190페이지)입니다. 우리는 502페이지 / 고유 61페이지(실사용 템플릿 51종)라 페이지 수는 중간 티어, 고유 수는 그 아래입니다. $10~12 구간이 정직한 위치입니다.
 
 리뷰가 10개 넘게 쌓이면 정가를 $19.99로 올리고 세일가를 $12~13으로 조정하는 걸 권합니다.
 
