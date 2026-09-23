@@ -23,7 +23,7 @@ SIZE = 2000
 CSS = """
 *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact}
 body{width:2000px;height:2000px;font-family:'Nunito',system-ui,sans-serif;
-     background:#FBF8F3;color:#3A3A3A;overflow:hidden}
+     background:#FBF8F3;color:#3A3A3A;overflow:hidden;--bo:.55}
 .wrap{width:100%;height:100%;padding:110px;display:flex;flex-direction:column}
 .kicker{display:inline-block;background:#EAF2F8;color:#3E6E93;font-size:30px;
         font-weight:800;letter-spacing:.06em;padding:12px 30px;border-radius:99px;
@@ -49,7 +49,30 @@ h1{font-size:104px;font-weight:800;line-height:1.1;margin-top:38px;
 .chip b{display:block;font-size:44px;font-weight:800}
 .chip span{display:block;font-size:28px;color:#827D75;margin-top:10px}
 .big{font-size:150px;font-weight:800;color:#3E6E93;line-height:1}
+/* Irregular blobs rather than concentric radial gradients. Symmetric
+   gradients read as a vignette -- tidy, and invisible at thumbnail size.
+   Lopsided shapes with a heavy blur give the square actual colour without
+   drawing an edge anywhere near the type. */
+.blobs{position:absolute;inset:-120px;z-index:0;overflow:hidden}
+.blobs i{position:absolute;display:block;filter:blur(95px)}
+.b1{width:1120px;height:900px;left:-190px;top:60px;
+   background:#7FA8C9;opacity:calc(var(--bo,1) * .30);
+   border-radius:62% 38% 44% 56% / 48% 61% 39% 52%}
+.b2{width:1000px;height:860px;right:-210px;top:-90px;
+   background:#E08A73;opacity:calc(var(--bo,1) * .26);
+   border-radius:38% 62% 57% 43% / 63% 41% 59% 37%}
+.b3{width:1180px;height:820px;left:230px;bottom:-260px;
+   background:#D9A441;opacity:calc(var(--bo,1) * .22);
+   border-radius:54% 46% 36% 64% / 42% 57% 43% 58%}
+.b4{width:760px;height:700px;right:-90px;bottom:-140px;
+   background:#7FA37C;opacity:calc(var(--bo,1) * .20);
+   border-radius:45% 55% 63% 37% / 56% 38% 62% 44%}
+body>div:not(.blobs){position:relative;z-index:1}
 """
+
+
+BLOBS = ('<div class="blobs"><i class="b1"></i><i class="b2"></i>'
+         '<i class="b3"></i><i class="b4"></i></div>')
 
 
 def html(body, extra=""):
@@ -91,6 +114,7 @@ def shoot(name, body, extra=""):
 SAFE = 260
 
 HERO_CSS = """
+body{--bo:1}
 .hero{width:100%;height:100%;padding:80px SAFEpx 56px;position:relative;overflow:hidden;display:flex;
       flex-direction:column;align-items:center;text-align:center}
 /* the shared .kicker pins itself left; override it or it sits off-axis
@@ -123,32 +147,12 @@ HERO_CSS = """
 .hero .stage .p2{transform:translate(-800px,275px) rotate(6deg)}
 .hero .stage .p3{transform:translate(738px,-255px) rotate(8deg)}
 .hero .stage .p4{transform:translate(800px,262px) rotate(-6deg)}
-/* Irregular blobs rather than concentric radial gradients. Symmetric
-   gradients read as a vignette -- tidy, and invisible at thumbnail size.
-   Lopsided shapes with a heavy blur give the square actual colour without
-   drawing an edge anywhere near the type. */
-.hero .blobs{position:absolute;inset:-120px;z-index:0;overflow:hidden}
-.hero .blobs i{position:absolute;display:block;filter:blur(95px)}
-.hero .b1{width:1120px;height:900px;left:-190px;top:60px;
-   background:#7FA8C9;opacity:.30;
-   border-radius:62% 38% 44% 56% / 48% 61% 39% 52%}
-.hero .b2{width:1000px;height:860px;right:-210px;top:-90px;
-   background:#E08A73;opacity:.26;
-   border-radius:38% 62% 57% 43% / 63% 41% 59% 37%}
-.hero .b3{width:1180px;height:820px;left:230px;bottom:-260px;
-   background:#D9A441;opacity:.22;
-   border-radius:54% 46% 36% 64% / 42% 57% 43% 58%}
-.hero .b4{width:760px;height:700px;right:-90px;bottom:-140px;
-   background:#7FA37C;opacity:.20;
-   border-radius:45% 55% 63% 37% / 56% 38% 62% 44%}
 .hero>*{position:relative;z-index:1}
 """.replace("SAFEpx", f"{SAFE}px")
 
 
 def hero():
-    body = f"""<div class="hero">
-      <div class="blobs"><i class="b1"></i><i class="b2"></i>
-        <i class="b3"></i><i class="b4"></i></div>
+    body = f"""{BLOBS}<div class="hero">
       <span class="kicker">UNDATED &middot; NO-GUILT</span>
       <h1>ADHD &amp; Wellness<br>Digital Planner</h1>
       <div class="sub">Start any day. Skip a week. Nothing to catch up on.</div>
@@ -209,7 +213,7 @@ def templates():
     cells = "".join(
         f'<div class="cell"><img src="{img(n)}"><b>{label}</b></div>'
         for n, label in TMPL_PICKS)
-    body = f"""<div class="tm">
+    body = f"""{BLOBS}<div class="tm">
       <span class="kicker">WHAT'S INSIDE</span>
       <h1><em>61</em> pages that are<br>actually different</h1>
       <div class="sub">Not one page copied three hundred times.<br>Plus eight blank pages in three papers.</div>
@@ -271,7 +275,7 @@ def navigation():
     rows = "".join(
         f'<div class="t"><i style="background:{c}"></i><b>{n}</b>'
         f'<span>{d}</span></div>' for n, c, d in TABS_10)
-    body = f"""<div class="nav">
+    body = f"""{BLOBS}<div class="nav">
       <span class="kicker">NEVER LOSE YOUR PLACE</span>
       <h1>Ten tabs, down<br>every single page</h1>
       <div class="sub">All 502 of them. The most common complaint about big
@@ -316,7 +320,7 @@ def tools(name, kicker, title, sub, picks):
     cells = "".join(
         f'<div class="cell"><img src="{img(n)}"><b>{lab}</b>'
         f'<span>{note}</span></div>' for n, lab, note in picks)
-    body = f"""<div class="tl">
+    body = f"""{BLOBS}<div class="tl">
       <span class="kicker">{kicker}</span>
       <h1>{title}</h1>
       <div class="sub">{sub}</div>
@@ -326,7 +330,7 @@ def tools(name, kicker, title, sub, picks):
 
 
 def everyday():
-    body = f"""<div class="wrap">
+    body = f"""{BLOBS}<div class="wrap">
       <span class="kicker">THE PAGES YOU OPEN EVERY DAY</span>
       <h1>424 daily &amp; weekly pages</h1>
       <div class="sub">A timed day from 7am, meds and water, a mood row.
@@ -389,7 +393,7 @@ MOSAIC_CSS = """
 
 def mosaic():
     cells = "".join(f'<img src="{img(n)}">' for n in MOSAIC)
-    body = f"""<div class="ms">
+    body = f"""{BLOBS}<div class="ms">
       <span class="kicker">ALL OF IT</span>
       <h1><em>502</em> pages in one file</h1>
       <div class="sub">Twenty-four of the sixty-one designs. No page is
@@ -413,7 +417,7 @@ def numbers():
         f'margin-top:18px">{l}</span>'
         f'<span style="font-size:28px;margin-top:8px">{d}</span></div>'
         for n, l, d in stats)
-    body = f"""<div class="wrap">
+    body = f"""{BLOBS}<div class="wrap">
       <span class="kicker">AT A GLANCE</span>
       <h1>Built to be used,<br>not admired</h1>
       <div class="grow"><div style="display:grid;width:100%;
@@ -473,7 +477,7 @@ def howto():
         if n == "2":
             rows += ('<div class="apps">'
                      + "".join(f"<u>{a}</u>" for a in apps) + "</div>")
-    body = f"""<div class="hw">
+    body = f"""{BLOBS}<div class="hw">
       <span class="kicker">HOW IT WORKS</span>
       <h1>No app to install</h1>
       <div class="sub">It is a hyperlinked PDF. It opens in the note app
