@@ -52,12 +52,32 @@ def dedupe(src, dst):
                 if getattr(v, "is_indirect", False) and v.objgen in replace:
                     node[i] = replace[v.objgen]
 
+    # Folding duplicate pattern/shading dictionaries was tried and dropped.
+    # It folded 5,328 of them and the file came out byte for byte the same
+    # size -- they are tiny and the object streams already compress the
+    # repetition away. Measure before keeping a pass like that.
+
     for obj in pdf.objects:
         if isinstance(obj, pikepdf.Stream):
             repoint(obj.stream_dict)
         else:
             repoint(obj)
     repoint(pdf.Root)
+
+    # Chrome writes an accessibility tag tree: 33,710 StructElem objects
+    # here, 753,508 bytes, 3.7% of the file. In a planner those tags mark
+    # decorative divs -- the pages are mostly blank writing area. Text stays
+    # selectable, copyable and searchable without them; what is lost is the
+    # reading-order hint a screen reader would use. Dropped deliberately on
+    # 2026-09-23 to fit the twenty Notes pages under Etsy's 20MB cap.
+    root = pdf.Root
+    for k in ("/StructTreeRoot", "/MarkInfo"):
+        if k in root:
+            del root[k]
+    for pg in pdf.pages:
+        for k in ("/StructParents", "/Tabs"):
+            if k in pg:
+                del pg[k]
 
     pdf.save(dst, object_stream_mode=pikepdf.ObjectStreamMode.generate,
              compress_streams=True, linearize=False)

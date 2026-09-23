@@ -372,6 +372,8 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.8-undated  2026-09-23  카드가 아니라 행을 고정 (좌우 높이·중간 구멍)
 #   v8.9-undated  2026-09-23  표 좌측 바깥선 제거
 #   v8.10-undated 2026-09-23  주 번호 격자 마지막 줄 정렬
+#   v8.11-undated 2026-09-23  NOTES 를 1장에서 인덱스+20장으로
+#   v8.12-undated 2026-09-23  NOTES 인덱스 칩이 카드 밖으로 잘리던 것
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
@@ -382,6 +384,8 @@ THEMES["v8.7-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.8-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.9-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.10-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.11-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.12-undated"] = dict(THEMES["v8-undated"])
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -872,6 +876,8 @@ def rail_key(key):
         return "month"
     if re.fullmatch(r"w\d+", key):
         return "week"
+    if re.fullmatch(r"n\d+", key):
+        return "notes"
     if key in TAB_KEYS:          # a tab's own index page, e.g. "month"
         return key
     return SUB_OF.get(key, key)
@@ -1300,9 +1306,70 @@ def p_meds():
       </div>""")
 
 
+# Twenty pages of paper, not one. A tab that reads like a section but holds
+# a single sheet feels short next to FOCUS or LIFE, which carry ten each.
+# Three kinds, because which paper you want depends on what you are writing.
+NOTE_KINDS = [("Dot grid", "dots", 8),
+              ("Ruled", "ruled", 8),
+              ("Plain", "plain", 4)]
+NOTE_TOTAL = sum(c for _, _, c in NOTE_KINDS)
+
+
+def note_specs():
+    """(page key, kind label, kind, running number) for each blank page."""
+    out, n = [], 0
+    for label, kind, count in NOTE_KINDS:
+        for _ in range(count):
+            n += 1
+            out.append((f"n{n}", label, kind, n))
+    return out
+
+
 def p_notes():
-    return (head("Notes", "Blank space")
-            + '<div class="body"><div class="card dots" style="flex:1"></div></div>')
+    """The index. Every blank page has to be reachable from somewhere or
+    Chrome keeps the page and drops nothing, but the reader can never get
+    to it -- the same trap as a dead link, from the other side."""
+    specs, n, groups = note_specs(), 0, ""
+    for label, kind, count in NOTE_KINDS:
+        chips = ""
+        for _ in range(count):
+            n += 1
+            chips += (f'<a href="#n{n}" style="text-align:center;padding:10pt 0;'
+                      f'background:var(--chip);color:var(--accent-text);'
+                      f'border-radius:9pt;font-size:9pt;font-weight:800;'
+                      f'text-decoration:none">{n}</a>')
+        # Five columns at 74pt, the same grid the 52-week index uses. Eight
+        # across at 58pt came to 534pt and ran off the card, which is only
+        # about 461pt wide inside its padding -- chips 8 and 16 were cut.
+        groups += (f'<div class="label" style="margin:16pt 0 10pt">{label}</div>'
+                   f'<div style="display:grid;'
+                   f'grid-template-columns:repeat(5,74pt);gap:11pt;'
+                   f'justify-content:start">{chips}</div>')
+    return (head("Notes", "Blank space",
+                 f"{NOTE_TOTAL} pages. Pick the paper you want.")
+            + f'<div class="body"><div class="card" style="flex:1">'
+              f'<div style="display:flex;flex-direction:column;'
+              f'justify-content:center;height:100%">{groups}</div>'
+              f'</div></div>')
+
+
+def p_note(label, kind, n):
+    if kind == "dots":
+        inner = '<div class="card dots" style="flex:1"></div>'
+    elif kind == "ruled":
+        # 30 is a floor; the spare rules overfill and the card clips them,
+        # so the page is ruled edge to edge whatever its height works out to.
+        inner = f'<div class="card" style="flex:1">{lines(30)}</div>'
+    else:
+        inner = '<div class="card" style="flex:1"></div>'
+    # No page number in the subtitle, deliberately. A page's whole content
+    # -- rail included -- is one stream, so any per-page difference makes it
+    # unique and dedupe cannot fold it. Numbering the pages cost 1.0MB over
+    # twenty of them and pushed the file past Etsy's 20MB cap. Without the
+    # number every page of a kind is byte-identical and folds to one stream.
+    # The index numbers them anyway, which is where the reader looks.
+    return (head("Notes", "Blank space", label)
+            + f'<div class="body">{inner}</div>')
 
 
 
@@ -2194,6 +2261,10 @@ def build_html():
         ("reading", p_reading), ("dates", p_dates), ("subs", p_subs),
         ("travel", p_travel), ("chores", p_chores),
         ("notes", p_notes),
+    ] + [
+        (k, (lambda lb, kd, num: lambda: p_note(lb, kd, num))(lb, kd, num))
+        for k, lb, kd, num in note_specs()
+    ] + [
     ]
     if student_pages:
         specs = student_pages.specs()

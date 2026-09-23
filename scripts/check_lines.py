@@ -259,8 +259,26 @@ def main():
     a = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+    def cluster(vals, tol=0.25):
+        """Merge heights that differ by less than a quarter pixel.
+
+        The pitch is 20pt = 26.666..px, so Chrome's layout grid cannot land
+        every row on the same value -- some pages report 26.6 and 26.7 in
+        the same block. That is a rounding artefact, not a visible change
+        (a tenth of a pixel), and treating it as a second kind of rule made
+        18 weekly pages fail for nothing. A real mistake is a whole rule
+        apart: the worst page measured 21.3 against 60.9.
+        """
+        out = []
+        for v in sorted(vals):
+            if out and v - out[-1] < tol:
+                continue
+            out.append(v)
+        return out
+
     d = measure(a.html)
     pages, trk = d["pages"], d["trk"]
+    pages = {k: cluster(v) for k, v in pages.items()}
     cards, over = d.get("cards", []), d.get("over", [])
     uneven_rows = d.get("uneven", [])
     short, tail = d.get("short", []), d.get("tail", [])
@@ -281,7 +299,9 @@ def main():
         print("   OK    페이지 안에서는 모두 균일")
 
     # --- 2. 문서 전체에서 몇 종인가 ---------------------------------------
-    kinds = Counter(h for v in pages.values() for h in v)
+    kinds = Counter(round(h, 1)
+                    for h in cluster(
+                        [h for v in pages.values() for h in v]))
     print(f"\n문서 전체 괘선 높이 {len(kinds)}종")
     for h, n in kinds.most_common(8):
         print(f"   {h:>7}px  ×{n}")
