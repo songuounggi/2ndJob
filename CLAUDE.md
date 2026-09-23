@@ -213,7 +213,13 @@ for m in re.finditer(r'<section class="page" id="([^"]+)".*?</nav>', html, re.S)
 `to_pdf()`는 빌드 후 mtime이 갱신됐는지 확인하고 아니면 예외를 던진다. 이
 가드를 절대 제거하지 말 것.
 
-**2. 잠그는 주범은 뷰어가 아니라 `pypdfium2`다.** `PdfDocument(path)`는 파일
+**2. 잠그는 것은 둘이다 — `pypdfium2`, 그리고 Acrobat.**
+2026-09-23 에 사용자가 Acrobat 으로 열어둔 `v8.1-FINAL` 을 덮어쓰려다
+`PermissionError: [Errno 13]` 이 났다. Chrome 내장 뷰어와 앱 미리보기는
+잠그지 않으므로 **검수는 그쪽으로 연다**(사용자와 합의됨). 재빌드가
+막히면 먼저 무엇이 그 파일을 열고 있는지 묻는다.
+
+코드 쪽 주범은 `pypdfium2` 다. `PdfDocument(path)`는 파일
 핸들을 유지한다. 같은 프로세스에서 측정 후 재빌드하면 반드시 막힌다. 측정은
 바이트로 읽어서 열 것:
 
