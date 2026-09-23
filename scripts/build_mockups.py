@@ -115,8 +115,12 @@ SAFE = 260
 
 HERO_CSS = """
 body{--bo:1}
-.hero{width:100%;height:100%;padding:80px SAFEpx 56px;position:relative;overflow:hidden;display:flex;
-      flex-direction:column;align-items:center;text-align:center}
+/* The content block is centred and kept under 1500px tall. Etsy crops
+   the square to 4:3 for its landscape placement, which keeps only the
+   middle 1500px -- with the block filling the full 2000px the first
+   line of the headline was sliced in half. */
+.hero{width:100%;height:100%;padding:0 SAFEpx;position:relative;overflow:hidden;display:flex;
+      flex-direction:column;align-items:center;justify-content:center;text-align:center}
 /* the shared .kicker pins itself left; override it or it sits off-axis
    while everything else is centred */
 .hero .kicker{align-self:center}
@@ -133,15 +137,15 @@ body{--bo:1}
    image is packed. The pages sit outside the SAFE box on purpose -- they
    are decoration, so Etsy's search crop can take their outer edges without
    costing anything that has to be read. */
-.hero .stage{flex:1;display:flex;align-items:center;justify-content:center;
-             min-height:0;position:relative;margin-top:10px}
+.hero .stage{flex:none;height:900px;display:flex;align-items:center;
+             justify-content:center;position:relative;margin-top:34px}
 .hero .stage .tab,.hero .stage .pg{position:absolute}
 .hero .stage .back{transform:translateX(188px) scale(.87);z-index:2;
                    opacity:.97}
 .hero .stage .front{transform:translateX(-150px);z-index:3}
-.hero .stage img{height:1010px}
+.hero .stage img{height:880px}
 .hero .stage .pg{z-index:1}
-.hero .stage .pg img{height:470px;border-radius:14px;
+.hero .stage .pg img{height:420px;border-radius:14px;
                      box-shadow:0 18px 44px rgba(0,0,0,.13);display:block}
 .hero .stage .p1{transform:translate(-735px,-235px) rotate(-9deg)}
 .hero .stage .p2{transform:translate(-800px,275px) rotate(6deg)}
