@@ -37,6 +37,14 @@ HTML = os.path.join(ROOT, "src", "planner_%s.html" % VERSION)
 # 재서 21.21MB "상한 초과"로 판정했는데, 실제 판매본은 14.94MB 였다.
 # 빌드보다 오래된 FINAL 은 낡은 결과를 재는 것이므로 거부한다.
 PDF = os.path.join(ROOT, "output", "planner_%s-FINAL.pdf" % VERSION)
+# 빌드는 HTML 을 먼저 쓰고(snap 이 한 번 더 고쳐 쓴다) PDF 를 나중에 쓴다.
+# PDF 가 HTML 보다 오래됐으면 Chrome 이 쓰지 못한 것이다. 2026-09-24 에
+# 빌드가 실패했는데 `빌드 | tail && dedupe` 의 파이프가 종료 코드를 삼켜
+# dedupe 가 낡은 PDF 로 새 FINAL 을 만들었고, 아래 FINAL 검사만으로는
+# 통과했다. HTML 기반 검사는 새 HTML 을, PDF 검사는 낡은 PDF 를 재고 있었다.
+if not os.path.exists(RAW) or os.path.getmtime(RAW) < os.path.getmtime(HTML):
+    sys.exit("PDF 가 없거나 HTML 보다 오래됐다 -- 빌드가 PDF 를 쓰지 못했다. "
+             "빌드 출력의 오류를 보고 다시 빌드할 것")
 if not os.path.exists(PDF) or os.path.getmtime(PDF) < os.path.getmtime(RAW):
     sys.exit("FINAL 이 없거나 빌드보다 오래됐다. 먼저:\n"
              "  python scripts/dedupe_pdf.py %s %s" % (

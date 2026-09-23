@@ -862,6 +862,11 @@ python scripts/check_lines.py src/planner_student-v0.1.html
   마감선"(전 483) 추가. `check_lines.py` 는 이제 실패 0
 - 결과: 428p / **14.44MB** / verify 20항목 중 19 통과(`d1` 점선 균일 2, 알고 넘어감)
 
-**아직 남은 것:** 검사기가 빌드 실패로 남은 **낡은 PDF 를 통과시킨다**
-(FINAL 이 RAW 보다 새것인지만 본다. RAW 가 HTML 보다 오래됐는지도 봐야 한다).
-그 다음은 위 A·B·C(focus-session)·D·E·F·G·H.
+**낡은 PDF 통과 구멍 — 막았다.** 빌드가 PDF 를 못 썼는데 `빌드 | tail &&
+dedupe` 의 파이프가 종료 코드를 삼켜 dedupe 가 낡은 PDF 로 새 FINAL 을
+만들었고, 검사기는 FINAL 이 RAW 보다 새것인지만 봐서 통과시켰다. 이제
+**RAW 가 HTML 보다 오래됐으면 거부**한다(빌드는 HTML 을 먼저 쓴다).
+같은 상황을 재현해 옛 검사기는 통과, 새 검사기는 거부함을 확인했다.
+명령을 파이프로 이을 때는 `set -o pipefail` 을 먼저 켤 것.
+
+**다음:** 위 A·B·C(focus-session)·D·E·F·G·H.
