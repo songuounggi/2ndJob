@@ -173,6 +173,14 @@ python scripts/dedupe_pdf.py output/planner_v8.18-undated.pdf output/planner_v8.
 
 (2026-09-24 집 PC 에서 v8.18 을 뽑은 실측. 빌드 36초.)
 
+마지막으로 **Etsy 에 실제로 올린 이름**의 사본을 만든다. 구매자가 받는 파일은
+이 이름이다(이유는 `shop.md` 5-5절). 내용은 `-FINAL` 과 바이트까지 같다.
+
+```bash
+mkdir -p output/upload
+cp output/planner_v8.18-undated-FINAL.pdf output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf
+```
+
 ---
 
 ## 6. 검수
