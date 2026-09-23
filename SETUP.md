@@ -225,17 +225,34 @@ $env:PLANNER_VERSION="v7-bright"; python scripts/build_planner.py
 
 ## 회사 PC ↔ 집 노트북 오가기
 
-**작업을 끝낼 때** — `2ndJob` 안에서:
+### 어느 창에 치는가
 
-```bash
-git add -A && git commit -m "무엇을 했는지" && git push
-```
+**가장 쉬운 방법 — 안 쳐도 된다.** 그 PC 에서 Claude Code 를 이 폴더로 열고
+"git pull 해줘" 라고 말하면 된다. Claude 가 올바른 디렉토리에서 실행한다.
 
-**다른 PC에서 시작할 때** — `2ndJob` 안에서:
+직접 치려면 **프로젝트 폴더 안에서** 창을 열어야 한다. 다른 데서 치면
+"not a git repository" 가 난다.
+
+1. 탐색기로 `2ndJob` 폴더를 연다
+2. 주소창(경로가 적힌 칸)을 클릭하고 `powershell` 이라고 친 뒤 Enter
+3. 그 폴더에서 열린 PowerShell 에 아래를 친다
+
+**다른 PC에서 시작할 때:**
 
 ```bash
 git pull
 ```
+
+**작업을 끝낼 때:**
+
+```bash
+git add <고친 파일> && git commit -m "무엇을 했는지" && git push
+```
+
+> **`git add -A` 를 쓰지 말 것.** 이 프로젝트는 방을 나눠 쓴다. `-A` 는
+> 다른 방이 만들던 파일까지 전부 담는다 -- 실제로 그렇게 다른 방의
+> 작업 중인 파일이 커밋에 섞여 들어간 적이 있다. **고친 파일을 이름으로
+> 적는다.** 무엇이 바뀌었는지는 `git status` 로 먼저 본다.
 
 `CLAUDE.md` 도 같이 따라오므로, 어느 쪽에서 Claude Code 를 열든 프로젝트
 규칙(그림자 사양, 빌드가 조용히 실패하는 경우 등)을 그대로 알고 시작한다.
