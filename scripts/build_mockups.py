@@ -91,7 +91,7 @@ def shoot(name, body, extra=""):
 SAFE = 260
 
 HERO_CSS = """
-.hero{width:100%;height:100%;padding:96px SAFEpx;display:flex;
+.hero{width:100%;height:100%;padding:80px SAFEpx 56px;position:relative;overflow:hidden;display:flex;
       flex-direction:column;align-items:center;text-align:center}
 /* the shared .kicker pins itself left; override it or it sits off-axis
    while everything else is centred */
@@ -104,16 +104,32 @@ HERO_CSS = """
 .hero .stats b{background:#FFF;border-radius:99px;padding:14px 30px;
                font-size:30px;font-weight:800;color:#3E6E93;
                box-shadow:0 8px 22px rgba(0,0,0,.07)}
-/* two devices, the back one peeking out so the inside is visible at
-   thumbnail size -- a single centred tablet read as empty next to the
-   competition, which all show three or four screens */
+/* Two devices plus four loose pages fanned behind them. Two tablets alone
+   left the lower corners of the square empty, and every competing first
+   image is packed. The pages sit outside the SAFE box on purpose -- they
+   are decoration, so Etsy's search crop can take their outer edges without
+   costing anything that has to be read. */
 .hero .stage{flex:1;display:flex;align-items:center;justify-content:center;
-             min-height:0;position:relative;margin-top:16px}
-.hero .stage .tab{position:absolute}
-.hero .stage .back{transform:translateX(188px) scale(.87);z-index:1;
+             min-height:0;position:relative;margin-top:10px}
+.hero .stage .tab,.hero .stage .pg{position:absolute}
+.hero .stage .back{transform:translateX(188px) scale(.87);z-index:2;
                    opacity:.97}
-.hero .stage .front{transform:translateX(-150px);z-index:2}
-.hero .stage img{height:960px}
+.hero .stage .front{transform:translateX(-150px);z-index:3}
+.hero .stage img{height:1010px}
+.hero .stage .pg{z-index:1}
+.hero .stage .pg img{height:470px;border-radius:14px;
+                     box-shadow:0 18px 44px rgba(0,0,0,.13);display:block}
+.hero .stage .p1{transform:translate(-735px,-235px) rotate(-9deg)}
+.hero .stage .p2{transform:translate(-800px,275px) rotate(6deg)}
+.hero .stage .p3{transform:translate(738px,-255px) rotate(8deg)}
+.hero .stage .p4{transform:translate(800px,262px) rotate(-6deg)}
+/* a wash so the square is not flat cream behind the art */
+.hero::before{content:"";position:absolute;inset:0;z-index:0;
+   background:
+     radial-gradient(1100px 760px at 18% 78%, rgba(127,168,201,.20), transparent 70%),
+     radial-gradient(1000px 700px at 84% 24%, rgba(224,138,115,.17), transparent 70%),
+     radial-gradient(900px 620px at 76% 86%, rgba(217,164,65,.14), transparent 70%)}
+.hero>*{position:relative;z-index:1}
 """.replace("SAFEpx", f"{SAFE}px")
 
 
@@ -124,6 +140,10 @@ def hero():
       <div class="sub">Start any day. Skip a week. Nothing to catch up on.</div>
       <div class="stats"><b>502 pages</b><b>61 unique</b><b>10 tabs</b></div>
       <div class="stage">
+        <div class="pg p1"><img src="{img(17)}"></div>
+        <div class="pg p2"><img src="{img(35)}"></div>
+        <div class="pg p3"><img src="{img(48)}"></div>
+        <div class="pg p4"><img src="{img(452)}"></div>
         <div class="tab back"><img src="{img(68)}"></div>
         <div class="tab front"><img src="{img(1)}"></div>
       </div>
@@ -326,21 +346,45 @@ CLOSEUP_CSS = """
 """
 
 
-def closeup():
-    """A readable crop of Guess vs actual -- the page that names the problem
-    ADHD buyers search for (time blindness) in words they recognise."""
-    src = "file:///" + os.path.join(
-        PREVIEW, "big_p20_v815.png").replace("\\", "/")
-    body = f"""<div class="close">
-      <span class="kicker">INSIDE ONE PAGE</span>
-      <h1>Guess first.<br>Then check.</h1>
-      <div class="sub">You thought it would take an hour. It took three.
-        Do that ten times and you know your multiplier.</div>
-      <div class="frame" style="--w:132%;--top:-4%">
-        <img src="{src}">
-      </div>
+# 10 used to be a blown-up crop of the Guess vs actual table. Enlarged, an
+# empty table is just empty cells -- it showed no scale, no variety and no
+# reason to buy. The last slot is better spent proving the one claim the
+# other nine only assert: there really is this much in the file.
+MOSAIC = [5, 9, 12, 13, 15, 17, 18, 19, 20, 22, 25, 27,
+          29, 32, 35, 38, 40, 45, 47, 48, 50, 54, 66, 452]
+
+MOSAIC_CSS = """
+.ms{width:100%;height:100%;padding:56px 60px 48px;display:flex;
+    flex-direction:column;align-items:center;text-align:center}
+.ms .kicker{align-self:center}
+.ms h1{font-size:84px;font-weight:800;line-height:1.05;margin-top:18px;
+       letter-spacing:-.025em}
+.ms h1 em{font-style:normal;color:#3E6E93}
+.ms .sub{font-size:30px;color:#6E6A64;margin-top:12px}
+/* Size the cells by HEIGHT. Six columns of 1fr made each row 382px tall,
+   four rows overran the square and the footer landed on top of the last
+   row. Fixing the height makes the fit arithmetic instead of hopeful. */
+.ms .wall{flex:1;min-height:0;margin-top:24px;display:grid;
+          grid-template-columns:repeat(6,auto);gap:13px;
+          align-content:center;justify-content:center}
+.ms .wall img{height:380px;width:auto;border-radius:9px;display:block;
+              box-shadow:0 7px 18px rgba(0,0,0,.10)}
+.ms .foot{font-size:27px;color:#A8A39B;margin-top:22px;flex:none}
+"""
+
+
+def mosaic():
+    cells = "".join(f'<img src="{img(n)}">' for n in MOSAIC)
+    body = f"""<div class="ms">
+      <span class="kicker">ALL OF IT</span>
+      <h1><em>502</em> pages in one file</h1>
+      <div class="sub">Twenty-four of the sixty-one designs. No page is
+        repeated except the days and weeks.</div>
+      <div class="wall">{cells}</div>
+      <div class="foot">Undated &middot; hyperlinked PDF &middot; GoodNotes,
+        Notability, Noteful, Xodo &middot; or print at home</div>
     </div>"""
-    return shoot("10_closeup", body, CLOSEUP_CSS)
+    return shoot("10_mosaic", body, MOSAIC_CSS)
 
 
 def numbers():
@@ -448,7 +492,7 @@ if __name__ == "__main__":
               [(38, "Medication log", "dose, and how it felt"),
                (50, "Monthly budget", "in, out, what is left"),
                (51, "Before you buy it", "the ten-minute check")]),
-        everyday(), closeup(), numbers(), howto(),
+        everyday(), mosaic(), numbers(), howto(),
     ]
     for m in made:
         print("saved", os.path.basename(m))
