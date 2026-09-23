@@ -366,10 +366,12 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.2-undated  2026-09-23  flex:none 카드 부풀림 + Vision 카드 경로 통일
 #   v8.3-undated  2026-09-23  괘선 바닥 정렬 시안 -- 첫 줄이 잘려 폐기
 #   v8.4-undated  2026-09-23  카드 높이를 행 높이의 배수로 고정 (snap_cards)
+#   v8.5-undated  2026-09-23  마지막 괘선이 래스터에서 사라지던 것 수정
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.4-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.5-undated"] = dict(THEMES["v8-undated"])
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
