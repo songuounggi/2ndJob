@@ -471,6 +471,36 @@ hyperlinked pdf journal
 
 ---
 
+## 5-5. 디지털 파일명은 구매자에게 보이고, 올린 뒤엔 못 고친다
+
+Etsy 공식 문서 원문:
+
+> The file names you see will be the same ones your buyers see. We don't
+> have a way of editing the name after uploading, so be sure to name your
+> files appropriately first.
+
+`planner_v8.18-undated-FINAL.pdf` 같은 내부 이름을 그대로 올리면 구매자
+다운로드 폴더에 버전 번호가 남는다. 업로드용 사본을 따로 만든다:
+
+```
+output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf
+```
+
+제약: **70자 이내**, 영숫자와 `.` `_` `-` 만. 공백 불가.
+
+### 파일을 교체하면 기존 구매자는 어느 버전을 받는가 — **확인 못 했다**
+
+공식 문서는 접근 권한만 말한다("Canceling an order is the only way to
+revoke a buyer's access"). 어느 버전이 나가는지는 안 밝힌다.
+
+→ **"업데이트 무료 제공" 같은 문구는 쓰지 않는다.** 검증 못 한 약속이다.
+구매자가 생긴 뒤 파일을 고치면 Etsy Messages 로 직접 알린다.
+
+구매자 재다운로드 경로: Your account -> Purchases -> Download Files.
+횟수·기간 제한은 없다(공식 문서 확인).
+
+---
+
 ## 6. v8.18 교체 — **아직 올리지 않았다** (2026-09-23)
 
 현재 Etsy 에서 팔리는 파일은 **v8-undated (494p)** 다. 아래는 준비만 된
