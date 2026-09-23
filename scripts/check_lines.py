@@ -28,7 +28,7 @@ CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 # 페이지 안에서 실제로 재는 코드. 여기만 고치면 검사 항목이 바뀐다.
 PROBE = r"""
-const out = {pages:{}, trk:[], cards:[], over:[]};
+const out = {pages:{}, trk:[], cards:[], over:[], uneven:[]};
 document.querySelectorAll('section.page').forEach(sec => {
   const rules = [...sec.querySelectorAll('.lines > div')];
   if (rules.length) {
@@ -89,6 +89,25 @@ document.querySelectorAll('section.page').forEach(sec => {
       if (cb - inner > d) d = cb - inner;
     }
     if (d > 2) out.over.push({page: sec.id, i, d: Math.round(d)});
+  });
+  // The two sides of a row must end level. Pinning cards inside a row
+  // instead of the row itself broke this: Meals & groceries had a short
+  // right card, and every daily page had a short right column.
+  sec.querySelectorAll('.row').forEach((row, i) => {
+    const kids = [...row.children];
+    if (kids.length < 2) return;
+    // Measure the cards, not the wrappers. A .col stretches to the row even
+    // when the card inside it stops short, which is exactly how every daily
+    // page ended up with a short right side while the row looked level.
+    const bots = kids.map(k => {
+      const cards = k.classList.contains('card') ? [k]
+                    : [...k.querySelectorAll('.card')];
+      if (!cards.length) return null;
+      return Math.max(...cards.map(c => c.getBoundingClientRect().bottom));
+    }).filter(b => b !== null);
+    if (bots.length < 2) return;
+    const d = Math.max(...bots) - Math.min(...bots);
+    if (d > 2) out.uneven.push({page: sec.id, i, d: Math.round(d*10)/10});
   });
   sec.querySelectorAll('table.trk').forEach((t, i) => {
     const cs = e => getComputedStyle(e);
@@ -166,6 +185,7 @@ def main():
     d = measure(a.html)
     pages, trk = d["pages"], d["trk"]
     cards, over = d.get("cards", []), d.get("over", [])
+    uneven_rows = d.get("uneven", [])
     fails = []
 
     # --- 1. 한 페이지 안에서 섞였는가 -------------------------------------
@@ -261,6 +281,16 @@ def main():
             print(f"   FAIL  {o['page']:<14} 카드#{o['i']}  {o['d']}px 넘침")
     else:
         print("   OK    카드를 넘치는 내용 없음")
+
+    # --- 6. 행의 좌우가 같은 높이에서 끝나는가 ---------------------------
+    if uneven_rows:
+        pages_u = sorted({u["page"] for u in uneven_rows})
+        fails.append(f"좌우가 어긋난 행: {len(uneven_rows)}개 "
+                     f"({len(pages_u)}페이지)")
+        for u in uneven_rows[:8]:
+            print(f"   FAIL  {u['page']:<14} 행#{u['i']}  {u['d']}px 어긋남")
+    else:
+        print("   OK    행의 좌우가 같은 높이에서 끝남")
 
     print()
     if fails:

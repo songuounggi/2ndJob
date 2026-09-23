@@ -368,12 +368,16 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.4-undated  2026-09-23  카드 높이를 행 높이의 배수로 고정 (snap_cards)
 #   v8.5-undated  2026-09-23  마지막 괘선이 래스터에서 사라지던 것 수정
 #   v8.6-undated  2026-09-23  넉넉한 상자도 고정 + 표/행목록 가로 마감선
+#   v8.7-undated  2026-09-23  여분 줄 8 -> 26 (행 안에 뚫리던 빈 공간)
+#   v8.8-undated  2026-09-23  카드가 아니라 행을 고정 (좌우 높이·중간 구멍)
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.4-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.5-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.6-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.7-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.8-undated"] = dict(THEMES["v8-undated"])
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -942,7 +946,7 @@ def head(eyebrow, title, sub="", field_after=False, extra=""):
 # raising this to 18 grew one card from 334px to 575px and crushed its
 # neighbours to zero rules. Keep it small; cards that need more rules get
 # them from their own lines(n).
-LINE_SPARE = 8
+LINE_SPARE = 26
 _LN = 0
 
 
@@ -2210,64 +2214,86 @@ def build_html():
 
 # ---------------------------------------------------------------- snap ----
 SNAP_PROBE = r"""
-const out=[];
-document.querySelectorAll('.lines[data-ln]').forEach(L=>{
-  const k=[...L.children]; if(!k.length) return;
-  const P=k[0].getBoundingClientRect().height; if(!P) return;
-  const card=L.closest('.card'); if(!card) return;
-  // Only pin when the rules are the card's own last block. If anything sits
-  // below them, shrinking the card would cut it off.
-  if(L.parentElement!==card) return;
-  if(card.lastElementChild!==L) return;
-  const H=L.clientHeight;
-  // Two guards learned the hard way.
-  // The epsilon is 0.15, not 0.01: after one pass the box lands a fraction
-  // under an exact multiple, and a tight epsilon reads that as one rule
-  // fewer and shaves a whole rule off on the next pass. The worry page went
-  // from two rules a card to one that way.
-  // And the count is capped by the rules that actually exist. A box can be
-  // roomier than its rules (habits had seven rules' worth of empty space
-  // under the last one); pinning to the box would keep that space, pinning
-  // to the rules removes it.
-  // Count the rules that actually render instead of dividing. Dividing needs
-  // an epsilon, and every value of it is wrong somewhere: 0.01 read a box a
-  // hair under a multiple as one rule short and shaved a whole rule off on
-  // the next pass (worry went from two rules a card to one), while 0.15 read
-  // a box 0.8px short as one rule longer and skipped the card entirely (meds
-  // kept a full empty row under its last rule). Counting is exact.
-  const lb=L.getBoundingClientRect();
-  let kk=0;
+// A card's height once its rules end where the box does, or null when the
+// card should be left alone.
+function needed(card){
+  const L = card.querySelector(':scope > .lines');
+  if(!L) return null;
+  const k = [...L.children];
+  if(!k.length) return null;
+  const P = k[0].getBoundingClientRect().height;
+  if(!P) return null;
+  if(card.lastElementChild !== L) return null;   // something sits below
+  const H = L.clientHeight;
+  // The box is exactly its rules already -- a spare=0 card, sized by them.
+  if(Math.abs(k.length*P - H) < 1) return null;
+  const lb = L.getBoundingClientRect();
+  let kk = 0;
   for(const d of k){
-    // 0.5px, not 1px. Chrome lays out on a 1/64px grid, so half a pixel
-    // absorbs the rounding while still excluding a rule that genuinely
-    // does not fit -- at 1px the eighth rule of the meds card counted
-    // as visible though it overhangs by 0.8px, the remainder came out
-    // negative, and the card was left with an empty row.
-    if(d.getBoundingClientRect().bottom<=lb.bottom+0.5) kk++; else break;
+    if(d.getBoundingClientRect().bottom <= lb.bottom + 0.5) kk++; else break;
   }
-  if(kk<1) return;
-  // Skip only the box that is exactly its own rules -- the spare=0 card,
-  // whose height comes from the rules themselves. scrollHeight cannot tell
-  // that apart from a box that is ROOMIER than its rules (both report
-  // scrollHeight == clientHeight), and skipping those left a rule's worth
-  // of dead space under the last line on Screen time. Compare heights.
-  if(Math.abs(k.length*P-H)<1) return;
-  // Aim for one pixel under the last rule rather than zero. On the boundary
-  // the rasteriser may or may not keep that rule: "Worth it?" measured three
-  // in the DOM and printed two, and Gratitude lost its ninth the same way.
-  const want=kk*P+1;
-  const d=H-want;
-  if(Math.abs(d)<0.5) return;             // already right; pinning would churn
-  const parent=card.parentElement;
-  // +1px of slack. Pinning to exactly k*P puts the last rule's border on
-  // the clip boundary, and it is a coin toss whether it survives
-  // rasterisation -- "Worth it?" measured three rules in the DOM and
-  // printed two. One pixel is invisible and keeps the rule inside.
-  out.push({id:L.getAttribute('data-ln'),
-            h:Math.round((card.getBoundingClientRect().height-d)*100)/100,
-            row:parent && parent.classList.contains('row')});
+  if(kk < 1) return null;
+  // One pixel under the last rule, not zero: on the boundary the rasteriser
+  // may drop it.
+  return card.getBoundingClientRect().height - (H - (kk*P + 1));
+}
+
+const out = [], rowPins = [];
+const inRow = new Set();
+
+// Rows first. Pin the ROW, never the cards inside it -- pinning the cards
+// and holding them with align-self:flex-start let the two sides of a row
+// end at different heights (47p Meals & groceries), and left the row itself
+// full size so the slack opened as a hole above the card below it
+// (32p Boundaries, 49p Cleaning).
+document.querySelectorAll('.row').forEach(row => {
+  // Every card anywhere under the row is off limits to the per-card pass --
+  // including the ones nested in a .col. Pinning one of those shortened the
+  // column and left the two sides of a daily page ending at different
+  // heights (121p).
+  row.querySelectorAll('.card').forEach(c => inRow.add(c));
+  const kids = [...row.children];
+  let key = null, want = 0, any = false;
+  for(const el of kids){
+    const L = el.querySelector('.lines[data-ln]');
+    if(L && !key) key = L.getAttribute('data-ln');
+    const h = el.getBoundingClientRect().height;
+    if(el.classList.contains('card')){
+      const n = needed(el);
+      if(n === null){ want = Math.max(want, h); }
+      else { want = Math.max(want, n); any = true; }
+    } else {
+      // A column: its bottom is set by its last card, so it can give back
+      // only that card's slack.
+      const cards = [...el.children].filter(c => c.classList.contains('card'));
+      const last = cards[cards.length - 1];
+      const n = last ? needed(last) : null;
+      if(n === null){ want = Math.max(want, h); }
+      else {
+        want = Math.max(want,
+                        h - (last.getBoundingClientRect().height - n));
+        any = true;
+      }
+    }
+  }
+  if(!key || !any) return;
+  const h = row.getBoundingClientRect().height;
+  if(Math.abs(h - want) < 0.5) return;
+  rowPins.push({id: key, h: Math.round(want*100)/100});
 });
-document.body.setAttribute('data-probe',JSON.stringify(out));
+
+// Cards that stand on their own in the column.
+document.querySelectorAll('.lines[data-ln]').forEach(L => {
+  const card = L.closest('.card');
+  if(!card || inRow.has(card)) return;
+  if(L.parentElement !== card) return;
+  const n = needed(card);
+  if(n === null) return;
+  if(Math.abs(card.getBoundingClientRect().height - n) < 0.5) return;
+  out.push({id: L.getAttribute('data-ln'), h: Math.round(n*100)/100});
+});
+
+document.body.setAttribute('data-probe', JSON.stringify({c: out, r: rowPins}));
 """
 
 
@@ -2302,46 +2328,29 @@ def snap_cards():
     if not m:
         raise RuntimeError("snap 측정 실패: Chrome 이 결과를 내놓지 "
                            "않았다 " + (r.stderr or "")[-400:])
-    pins = json.loads(m.group(1).replace("&quot;", '"'))
-    if not pins:
+    got = json.loads(m.group(1).replace("&quot;", '"'))
+    pins, rowpins = got["c"], got["r"]
+    if not pins and not rowpins:
         return 0
-    rules = ["/* snap: ruled cards pinned to a whole number of rule pitches */",
-             ".body{justify-content:space-between}"]
-    for p in pins:
-        # align-self keeps a pinned card from stretching back to the row
-        # height; in a column the pin has to beat flex:1 as well.
-        # !important is required: the cards carry style="flex:1" inline, and
-        # an inline declaration beats a stylesheet one. Without it the pin is
-        # ignored in a column (flex-basis:0 wins over height) and only the
-        # cards inside a .row move.
-        # align-self only belongs on a card inside a .row. That row runs
-        # horizontally, so its cross axis is vertical and flex-start is what
-        # stops the card stretching back to the row height. In the column
-        # .body the cross axis is horizontal -- the same declaration there
-        # shrinks the card's WIDTH to its content.
-        # min-height:0 is not optional. A flex item defaults to
-        # min-height:auto, which resolves to its content -- and the
-        # content here is every spare rule, clipped or not. Without
-        # this the pinned card grows to fit them all (doctor: 334px
-        # pinned, 575px rendered) and squeezes its neighbours to zero.
-        # Which axis `flex` controls depends on the parent's direction, so
-        # the pin differs. Inside a horizontal .row, flex sets the WIDTH --
-        # overriding it to none collapses the card to its text (the Vision
-        # page rendered as two narrow columns). There the height is pinned
-        # directly and align-self stops the stretch. Inside the column .body,
-        # flex sets the height, so it has to be cleared for height to win;
-        # align-self there would attack the width instead.
-        if p.get("row"):
-            pin = (f'height:{p["h"]}px!important;min-height:0!important;'
-                   f'align-self:flex-start!important')
-        else:
-            pin = (f'flex:none!important;height:{p["h"]}px!important;'
-                   f'min-height:0!important')
-        rules.append(f'.card:has(>[data-ln="{p["id"]}"]){{{pin}}}')
+    rules = ["/* snap: ruled boxes pinned to a whole number of rule pitches */"]
+    for r in rowpins:
+        # The row is pinned and its cards stretch to it, so the two sides of
+        # a row always end level.
+        rules.append(
+            f'.row:has(>.card>[data-ln="{r["id"]}"])'
+            f'{{flex:none!important;height:{r["h"]}px!important;'
+            f'min-height:0!important}}')
+    for c in pins:
+        # A card standing on its own in the column: flex sets its height
+        # there, so flex has to be cleared for height to win.
+        rules.append(
+            f'.card:has(>[data-ln="{c["id"]}"])'
+            f'{{flex:none!important;height:{c["h"]}px!important;'
+            f'min-height:0!important}}')
     html = html.replace("</head>",
                         "<style>" + chr(10).join(rules) + "</style></head>")
     io.open(SRC, "w", encoding="utf-8").write(html)
-    return len(pins)
+    return len(pins) + len(rowpins)
 
 
 def to_pdf():
