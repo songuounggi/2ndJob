@@ -466,8 +466,13 @@ h1{font-size:23pt;font-weight:800;margin:11pt 0 0;letter-spacing:-.01em}
 .box{width:12pt;height:12pt;border:1.2px solid var(--line);border-radius:3pt;
      flex:none}
 
-.lines{flex:1;display:flex;flex-direction:column;min-height:0}
-.lines>div{flex:1;border-bottom:1px solid var(--line);min-height:16pt}
+/* Writing rules are fixed height, never flex. With flex:1 the gap became
+   card-height / line-count, so it differed on every page -- measured at
+   21.3px to 139.5px across v8, with 209 pages mixing two or more gaps on
+   one page. Paper does not do that. See LINES.md. */
+.lines{flex:1;display:flex;flex-direction:column;min-height:0;
+       overflow:hidden}
+.lines>div{height:26pt;flex:none;border-bottom:1px solid var(--line)}
 
 .row{display:flex;gap:12pt;flex:1;min-height:0}
 .col{display:flex;flex-direction:column;gap:12pt;min-height:0}
@@ -492,7 +497,16 @@ h1{font-size:23pt;font-weight:800;margin:11pt 0 0;letter-spacing:-.01em}
 .trk .dh{border:none;font-size:5.4pt;color:var(--soft);font-weight:800;
          height:13pt;vertical-align:bottom;padding-bottom:3pt;text-align:center}
 .trk .dh.we{color:var(--accent-text)}
-.trk tr:first-child .nm{border-bottom:none}
+/* The label column is borderless, so the table had no left edge but kept a
+   right one from the last cell -- visibly lopsided. Drop the outer frame on
+   all four sides and keep only the dividers between cells, which is the
+   house rule (no outlines; shadows do the layering). */
+/* No exception for the label column: the rule under the header runs the
+   full width. .nm already carries border-bottom; the old
+   `tr:first-child .nm{border-bottom:none}` cut it off on the left only,
+   which is what made the header look lopsided on 7 tables. */
+.trk td:last-child{border-right:none}
+.trk tr:last-child td{border-bottom:none}
 
 .dots{background-image:radial-gradient(var(--line) 1.1px, transparent 1.1px);
       background-size:14pt 14pt;background-position:8pt 8pt}
@@ -896,8 +910,16 @@ def head(eyebrow, title, sub="", field_after=False, extra=""):
     return f'<div class="head"><div class="eyebrow">{eyebrow}</div>{t}{s}</div>'
 
 
+# The rules overfill and the box clips them. Sizing each block to its card
+# by hand means re-tuning every page whenever a card changes -- measured
+# leftovers of up to 11 rows on unique pages and 4 on every daily. n is the
+# floor; the spare rows fall outside overflow:hidden.
+LINE_SPARE = 8
+
+
 def lines(n):
-    return '<div class="lines">' + "<div></div>" * n + "</div>"
+    return ('<div class="lines">'
+            + "<div></div>" * (n + LINE_SPARE) + "</div>")
 
 
 def checkrow(field_flex=1):
@@ -1191,7 +1213,10 @@ def tracker(names, blanks=0, corner=""):
                     for _ in range(blanks))
     # the corner needs the label column's width (.nm) with the header row's
     # typography (.dh); neither class gives both
-    head_cell = (f'<td style="width:104pt;border:none;font-size:5.4pt;'
+    # a labelled corner needs the underline the day columns get; without it
+    # the header row is cut on one side only (same defect as TASK)
+    head_cell = (f'<td style="width:104pt;border:none;'
+                 f'border-bottom:1px solid var(--line);font-size:5.4pt;'
                  f'color:var(--soft);font-weight:800;text-align:left;'
                  f'vertical-align:bottom;padding:0 0 3pt 2pt">{corner}</td>'
                  ) if corner else '<td class="nm"></td>'
