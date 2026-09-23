@@ -377,6 +377,9 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.13-undated 2026-09-23  접근성 태그 유지 + 노트 8장
 #   v8.14-undated 2026-09-23  NOTES 인덱스 카드가 내용만큼만 차지하도록
 #   v8.15-undated 2026-09-23  빈 행을 둔 표에 왼쪽 열 라벨
+#   v8.16-undated 2026-09-23  표지 Notes 행 + 적는 칸 마감선 (마감선은 반려)
+#   v8.17-undated 2026-09-23  표지 Notes 행만. 마감선 확장은 되돌림
+#   v8.18-undated 2026-09-23  목록 9군데 마감선 제거 (표 11개는 유지)
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
@@ -392,6 +395,9 @@ THEMES["v8.12-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.13-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.14-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.15-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.16-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.17-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.18-undated"] = dict(THEMES["v8-undated"])
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -1050,6 +1056,7 @@ def p_cover():
             ("Feelings tools", "the loop, the sting, the inner critic", "10"),
             ("Health &amp; habits", "medication, sleep, routines", "10"),
             ("Life admin", "meals, money, the things that slip", "10"),
+            ("Blank space", "dot grid, ruled, plain", "8"),
         ]
     else:
         items = [
@@ -1165,7 +1172,7 @@ def p_week(label=""):
     days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:flex-start;padding-top:8pt;'
-        f'border-bottom:1px solid var(--line)">'
+        f'{"" if i == len(days) - 1 else "border-bottom:1px solid var(--line)"}">'
         f'<span class="chip" style="{"" if i < 5 else "background:var(--field);color:var(--mid)"}">{d}</span>'
         f'</div>' for i, d in enumerate(days))
     return (head("Weekly spread", label or "Week of", field_after=True)
@@ -1436,7 +1443,7 @@ def p_braindump():
 def p_session():
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'border-bottom:1px solid var(--line)">'
+        f'{"" if i == 5 else "border-bottom:1px solid var(--line)"}">'
         f'<span style="font-size:7.5pt;font-weight:700;color:var(--soft);'
         f'width:16pt">{i + 1}</span>'
         f'<div class="field" style="flex:2"></div>'
@@ -1469,7 +1476,7 @@ def p_obstacle():
 def p_paralysis():
     opts = "".join(
         f'<div style="flex:1;display:flex;gap:10pt;align-items:center;'
-        f'border-bottom:1px solid var(--line)">'
+        f'{"" if i == 2 else "border-bottom:1px solid var(--line)"}">'
         f'<span class="chip">{c}</span><div class="field" style="flex:1"></div></div>'
         for i, c in enumerate(["A", "B", "C"]))
     return (head("Focus", "Stuck on deciding",
@@ -1579,7 +1586,7 @@ def p_meals():
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'border-bottom:1px solid var(--line)">'
+        f'{"" if i == len(days) - 1 else "border-bottom:1px solid var(--line)"}">'
         f'<span class="chip" style="width:30pt;text-align:center">{d}</span>'
         f'<div class="field" style="flex:1"></div></div>'
         for i, d in enumerate(days))
@@ -1744,7 +1751,7 @@ def p_gratitude():
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'border-bottom:1px solid var(--line)">'
+        f'{"" if i == len(days) - 1 else "border-bottom:1px solid var(--line)"}">'
         f'<span class="chip" style="width:30pt;text-align:center">{d}</span>'
         f'<div class="field" style="flex:1"></div></div>'
         for i, d in enumerate(days))
@@ -1857,7 +1864,7 @@ def p_impulse():
 def p_reading():
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'border-bottom:1px solid var(--line)">'
+        f'{"" if i == 9 else "border-bottom:1px solid var(--line)"}">'
         f'<div class="box"></div>'
         f'<div class="field" style="flex:3"></div>'
         f'<div class="field" style="width:52pt"></div></div>' for i in range(10))
@@ -1972,7 +1979,7 @@ def p_avoiding():
 def p_deadline():
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'border-bottom:1px solid var(--line)">'
+        f'{"" if i == 6 else "border-bottom:1px solid var(--line)"}">'
         f'<div class="field" style="width:58pt"></div>'
         f'<div class="field" style="flex:1"></div></div>' for i in range(7))
     return (head("Focus", "Working backwards",
@@ -2018,7 +2025,7 @@ def p_boundaries():
 def p_energy():
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'border-bottom:1px solid var(--line)">'
+        f'{"" if i == 7 else "border-bottom:1px solid var(--line)"}">'
         f'<div class="field" style="flex:3"></div>'
         + "".join('<div class="box" style="width:12pt;height:12pt"></div>'
                   for _ in range(5))
@@ -2037,7 +2044,7 @@ def p_intake():
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:8pt;'
-        f'border-bottom:1px solid var(--line)">'
+        f'{"" if i == len(days) - 1 else "border-bottom:1px solid var(--line)"}">'
         f'<span class="chip" style="width:30pt;text-align:center">{d}</span>'
         + "".join('<div class="box" style="width:11pt;height:11pt"></div>'
                   for _ in range(8))
