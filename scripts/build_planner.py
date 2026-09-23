@@ -6,6 +6,8 @@ internal `#anchor` links as PDF named destinations.
 """
 
 import calendar
+import io
+import json
 import os
 import re
 import tempfile
@@ -361,7 +363,13 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 # output/ is gitignored so git will not bring it back.
 #   v8-undated    2026-09-21  출시본 (Etsy 에 올라간 것)
 #   v8.1-undated  2026-09-23  선 일관성 수정
+#   v8.2-undated  2026-09-23  flex:none 카드 부풀림 + Vision 카드 경로 통일
+#   v8.3-undated  2026-09-23  괘선 바닥 정렬 시안 -- 첫 줄이 잘려 폐기
+#   v8.4-undated  2026-09-23  카드 높이를 행 높이의 배수로 고정 (snap_cards)
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.4-undated"] = dict(THEMES["v8-undated"])
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -922,12 +930,30 @@ def head(eyebrow, title, sub="", field_after=False, extra=""):
 # by hand means re-tuning every page whenever a card changes -- measured
 # leftovers of up to 11 rows on unique pages and 4 on every daily. n is the
 # floor; the spare rows fall outside overflow:hidden.
+# Spare rules exist to be clipped, and only where the card's height is set
+# from outside. On a card whose height follows its content -- the cards in
+# hyperfocus and doctor are like this -- every spare rule is real height:
+# raising this to 18 grew one card from 334px to 575px and crushed its
+# neighbours to zero rules. Keep it small; cards that need more rules get
+# them from their own lines(n).
 LINE_SPARE = 8
+_LN = 0
 
 
-def lines(n):
-    return ('<div class="lines">'
-            + "<div></div>" * (n + LINE_SPARE) + "</div>")
+def lines(n, spare=LINE_SPARE):
+    """Rules for a writing area. `n` is the floor, not the count.
+
+    The spare rules exist to be clipped: the card is taller than `n` rules
+    on most pages, and we would otherwise leave a blank strip. That only
+    works when the flex container sets the card's height. On a `flex:none`
+    card the content sets the height instead, so the spare rules inflate
+    the card rather than being cut -- on "Working backwards" it grew to ten
+    rules and crushed the field rows above it. Pass spare=0 there.
+    """
+    global _LN
+    _LN += 1
+    return (f'<div class="lines" data-ln="{_LN}">'
+            + "<div></div>" * (n + spare) + "</div>")
 
 
 def checkrow(field_flex=1):
@@ -1288,8 +1314,12 @@ def prompt_card(label, hint, n_lines, flex=1):
     # extra rule -- that is why "Talk to yourself kindly" showed 2/3/2/2.
     h = (f'<div style="font-size:8pt;color:var(--soft);margin:-4pt 0 8pt;'
          f'min-height:11pt">{hint or "&nbsp;"}</div>')
+    # flex:none means the content sets the height -- the spare rules would
+    # not be clipped, so do not print them. See lines().
+    spare = 0 if str(flex) == "none" else LINE_SPARE
     return (f'<div class="card" style="flex:{flex}">'
-            f'<div class="label">{label}</div>{h}{lines(n_lines)}</div>')
+            f'<div class="label">{label}</div>{h}'
+            f'{lines(n_lines, spare)}</div>')
 
 
 def field_row(label):
@@ -1785,9 +1815,11 @@ def p_weekly_review():
 
 
 def p_vision():
-    boxes = "".join(
-        f'<div class="card" style="flex:1"><div class="label">{t}</div>{lines(5)}</div>'
-        for t in ["This year", "Three years"])
+    # All four cards go through prompt_card. Building a card by hand skips
+    # the reserved hint slot, so its rules start 11pt higher and one more
+    # fits -- the top pair had six rules against the bottom pair's five.
+    boxes = "".join(prompt_card(t, "", 5)
+                    for t in ["This year", "Three years"])
     return (head("Year", "Vision page", "Not a plan. Just the direction.")
             # both pairs go in rows: with only the top pair wrapped, the
             # row's gap made those two cards shorter and they fitted one
@@ -2165,6 +2197,113 @@ def build_html():
     return SRC
 
 
+# ---------------------------------------------------------------- snap ----
+SNAP_PROBE = r"""
+const out=[];
+document.querySelectorAll('.lines[data-ln]').forEach(L=>{
+  const k=[...L.children]; if(!k.length) return;
+  const P=k[0].getBoundingClientRect().height; if(!P) return;
+  const card=L.closest('.card'); if(!card) return;
+  // Only pin when the rules are the card's own last block. If anything sits
+  // below them, shrinking the card would cut it off.
+  if(L.parentElement!==card) return;
+  if(card.lastElementChild!==L) return;
+  const H=L.clientHeight;
+  // Two guards learned the hard way.
+  // The epsilon is 0.15, not 0.01: after one pass the box lands a fraction
+  // under an exact multiple, and a tight epsilon reads that as one rule
+  // fewer and shaves a whole rule off on the next pass. The worry page went
+  // from two rules a card to one that way.
+  // And the count is capped by the rules that actually exist. A box can be
+  // roomier than its rules (habits had seven rules' worth of empty space
+  // under the last one); pinning to the box would keep that space, pinning
+  // to the rules removes it.
+  const kk=Math.min(Math.floor(H/P+0.15), k.length);
+  if(kk<1) return;
+  const r=H-kk*P;
+  if(r<2) return;                         // close enough; pinning would churn
+  const parent=card.parentElement;
+  out.push({id:L.getAttribute('data-ln'),
+            h:Math.round((card.getBoundingClientRect().height-r)*100)/100,
+            row:parent && parent.classList.contains('row')});
+});
+document.body.setAttribute('data-probe',JSON.stringify(out));
+"""
+
+
+def snap_cards():
+    """Make every ruled card an exact whole number of rule pitches tall.
+
+    The rules have a fixed height, but the card's height comes from flex, so
+    what is left over after the last rule is `H mod pitch` -- measured at
+    0 to 35px across the document. That slack is visible as an uneven bottom
+    margin, and it cannot be removed in CSS because CSS has no modulo.
+
+    Pushing the slack to the top instead (justify-content:flex-end) was tried
+    and is worse: it eats into the first row, which then has less than a full
+    line of writing space on 87 of 115 blocks.
+
+    So the card is measured once and then pinned to header + k*pitch. The
+    slack moves out of the card and into the gaps between cards, where it is
+    not readable as a half-empty row. The pins go in an appended stylesheet
+    keyed by data-ln, so the generated markup stays untouched.
+    """
+    html = io.open(SRC, encoding="utf-8").read()
+    tmp = os.path.join(tempfile.gettempdir(), "snap_probe.html")
+    io.open(tmp, "w", encoding="utf-8").write(
+        html.replace("</body>", f"<script>{SNAP_PROBE}</script></body>"))
+    profile = os.path.join(tempfile.gettempdir(), "planner-snap-profile")
+    r = subprocess.run(
+        [CHROME, "--headless=new", "--disable-gpu", f"--user-data-dir={profile}",
+         "--virtual-time-budget=25000", "--dump-dom",
+         "file:///" + tmp.replace(chr(92), "/")],
+        capture_output=True, text=True, encoding="utf-8", errors="replace")
+    m = re.search(r'data-probe="([^"]*)"', r.stdout or "")
+    if not m:
+        raise RuntimeError("snap 측정 실패: Chrome 이 결과를 내놓지 "
+                           "않았다 " + (r.stderr or "")[-400:])
+    pins = json.loads(m.group(1).replace("&quot;", '"'))
+    if not pins:
+        return 0
+    rules = ["/* snap: ruled cards pinned to a whole number of rule pitches */",
+             ".body{justify-content:space-between}"]
+    for p in pins:
+        # align-self keeps a pinned card from stretching back to the row
+        # height; in a column the pin has to beat flex:1 as well.
+        # !important is required: the cards carry style="flex:1" inline, and
+        # an inline declaration beats a stylesheet one. Without it the pin is
+        # ignored in a column (flex-basis:0 wins over height) and only the
+        # cards inside a .row move.
+        # align-self only belongs on a card inside a .row. That row runs
+        # horizontally, so its cross axis is vertical and flex-start is what
+        # stops the card stretching back to the row height. In the column
+        # .body the cross axis is horizontal -- the same declaration there
+        # shrinks the card's WIDTH to its content.
+        # min-height:0 is not optional. A flex item defaults to
+        # min-height:auto, which resolves to its content -- and the
+        # content here is every spare rule, clipped or not. Without
+        # this the pinned card grows to fit them all (doctor: 334px
+        # pinned, 575px rendered) and squeezes its neighbours to zero.
+        # Which axis `flex` controls depends on the parent's direction, so
+        # the pin differs. Inside a horizontal .row, flex sets the WIDTH --
+        # overriding it to none collapses the card to its text (the Vision
+        # page rendered as two narrow columns). There the height is pinned
+        # directly and align-self stops the stretch. Inside the column .body,
+        # flex sets the height, so it has to be cleared for height to win;
+        # align-self there would attack the width instead.
+        if p.get("row"):
+            pin = (f'height:{p["h"]}px!important;min-height:0!important;'
+                   f'align-self:flex-start!important')
+        else:
+            pin = (f'flex:none!important;height:{p["h"]}px!important;'
+                   f'min-height:0!important')
+        rules.append(f'.card:has(>[data-ln="{p["id"]}"]){{{pin}}}')
+    html = html.replace("</head>",
+                        "<style>" + chr(10).join(rules) + "</style></head>")
+    io.open(SRC, "w", encoding="utf-8").write(html)
+    return len(pins)
+
+
 def to_pdf():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     before = os.path.getmtime(OUT) if os.path.exists(OUT) else 0
@@ -2192,5 +2331,13 @@ if __name__ == "__main__":
             print("baked:", f)
     build_bloom_assets()
     build_html()
+    # One pass is not enough: pinning a card frees space that the cards still
+    # on flex:1 absorb, which moves them off the pitch again. Re-measure until
+    # nothing is left to pin.
+    for _pass in range(1, 8):
+        n = snap_cards()
+        print(f"snap pass {_pass}: pinned {n}")
+        if not n:
+            break
     to_pdf()
     print("Saved:", OUT)

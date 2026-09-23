@@ -28,13 +28,48 @@ CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 # 페이지 안에서 실제로 재는 코드. 여기만 고치면 검사 항목이 바뀐다.
 PROBE = r"""
-const out = {pages:{}, trk:[]};
+const out = {pages:{}, trk:[], cards:[], over:[]};
 document.querySelectorAll('section.page').forEach(sec => {
   const rules = [...sec.querySelectorAll('.lines > div')];
   if (rules.length) {
     const hs = rules.map(d => Math.round(d.getBoundingClientRect().height*10)/10);
     out.pages[sec.id] = [...new Set(hs)].sort((a,b) => a-b);
   }
+  // 높이가 같은 카드는 줄 수도 같아야 한다. 사용자의 규칙 그대로다 --
+  // "섹션 높이가 같다면 줄 수도 같아야 함". 같은 flex 로 묶으면 Vision
+  // 페이지처럼 행이 다른 두 쌍을 놓친다(양쪽 행 모두 flex:1 이라 높이는
+  // 같은데 줄 수가 6 대 5 였다). 그래서 실측 높이로 묶는다.
+  sec.querySelectorAll('.lines').forEach(L => {
+    const k = [...L.children];
+    if (!k.length) return;
+    const one = k[0].getBoundingClientRect().height;
+    if (!one) return;
+    const card = L.closest('.card');
+    if (!card) return;
+    out.cards.push({
+      page: sec.id,
+      h: Math.round(card.getBoundingClientRect().height),
+      vis: Math.floor(L.clientHeight / one + 0.01),
+      label: (card.querySelector('.label') || {}).textContent || ''
+    });
+  });
+  // 카드 안의 내용이 카드를 넘치는가. flex:none 카드에 여분 괘선을 찍어
+  // 카드가 부풀고 위 칸을 짓눌렀던 결함("Working backwards")을 잡는다.
+  sec.querySelectorAll('.card').forEach((c, i) => {
+    // scrollHeight 를 쓰면 안 된다. .card::after 의 그림자 타원이
+    // (top:100%, height:13pt = 17.3px) 카드 아래에 놓여 있어서 모든
+    // 카드가 17~18px 넘치는 것으로 잡힌다. 자식 요소만 본다.
+    const cs = getComputedStyle(c);
+    const r = c.getBoundingClientRect();
+    const inner = r.bottom - parseFloat(cs.paddingBottom || 0)
+                           - parseFloat(cs.borderBottomWidth || 0);
+    let d = 0;
+    for (const ch of c.children) {
+      const cb = ch.getBoundingClientRect().bottom;
+      if (cb - inner > d) d = cb - inner;
+    }
+    if (d > 2) out.over.push({page: sec.id, i, d: Math.round(d)});
+  });
   sec.querySelectorAll('table.trk').forEach((t, i) => {
     const cs = e => getComputedStyle(e);
     const rows = [...t.rows];
@@ -110,6 +145,7 @@ def main():
 
     d = measure(a.html)
     pages, trk = d["pages"], d["trk"]
+    cards, over = d.get("cards", []), d.get("over", [])
     fails = []
 
     # --- 1. 한 페이지 안에서 섞였는가 -------------------------------------
@@ -152,6 +188,37 @@ def main():
             print(f"   FAIL  {t['page']} 표#{t['i']} 바깥선({side})")
     if not no_underline and not outer:
         print("   OK    헤더선 균일, 바깥 테두리 없음")
+
+    # --- 4. 높이가 같은 카드는 줄 수도 같아야 한다 ------------------------
+    from collections import defaultdict
+    by = defaultdict(set)
+    where = defaultdict(list)
+    for c in cards:
+        by[(c["page"], c["h"])].add(c["vis"])
+        where[(c["page"], c["h"])].append((c["label"].strip()[:22], c["vis"]))
+    uneven = {k: v for k, v in by.items() if len(v) > 1}
+    print("")
+    print(f"괘선 카드 {len(cards)}개")
+    if uneven:
+        fails.append(f"높이가 같은데 줄 수가 다른 카드: {len(uneven)}묶음")
+        for k, v in list(uneven.items())[:8]:
+            print(f"   FAIL  {k[0]:<14} 높이 {k[1]}px  줄 {sorted(v)}")
+            for lb, n in where[k]:
+                print(f"           {n}줄  {lb}")
+        if len(uneven) > 8:
+            print(f"   ... 외 {len(uneven)-8}묶음")
+    else:
+        print("   OK    같은 높이 = 같은 줄 수")
+
+    # --- 5. 카드를 넘치는 내용 --------------------------------------------
+    if over:
+        pages_over = sorted({o["page"] for o in over})
+        fails.append(f"내용이 카드를 넘침: {len(over)}개 "
+                     f"({len(pages_over)}페이지)")
+        for o in over[:8]:
+            print(f"   FAIL  {o['page']:<14} 카드#{o['i']}  {o['d']}px 넘침")
+    else:
+        print("   OK    카드를 넘치는 내용 없음")
 
     print()
     if fails:
