@@ -145,20 +145,29 @@ TMPL_CSS = """
        letter-spacing:-.025em}
 .tm h1 em{font-style:normal;color:#3E6E93}
 .tm .sub{font-size:34px;color:#6E6A64;margin-top:16px}
-.tm .grid{flex:1;min-height:0;margin-top:34px;display:grid;
-          grid-template-columns:1fr 1fr;gap:30px 44px;align-content:center;
-          justify-items:center}
+/* auto columns, not 1fr: the slack belongs on the outside edges, not as
+   a gap between the two halves of the image. */
+.tm .grid{flex:1;min-height:0;margin-top:30px;display:grid;
+          grid-template-columns:repeat(3,auto);gap:24px 40px;
+          align-content:center;justify-content:center;justify-items:center}
 .tm .cell{display:flex;flex-direction:column;align-items:center;gap:12px}
-.tm .cell img{height:var(--cell,560px);width:auto;border-radius:12px;
+.tm .cell img{height:var(--cell,610px);width:auto;border-radius:12px;
               box-shadow:0 12px 30px rgba(0,0,0,.11);display:block}
-.tm .cell b{font-size:29px;font-weight:800;color:#3A3A3A}
+.tm .cell b{font-size:27px;font-weight:800;color:#3A3A3A}
 """
 
+# Six, not four. Four in a 2x2 left a hole down the middle of the square --
+# the columns were 1fr of a 1816px canvas and the art is only ~480px wide.
+# Three across closes it, and the six are chosen to look different from each
+# other at thumbnail size: radial, dense grid, calendar, rows of boxes,
+# chips, input fields.
 TMPL_PICKS = [
     (17, "Mind map"),
     (35, "31-day habit tracker"),
     (66, "Monthly grid"),
     (48, "Wheel of life"),
+    (29, "Gratitude"),
+    (22, "Working backwards"),
 ]
 
 
