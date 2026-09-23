@@ -538,8 +538,24 @@ Etsy 에서 팔리는 파일은 이제 **v8.18-undated (502p)** 다. 다섯 단�
 ### 남은 것
 
 - 게시된 핀 3개 설명이 아직 494/58 이다
-- 리스팅 Highlights 에 **"Party decor for gatherings and celebrations"**
-  가 붙어 있다. ADHD 플래너와 무관하다 -- Item Details 의 속성에서 뺀다
+### Highlights 의 "Party decor" 는 건드리지 않는다
+
+리스팅 상단 Highlights 에 **"Party decor for gatherings and celebrations"**
+가 붙는다. ADHD 플래너와 무관해 보이지만 **셀러가 넣은 속성이 아니다.**
+
+`Planner Templates` 의 Etsy 분류 경로가 이렇기 때문이다:
+
+```
+Paper & Party Supplies -> Paper -> Stationery
+  -> Design & Templates -> Templates -> Planner Templates
+```
+
+최상위 `Paper & Party Supplies` 를 Etsy 가 자동으로 설명하는 문장이고,
+입력칸이 없어 뺄 수 없다. 카테고리 1위 FutureADHD 리스팅에도 **같은 줄이
+그대로 있다**(2026-09-23 확인).
+
+없애려면 카테고리를 옮겨야 하는데 `Planner Templates` 는 구매자가 실제로
+검색해 들어오는 자리다. **그대로 둔다.**
 
 ---
 
