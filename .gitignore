@@ -1,6 +1,12 @@
-# 생성물 -- scripts/build_planner.py 로 언제든 다시 뽑는다
-output/
+# 생성물 -- scripts/build_planner.py 로 언제든 다시 뽑는다.
+# output/ 를 통째로 무시하면 git 이 그 안으로 들어가지 않아 예외가 먹지
+# 않는다. output/* 로 적어야 아래 ! 가 동작한다.
+output/*
 src/
+
+# 예외: 올릴 핀 이미지는 다른 PC 로 따라가야 한다. 다시 뽑으려면 PDF
+# 빌드부터 페이지 렌더까지 사슬이 길고, 6장에 850KB 뿐이다.
+!output/pinterest_v815/
 
 # 검수용 임시 렌더
 scratch_*.png
