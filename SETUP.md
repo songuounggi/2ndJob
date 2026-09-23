@@ -9,7 +9,7 @@
 |---|---|---|
 | 환경변수 주고 실행 | `$env:NAME="값"; python x.py` | `NAME=값 python x.py` |
 
-PowerShell에서 `PLANNER_VERSION=v8-undated python ...` 를 치면 환경변수가
+PowerShell에서 `PLANNER_VERSION=v8.18-undated python ...` 를 치면 환경변수가
 전달되지 않고 기본값 `v2-warm` 이 빌드된다. **에러 없이 다른 파일명으로
 성공 메시지가 뜨기 때문에** 눈치채기 어렵다. (실측 확인함)
 
@@ -132,22 +132,26 @@ grep -n "^CHROME" scripts/build_planner.py
 **PowerShell**
 
 ```bash
-$env:PLANNER_VERSION="v8-undated"; python scripts/build_planner.py
+$env:PLANNER_VERSION="v8.18-undated"; python scripts/build_planner.py
 ```
 
 **Git Bash**
 
 ```bash
-PLANNER_VERSION=v8-undated python scripts/build_planner.py
+PLANNER_VERSION=v8.18-undated python scripts/build_planner.py
 ```
 
-`Saved: ...\output\planner_v8-undated.pdf` 가 찍히면 성공.
+`Saved: ...\output\planner_v8.18-undated.pdf` 가 찍히면 성공.
+
+> **`v8.18-undated` 가 현재 판매본이다.** `v8-undated` 는 2026-09-21
+> 출시본(494p)이고 비교용으로만 남겨 둔다. 버전 이름을 틀리면 옛 판을
+> 만들게 된다.
 
 이어서 중복 스트림을 접는다. **이 단계를 빼면 25.9MB라 Etsy 20MB 상한을
 넘는다.**
 
 ```bash
-python scripts/dedupe_pdf.py output/planner_v8-undated.pdf output/planner_v8-undated-FINAL.pdf
+python scripts/dedupe_pdf.py output/planner_v8.18-undated.pdf output/planner_v8.18-undated-FINAL.pdf
 ```
 
 기대 출력:
@@ -166,7 +170,7 @@ python scripts/dedupe_pdf.py output/planner_v8-undated.pdf output/planner_v8-und
 **페이지 수와 링크**
 
 ```bash
-python -c "import os; from pypdf import PdfReader; p='output/planner_v8-undated-FINAL.pdf'; r=PdfReader(p); print(len(r.pages),'pages /',len(r.named_destinations),'destinations / %.2f MB'%(os.path.getsize(p)/1048576))"
+python -c "import os; from pypdf import PdfReader; p='output/planner_v8.18-undated-FINAL.pdf'; r=PdfReader(p); print(len(r.pages),'pages /',len(r.named_destinations),'destinations / %.2f MB'%(os.path.getsize(p)/1048576))"
 ```
 
 기대값: `494 pages / 493 destinations / 18.33 MB`
@@ -177,7 +181,7 @@ python -c "import os; from pypdf import PdfReader; p='output/planner_v8-undated-
 python -c "
 import pypdfium2 as pdfium, os
 os.makedirs('output/preview', exist_ok=True)
-with open('output/planner_v8-undated-FINAL.pdf','rb') as fh:
+with open('output/planner_v8.18-undated-FINAL.pdf','rb') as fh:
     d = pdfium.PdfDocument(fh.read())
 for n in [1,2,12,13,14,16,20,21,24,25,26,27,28,31,35,38,39,47,50,51,54,58]:
     d[n-1].render(scale=2).to_pil().save(f'output/preview/v8_p{n}.png')
@@ -197,7 +201,9 @@ d.close(); print('ok')
 `2ndJob` 안에서. **6단계의 PNG 렌더가 먼저 있어야 한다.**
 
 ```bash
-python scripts/build_mockups.py
+python scripts/verify_v8_18.py            # 구조 13항목
+python scripts/check_lines.py src/planner_v8.18-undated.html   # 선 11항목
+python scripts/build_mockups.py           # 리스팅 이미지 10장
 ```
 
 `output/listing/` 에 2000x2000 PNG 8장이 생긴다.
@@ -213,7 +219,7 @@ $env:PLANNER_VERSION="v7-bright"; python scripts/build_planner.py
 ```
 
 쓸 수 있는 값: `v1-admin` `v2-warm` `v3-sunset` `v5-sky` `v6-skyblue`
-`v7-bright` `v8-undated`
+`v7-bright` `v8-undated`(출시본) `v8.18-undated`(현재 판매본)
 
 ---
 
