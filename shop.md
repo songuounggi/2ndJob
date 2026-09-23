@@ -471,6 +471,39 @@ hyperlinked pdf journal
 
 ---
 
+## 6. v8.18 교체 — **아직 올리지 않았다** (2026-09-23)
+
+현재 Etsy 에서 팔리는 파일은 **v8-undated (494p)** 다. 아래는 준비만 된
+상태이고, 업로드 전까지 리스팅 문구는 494/58 그대로 두어야 한다.
+
+| 올릴 것 | 경로 |
+|---|---|
+| PDF | `output/planner_v8.18-undated-FINAL.pdf` (502p, 19,599,557B) |
+| 이미지 10장 | `output/listing_v815/01_hero.png` ~ `10_mosaic.png` |
+
+> `listing_v815/` 에 `10_closeup.png` 가 같이 있다. 그건 **옛 파일**이고
+> 올릴 것은 `10_mosaic.png` 다.
+
+### 바뀌는 숫자
+
+```
+494 pages  -> 502 pages
+고유 58종  -> 61종      (비반복은 66장이지만 노트 8장의 디자인은 3종뿐)
+493 linked -> 501 linked
+```
+
+### 순서 (이 순서를 지킬 것)
+
+1. Etsy 디지털 파일 교체 → v8.18
+2. 이미지 10장 교체
+3. Etsy 본문 숫자 수정
+4. `listing.md` · `pinterest.md` · `CLAUDE.md` · `.claude/agents/etsy-research.md` 수정
+5. 게시된 핀 3개 설명 수정
+
+**4번을 먼저 하면 문서와 실제 판매 파일이 어긋난다.**
+
+---
+
 ## 5-4. 리스팅을 수정하면 순위가 초기화되는가
 
 **지금은 신경 쓰지 않아도 되는 걱정이다.**
