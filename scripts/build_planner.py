@@ -370,6 +370,8 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.6-undated  2026-09-23  넉넉한 상자도 고정 + 표/행목록 가로 마감선
 #   v8.7-undated  2026-09-23  여분 줄 8 -> 26 (행 안에 뚫리던 빈 공간)
 #   v8.8-undated  2026-09-23  카드가 아니라 행을 고정 (좌우 높이·중간 구멍)
+#   v8.9-undated  2026-09-23  표 좌측 바깥선 제거
+#   v8.10-undated 2026-09-23  주 번호 격자 마지막 줄 정렬
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
@@ -378,6 +380,8 @@ THEMES["v8.5-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.6-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.7-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.8-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.9-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.10-undated"] = dict(THEMES["v8-undated"])
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -529,6 +533,10 @@ h1{font-size:23pt;font-weight:800;margin:11pt 0 0;letter-spacing:-.01em}
    full width. .nm already carries border-bottom; the old
    `tr:first-child .nm{border-bottom:none}` cut it off on the left only,
    which is what made the header look lopsided on 7 tables. */
+/* Both vertical edges, not just the right one. A table with a .nm
+   label column has no left edge because .nm is borderless, but subs
+   has no label column and showed one (54p). */
+.trk td:first-child{border-left:none}
 .trk td:last-child{border-right:none}
 /* The closing rule stays. The header rule runs the full width, so a
    table with no line under its last row reads as unfinished. Only the
@@ -2113,9 +2121,12 @@ def p_weeks():
         f'font-size:9.5pt;font-weight:800;text-decoration:none">{w}</a>'
         for w in range(1, WEEKS + 1))
     return (head("Plan", "Fifty-two weeks", "Tap a number to open that week.")
+            # A grid, not wrapped flex. Wrapping centred the short last row,
+            # so 51 and 52 floated between the columns instead of sitting
+            # under 46 and 47.
             + '<div class="body"><div class="card" style="flex:1">'
-              '<div style="display:flex;flex-wrap:wrap;gap:11pt;'
-              'justify-content:center;align-content:center;'
+              '<div style="display:grid;grid-template-columns:repeat(5,74pt);'
+              'gap:11pt;justify-content:center;align-content:center;'
               f'height:100%">{chips}</div></div></div>')
 
 

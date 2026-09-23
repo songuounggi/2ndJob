@@ -28,7 +28,7 @@ CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 # 페이지 안에서 실제로 재는 코드. 여기만 고치면 검사 항목이 바뀐다.
 PROBE = r"""
-const out = {pages:{}, trk:[], cards:[], over:[], uneven:[], short:[], tail:[], holes:[]};
+const out = {pages:{}, trk:[], cards:[], over:[], uneven:[], short:[], tail:[], holes:[], offgrid:[]};
 document.querySelectorAll('section.page').forEach(sec => {
   const rules = [...sec.querySelectorAll('.lines > div')];
   if (rules.length) {
@@ -132,6 +132,33 @@ document.querySelectorAll('section.page').forEach(sec => {
       }
     }
   }
+  // A wrapped or gridded run of chips must keep its columns. The 52-week
+  // index centred its short last row, so 51 and 52 sat between the columns
+  // instead of under 46 and 47.
+  sec.querySelectorAll('.card > div').forEach((g, gi) => {
+    const kids = [...g.children];
+    if (kids.length < 10) return;
+    // Only a real grid: every cell the same width. A run of word chips
+    // wraps by its own widths and has no columns to keep -- checking it
+    // flagged the Name the feeling page, which is correct as it is.
+    const ws = kids.map(k => Math.round(k.getBoundingClientRect().width));
+    if (new Set(ws).size > 1) return;
+    const xs = kids.map(k => Math.round(k.getBoundingClientRect().left));
+    const ys = kids.map(k => Math.round(k.getBoundingClientRect().top));
+    const firstY = ys[0];
+    const cols = xs.filter((_, i) => ys[i] === firstY);
+    if (cols.length < 2) return;
+    const lastY = ys[ys.length - 1];
+    const lastRow = xs.filter((_, i) => ys[i] === lastY);
+    if (lastY === firstY) return;
+    for (let i = 0; i < lastRow.length; i++) {
+      if (Math.abs(lastRow[i] - cols[i]) > 1) {
+        out.offgrid.push({page: sec.id, gi,
+          got: lastRow[i], want: cols[i]});
+        break;
+      }
+    }
+  });
   // The two sides of a row must end level. Pinning cards inside a row
   // instead of the row itself broke this: Meals & groceries had a short
   // right card, and every daily page had a short right column.
@@ -180,10 +207,18 @@ document.querySelectorAll('section.page').forEach(sec => {
     });
     const anyBottom = last && [...last.cells].some(
       c => parseFloat(cs(c).borderBottomWidth) > 0);
+    // The left edge was never checked, which is how 54p Subscriptions kept
+    // one. A table with a .nm label column has none because .nm is
+    // borderless; a table without one does unless it is taken off.
+    const anyLeft = [...rows].some(r => {
+      const c = r.cells[0];
+      return c && parseFloat(cs(c).borderLeftWidth) > 0;
+    });
     out.trk.push({page: sec.id, i,
                   labelledHeader: !!labelled,
                   unevenHeaderRule: !!uneven,
                   cols: per,
+                  outerLeft: !!anyLeft,
                   outerRight: !!anyRight,
                   outerBottom: !!anyBottom});
   });
@@ -230,6 +265,7 @@ def main():
     uneven_rows = d.get("uneven", [])
     short, tail = d.get("short", []), d.get("tail", [])
     holes = d.get("holes", [])
+    offgrid = d.get("offgrid", [])
     fails = []
 
     # --- 1. 한 페이지 안에서 섞였는가 -------------------------------------
@@ -262,7 +298,7 @@ def main():
     # required -- a table whose header rule spans the full width but whose
     # last row just stops reads as unfinished. Only a vertical outer edge is
     # a defect.
-    outer = [t for t in trk if t["outerRight"]]
+    outer = [t for t in trk if t["outerRight"] or t["outerLeft"]]
     unclosed = [t for t in trk if not t["outerBottom"]]
     print(f"\n.trk 표 {len(trk)}개")
     if no_underline:
@@ -272,7 +308,9 @@ def main():
     if outer:
         fails.append(f"세로 바깥 테두리가 남은 표: {len(outer)}개")
         for t in outer[:6]:
-            print(f"   FAIL  {t['page']} 표#{t['i']} 우측 바깥선")
+            side = "좌" if t["outerLeft"] else ""
+            side += "우" if t["outerRight"] else ""
+            print(f"   FAIL  {t['page']} 표#{t['i']} {side}측 바깥선")
     if unclosed:
         fails.append(f"마지막 행 아래 선이 없는 표: {len(unclosed)}개")
         for t in unclosed[:6]:
@@ -351,6 +389,15 @@ def main():
                   f"줄 {x['have']}개, {x['miss']}줄분 남음")
     else:
         print("   OK    줄이 상자를 채운다")
+
+    # --- 7-1. 칩 격자의 마지막 줄이 열에 맞는가 --------------------------
+    if offgrid:
+        fails.append(f"마지막 줄이 열에서 벗어난 격자: {len(offgrid)}개")
+        for o in offgrid[:6]:
+            print(f"   FAIL  {o['page']:<14} 격자#{o['gi']}  "
+                  f"x={o['got']} (열은 {o['want']})")
+    else:
+        print("   OK    격자 마지막 줄이 열에 맞음")
 
     # --- 7-2. 본문 요소 사이에 뚫린 구멍 ---------------------------------
     if holes:
