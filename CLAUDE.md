@@ -27,6 +27,50 @@ Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
 **상품 2 — 제작 중.** ADHD 학생용 플래너(v9-student). 기획·규모·테마 확정,
 1차(테마) 착수 전. 상세는 `product2-student.md`.
 
+## 방이 여럿, 저장소는 하나 (중요)
+
+```
+저장소     1개   github.com/songuounggi/2ndJob
+작업 폴더  1개   C:\Users\ThinkBook\AiProject\2ndJob
+```
+
+**방이 나뉘어도 폴더는 하나다.** Prod 1 과 Prod 2 는 같은 파일을 본다.
+
+| | 무엇이 오가는가 |
+|---|---|
+| **방 ↔ 방** (같은 PC) | git 이 필요 없다. **파일을 이미 공유한다.** 한쪽이 저장하면 다른 쪽 디스크에도 그 순간 반영된다. 커밋은 기록용이다 |
+| **PC ↔ PC** | git 이 유일한 통로다. 회사 PC ↔ 집 노트북 |
+
+### git 이 막아주지 못하는 것
+
+**두 방이 같은 파일을 동시에 고치면 나중에 저장한 쪽이 앞을 덮는다.**
+git 충돌이 아니라 파일 자체가 사라지는 것이라 경고도 없다.
+
+두 방이 공유하는 파일:
+
+```
+scripts/build_planner.py     Prod 2 가 student_pages 를 여기로 import 한다
+scripts/student_pages.py
+scripts/check_lines.py       선 검사기는 버전 중립이라 둘 다 쓴다
+LINES.md   CLAUDE.md
+```
+
+**같은 파일을 만질 일이 생기면 먼저 다른 방에 알린다.** 한쪽이 끝낸 뒤
+다른 쪽이 시작한다.
+
+### 커밋 규칙
+
+각 방이 **자기가 고친 파일만 이름으로 적어** 커밋한다.
+
+```bash
+git status                                   # 먼저 무엇이 바뀌었는지 본다
+git add scripts/build_planner.py LINES.md    # 이름으로
+git commit -m "..." && git push
+```
+
+**`git add -A` 금지.** 다른 방이 만들던 파일까지 담는다 -- 실제로 그렇게
+다른 방의 작업 중인 파일이 커밋에 섞여 들어간 적이 있다.
+
 ## 판매 환경 제약 (중요)
 
 구매자 대다수는 **iPad + GoodNotes/Notability**. 이 환경에서 동작하는 인터랙션은
