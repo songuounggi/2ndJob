@@ -87,6 +87,12 @@ python -c "import PIL, numpy, pikepdf, pypdf, pypdfium2; print('ok')"
 
 `ok` 가 찍히면 된다.
 
+> **`UnicodeDecodeError: 'cp949' codec` 이 나면** — 한국어 Windows 는 pip 이
+> `requirements.txt` 의 한글 주석을 cp949 로 읽다 멈춘다(집 PC, 2026-09-24).
+> 그래서 이 파일 맨 앞에 **UTF-8 BOM** 을 넣어 두었다. 편집기가 BOM 을
+> 지워버렸으면 다시 이 에러가 난다. 그때는 `$env:PYTHONUTF8=1` (PowerShell)
+> 또는 `PYTHONUTF8=1` (Git Bash) 을 앞에 붙여 설치한다.
+
 ---
 
 ## 3. 커밋 신원 (PC마다 한 번, clone 직후)
@@ -161,9 +167,11 @@ python scripts/dedupe_pdf.py output/planner_v8.18-undated.pdf output/planner_v8.
 기대 출력:
 
 ```
-3173 duplicate streams folded into 19084 unique
-25.9 MB -> 18.3 MB (29% smaller)
+3196 duplicate streams folded into 19319 unique
+26.4 MB -> 18.7 MB (29% smaller)
 ```
+
+(2026-09-24 집 PC 에서 v8.18 을 뽑은 실측. 빌드 36초.)
 
 ---
 
@@ -177,7 +185,14 @@ python scripts/dedupe_pdf.py output/planner_v8.18-undated.pdf output/planner_v8.
 python -c "import os; from pypdf import PdfReader; p='output/planner_v8.18-undated-FINAL.pdf'; r=PdfReader(p); print(len(r.pages),'pages /',len(r.named_destinations),'destinations / %.2f MB'%(os.path.getsize(p)/1048576))"
 ```
 
-기대값: `494 pages / 493 destinations / 18.33 MB`
+기대값: `502 pages / 501 destinations / 18.69 MB`
+
+**구조 검사 13항목** — 이것 하나로 위 숫자와 링크·탭까지 다 본다.
+마지막 줄이 `FAILURES: 0` 이면 된다.
+
+```bash
+python scripts/verify_v8_18.py
+```
 
 **눈으로 볼 페이지 뽑기**
 
@@ -228,6 +243,20 @@ $env:PLANNER_VERSION="v7-bright"; python scripts/build_planner.py
 ---
 
 ## 회사 PC ↔ 집 노트북 오가기
+
+| PC | 작업 폴더 | 방 이름 예 |
+|---|---|---|
+| 회사 | `C:\Users\ThinkBook\AiProject\2ndJob` | `... (Office)` |
+| 집 | `C:\Users\sBrain\2ndJob` | `Prod 1. ADHD Planners (Home)` |
+
+**PC 를 옮겨 앉으면 이 순서로 한다:**
+
+1. 떠나는 PC 에서 — 각 방이 자기 파일을 커밋·푸시 (`git status` 가 깨끗해질 때까지)
+2. 도착한 PC 에서 — `git pull`
+3. 필요하면 5단계로 다시 빌드. 이전 PC 의 PDF 는 따라오지 않는다
+
+**1번을 빠뜨리면** 도착한 PC 에서 작업한 뒤 나중에 원래 PC 에서 pull 할 때
+충돌이 난다. 긴 연휴 전에는 특히 확인할 것.
 
 ### 어느 창에 치는가
 

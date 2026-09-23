@@ -4,7 +4,7 @@ import io, os, re, sys
 from collections import Counter
 from pypdf import PdfReader
 
-ROOT = r'C:\Users\ThinkBook\AiProject\2ndJob'
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PDF = os.path.join(ROOT, 'output', 'planner_v8.4-undated-FINAL.pdf')
 HTML = os.path.join(ROOT, 'src', 'planner_v8.4-undated.html')
 

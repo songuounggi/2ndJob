@@ -31,10 +31,45 @@ Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
 
 ```
 저장소     1개   github.com/songuounggi/2ndJob
-작업 폴더  1개   C:\Users\ThinkBook\AiProject\2ndJob
+작업 폴더  PC 마다 1개
+  회사 PC   C:\Users\ThinkBook\AiProject\2ndJob
+  집 PC     C:\Users\sBrain\2ndJob
 ```
 
-**방이 나뉘어도 폴더는 하나다.** Prod 1 과 Prod 2 는 같은 파일을 본다.
+**한 PC 안에서는 방이 나뉘어도 폴더는 하나다.** Prod 1 과 Prod 2 는 같은
+파일을 본다. 방 이름 끝의 `(Home)` / `(Office)` 가 어느 PC 의 방인지 나타낸다.
+
+**스크립트에 절대경로를 박지 않는다.** 폴더 위치가 PC 마다 다르다. 루트는
+스크립트 위치에서 구한다:
+
+```python
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+```
+
+2026-09-24 에 `verify_v8*.py` 14개가 회사 경로를 박고 있어 집에서 안 돌았다.
+새 스크립트를 만들면 이걸로 확인한다(아무것도 안 나와야 한다):
+
+```bash
+grep -rn -i "C:\\\\Users\|/c/Users" scripts
+```
+
+PC 를 옮기면 `git pull` 후 **그 PC 에서 다시 빌드**한다. `output/`·`src/` 는
+git 에 없어서 따라오지 않는다. 절차는 `SETUP.md`.
+
+**다시 뽑을 수 있는 것과 없는 것** (2026-09-24 집 PC 에서 확인)
+
+| 결과물 | 다른 PC 에서 |
+|---|---|
+| `v8.18-undated` 판매본 | 현재 코드로 빌드. 19,599,557 B, 검증 13항목 통과 |
+| `v8-undated` 출시본 | 커밋 `07cc59e` 로 worktree 를 떠서 빌드. **19,227,515 B 로 바이트 수까지 일치** |
+| `v8.1`~`v8.17` | **재현 불가.** 이름만 다르고 지금 코드로는 전부 v8.18 이 나온다. 필요하면 각 커밋으로 빌드 |
+| `v2`~`v7` 시안 | 현재 코드로 빌드됨. `v1-admin` 은 `KeyError: 'tasks'` 로 깨져 있다 |
+| 리스팅 이미지 `output/listing_v815/` | **회사 PC 에만 있다.** 소스 `rail_strip_v815.png` 만드는 법이 기록에 없다 |
+
+**회사 PC 복귀 후 할 일:** `output/listing_v815/` 와 `output/preview/rail_strip_v815.png`
+를 커밋한다. 앞의 것은 `.gitignore` 에 예외를 열어 두었고, 뒤의 것은 한 장이라
+`git add -f output/preview/rail_strip_v815.png` 로 넣는다. 그리고 rail_strip 을 어떻게
+잘랐는지 `build_mockups.py` 에 적는다.
 
 | | 무엇이 오가는가 |
 |---|---|
