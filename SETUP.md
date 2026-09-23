@@ -181,6 +181,13 @@ mkdir -p output/upload
 cp output/planner_v8.18-undated-FINAL.pdf output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf
 ```
 
+올린 파일이 여러 개가 되면 `shop.md` 0-1절 업로드 이력표의 "소스" 칸대로
+만든다. 다 만들었으면 이력표와 대조한다(`FAILURES: 0` 이면 된다):
+
+```bash
+python scripts/check_upload.py
+```
+
 ---
 
 ## 6. 검수
