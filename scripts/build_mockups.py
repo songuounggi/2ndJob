@@ -123,18 +123,32 @@ HERO_CSS = """
 .hero .stage .p2{transform:translate(-800px,275px) rotate(6deg)}
 .hero .stage .p3{transform:translate(738px,-255px) rotate(8deg)}
 .hero .stage .p4{transform:translate(800px,262px) rotate(-6deg)}
-/* a wash so the square is not flat cream behind the art */
-.hero::before{content:"";position:absolute;inset:0;z-index:0;
-   background:
-     radial-gradient(1100px 760px at 18% 78%, rgba(127,168,201,.20), transparent 70%),
-     radial-gradient(1000px 700px at 84% 24%, rgba(224,138,115,.17), transparent 70%),
-     radial-gradient(900px 620px at 76% 86%, rgba(217,164,65,.14), transparent 70%)}
+/* Irregular blobs rather than concentric radial gradients. Symmetric
+   gradients read as a vignette -- tidy, and invisible at thumbnail size.
+   Lopsided shapes with a heavy blur give the square actual colour without
+   drawing an edge anywhere near the type. */
+.hero .blobs{position:absolute;inset:-120px;z-index:0;overflow:hidden}
+.hero .blobs i{position:absolute;display:block;filter:blur(95px)}
+.hero .b1{width:1120px;height:900px;left:-190px;top:60px;
+   background:#7FA8C9;opacity:.30;
+   border-radius:62% 38% 44% 56% / 48% 61% 39% 52%}
+.hero .b2{width:1000px;height:860px;right:-210px;top:-90px;
+   background:#E08A73;opacity:.26;
+   border-radius:38% 62% 57% 43% / 63% 41% 59% 37%}
+.hero .b3{width:1180px;height:820px;left:230px;bottom:-260px;
+   background:#D9A441;opacity:.22;
+   border-radius:54% 46% 36% 64% / 42% 57% 43% 58%}
+.hero .b4{width:760px;height:700px;right:-90px;bottom:-140px;
+   background:#7FA37C;opacity:.20;
+   border-radius:45% 55% 63% 37% / 56% 38% 62% 44%}
 .hero>*{position:relative;z-index:1}
 """.replace("SAFEpx", f"{SAFE}px")
 
 
 def hero():
     body = f"""<div class="hero">
+      <div class="blobs"><i class="b1"></i><i class="b2"></i>
+        <i class="b3"></i><i class="b4"></i></div>
       <span class="kicker">UNDATED &middot; NO-GUILT</span>
       <h1>ADHD &amp; Wellness<br>Digital Planner</h1>
       <div class="sub">Start any day. Skip a week. Nothing to catch up on.</div>
