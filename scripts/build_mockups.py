@@ -12,7 +12,11 @@ import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PREVIEW = os.path.join(ROOT, "output", "preview")
-OUT = os.path.join(ROOT, "output", "listing")
+OUT = os.path.join(ROOT, "output", "listing_v815")
+# The shipped set was built from v8-undated and its source PNGs are
+# still in output/preview/v8_p*.png. This run reads the v8.15 renders
+# and writes beside the old images rather than over them.
+SRC = "v815_p"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 SIZE = 2000
 
@@ -55,7 +59,8 @@ def html(body, extra=""):
 
 
 def img(n):
-    return "file:///" + os.path.join(PREVIEW, f"v8_p{n}.png").replace("\\", "/")
+    return "file:///" + os.path.join(
+        PREVIEW, f"{SRC}{n}.png").replace("\\", "/")
 
 
 def shoot(name, body, extra=""):
@@ -117,9 +122,9 @@ def hero():
       <span class="kicker">UNDATED &middot; NO-GUILT</span>
       <h1>ADHD &amp; Wellness<br>Digital Planner</h1>
       <div class="sub">Start any day. Skip a week. Nothing to catch up on.</div>
-      <div class="stats"><b>494 pages</b><b>58 unique</b><b>10 tabs</b></div>
+      <div class="stats"><b>502 pages</b><b>61 unique</b><b>10 tabs</b></div>
       <div class="stage">
-        <div class="tab back"><img src="{img(60)}"></div>
+        <div class="tab back"><img src="{img(68)}"></div>
         <div class="tab front"><img src="{img(1)}"></div>
       </div>
     </div>"""
@@ -152,7 +157,7 @@ TMPL_CSS = """
 TMPL_PICKS = [
     (17, "Mind map"),
     (35, "31-day habit tracker"),
-    (58, "Monthly grid"),
+    (66, "Monthly grid"),
     (48, "Wheel of life"),
 ]
 
@@ -163,8 +168,8 @@ def templates():
         for n, label in TMPL_PICKS)
     body = f"""<div class="tm">
       <span class="kicker">WHAT'S INSIDE</span>
-      <h1><em>58</em> pages that are<br>actually different</h1>
-      <div class="sub">Not one page copied three hundred times.</div>
+      <h1><em>61</em> pages that are<br>actually different</h1>
+      <div class="sub">Not one page copied three hundred times.<br>Plus eight blank pages in three papers.</div>
       <div class="grid">{cells}</div>
     </div>"""
     return shoot("02_templates", body, TMPL_CSS)
@@ -222,14 +227,14 @@ TABS_10 = [
 
 def navigation():
     rail = "file:///" + os.path.join(
-        PREVIEW, "rail_strip.png").replace("\\", "/")
+        PREVIEW, "rail_strip_v815.png").replace("\\", "/")
     rows = "".join(
         f'<div class="t"><i style="background:{c}"></i><b>{n}</b>'
         f'<span>{d}</span></div>' for n, c, d in TABS_10)
     body = f"""<div class="nav">
       <span class="kicker">NEVER LOSE YOUR PLACE</span>
       <h1>Ten tabs, down<br>every single page</h1>
-      <div class="sub">All 494 of them. The most common complaint about big
+      <div class="sub">All 502 of them. The most common complaint about big
         planners is not being able to find anything.</div>
       <div class="body">
         <div class="rail"><img src="{rail}"></div>
@@ -287,8 +292,8 @@ def everyday():
       <div class="sub">A timed day from 7am, meds and water, a mood row.
         Weeks start on Monday.</div>
       <div class="grow" style="gap:50px">
-        <div class="tab"><img src="{img(60)}"></div>
-        <div class="tab"><img src="{img(444)}"></div>
+        <div class="tab"><img src="{img(68)}"></div>
+        <div class="tab"><img src="{img(452)}"></div>
       </div>
     </div>"""
     return shoot("09_everyday", body)
@@ -319,7 +324,7 @@ def closeup():
     """A readable crop of Guess vs actual -- the page that names the problem
     ADHD buyers search for (time blindness) in words they recognise."""
     src = "file:///" + os.path.join(
-        PREVIEW, "big_p20.png").replace("\\", "/")
+        PREVIEW, "big_p20_v815.png").replace("\\", "/")
     body = f"""<div class="close">
       <span class="kicker">INSIDE ONE PAGE</span>
       <h1>Guess first.<br>Then check.</h1>
@@ -333,9 +338,9 @@ def closeup():
 
 
 def numbers():
-    stats = [("58", "unique page designs", "not one page copied 300 times"),
-             ("494", "pages in total", "12 months, 52 weeks, 372 days"),
-             ("493", "linked pages", "every page is a tap away"),
+    stats = [("61", "unique page designs", "not one page copied 300 times"),
+             ("502", "pages in total", "12 months, 52 weeks, 372 days, 8 blank"),
+             ("501", "linked pages", "every page is a tap away"),
              ("0", "dates printed", "start on any day of any year")]
     cells = "".join(
         f'<div class="chip" style="display:flex;flex-direction:column;'
