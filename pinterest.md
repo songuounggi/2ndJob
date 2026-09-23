@@ -12,6 +12,30 @@
 
 ---
 
+## 계정 유형은 "기타" 로 둔다 — Etsy 는 인증이 안 된다 (2026-09-23 확인)
+
+비즈니스 계정 온보딩에서 유형을 고르라고 한다. **`기타` 를 고른다.**
+
+`온라인 판매점 또는 마켓플레이스` 가 맞아 보이지만 **(웹사이트 필수)** 다.
+그리고 Pinterest 공식 문서가 이렇게 말한다:
+
+> To claim a website, you must own the domain, subdomain or subpath, and you
+> need to be able to edit the source code. As a result, you're unable to
+> claim most social accounts and online stores hosted on marketplaces like
+> **Etsy**, eBay and Amazon.
+
+**Etsy 숍 주소는 "내 웹사이트" 로 인증할 수 없다.** 소스코드를 고칠 수
+없기 때문이다. 인증 방법 네 가지(Google Merchant Center / HTML 태그 /
+HTML 파일 / DNS TXT) 전부 도메인 소유가 필요하다.
+
+Pinterest 자신이 "일반 Business 계정을 만들고 나중에 업데이트할 수
+있습니다" 라고 안내하므로 `기타` 로 두고 진행한다.
+
+> 언젠가 자체 도메인을 갖게 되면 그때 인증한다. 인증하면 내 핀에 프로필
+> 사진이 붙고, 다른 사람이 내 사이트 이미지를 저장해도 내 프로필로 연결된다.
+
+---
+
 ## 1. 계정
 
 `pinterest.com` → 가입. **비즈니스 계정**으로 (무료).
