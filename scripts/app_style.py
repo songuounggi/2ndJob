@@ -141,25 +141,30 @@ def rules_svg(widths, n_rows, head_h=24.0):
         if d:
             body.append('<path stroke="url(#h%d)" d="%s"/>' % (i, d))
         x += w
-    # 세로 구분선 (마지막 열 뒤에는 긋지 않는다)
+    # 세로 구분선. 칸마다 끊어 그리면 표 하나에 (행수+1)개의 셰이딩이
+    # 생긴다(22행이면 23개). 경계마다 한 줄로 긋고, 대시 위상을 밀어
+    # **행 경계마다 틈이 오게** 한다 -- 가로선과 십자로 만나지 않는다.
+    # 행 높이 24pt 는 주기 8pt 의 3배라 위상이 매 행 같은 자리에 온다.
     bounds = []
     x = 0.0
     for w in widths[:-1]:
         x += w
         bounds.append(x)
     if bounds:
-        d = "".join("M%.2f %.2fV%.2f" % (bx, INSET_V, head_h - INSET_V)
+        H = head_h + n_rows * ROW_H
+        d = "".join("M%.2f %.2fV%.2f" % (bx, INSET_V, H - INSET_V)
                     for bx in bounds)
-        body.append('<path stroke="url(#vh)" d="%s"/>' % d)
-        d = "".join("M%.2f %.2fV%.2f" % (bx, INSET_V, ROW_H - INSET_V)
-                    for bx in bounds)
-        for r in range(n_rows):
-            body.append('<path transform="translate(0,%.2f)" '
-                        'stroke="url(#vr)" d="%s"/>'
-                        % (head_h + r * ROW_H, d))
+        body.append('<path stroke="%s" stroke-dashoffset="%.2f" d="%s"/>'
+                    % (C, PERIOD - DASH / 2 - INSET_V, d))
 
-    if os.environ.get("FLAT_STROKE"):          # 비용 측정용
-        body = [re.sub(r'url\(#[hv][^)]*\)', C, b) for b in body]
+    # 마감선 -- 표는 닫는다(LINES.md 2 절). 헤더 아래 선이 전 폭을
+    # 가로지르는데 바닥이 열려 있으면 "표가 끝나지 않은" 것으로 읽히고,
+    # 마지막 행만 높이가 달라 보인다. 카드 안 필기 괘선은 반대로 열어 둔다.
+    # 열마다 긋지 않고 전 폭 한 줄로 긋는다 -- 열별로 그으면 셰이딩
+    # 객체가 열 수만큼 늘어 428페이지에서 +0.41MB 였다(상한 초과).
+    body.append('<path stroke="%s" d="M%.2f %.2fH%.2f"/>'
+                % (C, INSET, head_h + n_rows * ROW_H, w_tot - INSET))
+
     return ('<svg class="rules" viewBox="0 0 %.2f %.2f" width="%.2fpt" '
             'height="%.2fpt" xmlns="http://www.w3.org/2000/svg" '
             'fill="none" stroke-width="%.2f" stroke-dasharray="%g %g">'
@@ -168,7 +173,17 @@ def rules_svg(widths, n_rows, head_h=24.0):
                "".join(defs), "".join(body)))
 
 
+# 실험 기록(2026-09-23): 괘선을 CSS `border-bottom: dashed` 로 그려 보았다.
+# v8 이 쓰는 방식이고 "테두리 선은 벡터라 싸다"(LINES.md)는 기대였는데,
+# 428페이지에서 27.58MB 가 나왔다(SVG pattern 19.84MB). Chrome 이 점선
+# 테두리를 작은 사각형 여러 개로 내보낸다. 실선일 때만 싼 것이다.
+# 스위치는 남겨 둔다 -- 다음에 또 궁금해지면 한 번 돌려 보면 된다.
+DASH_BORDER = bool(os.environ.get("DASH_BORDER"))
+
+
 def lines_svg(width=None):
+    if DASH_BORDER:                      # 실험: CSS 점선 테두리로 대체
+        return ""
     """필기 괘선. 면 높이가 유동적이라 SVG <pattern> 으로 깐다.
 
     data: URI 를 background 로 깔았더니 페이지당 156KB 였다 -- 요소마다
@@ -236,13 +251,13 @@ h1{color:#241E3A}
    면 하나에 25.8KB 를 먹는다(40페이지 실측). ::after 타원 그라데이션은
    벡터 패턴으로 남는다. CLAUDE.md 에 v8 에서 겪은 같은 사고가 있다. */
 /* 윗변 하이라이트. 위에서 빛을 받는 면으로 읽혀 하단 그림자와 합쳐
-   "떠 있는" 느낌을 만든다. 원래 쓰던 사방 box-shadow 는 428페이지에서
+   "떠 있는" 느낌을 만든다.
+   불투명 .95 / 두께 .7pt / 좌우 13pt 잘라내기로 두었더니 양 끝이 뭉툭하게
+   끊긴 "흰 줄"로 보였다(2026-09-23 지적). 양 끝을 흐리고 농도를 낮춘다. 원래 쓰던 사방 box-shadow 는 428페이지에서
    +19.3MB 라 쓸 수 없었다(실측 18.60 -> 37.87MB).
    표는 머리띠가 자기 배경으로 윗변을 덮으므로 z-index 로 위에 얹는다.
    좌우를 모서리 반경만큼 비워야 둥근 모서리 밖으로 삐져나오지 않는다. */
-.field::before, .lines::before, .tbwrap::before{content:"";position:absolute;
-    left:13pt;right:13pt;top:0;height:.7pt;z-index:4;pointer-events:none;
-    background:rgba(255,255,255,.95)}
+
 .field::after, .lines::after, .tbwrap::after{content:"";position:absolute;
     left:3%;right:3%;top:100%;height:11pt;pointer-events:none;z-index:-1;
     background:radial-gradient(ellipse 64% 100% at 50% 0%,
@@ -278,6 +293,7 @@ h1{color:#241E3A}
 .rules.rows{left:@INSET@pt;top:0;width:calc(100% - @INSET2@pt);height:100%}
 /* 괘선은 타일 배경이 그린다. 줄 <div> 는 높이만 잡는다 */
 .lines>div{border:none;flex:none;height:@ROW@pt}
+@DASHB@
 
 /* 선택 탭 = 표지 카드와 같은 유리 레시피.
    불투명 흰 알약은 페이지에서 유일한 불투명 개체라 혼자 튀었다. */
@@ -301,9 +317,11 @@ DARK = """
 .dk .eyebrow{color:rgba(232,228,255,.72)}
 .dk .sub{color:rgba(232,228,255,.56)}
 .dk .label{color:#F0EDFF}
+/* 윗변만 밝게 두면(표지 카드 레시피) 목차 카드에서는 "흰 실선 하나"로
+   보인다(2026-09-23 지적). 테두리는 사방 같은 농도로 둔다.
+   표지 .cv-card 는 배경이 훨씬 어둡고 카드가 커서 그대로 둔다. */
 .dk .card{background:rgba(255,255,255,.08);
-     border:.8pt solid rgba(255,255,255,.17);
-     border-top-color:rgba(255,255,255,.32);border-radius:24pt;
+     border:.8pt solid rgba(255,255,255,.14);border-radius:24pt;
      box-shadow:none;padding:16pt}
 .dk .card::after{display:none}
 
@@ -346,6 +364,9 @@ def css():
            .replace("@ROW@", "%g" % ROW_H)
            .replace("@INSET2@", "%g" % (2 * INSET))
            .replace("@INSET@", "%g" % INSET)
+           .replace("@DASHB@",
+                    ".lines>div{border-bottom:%.2fpt dashed %s}"
+                    % (THICK_PT, C) if DASH_BORDER else "")
            .replace("@DIM@", RAIL_DIM)
            .replace("@SHEETR@", "%g" % SHEET_R)
            .replace("@SHEET@", "%g" % SHEET))

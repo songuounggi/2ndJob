@@ -39,28 +39,20 @@ TABS = [
 
 # 탭 하나가 묶는 하위 페이지들. 탭은 분류고, 상품의 깊이는 여기에 있다.
 GROUPS = {
+    # 학기마다 반복되는 것은 여기 넣지 않는다. 칩 격자로 간다(REPEATS).
     "semester": [
         ("terms", "All eight terms", "four years on one page"),
-        ("goals", "Term goals", "what you want out of this term"),
-        ("term-review", "Term review", "what actually happened"),
     ],
-    "classes": [
-        ("timetable", "Class schedule", "the week, hour by hour"),
-        ("contacts", "Who to ask", "professors, TAs, office hours"),
-    ],
+    "classes": [],
     "work": [
-        ("syllabus", "Syllabus unpack", "one handout, broken into dates"),
-        ("assignments", "Assignment tracker", "due, started, handed in"),
         ("backwards", "Working backwards", "from the deadline, not from today"),
         ("group", "Group project", "who does what, by when"),
         ("estimate", "Guess vs actual", "how long it really took"),
         ("obstacle", "Obstacle plan", "what will get in the way"),
     ],
     "study": [
-        ("exam", "Exam study plan", "split the scope, spread the days"),
         ("cornell", "Lecture notes", "cue, notes, summary"),
         ("reading", "Reading log", "to read, and read"),
-        ("grades", "Grade tracker", "what each piece is worth"),
         ("session", "Study session log", "when and where it worked"),
         ("office", "Office hours", "what to ask, before you forget"),
     ],
@@ -80,8 +72,22 @@ GROUPS = {
 
 TERMS = 8                      # 4년 = 8학기
 WEEKS_PER_TERM = 16
-DAYS_PER_TERM = 31             # 매일치가 아니다 -- 필요한 날에 쓰는 31장
-CLASSES = 8                    # 과목별 페이지
+DAYS_PER_TERM = 14             # 매일치가 아니다 -- 필요한 날에 쓰는 장수
+CLASSES_PER_TERM = 5           # 학기당 수강 과목
+SYLLABUS_PER_TERM = 5          # 과목마다 강의계획서 한 장
+EXAMS_PER_TERM = 3             # 중간·기말·퀴즈
+
+# 반복 세트. (앞글자, 학기당 장수, 라벨). 앞글자는 한 글자여야 한다 --
+# build_planner 의 rail_key 가 ([a-z])(\d+) 로 읽는다.
+REPEATS = [("t", 1, "Term overview"), ("o", 1, "Term goals"),
+           ("r", 1, "Term review"),
+           ("w", WEEKS_PER_TERM, "Weeks"), ("d", DAYS_PER_TERM, "Days"),
+           ("h", 1, "Class schedule"), ("k", 1, "Who to ask"),
+           ("c", CLASSES_PER_TERM, "Class pages"),
+           ("s", SYLLABUS_PER_TERM, "Syllabus unpack"),
+           ("a", 1, "Assignment tracker"),
+           ("e", EXAMS_PER_TERM, "Exam study plan"),
+           ("g", 1, "Grade tracker")]
 
 
 # --------------------------------------------------------------- 조각들
@@ -116,21 +122,32 @@ def field(h=24):
 def fill(flex=1):
     """면 하나를 괘선으로 채운다. 줄은 SVG pattern 이 높이에 맞춰 깐다 --
     <div> 로 줄을 세던 방식은 면 높이와 안 맞아 아래가 비었다."""
-    return '<div class="lines" style="flex:%g">%s</div>' % (flex, A.lines_svg())
+    rows = "<div></div>" * 26 if A.DASH_BORDER else ""
+    return ('<div class="lines" style="flex:%g">%s%s</div>'
+            % (flex, rows, A.lines_svg()))
 
 
 def body(*parts):
     return '<div class="body">%s</div>' % "".join(parts)
 
 
+def head(term, title, sub_):
+    """반복 페이지의 머리. eyebrow 에 학기를 적고 제목은 학기 내 번호다.
+
+    전에는 제목이 통번호("Week 36")라, 목차에서 TERM 3 의 "4" 를 눌러
+    도착하면 숫자가 달라 잘못 눌렀다고 판단했다.
+    """
+    return bp.head("Term %d" % term, title, sub_)
+
+
 # --------------------------------------------------------- 핵심 페이지들
-def p_syllabus():
+def p_syllabus(term=1, i=1):
     """이 상품의 핵심 셀링 포인트. 강의계획서 한 장을 세 종류로 분해한다.
 
     쓰기 시작하는 문턱을 낮추려고 과목/교수 같은 머리 정보를 먼저 받고,
     그 다음에 표 세 개로 나눈다. 한 표에 다 넣으면 옮겨 적기를 포기한다.
     """
-    return (bp.head("Work", "Syllabus unpack",
+    return (head(term, "Syllabus unpack",
                     "One handout. Pull out the dates, then close it.")
             + body(
                 card("Class", field(24)),
@@ -146,8 +163,8 @@ def p_syllabus():
                 card("Anything else", fill(), flex="1")))
 
 
-def p_assignments():
-    return (bp.head("Work", "Assignment tracker",
+def p_assignments(term=1, i=1):
+    return (head(term, "Assignment tracker",
                     "Everything with a deadline, in one place")
             + body(card("This term",
                         tbl("t4", ["ASSIGNMENT", "CLASS", "DUE", "DONE"], 22,
@@ -165,9 +182,9 @@ def p_group_project():
                 card("My part &mdash; in my own words", fill(), flex="1")))
 
 
-def p_exam():
+def p_exam(term=1, i=1):
     """범위를 쪼개고 날짜에 배분한다. '공부하기'는 과제가 아니다."""
-    return (bp.head("Study", "Exam study plan",
+    return (head(term, "Exam study plan",
                     "Split the scope first. Then give each piece a day.")
             + body(
                 card("Exam", field(24)),
@@ -187,12 +204,14 @@ def p_cornell():
                 + card("Notes", fill(), flex="2.1")
                 + '</div>',
                 card("Summary &mdash; in your own words",
-                     '<div class="lines" style="flex:none;height:%gpt">%s'
-                     '</div>' % (3 * A.ROW_H, A.lines_svg()))))
+                     '<div class="lines" style="flex:none;height:%gpt">%s%s'
+                     '</div>' % (3 * A.ROW_H,
+                                 "<div></div>" * 3 if A.DASH_BORDER else "",
+                                 A.lines_svg()))))
 
 
-def p_grades():
-    return (bp.head("Study", "Grade tracker",
+def p_grades(term=1, i=1):
+    return (head(term, "Grade tracker",
                     "What each piece is worth, and what you got")
             + body(
                 card("Class", field(24)),
@@ -227,7 +246,7 @@ def p_office():
                 card("What they said", fill(), flex="1")))
 
 
-def p_timetable():
+def p_timetable(term=1, i=1):
     days = ["MON", "TUE", "WED", "THU", "FRI"]
     hours = ["08", "09", "10", "11", "12", "13", "14", "15", "16",
              "17", "18", "19", "20"]
@@ -237,7 +256,7 @@ def p_timetable():
                     for i, d in enumerate(days)) + "</tr>")
     rows = "".join("<tr><td>%s</td>%s</tr>" % (h, "<td></td>" * len(days))
                    for h in hours)
-    return (bp.head("Classes", "Class schedule",
+    return (head(term, "Class schedule",
                     "Write it once, in week one")
             + body('<div class="tbwrap" style="flex:none">'
                    '<table class="tb t6">%s%s</table>%s</div>'
@@ -245,18 +264,18 @@ def p_timetable():
                    card("Notes for the week", fill(), flex="1")))
 
 
-def p_contacts():
-    return (bp.head("Classes", "Who to ask",
+def p_contacts(term=1, i=1):
+    return (head(term, "Who to ask",
                     "The name you will need at 11pm the night before")
             + body(card("Professors &amp; TAs",
                         tbl("t4", ["NAME", "CLASS", "OFFICE HOURS", "ASKED"],
                             22, check_last=True))))
 
 
-def p_class(n):
+def p_class(term, i):
     """과목별 페이지. 한 과목의 모든 것이 한 장에 있어야 찾으러 가지 않는다."""
-    return (bp.head("Classes", "Class %d" % n,
-                    "Everything about one class, on one page")
+    return (head(term, "Class %d" % i,
+                 "Everything about one class, on one page")
             + body(
                 card("Class", field(24)),
                 '<div class="row" style="flex:none;gap:14pt">'
@@ -278,7 +297,7 @@ def p_terms():
                    card("Notes on the four years", fill(), flex="1")))
 
 
-def p_term(n):
+def p_term(term, i=1):
     """학기 개요 한 장. 16주를 한 장에 놓고, 무거운 주를 미리 본다."""
     rows = "".join(
         '<tr><td>Week %d</td><td></td><td></td><td class="bx"><i></i></td></tr>'
@@ -287,7 +306,7 @@ def p_term(n):
     hd = "".join('<td style="width:%.2fpt">%s</td>' % (w, c)
                  for w, c in zip(widths, ["WEEK", "WHAT IS DUE", "EXAMS",
                                           "CLEAR"]))
-    return (bp.head("Semester", "Term %d" % n,
+    return (bp.head("Semester", "Term %d" % term,
                     "Sixteen weeks. Fill in the heavy ones first.")
             + body('<div class="tbwrap" style="flex:none">'
                    '<table class="tb t4"><tr>%s</tr>%s</table>%s</div>'
@@ -296,8 +315,8 @@ def p_term(n):
                    card("What this term is really about", fill(), flex="1")))
 
 
-def p_week(n):
-    return (bp.head("Week", "Week %d" % n, "What has to happen this week")
+def p_week(term, i):
+    return (head(term, "Week %d" % i, "What has to happen this week")
             + body(
                 card("Due this week",
                      tbl("t4", ["WHAT", "CLASS", "DAY", "DONE"], 6,
@@ -306,8 +325,8 @@ def p_week(n):
                 card("One thing I will not drop", field(36))))
 
 
-def p_day(n):
-    return (bp.head("Day", "Day %d" % n, "One thing. Then the rest.")
+def p_day(term, i):
+    return (head(term, "Day %d" % i, "One thing. Then the rest.")
             + body(
                 card("Just one thing today", field(36)),
                 card("Due soon",
@@ -396,8 +415,8 @@ def p_obstacle():
                 card("If it all falls apart", fill(), flex="1")))
 
 
-def p_goals():
-    return (bp.head("Semester", "Term goals",
+def p_goals(term=1, i=1):
+    return (head(term, "Term goals",
                     "Three is plenty. Make them checkable.")
             + body(
                 card("This term",
@@ -406,8 +425,8 @@ def p_goals():
                 card("Why these", fill(), flex="1")))
 
 
-def p_term_review():
-    return (bp.head("Semester", "Term review", "Five minutes, once a term")
+def p_term_review(term=1, i=1):
+    return (head(term, "Term review", "Five minutes, once a term")
             + body(
                 card("What actually happened", fill(), flex="1"),
                 card("What I will do differently", fill(), flex="1"),
@@ -449,9 +468,19 @@ CHIP = ("display:flex;align-items:center;justify-content:center;"
         "font-size:7.5pt;font-weight:700;color:#2B2540")
 
 
-def chip_index(eyebrow, title, sub, prefix, per_term, cols):
-    """학기별로 묶은 칩 격자. 링크가 없는 목차는 목차가 아니다 --
-    Chrome 은 목적지 없는 <a href="#x"> 를 조용히 버린다."""
+def chip_card(label, prefix, per_term, cols=16):
+    """학기별로 묶은 칩 격자 한 장.
+
+    학기당 1장인 세트는 학기 칩 8개만 놓는다. 링크가 없는 목차는 목차가
+    아니다 -- Chrome 은 목적지 없는 <a href="#x"> 를 조용히 버린다.
+    """
+    if per_term == 1:
+        chips = "".join('<a href="#%s%d" style="%s">%d</a>' % (prefix, t, CHIP, t)
+                        for t in range(1, TERMS + 1))
+        grid = ('<div style="display:grid;grid-template-columns:repeat(8,1fr);'
+                'gap:6pt">%s</div>' % chips)
+        return ('<div class="card" style="flex:none">'
+                '<div class="label">%s</div>%s</div>' % (label, grid))
     blocks = []
     for t in range(1, TERMS + 1):
         chips = "".join(
@@ -459,26 +488,33 @@ def chip_index(eyebrow, title, sub, prefix, per_term, cols):
             % (prefix, (t - 1) * per_term + i, CHIP, i)
             for i in range(1, per_term + 1))
         blocks.append(
-            '<div style="margin-bottom:11pt">'
-            '<div style="font-size:6.6pt;letter-spacing:.14em;font-weight:800;'
-            'color:#4A4260;margin-bottom:5pt">TERM %d</div>'
-            '<div style="display:grid;grid-template-columns:repeat(%d,1fr);'
-            'gap:5pt">%s</div></div>' % (t, cols, chips))
-    return (bp.head(eyebrow, title, sub)
-            + body('<div class="card" style="flex:1">%s</div>'
-                   % "".join(blocks)))
+            '<div style="display:flex;align-items:center;gap:8pt;'
+            'margin-bottom:6pt">'
+            '<div style="font-size:6.6pt;letter-spacing:.12em;font-weight:800;'
+            'color:#4A4260;width:34pt;flex:none">TERM %d</div>'
+            '<div style="flex:1;display:grid;'
+            'grid-template-columns:repeat(%d,1fr);gap:5pt">%s</div></div>'
+            % (t, cols, chips))
+    return ('<div class="card" style="flex:none"><div class="label">%s</div>'
+            '%s</div>' % (label, "".join(blocks)))
+
+
+def chip_index(eyebrow, title, sub_, prefix, per_term, cols):
+    return (bp.head(eyebrow, title, sub_)
+            + body(chip_card("", prefix, per_term, cols),
+                   card("Anything else", fill(), flex="1")))
 
 
 def p_week_index():
     return chip_index("Jump to", "Weeks",
                       "Sixteen weeks a term, eight terms", "w",
-                      WEEKS_PER_TERM, 16)
+                      WEEKS_PER_TERM, WEEKS_PER_TERM)
 
 
 def p_day_index():
     return chip_index("Jump to", "Days",
-                      "Thirty-one a term. Use them on the days you need.",
-                      "d", DAYS_PER_TERM, 31)
+                      "Fourteen a term. Use them on the days you need.",
+                      "d", DAYS_PER_TERM, DAYS_PER_TERM)
 
 
 def group_page(key, title, sub, chips=""):
@@ -506,68 +542,79 @@ def group_page(key, title, sub, chips=""):
     return bp.head("Jump to", title, sub) + body("".join(body_parts))
 
 
-def chip_row(label, prefix, n, cols):
-    """t1..t8 / c1..c8 처럼 탭 목차에서 링크가 없던 페이지들로 가는 칩.
-    링크가 하나도 없으면 스크롤 말고는 갈 방법이 없다 -- 검사기가
-    '도달 불가 페이지'로 잡는 항목이다."""
-    chips = "".join('<a href="#%s%d" style="%s">%d</a>' % (prefix, i, CHIP, i)
-                    for i in range(1, n + 1))
-    return ('<div class="card" style="flex:none"><div class="label">%s</div>'
-            '<div style="display:grid;grid-template-columns:repeat(%d,1fr);'
-            'gap:6pt">%s</div></div>' % (label, cols, chips))
-
-
 # -------------------------------------------------------------- 페이지 목록
 def specs():
     """(키, 본문 만드는 함수) 목록. 순서가 PDF 페이지 순서다."""
-    s = [("cover", bp.p_cover), ("index", bp.p_index)]
+    out = [("cover", bp.p_cover), ("index", bp.p_index)]
 
-    def group(key, title, sub, chips=""):
-        s.append((key, (lambda k=key, t=title, u=sub, c=chips:
-                        lambda: group_page(k, t, u, c))()))
+    def group(key, title, sub_, *chips):
+        out.append((key, (lambda k=key, t=title, u=sub_, c="".join(chips):
+                          lambda: group_page(k, t, u, c))()))
+
+    def rep(prefix, per, fn):
+        """학기 × 학기당 장수. 키는 통번호, 제목은 학기 내 번호다."""
+        for t in range(1, TERMS + 1):
+            for i in range(1, per + 1):
+                out.append(("%s%d" % (prefix, (t - 1) * per + i),
+                            (lambda tt=t, ii=i, f=fn: lambda: f(tt, ii))()))
 
     group("semester", "Semester", "Eight terms, sixteen weeks each",
-          chip_row("Term overview", "t", TERMS, TERMS))
-    s += [("terms", p_terms), ("goals", p_goals),
-          ("term-review", p_term_review)]
-    for n in range(1, TERMS + 1):
-        s.append(("t%d" % n, (lambda i: lambda: p_term(i))(n)))
+          chip_card("Term overview", "t", 1),
+          chip_card("Term goals", "o", 1),
+          chip_card("Term review", "r", 1))
+    out.append(("terms", p_terms))
+    rep("t", 1, p_term)
+    rep("o", 1, p_goals)
+    rep("r", 1, p_term_review)
 
-    s.append(("week", p_week_index))
-    for n in range(1, WEEKS_PER_TERM * TERMS + 1):
-        s.append(("w%d" % n, (lambda i: lambda: p_week(i))(n)))
+    out.append(("week", p_week_index))
+    rep("w", WEEKS_PER_TERM, p_week)
 
-    s.append(("day", p_day_index))
-    for n in range(1, DAYS_PER_TERM * TERMS + 1):
-        s.append(("d%d" % n, (lambda i: lambda: p_day(i))(n)))
+    out.append(("day", p_day_index))
+    rep("d", DAYS_PER_TERM, p_day)
 
     group("classes", "Classes", "Timetable, and one page per class",
-          chip_row("One page per class", "c", CLASSES, CLASSES))
-    s += [("timetable", p_timetable), ("contacts", p_contacts)]
-    for n in range(1, CLASSES + 1):
-        s.append(("c%d" % n, (lambda i: lambda: p_class(i))(n)))
+          chip_card("Class schedule", "h", 1),
+          chip_card("Who to ask", "k", 1),
+          chip_card("One page per class", "c", CLASSES_PER_TERM,
+                    CLASSES_PER_TERM))
+    rep("h", 1, p_timetable)
+    rep("k", 1, p_contacts)
+    rep("c", CLASSES_PER_TERM, p_class)
 
-    group("work", "Work", "Syllabus, assignments, group projects")
-    s += [("syllabus", p_syllabus), ("assignments", p_assignments),
-          ("backwards", p_backwards), ("group", p_group_project),
-          ("estimate", p_estimate), ("obstacle", p_obstacle)]
+    group("work", "Work", "Syllabus, assignments, group projects",
+          chip_card("Syllabus unpack", "s", SYLLABUS_PER_TERM,
+                    SYLLABUS_PER_TERM),
+          chip_card("Assignment tracker", "a", 1))
+    rep("s", SYLLABUS_PER_TERM, p_syllabus)
+    rep("a", 1, p_assignments)
+    out += [("backwards", p_backwards), ("group", p_group_project),
+            ("estimate", p_estimate), ("obstacle", p_obstacle)]
 
-    group("study", "Study", "Exams, lecture notes, grades")
-    s += [("exam", p_exam), ("cornell", p_cornell), ("reading", p_reading),
-          ("grades", p_grades), ("session", p_session), ("office", p_office)]
+    group("study", "Study", "Exams, lecture notes, grades",
+          chip_card("Exam study plan", "e", EXAMS_PER_TERM, EXAMS_PER_TERM),
+          chip_card("Grade tracker", "g", 1))
+    rep("e", EXAMS_PER_TERM, p_exam)
+    rep("g", 1, p_grades)
+    out += [("cornell", p_cornell), ("reading", p_reading),
+            ("session", p_session), ("office", p_office)]
 
     group("focus", "Focus", "For when starting is the hard part")
-    s += [("braindump", p_braindump), ("focus-session", p_focus_session),
-          ("deciding", p_deciding), ("avoiding", p_avoiding),
-          ("energy", p_energy)]
+    out += [("braindump", p_braindump), ("focus-session", p_focus_session),
+            ("deciding", p_deciding), ("avoiding", p_avoiding),
+            ("energy", p_energy)]
 
     group("life", "Life", "The admin that eats the week")
-    s += [("meds", p_meds), ("sleep", p_sleep), ("mood", p_mood)]
+    out += [("meds", p_meds), ("sleep", p_sleep), ("mood", p_mood)]
 
-    s.append(("notes", p_notes))
-    return s
+    out.append(("notes", p_notes))
+    return out
 
 
 # 반복 페이지가 어느 탭을 켜는가. 하나라도 빠지면 그 페이지에서 레일이
 # 통째로 꺼져 "앱에서 튕겨나온" 느낌이 된다.
-REPEAT_TAB = [("t", "semester"), ("w", "week"), ("d", "day"), ("c", "classes")]
+REPEAT_TAB = [("t", "semester"), ("o", "semester"), ("r", "semester"),
+              ("w", "week"), ("d", "day"),
+              ("h", "classes"), ("k", "classes"), ("c", "classes"),
+              ("s", "work"), ("a", "work"),
+              ("e", "study"), ("g", "study")]

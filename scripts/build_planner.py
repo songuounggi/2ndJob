@@ -1003,19 +1003,28 @@ APP_ORBS = ["linear-gradient(140deg,#7C4DFF,#B388FF)",
             "linear-gradient(140deg,#22D3EE,#4DA3FF)",
             "linear-gradient(140deg,#FF8A3D,#FFD166)"]
 
-APP_GROUPS = [("Semester", "eight terms, sixteen weeks each"),
-              ("Classes", "timetable, one page per class"),
-              ("Work", "syllabus, assignments, group projects"),
-              ("Study", "exams, lecture notes, grades")]
+# (앵커, 이름, 설명). 앵커가 없으면 목차가 만들어지지 않는다 --
+# 2026-09-23 검수에서 네 줄이 전부 href="#index" 로 박혀 있어
+# 눌러도 제자리였다. 목적지가 유효해서 링크 검사도 통과했다.
+# 표지 카드는 실제 페이지 제목과 같아야 한다(없는 기능을 광고하지 않는다).
+APP_GROUPS = [("semester", "Semester", "eight terms, sixteen weeks each"),
+              ("week", "Weeks", "what is due, week by week"),
+              ("day", "Days", "one thing, then the rest"),
+              ("classes", "Classes", "timetable, one page per class"),
+              ("work", "Work", "syllabus, assignments, group projects"),
+              ("study", "Study", "exams, lecture notes, grades"),
+              ("focus", "Focus", "for when starting is the hard part"),
+              ("life", "Life", "medication, sleep, mood"),
+              ("notes", "Notes", "blank space")]
 
 
 def p_app_cover():
     """표지. 카드에 적는 것은 실제로 들어 있는 것이어야 한다 -- 리스팅의
     대표 이미지로 쓰이므로 페이지를 늘리면 여기도 같이 고친다."""
-    items = [("Semester at a glance", "sixteen weeks on one sheet"),
-             ("Syllabus unpack", "one handout, broken into dates"),
+    items = [("Syllabus unpack", "one handout, broken into dates"),
              ("Assignment tracker", "due, started, handed in"),
-             ("Working backwards", "from the deadline, not from today")]
+             ("Working backwards", "from the deadline, not from today"),
+             ("Term at a glance", "sixteen weeks on one sheet")]
     rows = "".join(
         f'<div class="crow"><div class="orb" style="background:{APP_ORBS[i]}">'
         f'</div><div class="cn">{n}<div class="cd">{d}</div></div></div>'
@@ -1030,14 +1039,14 @@ def p_app_cover():
 
 def p_app_index():
     rows = "".join(
-        f'<a class="crow" href="#index"><div class="orb" '
-        f'style="background:{APP_ORBS[i]}"></div>'
+        f'<a class="crow" href="#{k}"><div class="orb" '
+        f'style="background:{APP_ORBS[i % len(APP_ORBS)]}"></div>'
         f'<div class="cn">{n}<div class="cd">{d}</div></div>'
         f'<span class="cq">&rsaquo;</span></a>'
-        for i, (n, d) in enumerate(APP_GROUPS))
+        for i, (k, n, d) in enumerate(APP_GROUPS))
     return (head("Index", "Where to?", "Use the side tabs, or pick here")
             + '<div class="body"><div class="card" style="flex:none;'
-              f'padding:12pt 22pt">{rows}</div>'
+              f'padding:6pt 22pt">{rows}</div>'
             + '<div class="card" style="flex:1">'
               '<div class="label">Anything else</div>'
             + student_pages.fill() + '</div></div>')
