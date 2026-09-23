@@ -197,17 +197,14 @@ NAV_CSS = """
 .nav .sub{font-size:34px;color:#6E6A64;margin-top:16px;line-height:1.35}
 .nav .body{flex:1;min-height:0;display:flex;gap:56px;margin-top:38px;
            align-items:stretch}
-.nav .rail{flex:none;width:250px;border-radius:20px;overflow:hidden;
+/* The whole rail, not a slice of it. Scaled to the frame's WIDTH the strip
+   overflowed and only six tabs survived the crop -- an image that showed
+   six under a headline that says ten. Scale to height instead and the
+   frame narrows to match; nothing is cut, so the fades came out too. */
+.nav .rail{flex:none;border-radius:20px;overflow:hidden;
            background:#F7F4EE;box-shadow:0 14px 34px rgba(0,0,0,.10);
-           position:relative}
-.nav .rail img{position:absolute;top:50%;left:50%;
-               transform:translate(-50%,-50%);width:100%;display:block}
-/* the strip is far taller than the frame, so it has to be cut. Fade both
-   ends or the cut reads as a mistake rather than "it continues". */
-.nav .rail::before,.nav .rail::after{content:"";position:absolute;left:0;
-    right:0;height:120px;z-index:2;pointer-events:none}
-.nav .rail::before{top:0;background:linear-gradient(#F7F4EE,rgba(247,244,238,0))}
-.nav .rail::after{bottom:0;background:linear-gradient(rgba(247,244,238,0),#F7F4EE)}
+           position:relative;display:flex;align-items:center}
+.nav .rail img{height:100%;width:auto;display:block}
 .nav .list{flex:1;display:flex;flex-direction:column;justify-content:center;
            gap:5px}
 .nav .t{display:flex;align-items:baseline;gap:18px;padding:11px 0;
@@ -230,7 +227,7 @@ TABS_10 = [
     ("HABITS", "#7FA37C", "31-day tracker, routines"),
     ("HEALTH", "#7FA37C", "meds, sleep, symptoms"),
     ("LIFE", "#D9A441", "meals, money, the admin"),
-    ("NOTES", "#D9A441", "dot grid"),
+    ("NOTES", "#D9A441", "eight blank pages, three papers"),
 ]
 
 
