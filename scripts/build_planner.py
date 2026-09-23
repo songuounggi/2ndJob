@@ -355,6 +355,14 @@ THEMES = {
 # v9-student 는 이 이름이 정해지기 전에 쓰던 키라 별칭으로만 남긴다.
 THEMES["student-v0.1"] = THEMES["v9-student"]
 
+# Revisions of a shipped product get their own version name and their own
+# output file. The file a buyer already downloaded is never overwritten --
+# if a fix turns out wrong we need the old one to compare against, and
+# output/ is gitignored so git will not bring it back.
+#   v8-undated    2026-09-21  출시본 (Etsy 에 올라간 것)
+#   v8.1-undated  2026-09-23  선 일관성 수정
+THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
+
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
     VERSION = "student-v0.1"
@@ -472,7 +480,7 @@ h1{font-size:23pt;font-weight:800;margin:11pt 0 0;letter-spacing:-.01em}
    one page. Paper does not do that. See LINES.md. */
 .lines{flex:1;display:flex;flex-direction:column;min-height:0;
        overflow:hidden}
-.lines>div{height:26pt;flex:none;border-bottom:1px solid var(--line)}
+.lines>div{height:20pt;flex:none;border-bottom:1px solid var(--line)}
 
 .row{display:flex;gap:12pt;flex:1;min-height:0}
 .col{display:flex;flex-direction:column;gap:12pt;min-height:0}
@@ -1275,8 +1283,11 @@ def p_group(key, title, sub=""):
 
 
 def prompt_card(label, hint, n_lines, flex=1):
-    h = (f'<div style="font-size:8pt;color:var(--soft);margin:-4pt 0 8pt">{hint}</div>'
-         if hint else "")
+    # The hint slot is reserved whether or not there is a hint. Without it a
+    # card with no hint is one line taller than its neighbours, so it fits an
+    # extra rule -- that is why "Talk to yourself kindly" showed 2/3/2/2.
+    h = (f'<div style="font-size:8pt;color:var(--soft);margin:-4pt 0 8pt;'
+         f'min-height:11pt">{hint or "&nbsp;"}</div>')
     return (f'<div class="card" style="flex:{flex}">'
             f'<div class="label">{label}</div>{h}{lines(n_lines)}</div>')
 
@@ -1369,15 +1380,22 @@ def p_rsd():
     return (head("Feelings", "Rejection sensitivity",
                  "When a small thing lands like a very big one.")
             + '<div class="body">'
+            # six stacked cards left each one too short -- two of them came
+            # out with no rule at all. Pairing them into rows gives every
+            # card the same height, so the rule count matches.
+            + '<div class="row">'
             + prompt_card("What happened", "just the facts, no reading into it", 3)
             + prompt_card("What I told myself it meant", "", 3)
+            + '</div>'
+            + '<div class="row">'
             + prompt_card("What else it could have meant",
                           "list three, even the weak ones", 4)
-            + '<div class="row" style="flex:1">'
+            + prompt_card("What would I say to a friend here", "", 3)
+            + '</div>'
+            + '<div class="row">'
             + prompt_card("How strong now, 0-10", "", 2)
             + prompt_card("How strong tomorrow", "come back and fill this in", 2)
             + '</div>'
-            + prompt_card("What would I say to a friend here", "", 3)
             + '</div>')
 
 
@@ -1771,10 +1789,14 @@ def p_vision():
         f'<div class="card" style="flex:1"><div class="label">{t}</div>{lines(5)}</div>'
         for t in ["This year", "Three years"])
     return (head("Year", "Vision page", "Not a plan. Just the direction.")
+            # both pairs go in rows: with only the top pair wrapped, the
+            # row's gap made those two cards shorter and they fitted one
+            # rule fewer than the pair below.
             + f'<div class="body"><div class="row">{boxes}</div>'
+            + '<div class="row">'
             + prompt_card("What I want more of", "", 4)
             + prompt_card("What I want less of", "", 4)
-            + '</div>')
+            + '</div></div>')
 
 
 def p_estimate():
