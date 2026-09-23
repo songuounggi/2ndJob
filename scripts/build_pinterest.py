@@ -19,7 +19,8 @@ import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PREVIEW = os.path.join(ROOT, "output", "preview")
-OUT = os.path.join(ROOT, "output", "pinterest")
+# 9/22 에 뽑은 핀(494/58 기준)은 output/pinterest/ 에 그대로 둔다.
+OUT = os.path.join(ROOT, "output", "pinterest_v815")
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 W, H = 1000, 1500          # Pinterest's recommended 2:3
@@ -76,7 +77,9 @@ def html(body):
 
 
 def img(n):
-    return "file:///" + os.path.join(PREVIEW, f"v8_p{n}.png").replace("\\", "/")
+    # v8.18 렌더를 읽는다. 출시본 소스(v8_p*.png)는 그대로 둔다.
+    return "file:///" + os.path.join(
+        PREVIEW, f"v815_p{n}.png").replace("\\", "/")
 
 
 def shoot(name, body):
@@ -136,7 +139,7 @@ def pin_pages():
     cells = "".join(f'<img src="{img(n)}">' for n in (12, 16, 20, 25, 28, 35))
     return shoot("03_pages", f"""<div class="wrap">
       <span class="kicker">WHAT'S INSIDE</span>
-      <h1><em>58</em> pages that<br>are actually different</h1>
+      <h1><em>61</em> pages that<br>are actually different</h1>
       <div class="sub">Not one page copied three hundred times.</div>
       <div class="grow"><div class="grid"
            style="grid-template-columns:repeat(2,auto);--cell:288px">{cells}</div></div>
@@ -152,7 +155,7 @@ def pin_nav():
         planners is not being able to find anything.</div>
       <div class="grow"><div class="duo">
         <div class="tab"><img src="{img(2)}"></div>
-        <div class="tab"><img src="{img(58)}"></div></div></div>
+        <div class="tab"><img src="{img(66)}"></div></div></div>
       {FOOT}
     </div>""")
 
@@ -163,8 +166,8 @@ def pin_everyday():
       <h1>A timed day,<br>meds, and a<br>mood row</h1>
       <div class="sub">424 daily and weekly pages.<br>Weeks start on Monday.</div>
       <div class="grow"><div class="duo">
-        <div class="tab"><img src="{img(60)}"></div>
-        <div class="tab"><img src="{img(444)}"></div></div></div>
+        <div class="tab"><img src="{img(68)}"></div>
+        <div class="tab"><img src="{img(452)}"></div></div></div>
       {FOOT}
     </div>""")
 
@@ -180,7 +183,7 @@ def pin_undated():
       <h1>Not a single<br>date printed<br><em>anywhere</em></h1>
       <div class="grow" style="flex-direction:column;gap:40px">
         <div class="list">{items}</div>
-        <div class="tab" style="--h:420px"><img src="{img(61)}"></div>
+        <div class="tab" style="--h:420px"><img src="{img(69)}"></div>
       </div>
       {FOOT}
     </div>""")
