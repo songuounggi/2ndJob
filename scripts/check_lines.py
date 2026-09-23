@@ -194,20 +194,27 @@ def main():
 
     # --- 3. 표 -------------------------------------------------------------
     no_underline = [t for t in trk if t["unevenHeaderRule"]]
-    outer = [t for t in trk if t["outerRight"] or t["outerBottom"]]
+    # Horizontals close, verticals open. The rule under the last row is now
+    # required -- a table whose header rule spans the full width but whose
+    # last row just stops reads as unfinished. Only a vertical outer edge is
+    # a defect.
+    outer = [t for t in trk if t["outerRight"]]
+    unclosed = [t for t in trk if not t["outerBottom"]]
     print(f"\n.trk 표 {len(trk)}개")
     if no_underline:
         fails.append(f"헤더 아래 선이 열마다 다른 표: {len(no_underline)}개")
         for t in no_underline[:6]:
             print(f"   FAIL  {t['page']} 표#{t['i']} 헤더선 불균일 {t['cols']}")
     if outer:
-        fails.append(f"바깥 테두리가 남은 표: {len(outer)}개")
+        fails.append(f"세로 바깥 테두리가 남은 표: {len(outer)}개")
         for t in outer[:6]:
-            side = "우" if t["outerRight"] else ""
-            side += "하" if t["outerBottom"] else ""
-            print(f"   FAIL  {t['page']} 표#{t['i']} 바깥선({side})")
-    if not no_underline and not outer:
-        print("   OK    헤더선 균일, 바깥 테두리 없음")
+            print(f"   FAIL  {t['page']} 표#{t['i']} 우측 바깥선")
+    if unclosed:
+        fails.append(f"마지막 행 아래 선이 없는 표: {len(unclosed)}개")
+        for t in unclosed[:6]:
+            print(f"   FAIL  {t['page']} 표#{t['i']} 마감선 없음")
+    if not no_underline and not outer and not unclosed:
+        print("   OK    헤더선 균일, 가로 마감, 세로 열림")
 
     # --- 4. 높이가 같은 카드는 줄 수도 같아야 한다 ------------------------
     from collections import defaultdict

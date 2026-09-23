@@ -367,11 +367,13 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.3-undated  2026-09-23  괘선 바닥 정렬 시안 -- 첫 줄이 잘려 폐기
 #   v8.4-undated  2026-09-23  카드 높이를 행 높이의 배수로 고정 (snap_cards)
 #   v8.5-undated  2026-09-23  마지막 괘선이 래스터에서 사라지던 것 수정
+#   v8.6-undated  2026-09-23  넉넉한 상자도 고정 + 표/행목록 가로 마감선
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.4-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.5-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.6-undated"] = dict(THEMES["v8-undated"])
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -524,7 +526,9 @@ h1{font-size:23pt;font-weight:800;margin:11pt 0 0;letter-spacing:-.01em}
    `tr:first-child .nm{border-bottom:none}` cut it off on the left only,
    which is what made the header look lopsided on 7 tables. */
 .trk td:last-child{border-right:none}
-.trk tr:last-child td{border-bottom:none}
+/* The closing rule stays. The header rule runs the full width, so a
+   table with no line under its last row reads as unfinished. Only the
+   VERTICAL frame is dropped -- horizontals close, verticals open. */
 
 .dots{background-image:radial-gradient(var(--line) 1.1px, transparent 1.1px);
       background-size:14pt 14pt;background-position:8pt 8pt}
@@ -1137,7 +1141,7 @@ def p_week(label=""):
     days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:flex-start;padding-top:8pt;'
-        f'{"" if i == 6 else "border-bottom:1px solid var(--line)"}">'
+        f'border-bottom:1px solid var(--line)">'
         f'<span class="chip" style="{"" if i < 5 else "background:var(--field);color:var(--mid)"}">{d}</span>'
         f'</div>' for i, d in enumerate(days))
     return (head("Weekly spread", label or "Week of", field_after=True)
@@ -1343,7 +1347,7 @@ def p_braindump():
 def p_session():
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'{"" if i == 5 else "border-bottom:1px solid var(--line)"}">'
+        f'border-bottom:1px solid var(--line)">'
         f'<span style="font-size:7.5pt;font-weight:700;color:var(--soft);'
         f'width:16pt">{i + 1}</span>'
         f'<div class="field" style="flex:2"></div>'
@@ -1376,7 +1380,7 @@ def p_obstacle():
 def p_paralysis():
     opts = "".join(
         f'<div style="flex:1;display:flex;gap:10pt;align-items:center;'
-        f'{"" if i == 2 else "border-bottom:1px solid var(--line)"}">'
+        f'border-bottom:1px solid var(--line)">'
         f'<span class="chip">{c}</span><div class="field" style="flex:1"></div></div>'
         for i, c in enumerate(["A", "B", "C"]))
     return (head("Focus", "Stuck on deciding",
@@ -1486,7 +1490,7 @@ def p_meals():
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'{"" if i == 6 else "border-bottom:1px solid var(--line)"}">'
+        f'border-bottom:1px solid var(--line)">'
         f'<span class="chip" style="width:30pt;text-align:center">{d}</span>'
         f'<div class="field" style="flex:1"></div></div>'
         for i, d in enumerate(days))
@@ -1651,7 +1655,7 @@ def p_gratitude():
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'{"" if i == 6 else "border-bottom:1px solid var(--line)"}">'
+        f'border-bottom:1px solid var(--line)">'
         f'<span class="chip" style="width:30pt;text-align:center">{d}</span>'
         f'<div class="field" style="flex:1"></div></div>'
         for i, d in enumerate(days))
@@ -1764,7 +1768,7 @@ def p_impulse():
 def p_reading():
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'{"" if i == 9 else "border-bottom:1px solid var(--line)"}">'
+        f'border-bottom:1px solid var(--line)">'
         f'<div class="box"></div>'
         f'<div class="field" style="flex:3"></div>'
         f'<div class="field" style="width:52pt"></div></div>' for i in range(10))
@@ -1879,7 +1883,7 @@ def p_avoiding():
 def p_deadline():
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'{"" if i == 6 else "border-bottom:1px solid var(--line)"}">'
+        f'border-bottom:1px solid var(--line)">'
         f'<div class="field" style="width:58pt"></div>'
         f'<div class="field" style="flex:1"></div></div>' for i in range(7))
     return (head("Focus", "Working backwards",
@@ -1925,7 +1929,7 @@ def p_boundaries():
 def p_energy():
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:10pt;'
-        f'{"" if i == 7 else "border-bottom:1px solid var(--line)"}">'
+        f'border-bottom:1px solid var(--line)">'
         f'<div class="field" style="flex:3"></div>'
         + "".join('<div class="box" style="width:12pt;height:12pt"></div>'
                   for _ in range(5))
@@ -1944,7 +1948,7 @@ def p_intake():
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:center;gap:8pt;'
-        f'{"" if i == 6 else "border-bottom:1px solid var(--line)"}">'
+        f'border-bottom:1px solid var(--line)">'
         f'<span class="chip" style="width:30pt;text-align:center">{d}</span>'
         + "".join('<div class="box" style="width:11pt;height:11pt"></div>'
                   for _ in range(8))
@@ -2242,9 +2246,12 @@ document.querySelectorAll('.lines[data-ln]').forEach(L=>{
     if(d.getBoundingClientRect().bottom<=lb.bottom+0.5) kk++; else break;
   }
   if(kk<1) return;
-  // Nothing is being clipped, so the box already ends where its rules do --
-  // that is the spare=0 case, and there is no slack to win or lose.
-  if(L.scrollHeight<=L.clientHeight+1) return;
+  // Skip only the box that is exactly its own rules -- the spare=0 card,
+  // whose height comes from the rules themselves. scrollHeight cannot tell
+  // that apart from a box that is ROOMIER than its rules (both report
+  // scrollHeight == clientHeight), and skipping those left a rule's worth
+  // of dead space under the last line on Screen time. Compare heights.
+  if(Math.abs(k.length*P-H)<1) return;
   // Aim for one pixel under the last rule rather than zero. On the boundary
   // the rasteriser may or may not keep that rule: "Worth it?" measured three
   // in the DOM and printed two, and Gratitude lost its ninth the same way.
