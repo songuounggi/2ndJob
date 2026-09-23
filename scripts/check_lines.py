@@ -65,6 +65,13 @@ document.querySelectorAll('section.page').forEach(sec => {
                            - parseFloat(cs.borderBottomWidth || 0);
     let d = 0;
     for (const ch of c.children) {
+      // An absolutely positioned child with inset:0 fills the card's
+      // PADDING box on purpose -- the mind map's connector svg does exactly
+      // that -- so measuring it against the content box reports the bottom
+      // padding as overflow. It is laid out by its own offsets, not by the
+      // flow, so it cannot be crushed by a sibling either.
+      const pos = getComputedStyle(ch).position;
+      if (pos === 'absolute' || pos === 'fixed') continue;
       const cb = ch.getBoundingClientRect().bottom;
       if (cb - inner > d) d = cb - inner;
     }

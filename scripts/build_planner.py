@@ -1308,15 +1308,18 @@ def p_group(key, title, sub=""):
               f'<div class="label">Anything else</div>{lines(6)}</div></div>')
 
 
-def prompt_card(label, hint, n_lines, flex=1):
+def prompt_card(label, hint, n_lines, flex=1, spare=None):
     # The hint slot is reserved whether or not there is a hint. Without it a
     # card with no hint is one line taller than its neighbours, so it fits an
     # extra rule -- that is why "Talk to yourself kindly" showed 2/3/2/2.
     h = (f'<div style="font-size:8pt;color:var(--soft);margin:-4pt 0 8pt;'
          f'min-height:11pt">{hint or "&nbsp;"}</div>')
-    # flex:none means the content sets the height -- the spare rules would
-    # not be clipped, so do not print them. See lines().
-    spare = 0 if str(flex) == "none" else LINE_SPARE
+    # Spare rules are only ever clipped when something outside the card sets
+    # its height. When the content sets it -- the card itself on flex:none,
+    # or a whole row on flex:none -- every spare rule is real height. The
+    # card cannot see its parent, so a row like that passes spare=0 itself.
+    if spare is None:
+        spare = 0 if str(flex) == "none" else LINE_SPARE
     return (f'<div class="card" style="flex:{flex}">'
             f'<div class="label">{label}</div>{h}'
             f'{lines(n_lines, spare)}</div>')
@@ -1604,8 +1607,9 @@ def p_hyperfocus():
             + '<div class="body">'
             + field_row("What pulled me in")
             + '<div class="row" style="flex:none">'
-            + prompt_card("Started", "", 1) + prompt_card("Stopped", "", 1)
-            + prompt_card("Hours", "", 1)
+            + prompt_card("Started", "", 1, spare=0)
+            + prompt_card("Stopped", "", 1, spare=0)
+            + prompt_card("Hours", "", 1, spare=0)
             + '</div>'
             + prompt_card("What I got done", "give yourself the credit", 4)
             + prompt_card("What I missed", "meals, messages, sleep", 4)
@@ -1680,7 +1684,7 @@ def p_doctor():
     return (head("Health", "Doctor visit", "Write the questions down. You will forget them in the room.")
             + '<div class="body">'
             + '<div class="row" style="flex:none">'
-            + prompt_card("Date", "", 1) + prompt_card("Who", "", 1)
+            + prompt_card("Date", "", 1, spare=0) + prompt_card("Who", "", 1, spare=0)
             + '</div>'
             + prompt_card("What I want to ask", "put the important one first", 6)
             + prompt_card("What they said", "", 6)
@@ -1880,7 +1884,8 @@ def p_deadline():
                  "Start at the date it is due and walk back to today.")
             + '<div class="body">'
             + '<div class="row" style="flex:none">'
-            + prompt_card("Due", "", 1) + prompt_card("Today", "", 1)
+            + prompt_card("Due", "", 1, spare=0)
+            + prompt_card("Today", "", 1, spare=0)
             + '</div>'
             + f'<div class="card" style="flex:1">'
               f'<div class="label">Date &amp; what has to be done by then</div>{rows}</div>'
@@ -2218,7 +2223,22 @@ document.querySelectorAll('.lines[data-ln]').forEach(L=>{
   // roomier than its rules (habits had seven rules' worth of empty space
   // under the last one); pinning to the box would keep that space, pinning
   // to the rules removes it.
-  const kk=Math.min(Math.floor(H/P+0.15), k.length);
+  // Count the rules that actually render instead of dividing. Dividing needs
+  // an epsilon, and every value of it is wrong somewhere: 0.01 read a box a
+  // hair under a multiple as one rule short and shaved a whole rule off on
+  // the next pass (worry went from two rules a card to one), while 0.15 read
+  // a box 0.8px short as one rule longer and skipped the card entirely (meds
+  // kept a full empty row under its last rule). Counting is exact.
+  const lb=L.getBoundingClientRect();
+  let kk=0;
+  for(const d of k){
+    // 0.5px, not 1px. Chrome lays out on a 1/64px grid, so half a pixel
+    // absorbs the rounding while still excluding a rule that genuinely
+    // does not fit -- at 1px the eighth rule of the meds card counted
+    // as visible though it overhangs by 0.8px, the remainder came out
+    // negative, and the card was left with an empty row.
+    if(d.getBoundingClientRect().bottom<=lb.bottom+0.5) kk++; else break;
+  }
   if(kk<1) return;
   const r=H-kk*P;
   if(r<2) return;                         // close enough; pinning would churn
