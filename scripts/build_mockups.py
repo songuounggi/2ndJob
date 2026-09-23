@@ -77,7 +77,7 @@ BLOBS = ('<div class="blobs"><i class="b1"></i><i class="b2"></i>'
 
 def html(body, extra=""):
     return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@500;600&display=swap"
       rel="stylesheet"><style>{CSS}{extra}</style></head><body>{body}</body></html>"""
 
 
@@ -148,11 +148,34 @@ body{--bo:1}
 .hero .stage .p3{transform:translate(738px,-255px) rotate(8deg)}
 .hero .stage .p4{transform:translate(800px,262px) rotate(-6deg)}
 .hero>*{position:relative;z-index:1}
+/* Our own sentences, not a quote. A famous line would be someone else's
+   copyright and would read as an endorsement they never gave. These are
+   the thoughts the planner is answering, in the hand of the person who
+   would write them -- it is a product you write on, so the type should
+   look written. Kept under 10% so nothing competes with the title. */
+.hero .scribble{position:absolute;inset:0;z-index:0;pointer-events:none;
+   font-family:'Caveat',cursive;color:#3A3A3A}
+.hero .scribble span{position:absolute;white-space:nowrap;font-weight:600}
+/* Kept clear of the type block (roughly y 170-580, x 500-1430). The first
+   pass put one behind the title and it came out as a half-eaten word. */
+.hero .s1{top:30.5%;left:2%;font-size:54px;opacity:.10;transform:rotate(-6deg)}
+.hero .s2{top:30%;right:2.5%;font-size:54px;opacity:.10;transform:rotate(5deg)}
+/* Two more sat at 45% and the page cards covered all but their first and
+   last letters. Four is enough; a phrase that is half a word is a defect,
+   not texture. */
+.hero .s5{bottom:4.5%;left:6%;font-size:58px;opacity:.09;transform:rotate(-4deg)}
+.hero .s6{bottom:5.5%;right:7%;font-size:54px;opacity:.085;transform:rotate(6deg)}
 """.replace("SAFEpx", f"{SAFE}px")
 
 
 def hero():
-    body = f"""{BLOBS}<div class="hero">
+    scribble = """<div class="scribble">
+      <span class="s1">tomorrow me will handle it</span>
+      <span class="s2">I will remember it</span>
+      <span class="s5">just one thing today</span>
+      <span class="s6">not lazy</span>
+    </div>"""
+    body = f"""{BLOBS}<div class="hero">{scribble}
       <span class="kicker">UNDATED &middot; NO-GUILT</span>
       <h1>ADHD &amp; Wellness<br>Digital Planner</h1>
       <div class="sub">Start any day. Skip a week. Nothing to catch up on.</div>
