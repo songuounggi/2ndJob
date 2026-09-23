@@ -209,6 +209,16 @@ document.querySelectorAll('section.page').forEach(sec => {
     const uneven = per.length > 1 && new Set(per).size > 1;
     const labelled = firstRow && [...firstRow.cells].some(
       c => c.textContent.trim().length > 0);
+    // Rows left blank for the reader to fill in need the left column
+    // named, or it reads as an empty box rather than an invitation --
+    // tracker()'s own docstring says so, and three of the four tables
+    // that have blank rows were shipping without it.
+    const blankRows = rows.slice(1).filter(r => {
+      const c = r.cells[0];
+      return c && c.textContent.replace(/ /g, "").trim() === "";
+    }).length;
+    const corner = firstRow && firstRow.cells[0]
+      && firstRow.cells[0].textContent.trim().length > 0;
     // 바깥 테두리: 마지막 칸 오른쪽 / 마지막 행 아래는 없어야 한다
     const rightCell = firstRow && firstRow.cells[firstRow.cells.length-1];
     const anyRight = [...rows].some(r => {
@@ -226,6 +236,8 @@ document.querySelectorAll('section.page').forEach(sec => {
     });
     out.trk.push({page: sec.id, i,
                   labelledHeader: !!labelled,
+                  blankRows: blankRows,
+                  corner: !!corner,
                   unevenHeaderRule: !!uneven,
                   cols: per,
                   outerLeft: !!anyLeft,
@@ -341,11 +353,18 @@ def main():
             side = "좌" if t["outerLeft"] else ""
             side += "우" if t["outerRight"] else ""
             print(f"   FAIL  {t['page']} 표#{t['i']} {side}측 바깥선")
+    nocorner = [t for t in trk if t.get("blankRows", 0) > 0
+                and not t.get("corner")]
+    if nocorner:
+        fails.append(f"빈 행이 있는데 왼쪽 열 라벨이 없는 표: {len(nocorner)}개")
+        for t in nocorner[:6]:
+            print(f"   FAIL  {t['page']} 표#{t['i']} 빈 행 {t['blankRows']}개, "
+                  f"왼쪽 열 라벨 없음")
     if unclosed:
         fails.append(f"마지막 행 아래 선이 없는 표: {len(unclosed)}개")
         for t in unclosed[:6]:
             print(f"   FAIL  {t['page']} 표#{t['i']} 마감선 없음")
-    if not no_underline and not outer and not unclosed:
+    if not no_underline and not outer and not unclosed and not nocorner:
         print("   OK    헤더선 균일, 가로 마감, 세로 열림")
 
     # --- 4. 높이가 같은 카드는 줄 수도 같아야 한다 ------------------------

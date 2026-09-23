@@ -376,6 +376,7 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.12-undated 2026-09-23  NOTES 인덱스 칩이 카드 밖으로 잘리던 것
 #   v8.13-undated 2026-09-23  접근성 태그 유지 + 노트 8장
 #   v8.14-undated 2026-09-23  NOTES 인덱스 카드가 내용만큼만 차지하도록
+#   v8.15-undated 2026-09-23  빈 행을 둔 표에 왼쪽 열 라벨
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
@@ -390,6 +391,7 @@ THEMES["v8.11-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.12-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.13-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.14-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.15-undated"] = dict(THEMES["v8-undated"])
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -1291,7 +1293,7 @@ def p_habits():
     return (head("Habit tracker", "Habits" if T.get("undated") else f"January {YEAR}",
                  "One month at a time. Mark the days you showed up.")
             + f"""<div class="body">
-      <div class="card" style="flex:2.2;padding:16pt 18pt">{tracker(names, 2)}</div>
+      <div class="card" style="flex:2.2;padding:16pt 18pt">{tracker(names, 2, corner="HABIT")}</div>
       <div class="row" style="flex:1">
         <div class="card" style="flex:1"><div class="label">What worked</div>{lines(5)}</div>
         <div class="card" style="flex:1"><div class="label">What to change</div>{lines(5)}</div>
@@ -1768,7 +1770,7 @@ def p_symptoms():
              "Fatigue", "Appetite", "Headache"]
     return (head("Health", "Symptom tracker", "Patterns are what your doctor will ask about.")
             + f'<div class="body"><div class="card" style="flex:2;padding:16pt 18pt">'
-              f'{tracker(names, 3)}</div>'
+              f'{tracker(names, 3, corner="SYMPTOM")}</div>'
             + prompt_card("What seemed to trigger it", "", 4, 1)
             + '</div>')
 
@@ -2072,7 +2074,7 @@ def p_cycle():
     return (head("Health", "Cycle tracker",
                  "Symptoms often follow it. Worth having the two side by side.")
             + f'<div class="body"><div class="card" style="flex:2;padding:16pt 18pt">'
-              f'{tracker(names, 2)}</div>'
+              f'{tracker(names, 2, corner="WHAT I TRACK")}</div>'
             + prompt_card("What I noticed this month", "", 4, 1)
             + '</div>')
 
