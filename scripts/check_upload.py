@@ -3,14 +3,14 @@
 
 파일 규칙 (2026-09-24 사용자 확정):
   작업본  output/planner_<버전>-FINAL.pdf        버전을 올려 가며 고친다. 지우지 않는다
-  원본    output/upload/<Etsy 이름>              v8.18. 영원히 건드리지 않는다
-  올린 판 output/upload/<버전>/<Etsy 이름>       최종 확인 후 Etsy 에 올린 판마다
-                                                 버전 이름으로 폴더를 만든다
+  올린 판 output/upload/<버전>/<Etsy 이름>       Etsy 에 올린 판마다 버전 이름으로
+                                                 폴더를 만든다. 한 번 넣으면 건드리지 않는다
+  upload/ 바로 아래에는 파일을 두지 않는다
 
 이력표에서 날짜가 적힌 줄 = 올린 것, "올리기 전" = 후보. 그래서 본다:
   1. 모든 줄: 작업본 FINAL 이 있고 바이트가 표와 같은가
   2. 올린 줄: upload/<버전>/ 이 있고 바이트가 같은가
-  3. 원본이 그대로인가 (v8.18, 19,599,557 B)
+  3. upload/ 바로 아래에 낱개 파일이 없는가
 
     python scripts/check_upload.py
 """
@@ -21,7 +21,6 @@ sys.stdout.reconfigure(encoding="utf-8")   # 한국어 Windows 콘솔은 cp949
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTPUT = os.path.join(ROOT, "output")
 UPLOAD = os.path.join(OUTPUT, "upload")
-ORIGINAL = ("ADHD-Wellness-Planner-Undated-502-pages.pdf", 19_599_557)
 
 md = open(os.path.join(ROOT, "shop.md"), encoding="utf-8").read()
 sec = md.split("## 0-1.", 1)[1].split("### 리스팅 이미지", 1)[0]
@@ -57,9 +56,8 @@ for ver, name, want, uploaded in rows:
     got = size(os.path.join(UPLOAD, folder, name))
     report(got == want, f"{tag}: upload/{folder}/ {got and f'{got:,}'} B  expect {want:,}")
 
-name, want = ORIGINAL
-got = size(os.path.join(UPLOAD, name))
-report(got == want, f"원본 upload/{name}: {got and f'{got:,}'} B  expect {want:,} (건드리지 않는다)")
+loose = [f for f in os.listdir(UPLOAD) if os.path.isfile(os.path.join(UPLOAD, f))]
+report(not loose, f"upload/ 바로 아래 낱개 파일 {len(loose)}개  expect 0 {loose if loose else ''}")
 
 print(f"\nFAILURES: {fail}")
 sys.exit(1 if fail else 0)

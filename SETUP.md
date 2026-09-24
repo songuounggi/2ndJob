@@ -179,12 +179,10 @@ python scripts/dedupe_pdf.py output/planner_v8.20-undated.pdf output/planner_v8.
 
 ```bash
 mkdir -p output/upload/v8.18
-cp output/planner_v8.18-undated-FINAL.pdf output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf
 cp output/planner_v8.18-undated-FINAL.pdf output/upload/v8.18/ADHD-Wellness-Planner-Undated-502-pages.pdf
 ```
 
-`output/upload/` 바로 아래 = **원본(v8.18). 이후 절대 바꾸지 않는다.**
-`upload/<버전>/` = Etsy 에 올린 판마다 하나. 이후 올린 판이 생기면
+`upload/<버전>/` = Etsy 에 올린 판마다 하나. `upload/` 바로 아래에는 파일을 두지 않는다. 이후 올린 판이 생기면
 (`shop.md` 0-1절 이력표에 날짜가 적힌 줄) 같은 식으로 `upload/<그 버전>/` 을 만든다.
 이력표의 옛 판(#1, #2)이 이 PC 에 없으면 "소스" 칸대로 빌드한다. 다 됐으면
 이력표와 대조한다(`FAILURES: 0` 이면 된다):
