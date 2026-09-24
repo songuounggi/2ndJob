@@ -73,7 +73,7 @@ git 에 없어서 따라오지 않는다. 절차는 `SETUP.md`.
 | 결과물 | 다른 PC 에서 |
 |---|---|
 | `v8.18-undated` 판매본 | 현재 코드로 빌드. 19,599,557 B, 검증 13항목 통과 |
-| **Etsy 에 올린 파일** `output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf` | 위 `-FINAL` 을 이 이름으로 복사한 것. 빌드만 하고 끝내면 빠진다 |
+| **Etsy 에 올린 파일** `output/upload/<이력 #>/ADHD-Wellness-Planner-Undated-502-pages.pdf` | `-FINAL` 을 이 이름으로 복사한 것. 빌드만 하고 끝내면 빠진다. 어느 판이 몇 번인지는 `shop.md` 0-1절 |
 | `v8-undated` 출시본 | 커밋 `07cc59e` 로 worktree 를 떠서 빌드. **19,227,515 B 로 바이트 수까지 일치** |
 | `v8.1`~`v8.17` | **재현 불가.** 이름만 다르고 지금 코드로는 전부 v8.18 이 나온다. 필요하면 각 커밋으로 빌드 |
 | `v2`~`v7` 시안 | 현재 코드로 빌드됨. `v1-admin` 은 `KeyError: 'tasks'` 로 깨져 있다 |

@@ -142,43 +142,44 @@ grep -n "^CHROME" scripts/build_planner.py
 **PowerShell**
 
 ```bash
-$env:PLANNER_VERSION="v8.18-undated"; python scripts/build_planner.py
+$env:PLANNER_VERSION="v8.19-undated"; python scripts/build_planner.py
 ```
 
 **Git Bash**
 
 ```bash
-PLANNER_VERSION=v8.18-undated python scripts/build_planner.py
+PLANNER_VERSION=v8.19-undated python scripts/build_planner.py
 ```
 
-`Saved: ...\output\planner_v8.18-undated.pdf` 가 찍히면 성공.
+`Saved: ...\output\planner_v8.19-undated.pdf` 가 찍히면 성공.
 
-> **`v8.18-undated` 가 현재 판매본이다.** `v8-undated` 는 2026-09-21
-> 출시본(494p)이고 비교용으로만 남겨 둔다. 버전 이름을 틀리면 옛 판을
-> 만들게 된다.
+> **`v8.19-undated` 가 올릴 판이다**(2026-09-24, GoodNotes 렌더링 수정).
+> Etsy 교체 전까지 판매 중인 것은 `v8.18-undated` 이고, 무엇이 언제 올라갔는지는
+> `shop.md` 0-1절 업로드 이력표가 기준이다. `v8-undated` 는 2026-09-21
+> 출시본(494p). 버전 이름을 틀리면 옛 판을 만들게 된다.
 
 이어서 중복 스트림을 접는다. **이 단계를 빼면 25.9MB라 Etsy 20MB 상한을
 넘는다.**
 
 ```bash
-python scripts/dedupe_pdf.py output/planner_v8.18-undated.pdf output/planner_v8.18-undated-FINAL.pdf
+python scripts/dedupe_pdf.py output/planner_v8.19-undated.pdf output/planner_v8.19-undated-FINAL.pdf
 ```
 
 기대 출력:
 
 ```
-3196 duplicate streams folded into 19319 unique
-26.4 MB -> 18.7 MB (29% smaller)
+529 duplicate streams folded into 13110 unique
+21.0 MB -> 15.3 MB (27% smaller)
 ```
 
-(2026-09-24 집 PC 에서 v8.18 을 뽑은 실측. 빌드 36초.)
+(2026-09-24 집 PC 실측. v8.18 은 `3196 ... 26.4 MB -> 18.7 MB`.)
 
 마지막으로 **Etsy 에 실제로 올린 이름**의 사본을 만든다. 구매자가 받는 파일은
 이 이름이다(이유는 `shop.md` 5-5절). 내용은 `-FINAL` 과 바이트까지 같다.
 
 ```bash
-mkdir -p output/upload
-cp output/planner_v8.18-undated-FINAL.pdf output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf
+mkdir -p output/upload/3
+cp output/planner_v8.19-undated-FINAL.pdf output/upload/3/ADHD-Wellness-Planner-Undated-502-pages.pdf
 ```
 
 올린 파일이 여러 개가 되면 `shop.md` 0-1절 업로드 이력표의 "소스" 칸대로
@@ -197,16 +198,16 @@ python scripts/check_upload.py
 **페이지 수와 링크**
 
 ```bash
-python -c "import os; from pypdf import PdfReader; p='output/planner_v8.18-undated-FINAL.pdf'; r=PdfReader(p); print(len(r.pages),'pages /',len(r.named_destinations),'destinations / %.2f MB'%(os.path.getsize(p)/1048576))"
+python -c "import os; from pypdf import PdfReader; p='output/planner_v8.19-undated-FINAL.pdf'; r=PdfReader(p); print(len(r.pages),'pages /',len(r.named_destinations),'destinations / %.2f MB'%(os.path.getsize(p)/1048576))"
 ```
 
-기대값: `502 pages / 501 destinations / 18.69 MB`
+기대값: `502 pages / 501 destinations / 15.35 MB`
 
-**구조 검사 13항목** — 이것 하나로 위 숫자와 링크·탭까지 다 본다.
+**구조 검사 15항목** — 이것 하나로 위 숫자와 링크·탭까지 다 본다.
 마지막 줄이 `FAILURES: 0` 이면 된다.
 
 ```bash
-python scripts/verify_v8_18.py
+python scripts/verify_v8_19.py
 ```
 
 **눈으로 볼 페이지 뽑기**
@@ -215,7 +216,7 @@ python scripts/verify_v8_18.py
 python -c "
 import pypdfium2 as pdfium, os
 os.makedirs('output/preview', exist_ok=True)
-with open('output/planner_v8.18-undated-FINAL.pdf','rb') as fh:
+with open('output/planner_v8.19-undated-FINAL.pdf','rb') as fh:
     d = pdfium.PdfDocument(fh.read())
 for n in [1,2,12,13,14,16,20,21,24,25,26,27,28,31,35,38,39,47,50,51,54,58]:
     d[n-1].render(scale=2).to_pil().save(f'output/preview/v8_p{n}.png')
@@ -253,7 +254,7 @@ $env:PLANNER_VERSION="v7-bright"; python scripts/build_planner.py
 ```
 
 쓸 수 있는 값: `v1-admin` `v2-warm` `v3-sunset` `v5-sky` `v6-skyblue`
-`v7-bright` `v8-undated`(출시본) `v8.18-undated`(현재 판매본)
+`v7-bright` `v8-undated`(출시본) `v8.18-undated` `v8.19-undated`(올릴 판)
 
 ---
 

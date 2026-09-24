@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """shop.md 의 업로드 이력표와 output/upload/ 의 실제 파일을 대조한다.
 
-이력표에 이름이 적힌 PDF 가 output/upload/ 에 있고, 바이트 수가 표와
+이력표에 이름이 적힌 PDF 가 output/upload/<#>/ 에 있고, 바이트 수가 표와
 같은지 본다. 다른 PC 에서 다시 빌드한 뒤, 그리고 Etsy 에 올린 직후 돌린다.
 
     python scripts/check_upload.py
@@ -26,9 +26,10 @@ for row in re.findall(r"^\|\s*(\d+)\s*\|(.+)$", sec, re.M):
     if not m:
         print(f"  ??    #{n} {date} {ver}: 파일 이름 미확인 -- 대조 불가")
         continue
-    path = os.path.join(UPLOAD, m.group(1))
+    # 같은 이름으로 다시 올릴 수 있어서 이력 번호별 폴더에 둔다 (2026-09-24)
+    path = os.path.join(UPLOAD, n, m.group(1))
     if not os.path.exists(path):
-        print(f"  FAIL  #{n} {date} {ver}: output/upload/{m.group(1)} 없음")
+        print(f"  FAIL  #{n} {date} {ver}: output/upload/{n}/{m.group(1)} 없음")
         fail += 1
         continue
     got = os.path.getsize(path)
