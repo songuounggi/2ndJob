@@ -178,11 +178,14 @@ python scripts/dedupe_pdf.py output/planner_v8.20-undated.pdf output/planner_v8.
 이 이름이다(이유는 `shop.md` 5-5절). 내용은 `-FINAL` 과 바이트까지 같다.
 
 ```bash
-mkdir -p output/upload
-cp output/planner_v8.20-undated-FINAL.pdf output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf
+mkdir -p output/upload/2
+cp output/planner_v8.18-undated-FINAL.pdf output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf
+cp output/planner_v8.18-undated-FINAL.pdf output/upload/2/ADHD-Wellness-Planner-Undated-502-pages.pdf
 ```
 
-`output/upload/` 에는 **지금 올릴 한 장만** 둔다. 옛 판은 버전 FINAL 로 남는다.
+`output/upload/` 바로 아래 = **지금 마켓에 올라가 있는 판**(위는 2026-09-24 기준
+v8.18). `upload/<#>/` = 올렸던 판의 보관본. 어느 번호가 어느 버전인지는
+`shop.md` 0-1절. 마켓 판이 바뀌면 이 명령도 그 판으로 고친다.
 이력표의 옛 판(#1, #2)이 이 PC 에 없으면 "소스" 칸대로 빌드한다. 다 됐으면
 이력표와 대조한다(`FAILURES: 0` 이면 된다):
 
