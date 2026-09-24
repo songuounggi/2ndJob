@@ -1176,3 +1176,11 @@ deciding "Picked", avoiding "The smallest possible first step")는 "한 가지�
 (130px)에서 4장 모두 멈추는 것 확인. 카드 크기: 4장 440 / 3장 600. 5번은 학기 카드
 글자 크기와 페이지 그림 높이(남은 칸에 맞춤), 9번은 태블릿 760 으로 잘림 해결.
 모음 `output/preview/review/35_mockups_final.png`, 잘리는 선 겹친 판 `35_mockups_safe.png`.
+
+### 리스팅 원고 (2026-09-24) — `product2-listing.md`
+
+제목(123자, 대문자 ADHD 하나)·태그 13개·영문 설명·가격 제안·**문장별 근거표**.
+`python scripts/check_listing_student.py student-v0.9` 가 원고 숫자(437p, 32종, 4,900 링크,
+2탭, 탭 10, 학기 8, 학기당 16/14/5/5/3, 노트 9)를 파일에서 다시 재서 대조하고, Etsy 규칙과
+금지 표현(print, cure, treat, one tap ...)을 본다. 옛 숫자·인쇄 주장을 넣은 원고로 6건 실패 확인.
+앱 호환(Notability·Xodo·Acrobat·Android)은 학생용에서 **미확인** -- 근거표에 그렇게 적었다.
