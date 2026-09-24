@@ -622,3 +622,61 @@ REPEAT_TAB = [("t", "semester"), ("o", "semester"), ("r", "semester"),
               ("h", "classes"), ("k", "classes"), ("c", "classes"),
               ("s", "work"), ("a", "work"),
               ("e", "study"), ("g", "study")]
+
+
+# ------------------------------------------------------------ 북마크(개요)
+# 맨 위 항목의 이름. 레일 글자는 대문자라 사이드바에서 소리치듯 읽힌다.
+TAB_TITLES = {"index": "Where to?", "semester": "Semester", "week": "Weeks",
+              "day": "Days", "classes": "Classes", "work": "Work",
+              "study": "Study", "focus": "Focus", "life": "Life",
+              "notes": "Notes"}
+
+
+def outline():
+    """뷰어 사이드바의 북마크. [(제목, 페이지 id, [하위...]), ...]
+
+    손으로 적지 않고 TABS / GROUPS / REPEATS 에서 뽑는다 -- 페이지를
+    더하거나 옮기면 북마크가 저절로 따라간다. 탭 아래 순서는 실제
+    페이지 순서다. 반복 세트는 학기별로 한 단계 더 내려가고, 한 탭이
+    반복 세트 하나뿐이면(Weeks, Days) 학기를 바로 탭 아래에 둔다.
+    """
+    order = {k: n for n, (k, _) in enumerate(specs())}
+    reps = {pre: (per, label) for pre, per, label in REPEATS}
+
+    def terms(pre):
+        per = reps[pre][0]
+        return [("Term %d" % t, "%s%d" % (pre, (t - 1) * per + 1), [])
+                for t in range(1, TERMS + 1)]
+
+    out = []
+    for key, _ in TABS:
+        kids = [(reps[pre][1], "%s1" % pre, terms(pre))
+                for pre, tab in REPEAT_TAB if tab == key]
+        kids += [(name, k, []) for k, name, _ in GROUPS.get(key, [])]
+        kids.sort(key=lambda it: order[it[1]])
+        if len(kids) == 1 and kids[0][2]:
+            kids = kids[0][2]
+        out.append((TAB_TITLES[key], key, kids))
+    return out
+
+
+def add_outline(pdf_path):
+    """PDF 에 북마크를 심는다. 하위가 있는 항목은 접어 둔다 -- 처음
+    사이드바에는 탭 10개만 보인다."""
+    import pikepdf
+    page = {k: n for n, (k, _) in enumerate(specs())}
+
+    def item(title, key, kids):
+        it = pikepdf.OutlineItem(title, page[key])
+        for k in kids:
+            it.children.append(item(*k))
+        it.is_closed = bool(kids)
+        return it
+
+    with pikepdf.open(pdf_path, allow_overwriting_input=True) as pdf:
+        with pdf.open_outline() as ol:
+            ol.root.clear()
+            for top in outline():
+                ol.root.append(item(*top))
+        pdf.save(pdf_path)
+    return sum(1 + sum(1 + len(g[2]) for g in t[2]) for t in outline())

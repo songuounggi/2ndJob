@@ -146,6 +146,42 @@ add("HTML 속 한글", len(korean), 0, not korean)
 _title = str((r.metadata or {}).get("/Title", ""))
 add("문서 제목에 Student", _title or "(없음)", "Student",
     "Student" in _title and "Wellness" not in _title)
+# 북마크(개요). 뷰어 사이드바의 목차다. 0개였다(2026-09-24). 개수만 보지
+# 말고 목적지까지 본다 -- 맨 위 항목은 탭 순서대로 각 탭의 목차 페이지를,
+# 모든 항목은 실제 페이지를 가리켜야 한다.
+def _walk(items, depth=0):
+    for it in items:
+        if isinstance(it, list):
+            yield from _walk(it, depth + 1)
+        else:
+            yield it, depth
+_ol = list(_walk(r.outline))
+_bad_ol = []
+for it, dep in _ol:
+    try:
+        r.get_destination_page_number(it)
+    except Exception:
+        _bad_ol.append(it.title)
+_tabs = re.findall(r'<a class="[^"]*" href="#([^"]+)"',
+                   h.split("</nav>")[0])
+_top = [ids[r.get_destination_page_number(it)]
+        for it, dep in _ol if dep == 0 and it.title not in _bad_ol]
+add("북마크 수", len(_ol), "> 0", len(_ol) > 0)
+add("북마크 맨 위 = 탭 순서", "%d/%d" % (sum(a == b for a, b in
+    zip(_top, _tabs)), len(_tabs)), "전부", _top == _tabs)
+add("목적지가 없는 북마크", len(_bad_ol), 0, not _bad_ol)
+# "Term 3" 북마크는 머리에 Term 3 이 적힌 페이지로 가야 한다. 학기당 장수를
+# 바꾸면 통번호 계산이 어긋나기 쉽다.
+_sec = dict(re.findall(r'<section class="page[^"]*" id="([^"]+)"(.*?)</section>',
+                       h, re.S))
+_term_bad = []
+for it, dep in _ol:
+    m = re.fullmatch(r"Term (\d+)", it.title)
+    if m and it.title not in _bad_ol:
+        pid = ids[r.get_destination_page_number(it)]
+        if not re.search(r">\s*Term %s\s*<" % m.group(1), _sec[pid]):
+            _term_bad.append("%s->%s" % (it.title, pid))
+add("학기 북마크가 딴 학기로", len(_term_bad), 0, not _term_bad)
 # 행이 딱 떨어지게 끝나는가 (LINES.md 1-3 절). 필기면 높이가 flex 로
 # 정해지면 나머지(0~22pt)만큼 마지막 괘선이 바닥 위에 애매하게 뜬다.
 # 높이는 24pt 배수로 고정되어야 하고, 맨 아래 괘선은 그리지 않는다.

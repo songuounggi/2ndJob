@@ -2503,4 +2503,6 @@ if __name__ == "__main__":
     if app_style:           # 학생용 면은 SVG 괘선이라 위 측정이 못 본다
         print("snap lines: pinned", app_style.snap_lines(SRC, CHROME))
     to_pdf()
+    if student_pages:       # 사이드바 북마크. Chrome 은 개요를 만들지 않는다
+        print("outline:", student_pages.add_outline(OUT), "items")
     print("Saved:", OUT)

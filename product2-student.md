@@ -874,4 +874,13 @@ Semester Planner` 로. `build_planner.py` 가 테마의 `student` 플래그로 �
 상품 1 값은 그대로 두어 판매본을 바이트까지 다시 뽑을 수 있다. 리스팅
 제목(F)을 정하면 여기도 맞춘다. 검사 "문서 제목에 Student" 추가(전: 실패).
 
-**다음:** 위 B·C(focus-session)·D·E·F·G·H.
+**B 완료 (2026-09-24).** PDF 북마크 133개. 맨 위는 탭 10개, 반복 세트는
+학기별로 한 단계 더(Term 1~8), Weeks·Days 는 학기가 바로 탭 아래. 하위가
+있는 항목은 접어 둔다. `student_pages.outline()` 이 TABS/GROUPS/REPEATS 에서
+뽑으므로 페이지를 바꾸면 북마크가 따라간다. 빌드 끝에 pikepdf 로 심고
+dedupe 를 거쳐도 남는다. 용량 영향 없음(14.43MB). 검사 4항목 추가: 북마크
+수 / 맨 위 = 탭 순서 / 목적지 없는 북마크 / "Term N" 이 그 학기 페이지로 가는가.
+Chrome 내장 뷰어의 사이드바는 Claude 가 클릭할 수 없어 실제 화면 캡처는 못 했다.
+GoodNotes 에서 보이는지는 사용자 확인 필요.
+
+**다음:** 위 C(focus-session)·D·E·F·G·H.
