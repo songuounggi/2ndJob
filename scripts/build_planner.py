@@ -380,6 +380,8 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.16-undated 2026-09-23  표지 Notes 행 + 적는 칸 마감선 (마감선은 반려)
 #   v8.17-undated 2026-09-23  표지 Notes 행만. 마감선 확장은 되돌림
 #   v8.18-undated 2026-09-23  목록 9군데 마감선 제거 (표 11개는 유지)
+#   v8.19-undated 2026-09-24  GoodNotes 바둑판 렌더링: 그림자·bloom 을 이미지로
+#                             (fast_paint. 모양 그대로, 페이지당 렌더 약 4배 빠름)
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
@@ -398,6 +400,7 @@ THEMES["v8.15-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.16-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.17-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.18-undated"] = dict(THEMES["v8-undated"])
+THEMES["v8.19-undated"] = dict(THEMES["v8-undated"], fast_paint=True)
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -645,8 +648,19 @@ if T.get("app"):
 else:
     app_style = None
 
+# fast_paint: the card and tab shadows become one shared PNG instead of a
+# radial-gradient each. Chrome writes every gradient as a function shading
+# under its own soft mask, 5-6 per page, and GoodNotes repaints them tile by
+# tile -- the user saw each page fill in as a checkerboard (2026-09-24). The
+# PNG is the same gradient sampled once (shadow_png), stretched to the same
+# box, so the shape is unchanged: mean difference 0.08 grey levels.
+# top:100% and the box geometry stay exactly as above.
+FAST_CSS = (".card::after,.rail a.on::after{background:"
+            f"url('../assets/shadow_{VERSION}.png') 0 0/100% 100% no-repeat}}")
+
 CSS = (ROOT_VARS + BASE_CSS + (INK_CSS if T.get("ink_style") else "")
        + (app_style.css() if app_style else "")
+       + (FAST_CSS if T.get("fast_paint") else "")
        + os.environ.get("TRIM_CSS", ""))
 
 
@@ -946,6 +960,11 @@ def page(key, body):
             layers += ('<div class="bg-photo" style="background-image:'
                        f"url('{T['photo']}');opacity:{T['photo_cover']}\"></div>")
         bo = T["bloom_cover"] if cover else T["bloom_page"]
+        if T.get("fast_paint") and not cover:
+            # Pre-composited onto --bg (bloom_baked_png): an opaque image
+            # needs no transparency group. The cover keeps the live blend
+            # because the sky photo sits under it; it is one page.
+            name, bo = "bloom_page_baked", 1
         layers += ('<div class="bg-bloom" style="background-image:'
                    f"url('../assets/{name}_{VERSION}.png');opacity:{bo}\"></div>")
     return (f'<section class="page" id="{key}" style="{style}">{layers}'
@@ -2244,6 +2263,43 @@ def build_bloom_assets():
         return
     bloom_png(os.path.join(d, f"bloom_cover_{VERSION}.png"), 306, 250, scale=0.5)
     bloom_png(os.path.join(d, f"bloom_page_{VERSION}.png"), 330, 92, scale=0.5)
+    if T.get("fast_paint"):
+        bloom_baked_png(os.path.join(d, f"bloom_page_{VERSION}.png"),
+                        os.path.join(d, f"bloom_page_baked_{VERSION}.png"),
+                        T["bg"], T["bloom_page"])
+        shadow_png(os.path.join(d, f"shadow_{VERSION}.png"))
+
+
+def bloom_baked_png(src, path, bg, opacity):
+    """The page bloom composited onto the page colour, saved opaque.
+
+    Same pixels the viewer would get from drawing the RGBA bloom at
+    `opacity` over --bg, but done once here instead of on every page.
+    """
+    import numpy as np
+    from PIL import Image
+    b = np.asarray(Image.open(src).convert("RGBA")).astype(np.float64) / 255
+    base = np.array([int(bg[i:i + 2], 16) for i in (1, 3, 5)]) / 255
+    al = b[..., 3:4] * opacity
+    rgb = b[..., :3] * al + base * (1 - al)
+    Image.fromarray(np.round(rgb * 255).astype(np.uint8), "RGB").save(
+        path, optimize=True)
+    return path
+
+
+def shadow_png(path, w=800, h=80):
+    """radial-gradient(ellipse 62% 100% at 50% 0%, rgba(0,0,0,.07), 0 at 72%)
+    sampled once. Both radii are relative to the box, so stretching this to
+    any card reproduces the CSS gradient."""
+    import numpy as np
+    from PIL import Image
+    x = (np.arange(w) + .5) / w - .5
+    y = (np.arange(h) + .5) / h
+    d = np.sqrt((x[None, :] / .62) ** 2 + (y[:, None] / 1.0) ** 2)
+    rgba = np.zeros((h, w, 4), np.uint8)
+    rgba[..., 3] = np.round(np.clip(1 - d / .72, 0, 1) * .07 * 255)
+    Image.fromarray(rgba, "RGBA").save(path, optimize=True)
+    return path
 
 
 def build_html():

@@ -304,7 +304,11 @@ for m in re.finditer(r'<section class="page" id="([^"]+)".*?</nav>', html, re.S)
     assert len(re.findall(r'<a class="on"', m.group(0))) == 1 or m.group(1) == "cover"
 ```
 
-**6. GoodNotes 에서 페이지가 바둑판처럼 늦게 채워진다 — 미해결 (2026-09-24).**
+**6. GoodNotes 에서 페이지가 바둑판처럼 늦게 채워진다 — `v8.19-undated` 에서 수정,
+iPad 확인 대기 (2026-09-24).** 테마 플래그 `fast_paint`. v8.19: 502p, 16,091,246 B
+(v8.18 보다 3.5MB 작다), 198 → 68 ms/page, 502장 픽셀 차이 평균 0.086 / 최대 10
+(노트 페이지 맨 아래 탭 그림자 한 줄). `verify_v8_19.py` 가 "셰이딩·소프트마스크
+있는 페이지 0" 을 잰다 — v8.18 에 돌리면 501장 FAIL. 상품 2 는 아직 안 켰다.
 사용자가 iPad 에서 판매본 v8.18 을 넘길 때마다 발견. 원인은 전 페이지에 깔린
 두 효과다: 카드·탭 `::after` 그라데이션 그림자(함수형 shading + 소프트마스크,
 페이지당 5~6개)와 `.bg-bloom` 의 opacity .55 반투명 합성. 모양을 유지한 채
