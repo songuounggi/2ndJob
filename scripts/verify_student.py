@@ -314,6 +314,96 @@ _close = len(re.findall(r'<path stroke="[^"]*" d="M[0-9.]+ [0-9.]+H[0-9.]+"/></s
 add("표 가장자리의 마감선", _close, 0, not _close)
 
 
+# ------------------------------------------------------- 링크·라벨 (H)
+# 인수인계 H 항목 (2026-09-24). 셋 다 "링크 검사는 통과인데 눌러 보면
+# 이상한" 종류다 -- CLAUDE.md "링크 검사는 있는 링크가 유효한가로 끝내지 마라".
+
+def body_links(pg):
+    """레일(x<60) 을 뺀 본문 링크 주석의 목적지 페이지 번호들."""
+    out = []
+    for a in pg.get("/Annots") or []:
+        o = a.get_object()
+        d = o.get("/Dest")
+        if d is None or float(o["/Rect"][0]) < 60:
+            continue
+        try:
+            out.append(idx[id(nd[d]["/Page"].get_object())])
+        except Exception:
+            pass
+    return out
+
+
+# H-1. 눌러도 제자리인 링크. 목차 네 줄이 전부 href="#index" 라 목차에서
+# 목차로 갔다(2026-09-23). 목적지가 유효해서 링크 검사는 통과했다.
+# 레일의 현재 탭은 원래 제자리라 뺀다.
+_self = [ids[n - 1] for n, pg in enumerate(r.pages, 1) if n in body_links(pg)]
+add("눌러도 제자리인 링크", len(_self), 0, not _self)
+
+# H-3. 링크처럼 생긴 것은 링크여야 한다.
+#  (a) HTML 본문의 <a href> 수 == PDF 본문 링크 주석 수. Chrome 은 목적지
+#      없는 앵커를 조용히 버린다 -- 버려지면 여기서 수가 어긋난다
+#  (b) › 표시와 칩이 <a> 밖에 있으면 눌리는 척만 하는 것이다
+_n_bad, _fake = [], []
+for n, pg in enumerate(r.pages, 1):
+    body = _sec[ids[n - 1]].split("</nav>", 1)[-1]
+    want = len(re.findall(r'<a [^>]*href="#', body))
+    got = len(body_links(pg))
+    if want != got:
+        _n_bad.append("%s %d/%d" % (ids[n - 1], got, want))
+    outside = re.sub(r"<a [^>]*>.*?</a>", "", body, flags=re.S)
+    if "&rsaquo;" in outside or "justify-content:center;height:19pt" in outside:
+        _fake.append(ids[n - 1])
+add("HTML 링크 수 != PDF 링크 수", len(_n_bad), 0, not _n_bad)
+add("링크처럼 생겼는데 링크 아님", len(_fake), 0, not _fake)
+
+
+# H-2. 라벨 아래에 쓸 자리가 있는가. Syllabus 맨 아래 "Anything else" 는
+# 라벨만 남고 면이 페이지 밖으로 밀렸다(2026-09-23). 선 검사기의 "넘침"이
+# 잡았지만 학생용 검사기에는 없었다. 실제 배치를 헤드리스 Chrome 으로 잰다:
+# 라벨 바로 뒤 요소가 없거나, 18pt 미만이거나, 페이지 아래로 나가면 실패.
+# 18pt: 칩 한 줄(19pt)은 정상이다. 24pt 로 두었더니 칩 줄 7곳을 잘못 잡았다.
+LABEL_JS = """
+const bad = [];
+document.querySelectorAll('section.page').forEach(pg => {
+  const pb = pg.getBoundingClientRect().bottom;
+  pg.querySelectorAll('.label').forEach(L => {
+    const nx = L.nextElementSibling;
+    if (!nx) { bad.push(pg.id + ':' + L.textContent + ':none'); return; }
+    const r = nx.getBoundingClientRect();
+    if (r.height * 0.75 < 18) bad.push(pg.id + ':' + L.textContent + ':h' + Math.round(r.height * 0.75));
+    else if (r.bottom > pb + 0.5) bad.push(pg.id + ':' + L.textContent + ':off');
+  });
+});
+document.body.setAttribute('data-probe', JSON.stringify(bad));
+"""
+
+
+def label_probe():
+    import json, subprocess, tempfile
+    chrome = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+    tmp = os.path.join(os.path.dirname(HTML), "_label_probe.html")
+    io.open(tmp, "w", encoding="utf-8").write(
+        h.replace("</body>", "<script>%s</script></body>" % LABEL_JS))
+    try:
+        out = subprocess.run(
+            [chrome, "--headless=new", "--disable-gpu",
+             "--user-data-dir=" + os.path.join(tempfile.gettempdir(),
+                                              "verify-label-profile"),
+             "--virtual-time-budget=25000", "--dump-dom",
+             "file:///" + tmp.replace(chr(92), "/")],
+            capture_output=True, text=True, encoding="utf-8", errors="replace")
+    finally:
+        os.remove(tmp)
+    m = re.search(r'data-probe="([^"]*)"', out.stdout or "")
+    if not m:
+        return ["(측정 실패)"]
+    return json.loads(m.group(1).replace("&quot;", '"').replace("&amp;", "&"))
+
+
+_lab = label_probe()
+add("쓸 자리 없는 라벨", len(_lab), 0, not _lab)
+
+
 # ------------------------------------------------------------------ 시각
 with open(PDF, "rb") as fh:
     doc = pdfium.PdfDocument(fh.read())
@@ -468,6 +558,8 @@ if tabbad:
     print("   탭이 잘못된 페이지:", tabbad[:8])
 if months:
     print("   월 이름:", dict(months))
+if _self or _n_bad or _fake or _lab:
+    print("   H:", _self[:5], _n_bad[:5], _fake[:5], _lab[:6])
 if clash or redef:
     print("   겹친 id:", clash[:10], "정의 여럿:", redef[:10])
 if bad_uniform:
