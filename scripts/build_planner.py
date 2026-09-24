@@ -359,6 +359,9 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 # student-v0.2  2026-09-24  GoodNotes 바둑판·느린 렌더 (RELEASE.md). 면 그림자를
 #                          공유 PNG 로, 표 페이드 제거, 괘선을 벡터로 (flat_paint)
 THEMES["student-v0.2"] = dict(THEMES["v9-student"], flat_paint=True)
+# student-v0.3  2026-09-24  표 점선 양 끝 페이드를 되살린다 -- 끝 점마다 옅은
+#                          단색으로. 그라데이션·소프트마스크 없이 (dash_fade)
+THEMES["student-v0.3"] = dict(THEMES["student-v0.2"], dash_fade=True)
 
 # Revisions of a shipped product get their own version name and their own
 # output file. The file a buyer already downloaded is never overwritten --
@@ -653,6 +656,7 @@ h1,.covertitle{font-variant-numeric:lining-nums tabular-nums;
 if T.get("app"):
     import app_style
     app_style.FLAT = bool(T.get("flat_paint"))   # RELEASE.md 2 절
+    app_style.DASH_FADE = bool(T.get("dash_fade"))
     app_style.VERSION = VERSION
 else:
     app_style = None

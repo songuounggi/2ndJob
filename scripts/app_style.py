@@ -67,6 +67,9 @@ THICK = "1px"             # = 0.75pt, CSS 쪽
 #   · 표 점선 양 끝 페이드       -> 단색 점선      (같음)
 #   · 필기 괘선 SVG <pattern>     -> 면마다 벡터 선 (Chrome 이 이미지 타일로 구웠다)
 FLAT = False
+# dash_fade (student-v0.3~): FLAT 에서 뺐던 표 점선 양 끝 페이드를 그라데이션
+# 없이 되살린다(_fade_dashes). 사용자 요청 2026-09-24.
+DASH_FADE = False
 VERSION = ""
 
 
@@ -114,6 +117,44 @@ def _stops(name, x1, y1, x2, y2, length):
             '<stop offset="100%%" stop-color="%s" stop-opacity="0"/>'
             '</linearGradient>'
             % (name, x1, y1, x2, y2, C, p, C, 100 - p, C, C))
+
+
+FADE_STEP = 0.1          # 양 끝 점의 투명도 눈금. 같은 값끼리 path 하나로 묶는다
+
+
+def _fade_dashes(x0, x1, ys):
+    """가로 점선 한 열(여러 행)을 양 끝이 흐려지게. 그라데이션 없이.
+
+    점은 x0 에서 시작해 PERIOD 마다 DASH 길이. 점 중심에서 가까운 끝까지의
+    거리를 페이드 폭 f 로 나눈 값이 그 점의 불투명도다 -- _stops() 의
+    그라데이션(끝 0 -> f 에서 1)을 점마다 한 번 샘플링한 것과 같다.
+    불투명도 1 인 가운데 구간은 dasharray 한 줄로 두어 바이트를 아낀다.
+    stroke-opacity 는 PDF 에서 고정 알파(/CA)라 소프트마스크가 아니다."""
+    L = x1 - x0
+    f = min(FADE, L / 3.0)
+    full, part = [], {}
+    s0 = x0
+    while s0 < x1 - 1e-6:
+        e = min(s0 + DASH, x1)
+        xc = (s0 + e) / 2
+        a = min(1.0, max(0.0, min(xc - x0, x1 - xc) / f))
+        a = round(a / FADE_STEP) * FADE_STEP
+        if a >= 1.0:
+            full.append((s0, e))
+        elif a > 0:
+            part.setdefault(round(a, 2), []).append((s0, e))
+        s0 += PERIOD
+    out = []
+    if full:
+        a0, b0 = full[0][0], full[-1][1]
+        out.append('<path stroke="%s" d="%s"/>' % (C, "".join(
+            "M%.2f %.2fH%.2f" % (a0, y, b0) for y in ys)))
+    for a, segs in sorted(part.items()):
+        out.append('<path stroke="%s" stroke-opacity="%g" stroke-dasharray="none" '
+                   'd="%s"/>' % (C, a, "".join(
+                       "M%.2f %.2fH%.2f" % (p0, y, p1)
+                       for y in ys for p0, p1 in segs)))
+    return out
 
 
 def _flat_stroke(b, tag, n):
@@ -188,9 +229,21 @@ def rules_svg(widths, n_rows, head_h=24.0):
     # "표는 닫는다"는 카드 안에 표가 따로 떠 있는 v8 의 .trk 이야기다.
 
     if FLAT:
-        # 페이드용 그라데이션은 PDF 에서 셰이딩 + 소프트마스크가 된다
+        # 페이드용 그라데이션은 PDF 에서 셰이딩 + 소프트마스크가 된다.
+        # 대신 양 끝 점 몇 개를 따로 떼어 점마다 옅은 단색으로 긋는다
+        # (사용자 요청 2026-09-24: 페이드는 살린다). 가로선만 해당 --
+        # 세로선은 원래 페이드가 없었다.
         defs = []
-        body = [_flat_stroke(b, tag, len(widths)) for b in body]
+        if DASH_FADE:
+            body = [b for b in body if "url(#" not in b]
+            x = 0.0
+            for w in widths:
+                body[:0] = _fade_dashes(
+                    x + INSET, x + w - INSET,
+                    [head_h + r * ROW_H for r in range(1, n_rows)])
+                x += w
+        else:                                # student-v0.2: 페이드 없이 단색
+            body = [_flat_stroke(b, tag, len(widths)) for b in body]
     return ('<svg class="rules" viewBox="0 0 %.2f %.2f" width="%.2fpt" '
             'height="%.2fpt" xmlns="http://www.w3.org/2000/svg" '
             'fill="none" stroke-width="%.2f" stroke-dasharray="%g %g">'

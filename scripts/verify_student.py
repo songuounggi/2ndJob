@@ -278,6 +278,14 @@ _punct = sorted(s_ for s_ in _subs
                 if ". " in s_ and not s_.rstrip().endswith((".", "?", "!")))
 add("문장 여럿인데 마침표 없는 부제", len(_punct), 0, not _punct)
 
+# 표 점선 양 끝 페이드. v0.2 에서 GoodNotes 속도 때문에 그라데이션을 빼며
+# 페이드도 사라졌다 -- 사용자가 살리라고 했다(2026-09-24). 그라데이션
+# (v0.1) 이든 끝 점별 옅은 단색(v0.3~, stroke-opacity) 이든 있어야 한다.
+_tables = re.findall(r'<svg class="rules" viewBox=.*?</svg>', h, re.S)
+_nofade = [t for t in _tables
+           if "url(#" not in t and "stroke-opacity" not in t]
+add("양 끝 페이드 없는 표", len(_nofade), 0, not _nofade)
+
 _wide = wide_label_cols(h)
 add("짧은 내용 열이 넓은 표", len(_wide), 0, not _wide)
 # 행이 딱 떨어지게 끝나는가 (LINES.md 1-3 절). 필기면 높이가 flex 로
