@@ -304,6 +304,16 @@ for m in re.finditer(r'<section class="page" id="([^"]+)".*?</nav>', html, re.S)
     assert len(re.findall(r'<a class="on"', m.group(0))) == 1 or m.group(1) == "cover"
 ```
 
+**6. GoodNotes 에서 페이지가 바둑판처럼 늦게 채워진다 — 미해결 (2026-09-24).**
+사용자가 iPad 에서 판매본 v8.18 을 넘길 때마다 발견. 원인은 전 페이지에 깔린
+두 효과다: 카드·탭 `::after` 그라데이션 그림자(함수형 shading + 소프트마스크,
+페이지당 5~6개)와 `.bg-bloom` 의 opacity .55 반투명 합성. 모양을 유지한 채
+**그림자를 공유 PNG 로, bloom 을 배경색에 미리 합성한 불투명 이미지로** 바꾸면
+248 → 63 ms/page, 픽셀 차이 평균 0.08 단계. 측정은 `scripts/perf_probe.py`.
+**남은 일:** ① iPad 에서 `output/ipad-test/` A/B 5장 비교 (PC 수치는 pdfium 이라
+GoodNotes 와 다를 수 있다) ② Prod 2 가 `build_planner.py` 작업을 끝낸 뒤
+`v8.19-undated` 로 반영. 상품 2 도 같은 그림자·bloom 을 쓴다.
+
 ## 빌드가 조용히 실패하는 두 가지 (둘 다 겪음)
 
 **1. 출력 PDF가 잠겨 있으면 Chrome은 종료 코드 0으로 아무것도 쓰지 않는다.**
