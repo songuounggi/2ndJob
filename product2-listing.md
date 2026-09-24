@@ -132,6 +132,49 @@ Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하�
 | 업로드 사본 | **올린 뒤에** `output/upload/student-v1.1/` 을 만들어 넣는다 (RELEASE.md 3-2. 미리 만들지 않는다) |
 | 목업 | `python scripts/build_mockups_student.py student-v1.1` → `output/listing_student/` **10장** (Etsy 는 20장까지) |
 
+## Etsy 입력 순서 — 새 리스팅 (2026-09-24 정리)
+
+`shop.md` 2절(상품 1 실제 입력 화면)의 순서를 그대로 따른다. **상품 2 는 교체가 아니라 새 리스팅**이다.
+Shop Manager → Listings → `+ Add a listing`. ★ = 필수.
+
+**0. 올리기 전** -- iPad 에서 p.1 표지 목록 줄을 눌러 해당 페이지로 가는지 확인(v1.1 에서 새로 생긴 링크).
+그다음 Etsy 이름 사본을 만든다: `output/upload/student-v1.1/ADHD-Student-Planner-Undated-437-pages.pdf`
+(`planner_student-v1.1-FINAL.pdf` 복사, 15,464,001 B). **이 사본을 올린다** -- 올린 뒤엔 이름을 못 고친다.
+
+| # | 구역 | 칸 | 넣을 값 |
+|---|---|---|---|
+| 1 | Photo and video | ★ Photos | `output/listing_student/` **1_hero → 10_notes 순서로 10장**. 파일 선택창은 `10_notes` 를 `1_hero` 바로 뒤에 놓으니 올린 뒤 **순서를 끌어서 확인**. 첫 장이 검색 썸네일 |
+| 2 | 〃 | Videos | 생략 |
+| 3 | Item details | ★ Category | `planner` 검색 → **`Planner Templates`** |
+| 4 | 〃 | ★ What type of item | **`Digital`** -- 바뀌면 Digital files 칸이 생기고 배송 설정이 사라져야 정상 |
+| 5 | 〃 | ★ Title | 위 "제목" 블록 (123자). 위에 뜨는 **Suggested 배너는 `Dismiss`** |
+| 6 | 〃 | ★ Digital files | 0단계의 `ADHD-Student-Planner-Undated-437-pages.pdf` 1개. 편집 화면 표시는 약 `15.46 mb` |
+| 7 | 〃 | ★ Description | 위 "상품 설명" 블록 전체 (3,201자). **태그를 여기 붙여넣지 말 것**(상품 1 에서 한 번 실수) |
+| 8 | 〃 | This digital item is made to order | **체크 안 함** |
+| 9 | Item options | Variations / Personalization | 건너뜀 (디지털은 불가) |
+| 10 | Attributes | Tags | 위 "태그" 블록 13개. **Description 이 아니라 여기** |
+| 11 | Price and inventory | ★ Price | **`14.99`** |
+| 12 | 〃 | ★ Quantity | `999` |
+| 13 | 〃 | SKU / US tariff | 비움 / 건너뜀 |
+| 14 | GPSR | | 건너뜀 (`Private individual`) |
+| 15 | How it's made | ★ Who made it? | `I did` |
+| 16 | 〃 | ★ What is it? | `A finished product` |
+| 17 | 〃 | ★ How is this digital content created? | **`With an AI generator`** (상품 1 과 같은 이유, `shop.md` F) |
+| 18 | Settings | Shop section | 기존 **`ADHD Planners`** |
+| 19 | 〃 | Feature this listing | 꺼둠 |
+| 20 | 〃 | ★ Renewal options | `Automatic` |
+| 21 | | **Publish** | |
+
+**발행 뒤 (같은 날)**
+
+| # | 할 일 | 값 |
+|---|---|---|
+| 22 | 런칭 세일 | Marketing → Sales & discounts → `Run a sale`. `Percentage off` **40** / Everywhere / 30일 / 조건 비움 / 이름 `STUDENT40` / **`Select listings` → 학생 플래너 1개만**. $14.99 → **$8.99**. 상품 1 의 `LAUNCH40`(~10/20)은 건드리지 않는다. **`All listings` 금지** (앞으로 올릴 상품까지 걸린다) |
+| 23 | 페이지 확인 | 발행 페이지를 **두 번** 연다(첫 요청은 캐시). 사진 순서·가격·세일가 |
+| 24 | 업로드 이력 | `shop.md` 0-1절에 줄 추가: 날짜 / `student-v1.1` / `ADHD-Student-Planner-Undated-437-pages.pdf` / 15,464,001 / 437. 이미지 표에도 10장 한 줄. 그다음 `python scripts/check_upload.py` |
+
+미확인: 세일이 두 개 동시에 돌 때(상품 1 `LAUNCH40` + `STUDENT40`) Etsy 가 허용하는지. 막히면 기존 세일 편집에서 학생 플래너를 추가한다.
+
 ## 일부러 쓰지 않은 것
 
 | 뺀 주장 | 이유 |
