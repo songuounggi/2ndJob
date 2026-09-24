@@ -178,12 +178,13 @@ python scripts/dedupe_pdf.py output/planner_v8.20-undated.pdf output/planner_v8.
 이 이름이다(이유는 `shop.md` 5-5절). 내용은 `-FINAL` 과 바이트까지 같다.
 
 ```bash
-mkdir -p output/upload/3
-cp output/planner_v8.20-undated-FINAL.pdf output/upload/3/ADHD-Wellness-Planner-Undated-502-pages.pdf
+mkdir -p output/upload
+cp output/planner_v8.20-undated-FINAL.pdf output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf
 ```
 
-올린 파일이 여러 개가 되면 `shop.md` 0-1절 업로드 이력표의 "소스" 칸대로
-만든다. 다 만들었으면 이력표와 대조한다(`FAILURES: 0` 이면 된다):
+`output/upload/` 에는 **지금 올릴 한 장만** 둔다. 옛 판은 버전 FINAL 로 남는다.
+이력표의 옛 판(#1, #2)이 이 PC 에 없으면 "소스" 칸대로 빌드한다. 다 됐으면
+이력표와 대조한다(`FAILURES: 0` 이면 된다):
 
 ```bash
 python scripts/check_upload.py

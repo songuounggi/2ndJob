@@ -73,7 +73,7 @@ git 에 없어서 따라오지 않는다. 절차는 `SETUP.md`.
 | 결과물 | 다른 PC 에서 |
 |---|---|
 | `v8.18-undated` 판매본 | 현재 코드로 빌드. 19,599,557 B, 검증 13항목 통과 |
-| **Etsy 에 올린 파일** `output/upload/<이력 #>/ADHD-Wellness-Planner-Undated-502-pages.pdf` | `-FINAL` 을 이 이름으로 복사한 것. 빌드만 하고 끝내면 빠진다. 어느 판이 몇 번인지는 `shop.md` 0-1절 |
+| **Etsy 에 올릴 파일** `output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf` | 딱 한 장. 올릴 판의 `-FINAL` 을 이 이름으로 복사한 것. 빌드만 하고 끝내면 빠진다. 어느 판이 언제 올라갔는지는 `shop.md` 0-1절 |
 | `v8-undated` 출시본 | 커밋 `07cc59e` 로 worktree 를 떠서 빌드. **19,227,515 B 로 바이트 수까지 일치** |
 | `v8.1`~`v8.17` | **재현 불가.** 이름만 다르고 지금 코드로는 전부 v8.18 이 나온다. 필요하면 각 커밋으로 빌드 |
 | `v2`~`v7` 시안 | 현재 코드로 빌드됨. `v1-admin` 은 `KeyError: 'tasks'` 로 깨져 있다 |
@@ -164,7 +164,14 @@ PLANNER_VERSION=v3-sunset python scripts/build_planner.py
 | `v3-sunset` | 피치 배경, 선셋 4색, Quicksand |
 | `v5-sky` / `v6-skyblue` / `v7-bright` | 하늘 사진 + 빛 번짐. v7이 최종 톤 |
 | `v8-undated` | 2026-09-21 출시본. 494p |
-| **`v8.18-undated`** | **판매용.** 노트 8장 + 선 규칙 정리. 502p |
+| `v8.18-undated` | 2026-09-23 교체본. 노트 8장 + 선 규칙 정리. 502p |
+| `v8.19-undated` | GoodNotes 바둑판 렌더링 수정(`fast_paint`). 올리지 않음 |
+| **`v8.20-undated`** | **올릴 판.** v8.19 + 도트 그리드 벡터화(`vector_dots`). 16,517,551 B |
+
+**파일은 한 가지 방식만 쓴다** (2026-09-24 확정): 원본은
+`output/planner_<버전>-FINAL.pdf`, 고칠 때마다 버전을 올리고 지우지 않는다.
+Etsy 에 올릴 것은 `output/upload/` 에 딱 한 장(Etsy 이름). 무엇이 언제
+올라갔는지는 `shop.md` 0-1절. 대조는 `scripts/check_upload.py`.
 
 v8은 테마가 아니라 **구조**가 다르다(`undated` 플래그). 달력 페이지가 위치 기반
 (Month N → 1~31 → 해당 일간)으로 바뀌고 데일리 372 + 위클리 52가 붙는다.
