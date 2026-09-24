@@ -8,6 +8,22 @@
 
 상품 1은 `shop.md` / `listing.md`, 제작 규칙은 `CLAUDE.md`.
 
+> **⚠️ 출시 전 반드시 `RELEASE.md` (2026-09-24, Prod 1 에서 인계).** 상품 1 판매본이
+> iPad GoodNotes 에서 바둑판처럼 느리게 그려지고 도트 그리드가 깨졌다. PC 검사로는
+> 안 보였다. **student-v0.1 (09-24 11:49 빌드) 은 같은 결함이 더 크다:**
+>
+> ```
+> python scripts/check_render.py output/planner_student-v0.1-FINAL.pdf
+>   FAIL  A. gradient shading     427 페이지   (카드 그림자 radial-gradient)
+>   FAIL  A. soft mask            427 페이지   (반투명 레이어)
+>   FAIL  A. image tile pattern   357 페이지   (반복 배경 -- 도트 그리드와 같은 결함)
+>   FAIL  B. 렌더 시간  평균 227 / 최대 542 ms  (기준 < 150, 상품 1 v8.20 = ~65)
+>   WARN  C. 두 엔진 차이 14.2 (p2)            (상품 1 v8.20 = 1.4)
+> ```
+>
+> 고치는 법은 `RELEASE.md` 2절(그림자·번짐은 공유 PNG, 반복 배경은 벡터). 버전은
+> 올려 가며(`RELEASE.md` 3절), 사용자의 iPad 확인 없이 올리지 않는다.
+
 ---
 
 ## 왜 이것인가

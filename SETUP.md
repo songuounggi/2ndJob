@@ -82,7 +82,7 @@ pip install -r requirements.txt
 확인:
 
 ```bash
-python -c "import PIL, numpy, pikepdf, pypdf, pypdfium2; print('ok')"
+python -c "import PIL, numpy, pikepdf, pypdf, pypdfium2, pymupdf; print('ok')"
 ```
 
 `ok` 가 찍히면 된다.
@@ -204,6 +204,13 @@ python -c "import os; from pypdf import PdfReader; p='output/planner_v8.20-undat
 ```
 
 기대값: `502 pages / 501 destinations / 15.75 MB`
+
+**뷰어 위험·속도·용량** — iPad 에서 느리거나 다르게 그려질 요소를 잰다(`RELEASE.md` 1절).
+마지막 줄이 `FAILURES: 0` 이면 된다.
+
+```bash
+python scripts/check_render.py output/planner_v8.20-undated-FINAL.pdf
+```
 
 **구조 검사 16항목** — 이것 하나로 위 숫자와 링크·탭까지 다 본다.
 마지막 줄이 `FAILURES: 0` 이면 된다.
