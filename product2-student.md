@@ -1184,3 +1184,21 @@ deciding "Picked", avoiding "The smallest possible first step")는 "한 가지�
 2탭, 탭 10, 학기 8, 학기당 16/14/5/5/3, 노트 9)를 파일에서 다시 재서 대조하고, Etsy 규칙과
 금지 표현(print, cure, treat, one tap ...)을 본다. 옛 숫자·인쇄 주장을 넣은 원고로 6건 실패 확인.
 앱 호환(Notability·Xodo·Acrobat·Android)은 학생용에서 **미확인** -- 근거표에 그렇게 적었다.
+
+### student-v1.0 — 출시판 후보 (2026-09-24)
+
+v0.9 + p.422 "The smallest possible first step" 두 줄(`avoid_lines`). v0.9 바이트 재현 확인.
+가격 $14.99 / 런칭 40% $8.99 확정. Etsy 파일명 `ADHD-Student-Planner-Undated-437-pages.pdf`.
+
+| 검사 | 결과 |
+|---|---|
+| verify_student | 알려진 가짜 실패(점선 균일) 하나만 |
+| check_lines | 통과 |
+| check_render A·C·D | 통과 (셰이딩·마스크·이미지 타일 0, 15.46MB) |
+| check_render B (속도) | **이 PC 가 바빠 판정 불가** -- 같은 때 v8.20 도 FAIL(원래 통과). 나란히 재면 학생용이 상품 1 의 약 1.5배. 조용할 때 v0.9 평균 ~105 / 최대 ~139ms. **iPad 실기기가 최종 판정** (v0.8 모바일 "빠릿하게" 확인됨) |
+| 리스팅 원고 | 통과 |
+
+check_render B 는 페이지마다 3회 중앙값으로 바꿨다(공유 파일, 사용자 승인). 한 번 튀는 값은
+걸러지지만 PC 전체가 느린 상태는 못 거른다 -- 판정은 기준 파일(v8.20)과 같은 때 나란히 잰다.
+
+**남은 것:** 사용자 iPad 체크리스트(v1.0) → Etsy 등록(shop.md 절차) → 업로드 후 `upload/student-v1.0/` 사본과 이력.

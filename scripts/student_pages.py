@@ -404,7 +404,8 @@ def p_avoiding():
             + body(
                 card("The thing", field(36)),
                 card("What I think will happen", fill(), flex="1"),
-                card("The smallest possible first step", field(36))))
+                card("The smallest possible first step",
+                     two_lines("avoid_lines"))))
 
 
 def p_energy():
@@ -465,6 +466,16 @@ def p_term_review(term=1, i=1):
                 card("What actually happened", fill(), flex="1"),
                 card("What I will do differently", fill(), flex="1"),
                 card("What worked &mdash; keep it", keep_it())))
+
+
+def two_lines(flag):
+    """한 줄 입력칸(36pt) 대신 두 줄 필기칸(48pt). 테마 플래그가 켜졌을 때만 --
+    옛 버전은 그대로 다시 뽑혀야 한다. p.422 "The smallest possible first step"
+    (student-v1.0, avoid_lines): 한 문장 이상 쓰는 칸이고 아래 공간도 있다."""
+    if bp and bp.T.get(flag):
+        return ('<div class="lines" style="flex:none;height:48pt">%s</div>'
+                % A.lines_svg())
+    return field(36)
 
 
 def keep_it():

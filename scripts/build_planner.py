@@ -381,6 +381,9 @@ THEMES["student-v0.7"] = dict(THEMES["student-v0.6"], cover_copy=True,
 THEMES["student-v0.8"] = dict(THEMES["student-v0.7"], term_glance=True)
 # student-v0.9  2026-09-24  Term review 의 "What worked" 를 두 줄 필기칸으로 (review_lines)
 THEMES["student-v0.9"] = dict(THEMES["student-v0.8"], review_lines=True)
+# student-v1.0  2026-09-24  출시판. v0.9 + "The smallest possible first step" 두 줄
+#                          (avoid_lines). 가격 $14.99 / 런칭 40%. product2-listing.md
+THEMES["student-v1.0"] = dict(THEMES["student-v0.9"], avoid_lines=True)
 
 # Revisions of a shipped product get their own version name and their own
 # output file. The file a buyer already downloaded is never overwritten --

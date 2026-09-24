@@ -104,17 +104,33 @@ For personal use. Please do not resell or redistribute the file.
 
 ---
 
-## 가격 — **사용자 결정 대기**
+## 가격 — 확정 (2026-09-24, 사용자)
 
-| 항목 | 제안 |
+| 항목 | 값 |
 |---|---|
-| 정가 | **$14.99** (`product2-student.md` "가격" 절의 추정값) |
+| 정가 | **$14.99** |
 | 런칭 세일 | 40% → **$8.99** |
+
+**시장 조사** (etsy-research 에이전트, 2026-09-24). Etsy 가 페이지를 403 으로 막아 **실가격 확인은 3건뿐**:
+FutureADHD(카테고리 1위, 리뷰 6,800+) 세일 ~$16.89 / 정가 ~$23.12, "The ADHD College Student
+Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하이퍼링크 iPad 플래너
+중가대는 세일가 $10~18. 정가를 높게 걸고 상시 25~60% 세일이 흔하다.
+판단: **정가 $14.99 는 적정**, 세일가 $8.99 는 범위 안이지만 낮은 편(상품 1 세일가 $10.19 와 가깝다).
+**조정 카드:** 반응이 좋으면 세일 폭을 줄여 ~$9.99 로, 리뷰 10개 이후 정가 인상(상품 1 과 같은 계획).
 
 상품 1($16.99)보다 낮은 이유: 페이지 수가 적고(437 vs 502) 학생 타겟은 가격 민감도가
 높다. $7~9 정가로는 가지 않는다(고유 디자인 32종 상품의 가격대가 아니고, 숍 가격 일관성).
 
 ---
+
+## Etsy 에 올릴 파일
+
+| 항목 | 값 |
+|---|---|
+| 파일 | `output/planner_student-v1.0-FINAL.pdf` (437p, 15,457,817 B) |
+| Etsy 파일명 | `ADHD-Student-Planner-Undated-437-pages.pdf` (42자, 영숫자·`-`·`.` 만. 올린 뒤엔 못 고친다) |
+| 업로드 사본 | **올린 뒤에** `output/upload/student-v1.0/` 을 만들어 넣는다 (RELEASE.md 3-2. 미리 만들지 않는다) |
+| 목업 | `python scripts/build_mockups_student.py student-v1.0` → `output/listing_student/` 9장 |
 
 ## 일부러 쓰지 않은 것
 

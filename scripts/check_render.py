@@ -104,11 +104,17 @@ def main(path):
 
     # B. 속도
     times = []
+    # 페이지마다 3번 재서 중앙값. 한 번만 재면 PC 가 순간 바쁠 때 튀어서,
+    # 바뀐 것 없는 페이지가 160~180ms 로 FAIL 이 났다 -- 같은 페이지 10회
+    # 중앙값은 105ms 였다 (2026-09-24, 집 PC, Prod 2 가 고침).
     for p in sample[::3]:
         pd[p - 1].render(scale=2.7)
-        t = time.perf_counter()
-        pd[p - 1].render(scale=2.7)
-        times.append(((time.perf_counter() - t) * 1000, p))
+        ts = []
+        for _ in range(3):
+            t = time.perf_counter()
+            pd[p - 1].render(scale=2.7)
+            ts.append((time.perf_counter() - t) * 1000)
+        times.append((sorted(ts)[1], p))
     times.sort(reverse=True)
     pd[0].render(scale=2.7)
     t = time.perf_counter(); pd[0].render(scale=2.7)
