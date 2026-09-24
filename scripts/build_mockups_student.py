@@ -100,6 +100,7 @@ h2{font-size:92px;font-weight:800;line-height:1.08;margin-top:36px;
 .tags{display:flex;flex-wrap:wrap;gap:18px;max-width:780px}
 .tag{border-radius:99px;padding:16px 32px;font-size:34px;font-weight:800;
      background:rgba(255,255,255,.14);color:#FFF}
+.wrap:not(.dark) .tag{background:rgba(255,255,255,.7);color:#5A3FB8}
 
 .note{display:flex;gap:22px;align-items:flex-start;margin-top:26px}
 .note .dot{width:22px;height:22px;border-radius:99px;flex:none;margin-top:14px}
@@ -227,15 +228,23 @@ def shoot(name, body, extra=""):
 
 
 def dark(body):
+    if MOCK_ALT == "pastel" and SLIDE_NO[0] % 2 == 0:
+        return pastel(body)
     return ('<div class="aurora"><img src="%s"></div>'
             '<div class="wrap dark">%s</div>' % (img(bg_name()), body))
 
 
 # 짝수 장은 바탕을 바꾼다 -- "10장이 너무 다 똑같아"(사용자 2026-09-24).
-# MOCK_ALT: flip = 같은 오로라를 180도 돌림(색은 같고 자리만 다름)
+# MOCK_ALT: pastel = 홀수 어두운 오로라, 짝수 밝은 파스텔 오로라(채도 올림) -- 기본
+#           flip = 같은 오로라를 180도 돌림(색은 같고 자리만 다름)
 #           night = 좌우 반전 + 짙은 남보라로 눌러 한 톤 어둡게
 #           none = 전부 같게
-MOCK_ALT = os.environ.get("MOCK_ALT", "flip")
+MOCK_ALT = os.environ.get("MOCK_ALT", "pastel")
+
+
+def pastel(body):
+    return ('<div class="aurora"><img src="%s"></div>'
+            '<div class="wrap">%s</div>' % (img("light_bg"), body))
 SLIDE_NO = [1]
 
 
@@ -251,6 +260,8 @@ LIGHT_BG = os.environ.get("MOCK_LIGHT", "dark")
 
 
 def light(body):
+    if MOCK_ALT == "pastel":
+        return dark(body)          # 홀짝이 정한다
     if LIGHT_BG == "dark":
         return dark(body)
     if LIGHT_BG == "pastel":
@@ -523,8 +534,11 @@ def prep():
     # 밝은 장 바탕 -- 제품 내지 바닥(sheet)과 같은 오로라
     sheet = os.path.join(ROOT, "assets", "app_sheet_%s.png" % VERSION)
     if os.path.exists(sheet):
-        Image.open(sheet).convert("RGB").resize((SIZE, SIZE), Image.LANCZOS).save(
-            os.path.join(SRC, "light_bg.png"))
+        from PIL import ImageEnhance
+        # 그대로면 거의 흰색이라 페이지가 묻힌다 -- 채도를 올리고 살짝 눌러 둔다
+        lb = Image.open(sheet).convert("RGB").resize((SIZE, SIZE), Image.LANCZOS)
+        lb = ImageEnhance.Brightness(ImageEnhance.Color(lb).enhance(2.2)).enhance(0.93)
+        lb.save(os.path.join(SRC, "light_bg.png"))
     # 레일 클로즈업 -- '탭 10개'를 실제로 보이게
     d1 = Image.open(os.path.join(SRC, "d1.png")).convert("RGB")
     w, h = d1.size
