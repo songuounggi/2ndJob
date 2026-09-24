@@ -228,7 +228,21 @@ def shoot(name, body, extra=""):
 
 def dark(body):
     return ('<div class="aurora"><img src="%s"></div>'
-            '<div class="wrap dark">%s</div>' % (img("cover_bg"), body))
+            '<div class="wrap dark">%s</div>' % (img(bg_name()), body))
+
+
+# 짝수 장은 바탕을 바꾼다 -- "10장이 너무 다 똑같아"(사용자 2026-09-24).
+# MOCK_ALT: flip = 같은 오로라를 180도 돌림(색은 같고 자리만 다름)
+#           night = 좌우 반전 + 짙은 남보라로 눌러 한 톤 어둡게
+#           none = 전부 같게
+MOCK_ALT = os.environ.get("MOCK_ALT", "flip")
+SLIDE_NO = [1]
+
+
+def bg_name():
+    if MOCK_ALT != "none" and SLIDE_NO[0] % 2 == 0:
+        return "cover_bg_" + MOCK_ALT
+    return "cover_bg"
 
 
 # 밝은 장의 바탕. 거의 흰 단색(PAPER)은 "흰 바탕은 아니다"(사용자 2026-09-24).
@@ -500,8 +514,12 @@ def prep():
     # 다크 장면 바닥이 될 오로라
     cov = Image.open(os.path.join(ROOT, "assets",
                                   "app_cover_student-v0.1.png")).convert("RGB")
-    cov.resize((SIZE, SIZE), Image.LANCZOS).save(
-        os.path.join(SRC, "cover_bg.png"))
+    cov = cov.resize((SIZE, SIZE), Image.LANCZOS)
+    cov.save(os.path.join(SRC, "cover_bg.png"))
+    cov.rotate(180).save(os.path.join(SRC, "cover_bg_flip.png"))
+    Image.blend(cov.transpose(Image.FLIP_LEFT_RIGHT),
+                Image.new("RGB", cov.size, (22, 14, 48)), 0.45).save(
+        os.path.join(SRC, "cover_bg_night.png"))
     # 밝은 장 바탕 -- 제품 내지 바닥(sheet)과 같은 오로라
     sheet = os.path.join(ROOT, "assets", "app_sheet_%s.png" % VERSION)
     if os.path.exists(sheet):
@@ -524,5 +542,6 @@ if __name__ == "__main__":
     render_src(VERSION)
     prep()
     for name, fn in SHOTS:
+        SLIDE_NO[0] = int(name.split("_")[0])
         check_safe(name, fn())
         print("찍음:", shoot(name, fn()))
