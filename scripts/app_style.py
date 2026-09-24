@@ -546,5 +546,26 @@ def snap_lines(src, chrome):
         parts.append(html[last:mk.start(1)] + style)
         last = mk.end(1)
     parts.append(html[last:])
-    io.open(src, "w", encoding="utf-8").write("".join(parts))
+    html = "".join(parts)
+    # 면을 담은 카드와 행도 더는 늘어나지 않게 한다. 카드가 flex:1 로
+    # 남으면 면 아래에 빈 띠가 생겨 다음 카드를 밀었다(위클리 Reading 아래,
+    # 2026-09-24). 남는 높이는 페이지 맨 아래로 간다. flex:1 인 행은 전부
+    # 필기면을 담는다 -- 아닌 행은 verify_student 의 "늘어나는 행"이 잡는다.
+    # 단, 가로 .row 안의 카드는 건드리지 않는다. 거기서 flex 는 **폭**을
+    # 정해서, flex:none 을 걸자 코넬 노트의 Cue/Notes 가 글자 폭으로
+    # 쪼그라들었다(LINES.md 1-3 절 함정 2 를 다시 밟음). 행만 고정한다.
+    row_re = re.compile(r'<div class="row" style="[^"]*">.*?</div></div></div>',
+                        re.S)
+    card_re = re.compile(r'(<div class="card" style=")flex:1(?=[;"])'
+                         r'([^"]*">(?:<div class="label">[^<]*</div>)?'
+                         r'<div class="lines" style="flex:none)')
+    out, last = [], 0
+    for m in row_re.finditer(html):
+        out.append(card_re.sub(r"\1flex:none\2", html[last:m.start()]))
+        out.append(re.sub(r'^(<div class="row" style=")flex:1(?=[;"])',
+                          r"\1flex:none", m.group(0)))
+        last = m.end()
+    out.append(card_re.sub(r"\1flex:none\2", html[last:]))
+    html = "".join(out)
+    io.open(src, "w", encoding="utf-8").write(html)
     return n

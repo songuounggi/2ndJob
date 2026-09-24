@@ -205,6 +205,23 @@ for pid, body in _sec.items():
     if got != want:
         _wk_bad.append(pid)
 add("학기 개요 -> 주간 링크 틀림", len(_wk_bad), 0, not _wk_bad)
+# 높이를 고정한 필기면을 담은 카드·행이 flex:1 이면, 카드는 늘어나고 면은
+# 그대로라 면 아래에 빈 띠가 생기고 다음 카드가 밀린다 -- 위클리의 Reading
+# 과 "One thing I will not drop" 사이가 규정 간격보다 벌어졌다(2026-09-24).
+# 가로 .row 안의 카드는 뺀다 -- 거기서 flex 는 폭이다(아래 항목).
+_row_re = r'<div class="row" style="[^"]*">.*?</div></div></div>'
+_outside = re.sub(_row_re, "", h, flags=re.S)
+_stretch = re.findall(r'<div class="card" style="flex:1[^"]*">'
+                      r'(?:<div class="label">[^<]*</div>)?'
+                      r'<div class="lines" style="flex:none', _outside)
+_stretch += re.findall(r'<div class="row" style="flex:1[;"]', h)
+add("고정한 면을 담고 늘어나는 카드", len(_stretch), 0, not _stretch)
+# 가로 행 안의 카드가 flex:none 이면 폭이 글자만큼 쪼그라든다. 코넬 노트의
+# Cue/Notes 가 가는 기둥이 됐다(2026-09-24, LINES.md 1-3 함정 2 재발).
+_narrow = [pid for pid, body in _sec.items()
+           for m in re.finditer(_row_re, body, re.S)
+           if re.search(r'<div class="card" style="flex:none', m.group(0))]
+add("가로 행 안에서 폭이 줄어든 카드", len(_narrow), 0, not _narrow)
 # 행이 딱 떨어지게 끝나는가 (LINES.md 1-3 절). 필기면 높이가 flex 로
 # 정해지면 나머지(0~22pt)만큼 마지막 괘선이 바닥 위에 애매하게 뜬다.
 # 높이는 24pt 배수로 고정되어야 하고, 맨 아래 괘선은 그리지 않는다.
