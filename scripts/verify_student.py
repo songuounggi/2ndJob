@@ -266,8 +266,10 @@ for k, t in _rail:
     t = re.sub(r"<[^>]+>", "", t).strip().lower()
     title = re.search(r"<h1>(.*?)</h1>", _sec[k]).group(1).strip().lower()
     li = _list.get(k, t).strip().lower()
-    # notes 는 목차가 아니라 바로 내용 페이지라 제목이 "Blank space" 다
-    if k not in ("index", "notes") and not (t == li == title):
+    # notes 는 v0.6 까지 목차 없이 바로 내용 페이지("Blank space")였다
+    if k == "notes" and title == "blank space":
+        continue
+    if k != "index" and not (t == li == title):
         _name_bad.append("%s: %s/%s/%s" % (k, t, li, title))
 add("탭·목차·제목 이름 불일치", len(_name_bad), 0, not _name_bad)
 # 부제 문장부호: 완전한 문장은 마침표, 조각은 없음(영어 UI 문구 관례,
@@ -305,6 +307,27 @@ add("그림자 없는 칩", len(_chips_flat), 0, not _chips_flat)
 _orbs = re.findall(r'<div class="orb" style="background:([^"]*)"', _sec["index"])
 _orb_flat = [o for o in _orbs if "gradient" not in o and "url(" not in o]
 add("단색으로 납작해진 목차 색 점", len(_orb_flat), 0, not _orb_flat)
+
+# 표지 카드는 리스팅 대표 이미지다 -- 적힌 것이 실제와 같아야 한다.
+#  (a) 카드의 이름은 목차·페이지 제목·북마크 어딘가에 쓰이는 이름이어야 한다
+#  (b) Assignment tracker 설명의 칸 이름은 실제 표 머리에 있어야 한다.
+#      "due, started, handed in" 이었는데 STARTED 칸은 없었다(2026-09-24)
+_cov = re.findall(r'<div class="cn">([^<]+)<div class="cd">([^<]+)</div>',
+                  _sec.get("cover", ""))
+_names = set(re.findall(r"<h1>([^<]+)</h1>", h)) | set(
+    re.findall(r'<div style="font-size:10.5pt;font-weight:700">([^<]+)</div>', h))
+_names |= set(re.findall(r'<div class="label">([^<]+)</div>', h))
+_cov_bad = [n for n, d in _cov if n.strip() not in _names]
+_at = [d for n, d in _cov if n.strip() == "Assignment tracker"]
+_at_head = re.findall(r'<td style="width:[0-9.]+pt">([A-Z ]+)</td>', _sec.get("a1", ""))
+if _at and _at_head:
+    _cov_bad += ["Assignment tracker: " + w for w in re.findall(r"[a-z]+", _at[0])
+                 if w in ("due", "started", "handed", "done", "class")
+                 and not any(w.upper() in x or (w == "handed" and "DONE" in x)
+                             for x in _at_head)]
+add("표지 카드와 실제가 다름", len(_cov_bad), 0, not _cov_bad)
+if _cov_bad:
+    print("   표지:", _cov_bad)
 
 _wide = wide_label_cols(h)
 add("짧은 내용 열이 넓은 표", len(_wide), 0, not _wide)
@@ -465,6 +488,49 @@ def gray(page, scale):
 
 
 _pill = pill_contrast()
+
+
+def dot_pitch():
+    """점지 노트의 점 간격이 14pt 인가 -- 상품 1 dot_svg 와 같은 값. 뷰어
+    배율 1.5/2/2.7 에서 렌더해 한 줄의 점 중심 간격을 잰다. 상품 1 v8.19 는
+    GoodNotes 에서 점이 4배 간격으로 그려졌다(PC 렌더는 정상 -- 그건 A-3 이
+    잡는다). 이 검사는 점 간격·크기를 바꾸는 코드 변경을 잡는다.
+    돌려주는 것: 문제 목록 (없으면 [])."""
+    dots = [i for i, pid in enumerate(ids)
+            if re.fullmatch(r"n\d+", pid) and ">Dot grid<" in _sec[pid]]
+    if not dots:
+        return []
+    bad = []
+    for z in (1.5, 2.0, 2.7):
+        a = gray(dots[0], z)
+        H, W = a.shape
+        band = a[int(H * .3):int(H * .7), int(W * .3):int(W * .7)]
+        bg = np.median(band)
+        rows = (band < bg - 8).sum(axis=1)
+        y = int(np.argmax(rows))
+        row = band[y] < bg - 8
+        cs, x = [], 0
+        while x < len(row):
+            if row[x]:
+                e = x
+                while e < len(row) and row[e]:
+                    e += 1
+                cs.append((x + e - 1) / 2.0)
+                x = e
+            else:
+                x += 1
+        gaps = np.diff(cs) / z
+        if len(gaps) < 5:
+            bad.append("%.1f배 점 %d개" % (z, len(cs)))
+        elif abs(np.median(gaps) - 14.0) > 0.5 or gaps.max() - gaps.min() > 1.5:
+            bad.append("%.1f배 간격 %.2f~%.2fpt" % (z, gaps.min(), gaps.max()))
+    return bad
+
+
+_dots = dot_pitch()
+add("점지 점 간격 14pt", len(_dots), 0, not _dots)
+if _dots:
+    print("   점지:", _dots)
 add("안 보이는 현재 탭 표시", len(_pill), 0, not _pill)
 
 

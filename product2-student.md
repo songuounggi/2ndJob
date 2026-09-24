@@ -1124,3 +1124,18 @@ assignments=a1, exam=e1, 나머지는 id 그대로), scale 2.
 아직 v0.4 에서 뽑은 것 -- 출시 버전이 정해지면 다시 뽑는다.
 **남은 것:** 상품 본문 표지(p.1)의 Assignment tracker 설명도 "due, started, handed in" 이다.
 실제 열은 DUE·DONE 뿐. 다음 버전에서 고칠지 사용자 결정 대기.
+
+### student-v0.7 (2026-09-24) — 표지 문구, 노트 9장, 탭 색, 셀페이드 저장
+
+- **표지 카드:** Assignment tracker "due, started, handed in" → "what is due, and done"
+  (`cover_copy`). **"Term at a glance" 는 그런 이름의 페이지가 없다**(칩·북마크는 "Term
+  overview") -- 사용자 결정 대기. verify "표지 카드와 실제가 다름" 이 이것 하나를 잡고 있다
+- **노트 3종류 x 3장** (`notes9`): NOTES 탭 → 노트 목차(p.428) → Ruled 429~431 /
+  Dot grid 432~434 / Plain 435~437. 437p. 점지는 **상품 1 `dot_svg()` 그대로**(14pt,
+  1.1px). 검사 "점지 점 간격 14pt" (12pt 로 만든 초안에서 실패 확인)
+- **반복 페이지가 자기 탭 색** (`tab_colors`): 시간표·Syllabus·시험 등이 전부 파랑이던 것.
+  라벨 앞 색 막대만 바뀐다. 비교 `output/preview/review/32_tab_colors.png`
+- **셀페이드 저장:** 흐림 계산을 `scripts/dashfade.py` 로 옮기고 app_style 은 연결만.
+  **옮긴 뒤 v0.3 / v0.6 / v0.7 HTML 이 바이트까지 동일**함을 확인. 그 과정에서 옛 버전을
+  바꾸던 두 가지(칩 격자 position:relative, 탭 색)를 플래그 뒤로 돌렸다
+- check_render 통과(평균 108 / 최대 128ms), 15.45MB

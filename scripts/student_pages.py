@@ -495,6 +495,70 @@ def p_notes():
             + body(card("", fill(), flex="1")))
 
 
+# 노트 (student-v0.7~, 사용자 제안 2026-09-24: "Prod 1 처럼 3종류 각 3장").
+# NOTES 탭 -> 노트 목차 -> 9장. 같은 종류끼리는 내용이 바이트까지 같아
+# dedupe 가 한 장으로 접는다 -- 페이지 번호를 본문에 넣지 않는 이유(상품 1
+# p_note 주석과 같은 사정).
+NOTE_KINDS = [("Ruled", "ruled", 3, "Lined, edge to edge"),
+              ("Dot grid", "dots", 3, "For lists, sketches and diagrams"),
+              ("Plain", "plain", 3, "Nothing printed on it")]
+
+
+def notes9():
+    return bool(bp and bp.T.get("notes9"))
+
+
+def note_keys():
+    out, n = [], 0
+    for label, kind, count, sub in NOTE_KINDS:
+        for _ in range(count):
+            n += 1
+            out.append(("n%d" % n, label, kind, sub))
+    return out
+
+
+def dot_grid(color="#d3d8de"):
+    """점지. **상품 1 의 bp.dot_svg() 를 그대로 쓴다** (v8.20, 사용자 iPad 확인
+    통과) -- 14pt 간격, 반지름 1.1px, 벡터 원 path 하나. 두 상품의 점지 품질이
+    같아야 한다(사용자 2026-09-24). 반복 배경(이미지 타일)은 GoodNotes 가 4배로
+    늘려 그렸다(v8.19).
+
+    상품 1 은 카드에 overflow:hidden 을 걸어 자른다. 여기서 면에 그걸 걸면
+    ::after 그림자가 잘리므로(brain dump 사례) 안쪽 div 가 자른다. 점 색은
+    이 상품의 점선 색."""
+    return ('<div style="position:absolute;inset:0;overflow:hidden;'
+            'border-radius:13pt;--line:%s">%s</div>' % (color, bp.dot_svg()))
+
+
+def p_note_page(label, kind, sub):
+    if kind == "ruled":
+        inner = card("", fill(), flex="1")
+    elif kind == "dots":
+        inner = card("", '<div class="field" style="flex:1;position:relative">'
+                         '%s</div>' % dot_grid(), flex="1")
+    else:
+        inner = card("", '<div class="field" style="flex:1"></div>', flex="1")
+    return bp.head("Notes", label, sub) + body(inner)
+
+
+def p_notes_index():
+    """노트 목차. 종류마다 칩 한 줄 -- 학기 칩과 같은 격자(8칸)라 크기가 같다."""
+    blocks, n = [], 0
+    for label, kind, count, sub in NOTE_KINDS:
+        chips = ""
+        for _ in range(count):
+            n += 1
+            chips += chip("n%d" % n, n)
+        sh = (A.chip_grid_shadow_tag(count, 1, chip_w(8, True), 6.0, 0, 0)
+              if A.CHIP_SHADOW else "")
+        blocks.append('<div class="card" style="flex:none"><div class="label">'
+                      '%s</div><div style="position:relative;display:grid;'
+                      'grid-template-columns:repeat(8,1fr);gap:6pt">%s%s</div>'
+                      '</div>' % (label, sh, chips))
+    return group_page("notes", "Notes", "Nine pages. Pick the paper you want.",
+                      "".join(blocks))
+
+
 # --------------------------------------------------- 반복 페이지의 목차
 # 칩 그림자. flat_paint 에서는 box-shadow 대신 0.4pt 헤어라인 -- 흐린
 # 그림자가 칩마다 소프트마스크가 되어 Weeks 목차 한 장에 128개, 렌더
@@ -542,9 +606,12 @@ def chip_card(label, prefix, per_term, cols=16):
     if per_term == 1:
         chips = "".join(chip("%s%d" % (prefix, t), t)
                         for t in range(1, TERMS + 1))
-        grid = ('<div style="position:relative;display:grid;'
+        # position:relative 는 그림자가 있을 때만 -- 옛 버전(v0.3 이하)을
+        # 바이트까지 다시 뽑을 수 있어야 한다(2026-09-24 재현 검사에서 발견)
+        grid = ('<div style="%sdisplay:grid;'
                 'grid-template-columns:repeat(8,1fr);gap:6pt">%s%s</div>'
-                % (grid_shadow(8, 1, True), chips))
+                % ("position:relative;" if A.CHIP_SHADOW else "",
+                   grid_shadow(8, 1, True), chips))
         return ('<div class="card" style="flex:none">'
                 '<div class="label">%s</div>%s</div>' % (label, grid))
     blocks = []
@@ -560,6 +627,9 @@ def chip_card(label, prefix, per_term, cols=16):
             '<div style="flex:1;display:grid;'
             'grid-template-columns:repeat(%d,1fr);gap:5pt">%s</div></div>'
             % (t, cols, chips))
+    if not A.CHIP_SHADOW:
+        return ('<div class="card" style="flex:none"><div class="label">%s</div>'
+                '%s</div>' % (label, "".join(blocks)))
     return ('<div class="card" style="flex:none"><div class="label">%s</div>'
             '<div style="position:relative">%s%s</div></div>'
             % (label, grid_shadow(cols, TERMS, False), "".join(blocks)))
@@ -673,12 +743,19 @@ def specs():
     group("life", "Life", "The admin that eats the week")
     out += [("meds", p_meds), ("sleep", p_sleep), ("mood", p_mood)]
 
-    out.append(("notes", p_notes))
+    if notes9():
+        out.append(("notes", p_notes_index))
+        for k, label, kind, sub in note_keys():
+            out.append((k, (lambda lb=label, kd=kind, sb=sub:
+                            lambda: p_note_page(lb, kd, sb))()))
+    else:
+        out.append(("notes", p_notes))
     return out
 
 
 # 반복 페이지가 어느 탭을 켜는가. 하나라도 빠지면 그 페이지에서 레일이
 # 통째로 꺼져 "앱에서 튕겨나온" 느낌이 된다.
+EXTRA_TAB = {"n": "notes"}      # 학기 반복이 아닌 번호 페이지 (노트)
 REPEAT_TAB = [("t", "semester"), ("o", "semester"), ("r", "semester"),
               ("w", "week"), ("d", "day"),
               ("h", "classes"), ("k", "classes"), ("c", "classes"),
@@ -718,6 +795,12 @@ def outline():
         kids.sort(key=lambda it: order[it[1]])
         if len(kids) == 1 and kids[0][2]:
             kids = kids[0][2]
+        if key == "notes" and notes9():
+            seen = []
+            for k, label, kind, sub in note_keys():
+                if label not in seen:
+                    seen.append(label)
+                    kids.append((label, k, []))
         out.append((TAB_TITLES[key], key, kids))
     return out
 

@@ -372,6 +372,11 @@ THEMES["student-v0.5"] = dict(THEMES["student-v0.4"], hanji=True)
 #                          밝은 페이지의 현재 탭 알약을 보이게 (line_fade, tab_pill)
 THEMES["student-v0.6"] = dict(THEMES["student-v0.4"], line_fade=True,
                               tab_pill=True)
+# student-v0.7  2026-09-24  표지 카드의 Assignment tracker 설명을 실제 칸에 맞춘다
+#                          + 노트를 3종류 x 3장 (Ruled / Dot grid / Plain, notes9)
+#                          + 반복 페이지가 자기 탭 색을 따른다 (tab_colors)
+THEMES["student-v0.7"] = dict(THEMES["student-v0.6"], cover_copy=True,
+                              notes9=True, tab_colors=True)
 
 # Revisions of a shipped product get their own version name and their own
 # output file. The file a buyer already downloaded is never overwritten --
@@ -881,6 +886,11 @@ def section_colors(key):
     that at the ceiling before colour coding starts hurting recall.
     """
     group = GROUP_OF.get(key, key)
+    if T.get("tab_colors") and group not in BUCKET:
+        # 반복 페이지(h#, s#, e# ...)와 노트(n#)는 켜지는 탭의 색을 따른다.
+        # 전에는 BUCKET 에 없어 전부 기본값(파랑)이었다 -- 시간표·Syllabus·
+        # 시험 계획이 CLASSES/WORK/STUDY 탭에서 열려도 파랑. v0.7 부터.
+        group = rail_key(key)
     bucket = BUCKET.get(group, "plan")
     keys = STUDENT_BUCKET_KEY if T.get("student") else BUCKET_KEY
     return T["sections"][keys[bucket]]
@@ -925,6 +935,8 @@ def rail_key(key):
             for pre, tab in student_pages.REPEAT_TAB:
                 if m.group(1) == pre:
                     return tab
+            if m.group(1) in student_pages.EXTRA_TAB:
+                return student_pages.EXTRA_TAB[m.group(1)]
         if key in TAB_KEYS:
             return key
         return SUB_OF.get(key, key)
@@ -1084,6 +1096,10 @@ def p_app_cover():
              ("Assignment tracker", "due, started, handed in"),
              ("Working backwards", "from the deadline, not from today"),
              ("Term at a glance", "sixteen weeks on one sheet")]
+    if T.get("cover_copy"):
+        # 실제 표는 ASSIGNMENT / CLASS / DUE / DONE 뿐이다 -- "started" 칸이
+        # 없다(2026-09-24, 사용자 확인). 목업 6번과 같은 문구.
+        items[1] = ("Assignment tracker", "what is due, and done")
     rows = "".join(
         f'<div class="crow"><div class="orb" style="background:{APP_ORBS[i]}">'
         f'</div><div class="cn">{n}<div class="cd">{d}</div></div></div>'

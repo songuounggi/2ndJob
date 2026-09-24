@@ -18,6 +18,8 @@ import os
 import re
 import zlib
 
+import dashfade as DF        # 셀페이드. .claude/skills/cellfade
+
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
@@ -144,132 +146,17 @@ FADE_PIECE = 0.0          # 0 이면 점 단위(v0.3~0.5). snap 전에 build_pla
 
 
 def _fade_dashes(x0, x1, ys):
-    """가로 점선 한 열(여러 행)을 양 끝이 흐려지게. 그라데이션 없이.
-
-    점은 x0 에서 시작해 PERIOD 마다 DASH 길이. 점 중심에서 가까운 끝까지의
-    거리를 페이드 폭 f 로 나눈 값이 그 점의 불투명도다 -- _stops() 의
-    그라데이션(끝 0 -> f 에서 1)을 점마다 한 번 샘플링한 것과 같다.
-    불투명도 1 인 가운데 구간은 dasharray 한 줄로 두어 바이트를 아낀다.
-    stroke-opacity 는 PDF 에서 고정 알파(/CA)라 소프트마스크가 아니다."""
-    L = x1 - x0
-    f = min(FADE, L / 3.0)
-    full, part = [], {}
-    s0 = x0
-    while s0 < x1 - 1e-6:
-        e = min(s0 + DASH, x1)
-        # 페이드 구간에 걸친 점은 PIECE(1pt) 조각으로 쪼개 조각마다 샘플링
-        # (student-v0.6). 점 단위로는 좁은 칸(DONE 열 등)에서 흐림이 거의
-        # 안 보였다 -- "양끝 흐림은 각 셀마다"(사용자 지적 2026-09-24).
-        if FADE_PIECE and min(s0 - x0, x1 - e) < f:
-            y = s0
-            while y < e - 1e-6:
-                ye = min(y + FADE_PIECE, e)
-                xc = (y + ye) / 2
-                a = min(1.0, max(0.0, min(xc - x0, x1 - xc) / f))
-                a = round(a / FADE_STEP) * FADE_STEP
-                if a > 0:
-                    part.setdefault(round(a, 2), []).append((y, ye))
-                y = ye
-            s0 += PERIOD
-            continue
-        xc = (s0 + e) / 2
-        a = min(1.0, max(0.0, min(xc - x0, x1 - xc) / f))
-        a = round(a / FADE_STEP) * FADE_STEP
-        if a >= 1.0:
-            full.append((s0, e))
-        elif a > 0:
-            part.setdefault(round(a, 2), []).append((s0, e))
-        s0 += PERIOD
-    out = []
-    if full:
-        a0, b0 = full[0][0], full[-1][1]
-        out.append('<path stroke="%s" d="%s"/>' % (C, "".join(
-            "M%.2f %.2fH%.2f" % (a0, y, b0) for y in ys)))
-    for a, segs in sorted(part.items()):
-        out.append('<path stroke="%s"%s stroke-dasharray="none" '
-                   'd="%s"/>' % (C, "" if a >= 1.0 else ' stroke-opacity="%g"' % a, "".join(
-                       "M%.2f %.2fH%.2f" % (p0, y, p1)
-                       for y in ys for p0, p1 in segs)))
-    return out
-
-
-def _fade_dashes_v(xs, y0, y1, offset):
-    """세로 점선(여러 경계)을 위아래 끝이 흐려지게. _fade_dashes 의 세로판.
-
-    세로선은 행 경계마다 틈이 오도록 dashoffset 을 민다. 점 위치를 브라우저
-    규칙 그대로 계산한다: 경로 위 거리 t 에서 (t + offset) mod PERIOD < DASH
-    이면 점이다. 가운데(불투명도 1) 구간은 그 첫 점에서 시작하는 dasharray
-    한 줄로, 끝 점들만 따로 옅게 긋는다."""
-    L = y1 - y0
-    f = min(FADE, L / 3.0)
-    segs, t = [], 0.0
-    while t < L - 1e-6:
-        ph = (t + offset) % PERIOD
-        if ph < DASH:
-            e = min(t + (DASH - ph), L)
-            segs.append((y0 + t, y0 + e))
-            t = e
-        else:
-            t += PERIOD - ph
-    full, part = [], {}
-    for a0, b0 in segs:
-        yc = (a0 + b0) / 2
-        a = min(1.0, max(0.0, min(yc - y0, y1 - yc) / f))
-        a = round(a / FADE_STEP) * FADE_STEP
-        if a >= 1.0:
-            full.append((a0, b0))
-        elif a > 0:
-            part.setdefault(round(a, 2), []).append((a0, b0))
-    out = []
-    if full:
-        a0, b0 = full[0][0], full[-1][1]
-        out.append('<path stroke="%s" d="%s"/>' % (C, "".join(
-            "M%.2f %.2fV%.2f" % (x, a0, b0) for x in xs)))
-    for a, ss in sorted(part.items()):
-        out.append('<path stroke="%s" stroke-opacity="%g" stroke-dasharray="none" '
-                   'd="%s"/>' % (C, a, "".join(
-                       "M%.2f %.2fV%.2f" % (x, p0, p1) for x in xs for p0, p1 in ss)))
-    return out
+    """가로 점선 한 칸(열)의 양 끝 흐림. 계산은 scripts/dashfade.py (셀페이드)
+    가 한다 -- 어느 상품이든 같은 함수를 쓴다. 여기는 이 테마의 값만 넘긴다."""
+    return DF.h_cells(x0, x1, ys, dash=DASH, period=PERIOD, fade=FADE,
+                      piece=FADE_PIECE, step=FADE_STEP, color=C)
 
 
 def _fade_dashes_vcell(xs, cells, y0, offset, piece=1.0):
-    """세로 구분선을 **칸마다** 위아래 끝이 흐려지게 (사용자 지적 2026-09-24:
-    "양끝 흐림은 각 셀마다"). 가로선이 열마다 흐려지는 것과 같은 규칙.
-
-    칸 하나는 24pt 에 점이 둘뿐이라 점 단위로 옅게 하면 둘 다 0.9 로 거의
-    같아 흐림이 안 보인다. 점을 piece(1pt) 조각으로 쪼개 조각 중심에서
-    그라데이션(_stops 와 같은 f)을 샘플링한다. 점 위치는 원래 세로선과
-    같다: 경로 시작 y0 에서 거리 t, (t + offset) mod PERIOD < DASH 이면 점.
-    cells: [(칸 위, 칸 아래), ...] -- 흐림은 [위+INSET_V, 아래-INSET_V] 에서."""
-    groups = {}
-    for top, bot in cells:
-        c0, c1 = top + INSET_V, bot - INSET_V
-        f = min(FADE, (c1 - c0) / 3.0)
-        k = int((c0 - y0 + offset) // PERIOD) - 1
-        while True:
-            ds = y0 - offset + k * PERIOD          # 점 시작 (전역 위상)
-            if ds >= c1:
-                break
-            a0, b0 = max(ds, c0), min(ds + DASH, c1)
-            k += 1
-            if b0 <= a0:
-                continue
-            y = a0
-            while y < b0 - 1e-6:
-                e = min(y + piece, b0)
-                yc = (y + e) / 2
-                al = min(1.0, max(0.0, min(yc - c0, c1 - yc) / f))
-                al = round(al / FADE_STEP) * FADE_STEP
-                if al > 0:
-                    groups.setdefault(round(al, 2), []).append((y, e))
-                y = e
-    out = []
-    for al, ss in sorted(groups.items()):
-        op = "" if al >= 1.0 else ' stroke-opacity="%g"' % al
-        out.append('<path stroke="%s"%s stroke-dasharray="none" d="%s"/>'
-                   % (C, op, "".join("M%.2f %.2fV%.2f" % (x, p0, p1)
-                                     for x in xs for p0, p1 in ss)))
-    return out
+    """세로 점선을 칸(행)마다 위아래 흐림. scripts/dashfade.py (셀페이드)."""
+    return DF.v_cells(xs, cells, y0, offset, inset=INSET_V, dash=DASH,
+                      period=PERIOD, fade=FADE, piece=piece, step=FADE_STEP,
+                      color=C)
 
 
 def _flat_stroke(b, tag, n):
