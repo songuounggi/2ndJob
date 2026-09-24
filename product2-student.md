@@ -1260,3 +1260,5 @@ iPad 체크리스트는 v1.0 에서 통과. v1.1 에서 새로 생긴 건 표지
   ("wait, when is that due?", "just the first step", "I will start it tonight").
 - **"배경을 좀 블러"** → A(오로라 크게 흐림) / B(뒤 물체만 흐림) / C(둘 다) 비교, **C 채택**: 바탕 GaussianBlur 240 +
   양옆 페이지·뒤 태블릿 `filter:blur(5px)`. 앞 태블릿과 제목이 뜬다. 1번에만 적용. `HERO_BLUR`, `HERO_DEPTH=0` 으로 끌 수 있다.
+- **물체 블러 뺌** -- "패드 1, 3, 4 는 블러 빼줘"(왼쪽부터 Exam 페이지·앞 태블릿·뒤 태블릿·Brain dump 중 흐렸던 셋).
+  남은 건 **바탕 블러만**(GaussianBlur 240). `HERO_DEPTH=1` 로 켤 수 있다. 1번 확정.

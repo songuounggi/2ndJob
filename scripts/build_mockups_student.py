@@ -331,7 +331,8 @@ HERO_CSS = """
 .hero .stage .pg img{height:380px;border-radius:14px;display:block;
                      box-shadow:0 20px 50px rgba(10,5,40,.45)}
 .hero .stage .pg{z-index:1}
-/* HERO_DEPTH: 뒤에 놓인 것(양옆 페이지, 뒤 태블릿)만 살짝 흐려 앞 태블릿이 뜨게 */
+/* HERO_DEPTH=1: 뒤에 놓인 것(양옆 페이지, 뒤 태블릿)만 흐림. 써 봤다가 뺐다 --
+   "1, 3, 4 는 블러 빼줘"(사용자). 페이지 글씨가 안 읽히면 무엇을 파는지 안 보인다. */
 .depth .stage .pg,.depth .stage .back{filter:blur(5px)}
 .hero .stage .p1{transform:translate(-50%,-50%) translate(-640px,120px) rotate(-11deg)}
 .hero .stage .p2{transform:translate(-50%,-50%) translate(760px,170px) rotate(10deg)}
@@ -351,7 +352,7 @@ HERO_CSS = """
 def s1_hero():
     """검색 결과에서 보이는 단 한 장."""
     return dark(
-        '<div class="hero%s">' % ("" if os.environ.get("HERO_DEPTH") == "0" else " depth") +
+        '<div class="hero%s">' % (" depth" if os.environ.get("HERO_DEPTH") == "1" else "") +
         '<div class="head"><div class="txt">'
         '<div class="kicker">UNDATED &middot; ADHD STUDENT</div>'
         '<h1>ADHD Student<br>Planner</h1>'
