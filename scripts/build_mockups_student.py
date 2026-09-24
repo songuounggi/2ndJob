@@ -149,12 +149,34 @@ def page(name, label, note, cell=700):
             '<b>%s</b><span>%s</span></div>' % (cell, img(name), label, note))
 
 
+SHELF_W = 2000 - 2 * 130        # 목업 폭 - 좌우 패딩
+PAGE_RATIO = 612 / 792.0
+
+
+def shelf(cells, cell):
+    """페이지 카드 한 줄. 폭을 넘치면 양 끝이 잘려 나간다 -- 찍기 전에 막는다
+    (2026-09-24: 4장 x 640, 3장 x 780 이 넘쳐 "ss schedule" 이 나갔다)."""
+    need = len(cells) * cell * PAGE_RATIO + (len(cells) - 1) * 32
+    if need > SHELF_W:
+        raise SystemExit("카드 %d장 x 높이 %dpx = 폭 %dpx > %dpx. 높이를 줄일 것"
+                         % (len(cells), cell, need, SHELF_W))
+    return "".join(page(k, t, d, cell) for k, t, d in cells)
+
+
 def chips(items, dark_=False):
     return '<div class="chips">%s</div>' % "".join(
         '<div class="chip">%s<i>%s</i></div>' % (a, b) for a, b in items)
 
 
 # ------------------------------------------------------------------ 9장 --
+# 문구의 근거 (2026-09-24, student-v0.4 실측. product2-student.md "F" 절 표):
+#   30 templates  = 쓰는 페이지 디자인 수(목차·탭 페이지 제외). 포함하면 40
+#   Eight terms   = TERMS 8, 반복 세트는 학기마다 한 벌
+#   two taps      = 모든 페이지 쌍의 최단 탭 수 최대값 (링크 그래프 BFS)
+#   4,800 links   = PDF 링크 주석 4,834
+#   112 day pages = DAYS_PER_TERM 14 x 8
+#   print 는 뺐다 -- 괘선 대비 1.14:1 이라 인쇄하면 거의 안 보인다(G)
+# 페이지 구성을 바꾸면 이 숫자들을 다시 잰다.
 def s1_hero():
     """검색 결과에서 보이는 단 한 장.
 
@@ -170,7 +192,7 @@ def s1_hero():
         '<h1 style="font-size:96px">ADHD<br>Student<br>Planner</h1>'
         '<div class="sub" style="font-size:42px">Syllabus, assignments and '
         'exams &mdash; broken into pieces you can actually start.</div>'
-        + chips([("428", "pages"), ("33", "templates")])
+        + chips([("428", "pages"), ("30", "templates")])
         + chips([("4", "years"), ("10", "tabs")])
         + '</div>'
           '<div style="flex:1;display:flex;justify-content:center;'
@@ -203,25 +225,28 @@ def s3_templates():
              ("grades", "Grade tracker", "what each piece is worth"),
              ("braindump", "Brain dump", "no order, no rules")]
     return light(
-        '<div class="kicker">33 UNIQUE TEMPLATES</div>'
-        '<h2>Not one page,<br>printed four hundred times.</h2>'
+        '<div class="kicker">30 PAGE DESIGNS</div>'
+        '<h2>One set per term.<br>Eight terms inside.</h2>'
         '<div class="grow"><div class="shelf">%s</div></div>'
-        % "".join(page(k, t, d, 640) for k, t, d in cells))
+        % shelf(cells, 520))
+    # 카드 높이: 폭 2000 - 좌우 패딩 260 = 1740px 안에 들어가야 한다. 페이지
+    # 비율 0.773 -> 4장이면 높이 <= 532, 3장이면 <= 722. 640/780 으로 두었을
+    # 때 양 끝 카드가 잘려 "ss schedule", 탭 레일 없는 페이지가 나갔다.
 
 
 def s4_navigation():
     """'탭 10개'가 핵심인데 그림에서 실오라기면 주장과 그림이 따로 논다."""
-    tabs = ["INDEX", "SEMESTER", "WEEK", "DAY", "CLASSES",
+    tabs = ["INDEX", "SEMESTER", "WEEKS", "DAYS", "CLASSES",
             "WORK", "STUDY", "FOCUS", "LIFE", "NOTES"]
     t = "".join('<div class="tag">%s</div>' % x for x in tabs)
     return dark(
         '<div class="kicker">TAP, DO NOT SCROLL</div>'
-        '<h2>Ten tabs down the side.<br>Every page is one tap away.</h2>'
+        '<h2>Ten tabs down the side.<br>Any page in two taps.</h2>'
         '<div class="grow" style="gap:90px">'
         '<img class="cut r" src="%s" style="height:1060px;flex:none">'
         '<div style="flex:none;max-width:820px"><div class="tags">%s</div>'
         '<div class="sub" style="font-size:40px;margin-top:34px">'
-        '4,700 working links inside. The tab you are on lights up, so you '
+        'Over 4,800 working links inside. The tab you are on lights up, so you '
         'never lose your place.</div></div></div>'
         % (img("rail_zoom"), t))
 
@@ -241,7 +266,7 @@ def s5_structure():
         '<h2>Start any week.<br>Skip a week.</h2>'
         '<div class="sub">Nothing is dated, so a gap costs you nothing. '
         'The page is not keeping score.</div>'
-        + chips([("8", "terms"), ("128", "week pages"), ("248", "day pages")])
+        + chips([("8", "terms"), ("128", "week pages"), ("112", "day pages")])
         + '<div class="grow" style="flex-direction:column;gap:34px">'
           '<div style="display:flex;gap:18px;width:100%%">%s</div>'
           '<img src="%s" style="height:720px;border-radius:20px;'
@@ -251,13 +276,13 @@ def s5_structure():
 
 def s6_work():
     cells = [("backwards", "Working backwards", "from the deadline"),
-             ("assignments", "Assignment tracker", "due, started, handed in"),
+             ("assignments", "Assignment tracker", "what is due, and done"),
              ("group", "Group project", "who does what, by when")]
     return light(
         '<div class="kicker">WORK</div>'
         '<h2>From the deadline,<br>not from today.</h2>'
         '<div class="grow"><div class="shelf">%s</div></div>'
-        % "".join(page(k, t, d, 780) for k, t, d in cells))
+        % shelf(cells, 700))
 
 
 def s7_study():
@@ -286,15 +311,15 @@ def s8_focus():
         '<div class="kicker">WHEN STARTING IS THE HARD PART</div>'
         '<h2>Eleven pages for the<br>part nobody sells you.</h2>'
         '<div class="grow"><div class="shelf">%s</div></div>'
-        % "".join(page(k, t, d, 780) for k, t, d in cells))
+        % shelf(cells, 700))
 
 
 def s9_howto():
     apps = ["GoodNotes", "Notability", "Noteshelf", "Xodo", "Adobe Acrobat"]
     tags = "".join('<div class="tag">%s</div>' % a for a in apps)
     steps = [("1", "Buy and download", "one PDF, instantly"),
-             ("2", "Open in your notes app", "iPad, Android tablet, or print"),
-             ("3", "Tap the side tabs", "no scrolling through 400 pages")]
+             ("2", "Open in your notes app", "iPad or Android tablet"),
+             ("3", "Tap the side tabs", "no scrolling through 428 pages")]
     st = "".join(
         '<div class="note"><div class="dot" style="background:%s;width:44px;'
         'height:44px;margin-top:6px;color:#FFF;font-size:26px;'

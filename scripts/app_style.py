@@ -78,6 +78,11 @@ ORB_PNG = False
 # "뭔가 아쉽고 썰렁해 보였다". 내지 배경은 전 페이지가 공유하는 이미지 한
 # 장이라 질감을 거기에 구우면 뷰어 부담이 거의 없다(반복 타일 아님).
 HANJI = False
+# line_fade / tab_pill (student-v0.6~, 사용자 지적 2026-09-24):
+#  · 필기칸 괘선에도 표 점선과 같은 양 끝 페이드 (p.17 "Why these" 가 표와 달랐다)
+#  · 밝은 페이지의 현재 탭 알약이 흰색 9% 라 안 보였다 -- 채움과 테두리를 올린다
+LINE_FADE = False
+TAB_PILL = False
 HANJI_STRENGTH = 1.0
 VERSION = ""
 
@@ -134,7 +139,8 @@ def _stops(name, x1, y1, x2, y2, length):
             % (name, x1, y1, x2, y2, C, p, C, 100 - p, C, C))
 
 
-FADE_STEP = 0.1          # 양 끝 점의 투명도 눈금. 같은 값끼리 path 하나로 묶는다
+FADE_STEP = 0.1
+FADE_PIECE = 0.0          # 0 이면 점 단위(v0.3~0.5). snap 전에 build_planner 가 켠다          # 양 끝 점의 투명도 눈금. 같은 값끼리 path 하나로 묶는다
 
 
 def _fade_dashes(x0, x1, ys):
@@ -151,6 +157,21 @@ def _fade_dashes(x0, x1, ys):
     s0 = x0
     while s0 < x1 - 1e-6:
         e = min(s0 + DASH, x1)
+        # 페이드 구간에 걸친 점은 PIECE(1pt) 조각으로 쪼개 조각마다 샘플링
+        # (student-v0.6). 점 단위로는 좁은 칸(DONE 열 등)에서 흐림이 거의
+        # 안 보였다 -- "양끝 흐림은 각 셀마다"(사용자 지적 2026-09-24).
+        if FADE_PIECE and min(s0 - x0, x1 - e) < f:
+            y = s0
+            while y < e - 1e-6:
+                ye = min(y + FADE_PIECE, e)
+                xc = (y + ye) / 2
+                a = min(1.0, max(0.0, min(xc - x0, x1 - xc) / f))
+                a = round(a / FADE_STEP) * FADE_STEP
+                if a > 0:
+                    part.setdefault(round(a, 2), []).append((y, ye))
+                y = ye
+            s0 += PERIOD
+            continue
         xc = (s0 + e) / 2
         a = min(1.0, max(0.0, min(xc - x0, x1 - xc) / f))
         a = round(a / FADE_STEP) * FADE_STEP
@@ -165,10 +186,89 @@ def _fade_dashes(x0, x1, ys):
         out.append('<path stroke="%s" d="%s"/>' % (C, "".join(
             "M%.2f %.2fH%.2f" % (a0, y, b0) for y in ys)))
     for a, segs in sorted(part.items()):
-        out.append('<path stroke="%s" stroke-opacity="%g" stroke-dasharray="none" '
-                   'd="%s"/>' % (C, a, "".join(
+        out.append('<path stroke="%s"%s stroke-dasharray="none" '
+                   'd="%s"/>' % (C, "" if a >= 1.0 else ' stroke-opacity="%g"' % a, "".join(
                        "M%.2f %.2fH%.2f" % (p0, y, p1)
                        for y in ys for p0, p1 in segs)))
+    return out
+
+
+def _fade_dashes_v(xs, y0, y1, offset):
+    """세로 점선(여러 경계)을 위아래 끝이 흐려지게. _fade_dashes 의 세로판.
+
+    세로선은 행 경계마다 틈이 오도록 dashoffset 을 민다. 점 위치를 브라우저
+    규칙 그대로 계산한다: 경로 위 거리 t 에서 (t + offset) mod PERIOD < DASH
+    이면 점이다. 가운데(불투명도 1) 구간은 그 첫 점에서 시작하는 dasharray
+    한 줄로, 끝 점들만 따로 옅게 긋는다."""
+    L = y1 - y0
+    f = min(FADE, L / 3.0)
+    segs, t = [], 0.0
+    while t < L - 1e-6:
+        ph = (t + offset) % PERIOD
+        if ph < DASH:
+            e = min(t + (DASH - ph), L)
+            segs.append((y0 + t, y0 + e))
+            t = e
+        else:
+            t += PERIOD - ph
+    full, part = [], {}
+    for a0, b0 in segs:
+        yc = (a0 + b0) / 2
+        a = min(1.0, max(0.0, min(yc - y0, y1 - yc) / f))
+        a = round(a / FADE_STEP) * FADE_STEP
+        if a >= 1.0:
+            full.append((a0, b0))
+        elif a > 0:
+            part.setdefault(round(a, 2), []).append((a0, b0))
+    out = []
+    if full:
+        a0, b0 = full[0][0], full[-1][1]
+        out.append('<path stroke="%s" d="%s"/>' % (C, "".join(
+            "M%.2f %.2fV%.2f" % (x, a0, b0) for x in xs)))
+    for a, ss in sorted(part.items()):
+        out.append('<path stroke="%s" stroke-opacity="%g" stroke-dasharray="none" '
+                   'd="%s"/>' % (C, a, "".join(
+                       "M%.2f %.2fV%.2f" % (x, p0, p1) for x in xs for p0, p1 in ss)))
+    return out
+
+
+def _fade_dashes_vcell(xs, cells, y0, offset, piece=1.0):
+    """세로 구분선을 **칸마다** 위아래 끝이 흐려지게 (사용자 지적 2026-09-24:
+    "양끝 흐림은 각 셀마다"). 가로선이 열마다 흐려지는 것과 같은 규칙.
+
+    칸 하나는 24pt 에 점이 둘뿐이라 점 단위로 옅게 하면 둘 다 0.9 로 거의
+    같아 흐림이 안 보인다. 점을 piece(1pt) 조각으로 쪼개 조각 중심에서
+    그라데이션(_stops 와 같은 f)을 샘플링한다. 점 위치는 원래 세로선과
+    같다: 경로 시작 y0 에서 거리 t, (t + offset) mod PERIOD < DASH 이면 점.
+    cells: [(칸 위, 칸 아래), ...] -- 흐림은 [위+INSET_V, 아래-INSET_V] 에서."""
+    groups = {}
+    for top, bot in cells:
+        c0, c1 = top + INSET_V, bot - INSET_V
+        f = min(FADE, (c1 - c0) / 3.0)
+        k = int((c0 - y0 + offset) // PERIOD) - 1
+        while True:
+            ds = y0 - offset + k * PERIOD          # 점 시작 (전역 위상)
+            if ds >= c1:
+                break
+            a0, b0 = max(ds, c0), min(ds + DASH, c1)
+            k += 1
+            if b0 <= a0:
+                continue
+            y = a0
+            while y < b0 - 1e-6:
+                e = min(y + piece, b0)
+                yc = (y + e) / 2
+                al = min(1.0, max(0.0, min(yc - c0, c1 - yc) / f))
+                al = round(al / FADE_STEP) * FADE_STEP
+                if al > 0:
+                    groups.setdefault(round(al, 2), []).append((y, e))
+                y = e
+    out = []
+    for al, ss in sorted(groups.items()):
+        op = "" if al >= 1.0 else ' stroke-opacity="%g"' % al
+        out.append('<path stroke="%s"%s stroke-dasharray="none" d="%s"/>'
+                   % (C, op, "".join("M%.2f %.2fV%.2f" % (x, p0, p1)
+                                     for x in xs for p0, p1 in ss)))
     return out
 
 
@@ -257,6 +357,14 @@ def rules_svg(widths, n_rows, head_h=24.0):
                     x + INSET, x + w - INSET,
                     [head_h + r * ROW_H for r in range(1, n_rows)])
                 x += w
+            if LINE_FADE and bounds:
+                # 세로선도 위아래 끝을 흐리게 (student-v0.6, 사용자 지적)
+                body = [b for b in body if "stroke-dashoffset" not in b]
+                cells = [(0.0, head_h)] + [(head_h + r * ROW_H,
+                                            head_h + (r + 1) * ROW_H)
+                                           for r in range(n_rows)]
+                body += _fade_dashes_vcell(bounds, cells, INSET_V,
+                                           PERIOD - DASH / 2 - INSET_V)
         else:                                # student-v0.2: 페이드 없이 단색
             body = [_flat_stroke(b, tag, len(widths)) for b in body]
     return ('<svg class="rules" viewBox="0 0 %.2f %.2f" width="%.2fpt" '
@@ -290,6 +398,16 @@ def flat_lines(k, w_pt):
                 for n in range(1, k))
     if not d:
         return FLAT_SVG
+    if LINE_FADE:
+        # pt 좌표 viewBox 로 그려 표 점선의 _fade_dashes 를 그대로 쓴다.
+        # 크기는 CSS(.rules.rows: 폭 100%-2*INSET, 높이 100%-12pt)가 정하므로
+        # viewBox 를 같은 pt 값으로 두면 1pt = 1 사용자 단위가 된다.
+        wv, hv = w_pt - 2 * INSET, k * ROW_H - ROW_H / 2
+        return ('<svg class="rules rows" xmlns="http://www.w3.org/2000/svg" '
+                'viewBox="0 0 %.2f %.2f" preserveAspectRatio="none" fill="none" '
+                'stroke-width="%.2f" stroke-dasharray="%g %g">%s</svg>'
+                % (wv, hv, THICK_PT, DASH, PERIOD - DASH,
+                   "".join(_fade_dashes(0.0, wv, [n * ROW_H for n in range(1, k)]))))
     return ('<svg class="rules rows" xmlns="http://www.w3.org/2000/svg">'
             '<path d="%s" fill="none" stroke="%s" stroke-width="%.4f" '
             'stroke-dasharray="%.4f %.4f"/></svg>'
@@ -508,6 +626,15 @@ def css():
     out += (DARK
             .replace("@CVL@", "%.2f" % (RAIL_R + _cv_side - CONTENT_L))
             .replace("@CVR@", "%.2f" % (_cv_side - CONTENT_R)))
+    if TAB_PILL:
+        # 사용자가 다섯 단계 중 L2 를 골랐다(2026-09-24). v0.4(9%/19%)의
+        # 은은함은 남기고 밝은 페이지에서도 알약이 구분되게.
+        out += (chr(10) + ".rail a.on{background:rgba(255,255,255,.22);"
+                "border:.8pt solid rgba(255,255,255,.40);"
+                "border-top-color:rgba(255,255,255,.55)}"
+                ".dk .rail a.on{background:rgba(255,255,255,.09);"
+                "border:.8pt solid rgba(255,255,255,.19);"
+                "border-top-color:rgba(255,255,255,.34)}")
     if FLAT:
         out += (chr(10) + ".field::after,.lines::after,.tbwrap::after{background:"
                 "url('../assets/app_shadow_%s.png') 0 0/100%% 100%% no-repeat}"

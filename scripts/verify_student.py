@@ -285,6 +285,14 @@ _tables = re.findall(r'<svg class="rules" viewBox=.*?</svg>', h, re.S)
 _nofade = [t for t in _tables
            if "url(#" not in t and "stroke-opacity" not in t]
 add("양 끝 페이드 없는 표", len(_nofade), 0, not _nofade)
+# 세로 구분선도 위아래 끝이 흐려야 한다 (student-v0.6~, 사용자 지적 2026-09-24:
+# 가로선만 흐리고 세로선은 끝까지 같은 진하기였다). 세로선이 있는 표에서
+# 옅은 세로 점(stroke-opacity 를 가진 V 경로)이 없으면 실패. v0.1 의
+# 그라데이션 판도 세로는 흐리지 않았으므로 v0.5 이하는 여기서 걸린다.
+_v_nofade = [t for t in _tables
+             if re.search(r'd="M[0-9.]+ [0-9.]+V', t)
+             and not re.search(r'stroke-opacity="[0-9.]+"[^>]*d="M[0-9.]+ [0-9.]+V', t)]
+add("세로선 끝 페이드 없는 표", len(_v_nofade), 0, not _v_nofade)
 # 칩 그림자와 목차 색 점. v0.2 에서 속도 때문에 헤어라인·단색으로 바꿨다가
 # 사용자가 살리라고 했다(2026-09-24). CSS(v0.1) 든 구운 PNG(v0.4~) 든 있어야
 # 한다. 칩 묶음마다 box-shadow 가 있거나, 묶음 그림자 이미지가 하나 있어야 한다.
@@ -401,6 +409,48 @@ def label_probe():
 
 
 _lab = label_probe()
+
+# 필기칸 괘선 양 끝 페이드 (student-v0.6~). 표는 흐려지는데 바로 아래 필기칸은
+# 끝까지 같은 진하기라 p.17 에서 둘이 달라 보였다(2026-09-24 지적).
+_lines_svg = re.findall(r'<svg class="rules rows"[^>]*>(.*?)</svg>', h, re.S)
+_lines_nofade = [x for x in _lines_svg if x.strip() and "stroke-opacity" not in x]
+add("양 끝 페이드 없는 필기칸", len(_lines_nofade), 0, not _lines_nofade)
+
+
+def pill_contrast():
+    """밝은 페이지의 현재 탭 알약이 눈에 보이는가. 알약 안(글자 없는 왼쪽
+    띠)이 바로 위아래 레일 배경보다 얼마나 밝은지. 옆 탭과 비교하면 레일
+    배경이 위아래로 색이 달라 흔들렸다. v0.4 = 1.2~2.7 (안 보임),
+    흰 알약 시안 = 12.5~22, 사용자가 고른 L2 = 4.9~7.6 (STUDY 구간이 밝아 낮다). 기준 4.
+    페이지 종류마다 첫 장만 잰다."""
+    seen, bad = set(), []
+    for n, pid in enumerate(ids):
+        kind = re.sub(r"\d+$", "#", pid)
+        if kind in seen or pid in ("cover", "index"):
+            continue
+        seen.add(kind)
+        pg = r.pages[n]
+        H = float(pg.mediabox.height)
+        rects = sorted([[float(x) for x in a.get_object()["/Rect"]]
+                        for a in pg.get("/Annots") or []
+                        if float(a.get_object()["/Rect"][0]) < 60],
+                       key=lambda q: -q[3])
+        nav = _sec[pid].split("</nav>")[0]
+        tabs = re.findall(r'<a class="([^"]*)" href="#', nav)
+        on = [i for i, t in enumerate(tabs) if "on" in t.split()]
+        if not on or len(rects) != len(tabs):
+            bad.append(pid + ":?")
+            continue
+        x0, y0, x1, y1 = rects[on[0]]
+        S = 3
+        a = gray(n, S)
+        xs = slice(int((x0 + 4) * S), int((x0 + 7) * S))
+        inside = a[int((H - y1 + 8) * S):int((H - y0 - 8) * S), xs].mean()
+        out = (a[int((H - y1 - 10) * S):int((H - y1 - 4) * S), xs].mean()
+               + a[int((H - y0 + 4) * S):int((H - y0 + 10) * S), xs].mean()) / 2
+        if inside - out < 4:
+            bad.append("%s:%.1f" % (pid, inside - out))
+    return bad
 add("쓸 자리 없는 라벨", len(_lab), 0, not _lab)
 
 
@@ -412,6 +462,10 @@ with open(PDF, "rb") as fh:
 def gray(page, scale):
     return np.asarray(doc[page].render(scale=scale).to_pil().convert("L")
                       ).astype(float)
+
+
+_pill = pill_contrast()
+add("안 보이는 현재 탭 표시", len(_pill), 0, not _pill)
 
 
 def runs(vals, cut):
@@ -558,6 +612,8 @@ if tabbad:
     print("   탭이 잘못된 페이지:", tabbad[:8])
 if months:
     print("   월 이름:", dict(months))
+if _pill or _lines_nofade:
+    print("   탭/괘선:", _pill[:6], len(_lines_nofade))
 if _self or _n_bad or _fake or _lab:
     print("   H:", _self[:5], _n_bad[:5], _fake[:5], _lab[:6])
 if clash or redef:
