@@ -349,7 +349,9 @@ def p_focus_session():
     return (bp.head("Focus", "Focus session", "One block. One thing.")
             + body(
                 card("The one thing", field(36)),
-                '<div class="row" style="gap:14pt">'
+                # flex:none -- .row 기본값은 flex:1 이라 입력칸만 든 이 행이
+                # 남는 높이를 삼켜 Start/Stop 아래가 222pt 비었다
+                '<div class="row" style="flex:none;gap:14pt">'
                 + card("Start", field(24), flex="1")
                 + card("Stop", field(24), flex="1")
                 + '</div>',

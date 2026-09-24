@@ -883,4 +883,10 @@ dedupe 를 거쳐도 남는다. 용량 영향 없음(14.43MB). 검사 4항목 �
 Chrome 내장 뷰어의 사이드바는 Claude 가 클릭할 수 없어 실제 화면 캡처는 못 했다.
 GoodNotes 에서 보이는지는 사용자 확인 필요.
 
-**다음:** 위 C(focus-session)·D·E·F·G·H.
+**C 완료 (2026-09-24).** p.420 Focus session 의 Start/Stop 행에 `flex:none`.
+`.row` 기본값이 `flex:1` 이라 입력칸만 든 행이 남는 높이를 삼켰다. 아래
+필기면이 216 -> 384pt (9 -> 16행). 검사 "필기면 없이 늘어나는 행" 추가
+(고치기 전 focus-session 1건만 걸림). C 의 나머지(syllabus·backwards·grades
+하단 잘림)는 09-23 에 이미 고쳤다.
+
+**다음:** 위 D·E·F·G·H.
