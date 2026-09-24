@@ -218,6 +218,6 @@ Shop Manager → Listings → `+ Add a listing`. ★ = 필수.
 | at most two taps, over 4,900 links | 링크 그래프 BFS 최대 2, 링크 주석 4,933 | 일치 |
 | The tab you are on lights up | verify "안 보이는 현재 탭 표시" 0 (L2) | 일치 |
 | WEEK OF / DATE box | w# datebox WEEK OF, d# datebox DATE | 일치 |
-| GoodNotes, Notability, Xodo, Acrobat; Android | 상품 1 원고와 같은 PDF 내부 링크 방식. **학생용 확인: v0.8 모바일, v1.0 아이폰 미리보기(애플 기본 PDF 엔진)에서 RELEASE.md 1-3 체크리스트 1~8 통과** (속도·탭·링크·점지·흐림·개요). **GoodNotes·Notability·Xodo·Acrobat 앱과 Android 는 학생용에서 미확인** | 부분 확인 |
+| GoodNotes, Notability, Xodo, Acrobat; Android | 상품 1 원고와 같은 PDF 내부 링크 방식. **학생용 확인: v0.8 모바일, v1.0 아이폰 미리보기(애플 기본 PDF 엔진)에서 RELEASE.md 1-3 체크리스트 1~8 통과** (속도·탭·링크·점지·흐림·개요). v1.1 표지 링크 4개 추가 확인(09-24). **GoodNotes·Notability·Xodo·Acrobat 앱과 Android 는 학생용에서 미확인** | 부분 확인 |
 | US Letter | 페이지 612 x 792 pt | 일치 |
 | 환불·개인 사용 문구 | 상품 1 `listing.md` 와 같은 문장 (숍 정책과 맞춘 것) | 일치 |
