@@ -1,8 +1,8 @@
 # 상품 2 Etsy 리스팅 원고 — ADHD 학생용 플래너
 
 복사해서 붙여넣기용. 영문은 그대로 쓴다.
-**student-v0.9 FINAL (437p / 페이지 디자인 32종 / 15.5MB) 에서 실측한 값이다.**
-검사: `python scripts/check_listing_student.py student-v0.9` -- 버전을 바꾸면 다시 돌린다.
+**student-v1.0 FINAL (437p / 페이지 디자인 32종 / 15.5MB) 에서 실측한 값이다** (v0.9 와 숫자 동일).
+검사: `python scripts/check_listing_student.py student-v1.0` -- 버전을 바꾸면 다시 돌린다.
 
 상품 1 원고(`listing.md`)의 형식과 교훈을 그대로 따른다: 제목 140자·대문자 단어 3개,
 태그 13개·20자, 문단 안 줄바꿈 금지, 의료 효과 주장 금지, 환불 문구는 숍 정책과 같게.
@@ -144,7 +144,7 @@ Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하�
 
 ---
 
-## 문장별 근거표 (student-v0.9)
+## 문장별 근거표 (student-v0.9 에서 뽑고 v1.0 에서 재확인)
 
 **확인 방법:** 페이지 수·링크·탭·칸 이름은 `src/planner_student-v0.9.html` 과 FINAL PDF 에서
 스크립트로 뽑았다. 앱 호환은 기기 확인 범위를 따로 적었다.
