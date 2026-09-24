@@ -20,7 +20,7 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 |---|---|
 | 숍 이름 | `SongAndParkStudio` |
 | 개설 | 2026 |
-| 리스팅 | **1개 — 2026-09-21 발행.** 올린 파일은 아래 "업로드 이력" |
+| 리스팅 | **2개.** 상품 1 — 2026-09-21 발행 (`listing/4579443848`). **상품 2 학생 플래너 — 2026-09-24 발행 (`listing/4581765488`)**. 올린 파일은 아래 "업로드 이력" |
 | 판매 / Admirers | **1** / 미확인 (2026-09-24 기준. 판매 목록은 0-1절 아래) |
 | 판매자 상태 | `Private individual` (사업자 아님, 맞게 설정됨) |
 | 지역 | South Korea |
@@ -55,9 +55,9 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 | 1 | 2026-09-21 | `v8-undated` | **미확인** — 사용자 확인 필요 | 19,227,515 | 494 | 커밋 `07cc59e` 로 worktree → `PLANNER_VERSION=v8-undated` 빌드 → dedupe. 바이트 일치 확인(09-24) |
 | 2 | 2026-09-23 | `v8.18-undated` | `ADHD-Wellness-Planner-Undated-502-pages.pdf` | 19,599,557 | 502 | 현재 코드로 v8.18 빌드 → dedupe → `upload/v8.18/` |
 | 3 | 2026-09-24 | `v8.20-undated` | `ADHD-Wellness-Planner-Undated-502-pages.pdf` (#2 와 같은 이름) | 16,517,551 | 502 | v8.20 빌드 → dedupe → `upload/v8.20/`. GoodNotes 바둑판 렌더링 + 도트 그리드 수정 |
-| 4 | 올리기 전 | `student-v1.1` | `ADHD-Student-Planner-Undated-437-pages.pdf` | 15,464,001 | 437 | **상품 2 (새 리스팅).** `PLANNER_VERSION=student-v1.1` 빌드 → dedupe → `upload/student-v1.1/`. 올리면 "올리기 전"을 날짜로 바꾼다 |
+| 4 | 2026-09-24 | `student-v1.1` | `ADHD-Student-Planner-Undated-437-pages.pdf` | 15,464,001 | 437 | **상품 2 (새 리스팅).** `PLANNER_VERSION=student-v1.1` 빌드 → dedupe → `upload/student-v1.1/`. 새 리스팅 `4581765488` 로 발행 |
 
-**현재 판매 중: #3 (v8.20).** #3 은 v8.19 로 준비했다가 사용자가 iPad 에서 도트
+**현재 판매 중: 상품 1 = #3 (v8.20), 상품 2 = #4 (student-v1.1).** #3 은 v8.19 로 준비했다가 사용자가 iPad 에서 도트
 그리드 결함을 찾아 v8.20 으로 바꿨다. 사용자가 iPad 에서 최종 확인 후 2026-09-24 에
 교체. Etsy 편집 화면 표시 `16.51 mb`.
 
@@ -87,7 +87,13 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 | 1 | 2026-09-21 | `output/listing/01~09_*.png` | 9 | 회사 PC 에만 있다. 개별 파일명 **미확인** |
 | 2 | 2026-09-23 | `output/listing_v815/01_hero.png` ~ `10_mosaic.png` (`10_closeup.png` 은 제외) | 10 | 회사 PC 에만 있다. 복귀 후 git 에 넣을 것(`CLAUDE.md`) |
 
-**현재 게시 중: #2.**
+| 3 | 2026-09-24 | **상품 2:** `output/listing_student/1_hero.png` ~ `10_notes.png` (1→10 순서) | 10 | `python scripts/build_mockups_student.py student-v1.1` (기본 `MOCK_ALT=pastel`: 홀수 어두운·짝수 파스텔). 집 PC 에서 만듦 |
+
+**현재 게시 중: 상품 1 = #2, 상품 2 = #3.**
+
+**상품 2 세일 `STUDENT40`** (2026-09-24 설정): 40% / Everywhere / 2026-09-24 ~ **10-23** / Select listings → 학생 플래너 1개.
+상품 1 `LAUNCH40`(~10/20)과 **동시에 걸 수 있었다**(Etsy 가 막지 않음). 발행 확인(한국에서 본 값, VAT 10% 포함):
+정가 USD 16.49(= 14.99 x 1.1) → 세일 USD 9.89(= 8.99 x 1.1), "Sale ends on October 23", 사진 10장, 설명 본문 일치.
 
 ### 구매자에게 가는 글은 문장마다 근거를 댄다 (2026-09-24)
 

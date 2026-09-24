@@ -1265,3 +1265,12 @@ iPad 체크리스트는 v1.0 에서 통과. v1.1 에서 새로 생긴 건 표지
 
 **v1.1 실기기 확인 (2026-09-24, 사용자)** -- v1.1 에서 새로 생긴 기능(p.1 표지 목록 줄 링크 4개) 확인됨.
 v1.0 체크리스트 1~8 통과 + 이것으로 v1.1 출시 확인 완료. GoodNotes 앱 자체는 여전히 미확인(아이폰 미리보기로 확인).
+
+## 출시 -- 2026-09-24
+
+**Etsy 발행 완료.** 리스팅 `4581765488` (https://www.etsy.com/listing/4581765488/adhd-student-planner-undated-digital).
+파일 `student-v1.1` (`upload/student-v1.1/ADHD-Student-Planner-Undated-437-pages.pdf`, 15,464,001 B), 사진 10장,
+$14.99 + `STUDENT40` 40% (~10/23). 기록은 `shop.md` 0-1절 #4 / 이미지 #3.
+
+**다음:** 학생 플래너 핀(`pinterest.md` 형식) / GoodNotes 앱에서 한 번 열어 보기 / 출시 후 보류 항목
+(내지 얇은 유리, 점선 균일 검사, check_lines SVG 대응).

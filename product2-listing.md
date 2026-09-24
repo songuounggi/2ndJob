@@ -173,7 +173,9 @@ Shop Manager → Listings → `+ Add a listing`. ★ = 필수.
 | 23 | 페이지 확인 | 발행 페이지를 **두 번** 연다(첫 요청은 캐시). 사진 순서·가격·세일가 |
 | 24 | 업로드 이력 | `shop.md` 0-1절에 줄 추가: 날짜 / `student-v1.1` / `ADHD-Student-Planner-Undated-437-pages.pdf` / 15,464,001 / 437. 이미지 표에도 10장 한 줄. 그다음 `python scripts/check_upload.py` |
 
-미확인: 세일이 두 개 동시에 돌 때(상품 1 `LAUNCH40` + `STUDENT40`) Etsy 가 허용하는지. 막히면 기존 세일 편집에서 학생 플래너를 추가한다.
+**확인 (09-24):** 세일 두 개 동시 가능 -- `LAUNCH40` + `STUDENT40` 둘 다 돈다. 한국에서 보면 VAT 10% 가 붙어 $16.49 → $9.89 로 보인다(정상, `shop.md` 5-0).
+
+**발행 완료 2026-09-24** -- https://www.etsy.com/listing/4581765488/adhd-student-planner-undated-digital
 
 ## 일부러 쓰지 않은 것
 
