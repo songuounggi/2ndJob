@@ -496,9 +496,14 @@ def p_notes():
 
 
 # --------------------------------------------------- 반복 페이지의 목차
+# 칩 그림자. flat_paint 에서는 box-shadow 대신 0.4pt 헤어라인 -- 흐린
+# 그림자가 칩마다 소프트마스크가 되어 Weeks 목차 한 장에 128개, 렌더
+# 545ms 였다(check_render, 2026-09-24). RELEASE.md 2 절 표 첫 줄.
+CHIP_EDGE = ("border:.4pt solid rgba(120,110,160,.22);" if A.FLAT
+             else "box-shadow:0 1pt 5pt rgba(40,28,90,.12);")
 CHIP = ("display:flex;align-items:center;justify-content:center;"
         "height:19pt;border-radius:7pt;text-decoration:none;"
-        "background:rgba(255,255,255,.55);box-shadow:0 1pt 5pt rgba(40,28,90,.12);"
+        "background:rgba(255,255,255,.55);" + CHIP_EDGE +
         "font-size:7.5pt;font-weight:700;color:#2B2540")
 
 

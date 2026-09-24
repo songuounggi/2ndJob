@@ -23,6 +23,9 @@
 >
 > 고치는 법은 `RELEASE.md` 2절(그림자·번짐은 공유 PNG, 반복 배경은 벡터). 버전은
 > 올려 가며(`RELEASE.md` 3절), 사용자의 iPad 확인 없이 올리지 않는다.
+>
+> **→ student-v0.2 (2026-09-24) 에서 A·B 전부 통과.** 아래 맨 끝 "student-v0.2" 절.
+> iPad 실기기 확인은 아직.
 
 ---
 
@@ -937,3 +940,49 @@ C 본문 맨 위 입력칸(필기면 한 행 줄어듦).
   문장 여럿인데 마침표 없는 부제(문장 판별은 기계로 못 해 확실한 경우만)
 
 **다음:** F·G·H.
+
+---
+
+## student-v0.2 — GoodNotes 렌더 수정 (2026-09-24, 집 PC)
+
+`RELEASE.md` 를 따른다. v0.1 은 그대로 다시 뽑을 수 있게 두고, 바뀐 동작은
+테마 플래그 `flat_paint` 로 켠다 (`THEMES["student-v0.2"]`).
+
+```bash
+PLANNER_VERSION=student-v0.2 python scripts/build_planner.py
+python scripts/dedupe_pdf.py output/planner_student-v0.2.pdf output/planner_student-v0.2-FINAL.pdf
+python scripts/verify_student.py student-v0.2
+python scripts/check_lines.py src/planner_student-v0.2.html
+python scripts/check_render.py output/planner_student-v0.2-FINAL.pdf
+```
+
+| check_render | v0.1 | **v0.2** |
+|---|---|---|
+| A-1 그라데이션 셰이딩 | 427 | **0** |
+| A-2 소프트마스크 | 427 | **0** |
+| A-3 이미지 타일 | 357 | **0** |
+| B 렌더 평균/최대 | 228 / 489ms | **104 / 125ms** |
+| D 용량 | 14.92MB | 15.10MB |
+
+무엇이 무엇을 만들고 있었나 (페이지 자원을 pikepdf 로 뜯어 확인):
+
+| PDF 속 | 정체 | v0.2 |
+|---|---|---|
+| 면 높이만 한 이미지 + 타일 패턴 | 필기 괘선 SVG `<pattern>`. Chrome 이 **래스터로 구웠다** | `snap_lines` 가 면 폭·높이를 재고 벡터 `<path>` 로 채움(`flat_lines`). 선 중심은 행 경계(표 점선과 같은 위상) |
+| 축형 셰이딩 + 소프트마스크 | 표 점선 양 끝 페이드 | 단색 점선 |
+| 함수형 셰이딩 + 소프트마스크 | 면 그림자 `::after radial-gradient` | 공유 PNG `assets/app_shadow_<버전>.png` 를 늘려 씀. 밝기 단면 차이 ≤1.7 |
+| 소프트마스크 128개 (p.29) | 칩 `box-shadow` | 0.4pt 헤어라인 |
+| 셰이딩 (p.2) | 목차 색 점 `linear-gradient` | 첫 색 단색. 표지(1p)는 예외로 그대로 |
+
+눈으로: 페이지 평균 차이 0.05~0.88/255. 칩은 흐린 그림자 → 얇은 테두리로
+바뀌어 **가장 눈에 띄는 변화**다. 비교 PNG `output/preview/review/18*`.
+
+**남은 것 두 가지 (사용자 결정 대기)**
+1. `check_render` C(두 엔진 차이) 경고 14.2 는 **검사기 버그**. pdfium 쪽은
+   `convert('L')`(밝기 가중치), MuPDF 쪽은 RGB 단순 평균이라 채도 높은 페이지일수록
+   벌어진다. 같은 방식으로 재면 0.62. `check_render.py` 는 공유 파일이라 안 고쳤다
+2. `verify_student` 점선 균일 4건은 **측정 한계**. 줄마다 세로 단면이 (3.0, 13)
+   두 픽셀로 똑같은데, 페이지 전체 배경 중앙값 하나를 기준선으로 써서 아래쪽
+   배경이 밝아지면 옅은 픽셀이 기준을 넘나든다. 국소 배경 기준으로 고칠지 결정 필요
+
+**다음:** iPad 실기기 확인(RELEASE.md 1-3). 그 뒤 F·G·H.

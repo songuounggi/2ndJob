@@ -60,6 +60,15 @@ ROW_H = 24.0              # 표/괘선 한 줄 높이
 THICK_PT = 0.75           # 선 두께 (pt)
 THICK = "1px"             # = 0.75pt, CSS 쪽
 
+# flat_paint (student-v0.2~, 2026-09-24). GoodNotes 가 바둑판처럼 늦게 그리는
+# 요소를 뺀다(RELEASE.md 2 절). build_planner 가 테마 플래그를 보고 켠다.
+# 끄면 student-v0.1 과 같은 결과가 나온다.
+#   · 면 그림자 radial-gradient  -> 공유 PNG 한 장 (그라데이션 셰이딩 + 소프트마스크)
+#   · 표 점선 양 끝 페이드       -> 단색 점선      (같음)
+#   · 필기 괘선 SVG <pattern>     -> 면마다 벡터 선 (Chrome 이 이미지 타일로 구웠다)
+FLAT = False
+VERSION = ""
+
 
 RAIL_TEXT_DARKEN = 0.82   # 레일 글자만 진하게. 본문 색은 건드리지 않는다
 RAIL_DIM = "#5B5375"      # 비선택 탭 글자
@@ -105,6 +114,12 @@ def _stops(name, x1, y1, x2, y2, length):
             '<stop offset="100%%" stop-color="%s" stop-opacity="0"/>'
             '</linearGradient>'
             % (name, x1, y1, x2, y2, C, p, C, 100 - p, C, C))
+
+
+def _flat_stroke(b, tag, n):
+    for i in range(n):
+        b = b.replace('url(#%sh%d)' % (tag, i), C)
+    return b
 
 
 def rules_svg(widths, n_rows, head_h=24.0):
@@ -172,6 +187,10 @@ def rules_svg(widths, n_rows, head_h=24.0):
     # 높이로 끝난다 -- Prod 1 필기면과 같은 마감이다. LINES.md 2 절의
     # "표는 닫는다"는 카드 안에 표가 따로 떠 있는 v8 의 .trk 이야기다.
 
+    if FLAT:
+        # 페이드용 그라데이션은 PDF 에서 셰이딩 + 소프트마스크가 된다
+        defs = []
+        body = [_flat_stroke(b, tag, len(widths)) for b in body]
     return ('<svg class="rules" viewBox="0 0 %.2f %.2f" width="%.2fpt" '
             'height="%.2fpt" xmlns="http://www.w3.org/2000/svg" '
             'fill="none" stroke-width="%.2f" stroke-dasharray="%g %g">'
@@ -188,9 +207,32 @@ def rules_svg(widths, n_rows, head_h=24.0):
 DASH_BORDER = bool(os.environ.get("DASH_BORDER"))
 
 
+FLAT_SVG = '<svg class="rules rows" xmlns="http://www.w3.org/2000/svg"></svg>'
+
+
+def flat_lines(k, w_pt):
+    """면 하나의 괘선을 벡터 선으로. 줄 k-1 개(맨 아래 행은 면 가장자리가
+    닫는다), 폭은 잰 면 폭. <pattern> 과 같은 자리에 같은 점선을 긋는다."""
+    q = 4.0 / 3.0                       # pt -> px (SVG 사용자 단위)
+    W = (w_pt - 2 * INSET) * q
+    # 선 중심은 행 경계 정중앙 -- 표 점선(rules_svg)과 같은 자리라야 뷰어
+    # 배율마다 두 선이 같은 픽셀 두께로 떨어진다. <pattern> 시절의 반 두께
+    # 올림은 래스터 타일용이었다(벡터에 두면 2배에서 2px/3px 로 갈렸다).
+    d = "".join("M0 %.2fH%.2f" % (n * ROW_H * q, W)
+                for n in range(1, k))
+    if not d:
+        return FLAT_SVG
+    return ('<svg class="rules rows" xmlns="http://www.w3.org/2000/svg">'
+            '<path d="%s" fill="none" stroke="%s" stroke-width="%.4f" '
+            'stroke-dasharray="%.4f %.4f"/></svg>'
+            % (d, C, THICK_PT * q, DASH * q, (PERIOD - DASH) * q))
+
+
 def lines_svg(width=None):
     if DASH_BORDER:                      # 실험: CSS 점선 테두리로 대체
         return ""
+    if FLAT:                             # 빈 자리. snap_lines 가 재고 채운다
+        return FLAT_SVG
     """필기 괘선. 면 높이가 유동적이라 SVG <pattern> 으로 깐다.
 
     data: URI 를 background 로 깔았더니 페이지당 156KB 였다 -- 요소마다
@@ -398,6 +440,10 @@ def css():
     out += (DARK
             .replace("@CVL@", "%.2f" % (RAIL_R + _cv_side - CONTENT_L))
             .replace("@CVR@", "%.2f" % (_cv_side - CONTENT_R)))
+    if FLAT:
+        out += (chr(10) + ".field::after,.lines::after,.tbwrap::after{background:"
+                "url('../assets/app_shadow_%s.png') 0 0/100%% 100%% no-repeat}"
+                % VERSION)
     # 주석은 소스에만 남긴다. 그대로 실으면 산출물에 한글이 들어가고
     # 428페이지어치 바이트를 차지한다.
     out = re.sub(r"/\*.*?\*/", "", out, flags=re.S)
@@ -498,14 +544,35 @@ def build_assets(version, force=False):
         if force or not os.path.exists(p):
             bake(kind, p)
             made.append(p)
+    if FLAT:
+        p = "assets/app_shadow_%s.png" % version
+        if force or not os.path.exists(p):
+            shadow_png(p)
+            made.append(p)
     return made
+
+
+def shadow_png(path, w=800, h=80):
+    """면 그림자 radial-gradient(ellipse 64% 100% at 50% 0%,
+    rgba(40,28,90,.15), 0 at 72%) 를 한 번 샘플링한 것. 두 반지름이 상자
+    기준이라 어느 면에 늘려 붙여도 CSS 그라데이션과 같은 모양이다.
+    build_planner.shadow_png 와 같은 방식, 색·농도만 이 테마 값."""
+    x = (np.arange(w) + .5) / w - .5
+    y = (np.arange(h) + .5) / h
+    d = np.sqrt((x[None, :] / .64) ** 2 + (y[:, None] / 1.0) ** 2)
+    rgba = np.zeros((h, w, 4), np.uint8)
+    rgba[..., 0], rgba[..., 1], rgba[..., 2] = 40, 28, 90
+    rgba[..., 3] = np.round(np.clip(1 - d / .72, 0, 1) * .15 * 255)
+    Image.fromarray(rgba, "RGBA").save(path, optimize=True)
+    return path
 
 
 # ---------------------------------------------------------------- snap ----
 SNAP_JS = """
 const out = [];
 document.querySelectorAll('.lines').forEach(L =>
-  out.push(L.getBoundingClientRect().height * 0.75));
+  out.push([L.getBoundingClientRect().height * 0.75,
+            L.getBoundingClientRect().width * 0.75]));
 document.body.setAttribute('data-probe', JSON.stringify(out));
 """
 
@@ -543,12 +610,13 @@ def snap_lines(src, chrome):
     if len(marks) != len(hs):
         raise RuntimeError("snap_lines: 면 %d개를 쟀는데 마크업은 %d개"
                            % (len(hs), len(marks)))
-    parts, last, n = [], 0, 0
-    for mk, hpt in zip(marks, hs):
+    parts, last, n, ks = [], 0, 0, []
+    for mk, (hpt, wpt) in zip(marks, hs):
         k = int((hpt + 0.5) // ROW_H)
         if k < 1:
             raise RuntimeError("snap_lines: 한 행도 안 들어가는 면 (%.1fpt)"
                                % hpt)
+        ks.append((k, wpt))
         style = re.sub(r"flex:[^;]*;?|height:[^;]*;?", "", mk.group(1))
         style = "flex:none;height:%gpt;%s" % (k * ROW_H, style)
         n += style != mk.group(1)
@@ -556,6 +624,13 @@ def snap_lines(src, chrome):
         last = mk.end(1)
     parts.append(html[last:])
     html = "".join(parts)
+    if FLAT:
+        slots = html.split(FLAT_SVG)
+        if len(slots) - 1 != len(ks):
+            raise RuntimeError("snap_lines: 괘선 자리 %d개, 면 %d개"
+                               % (len(slots) - 1, len(ks)))
+        html = slots[0] + "".join(flat_lines(k, w) + rest
+                                  for (k, w), rest in zip(ks, slots[1:]))
     # 면을 담은 카드와 행도 더는 늘어나지 않게 한다. 카드가 flex:1 로
     # 남으면 면 아래에 빈 띠가 생겨 다음 카드를 밀었다(위클리 Reading 아래,
     # 2026-09-24). 남는 높이는 페이지 맨 아래로 간다. flex:1 인 행은 전부
