@@ -302,7 +302,7 @@ def s1_hero():
         + '</div>'
           '<div style="flex:1;display:flex;justify-content:center;'
           'min-width:0">'
-          '<div class="tab" style="--tab:1120px;transform:rotate(2deg)">'
+          '<div class="tab" style="--tab:1000px;transform:rotate(2deg)">'
           '<img src="%s"></div></div></div>' % img("syllabus"))
 
 
