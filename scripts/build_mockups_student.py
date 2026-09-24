@@ -249,6 +249,8 @@ SLIDE_NO = [1]
 
 
 def bg_name():
+    if SLIDE_NO[0] == 1:
+        return "cover_bg_blur"     # 1번만 바탕을 더 흐리게("배경을 좀 블러", 사용자)
     if MOCK_ALT != "none" and SLIDE_NO[0] % 2 == 0:
         return "cover_bg_" + MOCK_ALT
     return "cover_bg"
@@ -329,21 +331,19 @@ HERO_CSS = """
 .hero .stage .pg img{height:380px;border-radius:14px;display:block;
                      box-shadow:0 20px 50px rgba(10,5,40,.45)}
 .hero .stage .pg{z-index:1}
+/* HERO_DEPTH: 뒤에 놓인 것(양옆 페이지, 뒤 태블릿)만 살짝 흐려 앞 태블릿이 뜨게 */
+.depth .stage .pg,.depth .stage .back{filter:blur(5px)}
 .hero .stage .p1{transform:translate(-50%,-50%) translate(-640px,120px) rotate(-11deg)}
 .hero .stage .p2{transform:translate(-50%,-50%) translate(760px,170px) rotate(10deg)}
-/* 포스트잇: 우리 문장(인용 아님). 테이프 한 조각으로 붙인 느낌. */
-.sticky{position:absolute;width:330px;padding:34px 30px 38px;z-index:6;
-        font-family:'Caveat',cursive;font-weight:600;font-size:54px;
-        line-height:1.02;color:#2A2340;text-align:center;
-        box-shadow:0 18px 36px rgba(10,5,40,.35)}
-.sticky::before{content:"";position:absolute;top:-18px;left:50%;width:120px;
-        height:38px;margin-left:-60px;background:rgba(255,255,255,.55);
-        transform:rotate(-3deg)}
-.sticky.y{background:#FFE27A}.sticky.p{background:#FFA6CB}
-.sticky.c{background:#94E8F2}.sticky.v{background:#CDBBFF}
+/* 손글씨: 우리 문장(인용 아님). 처음엔 포스트잇에 적었는데 "우리에겐 없는 기능이라
+   빼는 게 낫다 -- 기대하고 샀다가 실망한다"(사용자). 스티커가 들어 있는 것처럼
+   보이지 않게 종이 없이 글씨만 둔다. 클래스 이름은 자리 표시로 남김. */
+.sticky{position:absolute;width:380px;z-index:6;
+        font-family:'Caveat',cursive;font-weight:600;font-size:62px;
+        line-height:1.0;color:rgba(255,255,255,.62);text-align:center}
 .hero .n1{top:30px;right:40px;transform:rotate(6deg)}
 .hero .n2{top:270px;right:0;transform:rotate(-5deg)}
-.hero .stage .n3{transform:translate(-50%,-50%) translate(-540px,-230px) rotate(-8deg)}
+.hero .stage .n3{transform:translate(-50%,-50%) translate(-600px,-290px) rotate(-8deg)}
 .hero .stage .n4{transform:translate(-50%,-50%) translate(610px,-250px) rotate(7deg)}
 """
 
@@ -351,7 +351,7 @@ HERO_CSS = """
 def s1_hero():
     """검색 결과에서 보이는 단 한 장."""
     return dark(
-        '<div class="hero">'
+        '<div class="hero%s">' % ("" if os.environ.get("HERO_DEPTH") == "0" else " depth") +
         '<div class="head"><div class="txt">'
         '<div class="kicker">UNDATED &middot; ADHD STUDENT</div>'
         '<h1>ADHD Student<br>Planner</h1>'
@@ -368,7 +368,6 @@ def s1_hero():
           '<div class="tab back"><img src="%s"></div>'
           '<div class="tab front"><img src="%s"></div>'
           '<div class="sticky c n3">I will start it tonight</div>'
-          '<div class="sticky v n4">not lazy</div>'
           '</div></div>'
         % (img("exam"), img("braindump"), img("syllabus"), img("cover")))
 
@@ -569,6 +568,10 @@ def prep():
                                   "app_cover_student-v0.1.png")).convert("RGB")
     cov = cov.resize((SIZE, SIZE), Image.LANCZOS)
     cov.save(os.path.join(SRC, "cover_bg.png"))
+    from PIL import ImageFilter
+    # 원래 오로라가 이미 부드러워 90 으로는 티가 안 났다. 크게 흐려 어두운 띠까지 풀어 준다.
+    cov.filter(ImageFilter.GaussianBlur(int(os.environ.get("HERO_BLUR", "240")))).save(
+        os.path.join(SRC, "cover_bg_blur.png"))
     cov.rotate(180).save(os.path.join(SRC, "cover_bg_flip.png"))
     Image.blend(cov.transpose(Image.FLIP_LEFT_RIGHT),
                 Image.new("RGB", cov.size, (22, 14, 48)), 0.45).save(
