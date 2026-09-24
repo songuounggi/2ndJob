@@ -382,6 +382,8 @@ THEMES["student-v0.1"] = THEMES["v9-student"]
 #   v8.18-undated 2026-09-23  목록 9군데 마감선 제거 (표 11개는 유지)
 #   v8.19-undated 2026-09-24  GoodNotes 바둑판 렌더링: 그림자·bloom 을 이미지로
 #                             (fast_paint. 모양 그대로, 페이지당 렌더 약 4배 빠름)
+#   v8.20-undated 2026-09-24  도트 그리드를 벡터 원으로 (vector_dots). GoodNotes 가
+#                             CSS 도트의 이미지 타일을 4배 넓게, 흐릿하게 그렸다
 THEMES["v8.1-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.2-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.3-undated"] = dict(THEMES["v8-undated"])
@@ -401,6 +403,8 @@ THEMES["v8.16-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.17-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.18-undated"] = dict(THEMES["v8-undated"])
 THEMES["v8.19-undated"] = dict(THEMES["v8-undated"], fast_paint=True)
+THEMES["v8.20-undated"] = dict(THEMES["v8-undated"], fast_paint=True,
+                               vector_dots=True)
 
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
@@ -1398,8 +1402,37 @@ def p_notes():
               f'{groups}</div></div>')
 
 
+def dot_svg(w=612, h=792, step=14, first=1, r_px=1.1):
+    """The .dots grid drawn as real circles.
+
+    The CSS version (radial-gradient tile) is printed by Chrome as an image
+    inside a tiling pattern. pdfium draws it right, but GoodNotes scaled the
+    tile about 4x -- dots 58pt apart instead of 14 -- and blurred them into
+    squares (user's iPad, 2026-09-24). Plain vector circles have no pattern
+    for a viewer to misread.
+
+    Same geometry as .dots: 14pt tiles offset 8pt, dot at each tile centre,
+    so centres fall at 1pt + 14pt*k; radius 1.1 CSS px. The card clips the
+    overflow, so the grid is drawn for a whole page and never runs short.
+    """
+    pt = 4 / 3  # SVG user units are CSS px
+    r = r_px
+    xs = [(first + step * i) * pt for i in range(int((w - first) // step) + 1)]
+    ys = [(first + step * j) * pt for j in range(int((h - first) // step) + 1)]
+    # One path, not thousands of <circle>s: each dot is two arcs.
+    d = "".join(f"M{x - r:.2f} {y:.2f}a{r} {r} 0 1 0 {2 * r} 0a{r} {r} 0 1 0 {-2 * r} 0"
+                for y in ys for x in xs)
+    return ('<svg style="position:absolute;left:0;top:0;pointer-events:none" '
+            f'width="{w * pt:.0f}" height="{h * pt:.0f}" '
+            'xmlns="http://www.w3.org/2000/svg">'
+            f'<path fill="var(--line)" d="{d}"/></svg>')
+
+
 def p_note(label, kind, n):
-    if kind == "dots":
+    if kind == "dots" and T.get("vector_dots"):
+        inner = ('<div class="card" style="flex:1;position:relative;'
+                 f'overflow:hidden">{dot_svg()}</div>')
+    elif kind == "dots":
         inner = '<div class="card dots" style="flex:1"></div>'
     elif kind == "ruled":
         # 30 is a floor; the spare rules overfill and the card clips them,
