@@ -52,6 +52,11 @@ python scripts/check_upload.py                            # 업로드 이력표 
 | C | pdfium vs MuPDF 차이 | 경고만 | 엔진이 갈리는 페이지 신호. **도트 결함은 못 잡는다** |
 | D | 용량 | < 20,000,000 B | Etsy 디지털 파일 상한 |
 
+> **C 측정 방식 변경 (2026-09-24, Prod 2).** pdfium 쪽만 `convert('L')`(밝기
+> 가중치), MuPDF 쪽은 RGB 평균이라 채도 높은 페이지에서 가짜 차이가 났다(상품 2
+> 목차 14.2). 둘 다 RGB 평균으로 맞췄다. 바뀐 값: v8.20 최대 0.94, v8.18 1.23,
+> student-v0.3 0.90 -- 셋 다 경고 없음. A·B·D 판정은 그대로.
+
 기준값 실측 (집 PC):
 
 | 파일 | A-1 | A-2 | A-3 | B 최대 | 결과 |
@@ -60,6 +65,7 @@ python scripts/check_upload.py                            # 업로드 이력표 
 | v8.19 | 0 | 0 | 3 | — | FAIL (도트) |
 | **v8.20 (판매 중)** | 0 | 0 | 0 | 101ms | **통과** |
 | student-v0.1 (09-24 11:49) | 427 | 427 | **357** | 542ms | **FAIL 4 -- 상품 2 가 고칠 것** |
+| **student-v0.3** | 0 | 0 | 0 | 146ms | **통과** (v0.2 에서 수정, v0.3 에서 표 페이드 복원) |
 
 ### 1-2. 눈으로 보기 (PC 렌더)
 
@@ -101,7 +107,7 @@ Claude 는 iPad 를 만질 수 없다. 대신 **무엇을 어느 페이지에서
 - 켜는 법: 테마 플래그 `fast_paint=True`, `vector_dots=True` (`scripts/build_planner.py`)
 - **효과: 렌더 ~3배 빠름, 용량 19.6 → 16.5MB.** 모양 차이 평균 0.086/255
 - 표지 한 장은 사진 위 반투명이 남아 있다(예외로 둠)
-- **상품 2 (`app_style.py`) 는 아직 이 규칙을 안 따른다.** 1-1 표의 student 줄 참조
+- **상품 2 (`app_style.py`) 는 student-v0.2 부터 따른다** (플래그 `flat_paint`, `dash_fade`). `product2-student.md` 끝 절
 
 ---
 

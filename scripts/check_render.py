@@ -61,7 +61,11 @@ def scan(res, seen):
 
 
 def gray(img):
-    return np.asarray(img.convert('L')).astype(np.int16)
+    """RGB 단순 평균. MuPDF 쪽(C 항목)과 **같은 공식**이어야 한다.
+    전에는 여기만 convert('L')(밝기 가중치)이라, 같은 그림도 채도가 높을수록
+    차이가 나왔다 -- 상품 2 목차가 14.2 로 경고됐는데 같은 공식으로 재면
+    0.59 였다. 상품 1 v8.20 도 0.76 -> 0.29 (2026-09-24, Prod 2 가 고침)."""
+    return np.asarray(img.convert('RGB')).astype(np.int16).mean(axis=2)
 
 
 def main(path):
