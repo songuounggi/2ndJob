@@ -366,6 +366,8 @@ THEMES["student-v0.3"] = dict(THEMES["student-v0.2"], dash_fade=True)
 #                          미리 구운 PNG 로 (chip_shadow, orb_png)
 THEMES["student-v0.4"] = dict(THEMES["student-v0.3"], chip_shadow=True,
                               orb_png=True)
+# student-v0.5  2026-09-24  내지 바닥에 한지 질감 (hanji). 공유 배경 한 장에 굽는다
+THEMES["student-v0.5"] = dict(THEMES["student-v0.4"], hanji=True)
 
 # Revisions of a shipped product get their own version name and their own
 # output file. The file a buyer already downloaded is never overwritten --
@@ -663,6 +665,7 @@ if T.get("app"):
     app_style.DASH_FADE = bool(T.get("dash_fade"))
     app_style.CHIP_SHADOW = bool(T.get("chip_shadow"))
     app_style.ORB_PNG = bool(T.get("orb_png"))
+    app_style.HANJI = bool(T.get("hanji"))
     app_style.VERSION = VERSION
 else:
     app_style = None
@@ -964,7 +967,7 @@ def page(key, body):
                   f"url('../assets/{base}_{VERSION}.png')\"></div>")
         if not dark:
             layers += ('<div class="sheet" style="background-image:'
-                       f"url('../assets/app_sheet_{VERSION}.png')\"></div>")
+                       f"url('../assets/{app_style.sheet_file()}')\"></div>")
         return (f'<section class="page{" dk" if dark else ""}" id="{key}" '
                 f'style="{style}">{layers}'
                 f'{rail(rail_key(key))}<div class="content">{body}</div></section>')

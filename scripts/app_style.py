@@ -74,7 +74,18 @@ DASH_FADE = False
 # 그림자와 목차 색 점을 미리 구운 PNG 로 되살린다. 사용자 요청 2026-09-24.
 CHIP_SHADOW = False
 ORB_PNG = False
+# hanji (student-v0.5~): 내지 바닥에 한지 질감. 사용자 요청 2026-09-24 --
+# "뭔가 아쉽고 썰렁해 보였다". 내지 배경은 전 페이지가 공유하는 이미지 한
+# 장이라 질감을 거기에 구우면 뷰어 부담이 거의 없다(반복 타일 아님).
+HANJI = False
+HANJI_STRENGTH = 1.0
 VERSION = ""
+
+
+def sheet_file():
+    """내지 배경 파일 이름(확장자 포함). 한지는 섬유 무늬라 PNG 로는 압축이
+    안 된다 -- JPEG."""
+    return "app_sheet_%s.%s" % (VERSION, "jpg" if HANJI else "png")
 
 
 RAIL_TEXT_DARKEN = 0.82   # 레일 글자만 진하게. 본문 색은 건드리지 않는다
@@ -574,6 +585,8 @@ def bake(kind, path, w=0.62, s=0.58):
     if kind == "cover":
         _mesh((0x14, 0x10, 0x3A)).convert("RGB").save(path, optimize=True)
         return path
+    if kind == "sheet" and HANJI:
+        return _bake_hanji_sheet(path, w, s)
     if kind == "sheet":
         g = SHEET * PT
         (_mesh((0xF9, 0xF6, 0xFE), w=w, s=s).convert("RGB")
@@ -598,6 +611,8 @@ def build_assets(version, force=False):
     made = []
     for kind in ("cover", "under", "sheet"):
         p = "assets/app_%s_%s.png" % (kind, version)
+        if kind == "sheet":
+            p = "assets/" + sheet_file()
         if force or not os.path.exists(p):
             bake(kind, p)
             made.append(p)
@@ -818,3 +833,75 @@ def chip_grid_shadow_tag(cols, rows, w_pt, gap_pt, pitch_pt, left_pt):
             'pointer-events:none"></i>'
             % (left_pt - CHIP_M, CHIP_M, span_w + 2 * CHIP_M,
                span_h + 2 * CHIP_M, name))
+
+
+# ------------------------------------------------------------------- 한지
+HANJI_PX = 1.25            # pt 당 px. 0.75 는 섬유가 안 보이고, 2 는 렌더 평균 161ms,
+                           # 1.5 는 최대 150ms(기준선). 1.25 = 평균 126 / 최대 136ms
+HANJI_CLOUD = 1.0          # 구름무늬 세기
+HANJI_FIBER = 2.5          # 섬유 결 세기. 1 은 안 보였고 4 는 긁힌 자국 같았다
+
+
+def _hanji_texture(W, H, k, strength, seed=7):
+    """한지 질감. 밝기 변화량(-/+) 배열을 돌려준다(0 = 변화 없음).
+
+    · 구름무늬: 아주 낮은 주파수의 얼룩 (닥 섬유가 뭉친 곳과 성긴 곳)
+    · 긴 섬유:  가늘고 긴 곡선. 대부분 종이보다 살짝 밝고, 일부는 살짝 어둡다
+    · 섬유 티:  드문드문 짧고 어두운 조각 (닥 껍질)
+    전부 아주 약하게 -- 괘선(#d3d8de)과 글자 대비를 해치면 안 된다."""
+    rng = np.random.default_rng(seed)
+    # 구름무늬
+    n = rng.standard_normal((H // 8 + 2, W // 8 + 2))
+    cloud = np.asarray(Image.fromarray(((n - n.min()) / (n.max() - n.min()) * 255)
+                                       .astype(np.uint8)).resize((W, H), Image.BICUBIC)
+                       .filter(ImageFilter.GaussianBlur(18 * k))).astype(np.float64)
+    cloud = (cloud - cloud.mean()) / (cloud.std() + 1e-6) * 1.6
+    # 섬유
+    light = Image.new("L", (W, H), 0)
+    dark = Image.new("L", (W, H), 0)
+    dl, dd = ImageDraw.Draw(light), ImageDraw.Draw(dark)
+    area = (W / k) * (H / k)                        # pt^2
+    for i in range(int(area / 260)):                # 긴 섬유
+        x, y = rng.uniform(0, W), rng.uniform(0, H)
+        ang = rng.uniform(0, np.pi)
+        L = rng.uniform(18, 90) * k
+        steps = int(L / (3 * k)) + 2
+        pts = []
+        for _ in range(steps):
+            pts.append((x, y))
+            ang += rng.normal(0, 0.18)
+            x += np.cos(ang) * 3 * k
+            y += np.sin(ang) * 3 * k
+        wdt = max(1, int(round(rng.uniform(0.25, 0.6) * k)))
+        if rng.random() < 0.8:
+            dl.line(pts, fill=int(rng.uniform(90, 200)), width=wdt)
+        else:
+            dd.line(pts, fill=int(rng.uniform(60, 140)), width=wdt)
+    for i in range(int(area / 2200)):               # 섬유 티
+        x, y = rng.uniform(0, W), rng.uniform(0, H)
+        ang = rng.uniform(0, np.pi)
+        L = rng.uniform(1.5, 5) * k
+        dd.line([(x, y), (x + np.cos(ang) * L, y + np.sin(ang) * L)],
+                fill=int(rng.uniform(150, 255)), width=max(1, int(0.6 * k)))
+    light = np.asarray(light.filter(ImageFilter.GaussianBlur(0.35 * k))).astype(np.float64)
+    dark = np.asarray(dark.filter(ImageFilter.GaussianBlur(0.35 * k))).astype(np.float64)
+    return (strength * cloud * HANJI_CLOUD
+            + HANJI_FIBER * strength * (light / 255 * 5.5 - dark / 255 * 5.0))
+
+
+def _bake_hanji_sheet(path, w, s):
+    """내지 배경(sheet) 을 pt 당 HANJI_PX 로, 한지 질감을 얹어 JPEG 로."""
+    g = SHEET * PT
+    base = (_mesh((0xF9, 0xF6, 0xFE), w=w, s=s).convert("RGB")
+            .crop((int(g), int(g), int(_W - g), int(_H - g))))
+    k = HANJI_PX
+    Wp = int(round((PAGE_W - 2 * SHEET) * k))
+    Hp = int(round((PAGE_H - 2 * SHEET) * k))
+    rgb = np.asarray(base.resize((Wp, Hp), Image.BICUBIC)).astype(np.float64)
+    t = _hanji_texture(Wp, Hp, k, HANJI_STRENGTH)
+    # 한지는 살짝 따뜻하다 -- 밝아지는 쪽은 흰색으로, 어두워지는 쪽은 미색으로
+    warm = np.array([1.0, 0.97, 0.90])
+    out = rgb + np.where(t[..., None] >= 0, t[..., None], t[..., None] * warm)
+    Image.fromarray(np.clip(np.round(out), 0, 255).astype(np.uint8), "RGB").save(
+        path, quality=88, optimize=True)
+    return path

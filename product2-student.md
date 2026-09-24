@@ -1055,3 +1055,34 @@ check_render 6항목 통과 (평균 106 / 최대 142ms, 14.37MB). **iPad 확인�
 라벨 기준은 처음 24pt 로 두었다가 칩 한 줄(19pt) 7곳을 잘못 잡아 18pt 로 내렸다.
 
 **다음:** iPad 확인(v0.4) 후 F(리스팅 문구)·G(인쇄 주장).
+
+### student-v0.5 — 내지 바닥 한지 질감 (2026-09-24, 사용자 요청)
+
+"내지 바닥이 아쉽고 썰렁하다 -- 한지 느낌을". 내지 배경(`sheet`)은 전 페이지가
+공유하는 이미지 한 장이라, 질감을 거기에 구우면 뷰어 부담이 이미지 해상도만큼만
+는다(반복 타일 아님, check_render A 무관). 플래그 `hanji`.
+
+- 질감(`app_style._hanji_texture`): 낮은 주파수 구름무늬 + 가늘고 긴 닥 섬유(대부분
+  밝게, 20% 는 살짝 어둡게, 미색 쪽) + 드문 섬유 티. 섬유 세기 `HANJI_FIBER = 2.5`
+  (1 은 안 보였고 4 는 긁힌 자국 같았다)
+- JPEG (섬유 무늬는 PNG 로 압축이 안 된다). `app_style.sheet_file()` 이 확장자를 준다
+- 해상도가 렌더 속도를 정한다 (8페이지 x 8회 중앙값):
+  | pt 당 px | 평균 / 최대 |
+  |---|---|
+  | 한지 없음 (v0.4) | 106 / 120ms |
+  | 2 | ~161ms (초과) |
+  | 1.5 | 138 / 150 (기준선) |
+  | **1.25 (채택)** | **126 / 136** |
+- check_render 통과(평균 122 / 최대 146ms), 14.23MB
+- **verify 점선 균일 가짜 실패가 4 -> 6.** 섬유가 배경을 얼룩지게 해 전역 기준선
+  판정이 더 흔들린다. 그 검사를 국소 배경 기준으로 고칠 이유가 하나 더 생겼다
+- 비교: `output/preview/review/22_hanji_page.png`, `22b_hanji_zoom.png`
+
+**F(리스팅 문구) 는 중단 상태.** 현재 문구 목업 9장을 `%TEMP%/mock_before` 에 찍어 뒀고,
+사실 확인 결과(아래)까지 했다. 수정안 목업은 아직. `output/preview/listing_src/` 는
+v0.4 에서 뽑은 페이지 PNG 13장(이름 대응: syllabus=s1, timetable=h1, grades=g1,
+assignments=a1, exam=e1, 나머지는 id 그대로), scale 2.
+- 30 page designs(목차 제외) / 40(포함), 400/428 장이 반복 세트
+- 어느 페이지에서든 어느 페이지까지 **최대 2탭**(모든 쌍 BFS), 링크 4,834개
+- "Eleven pages" = Focus 5 + Life 3 + Backwards·Estimate·Obstacle 3 → 맞다
+- 목업의 탭 이름이 WEEK/DAY (지금 WEEKS/DAYS)
