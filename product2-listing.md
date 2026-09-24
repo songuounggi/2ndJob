@@ -129,7 +129,7 @@ Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하�
 |---|---|
 | 파일 | `output/planner_student-v1.1-FINAL.pdf` (437p) — 최종 검수 반영판 |
 | Etsy 파일명 | `ADHD-Student-Planner-Undated-437-pages.pdf` (42자, 영숫자·`-`·`.` 만. 올린 뒤엔 못 고친다) |
-| 업로드 사본 | **올린 뒤에** `output/upload/student-v1.1/` 을 만들어 넣는다 (RELEASE.md 3-2. 미리 만들지 않는다) |
+| 업로드 사본 | `output/upload/student-v1.1/ADHD-Student-Planner-Undated-437-pages.pdf` -- 사용자 최종 확인(09-24) 뒤 만들었다. **이 파일을 올린다.** 한 번 넣었으니 건드리지 않는다 |
 | 목업 | `python scripts/build_mockups_student.py student-v1.1` → `output/listing_student/` **10장** (Etsy 는 20장까지) |
 
 ## Etsy 입력 순서 — 새 리스팅 (2026-09-24 정리)
@@ -138,8 +138,8 @@ Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하�
 Shop Manager → Listings → `+ Add a listing`. ★ = 필수.
 
 **0. 올리기 전** -- iPad 에서 p.1 표지 목록 줄을 눌러 해당 페이지로 가는지 확인(v1.1 에서 새로 생긴 링크).
-그다음 Etsy 이름 사본을 만든다: `output/upload/student-v1.1/ADHD-Student-Planner-Undated-437-pages.pdf`
-(`planner_student-v1.1-FINAL.pdf` 복사, 15,464,001 B). **이 사본을 올린다** -- 올린 뒤엔 이름을 못 고친다.
+그다음 Etsy 이름 사본: `output/upload/student-v1.1/ADHD-Student-Planner-Undated-437-pages.pdf`
+(`planner_student-v1.1-FINAL.pdf` 와 바이트 동일, 15,464,001 B -- 09-24 만듦). **이 사본을 올린다** -- 올린 뒤엔 이름을 못 고친다.
 
 | # | 구역 | 칸 | 넣을 값 |
 |---|---|---|---|

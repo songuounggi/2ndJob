@@ -55,6 +55,7 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 | 1 | 2026-09-21 | `v8-undated` | **미확인** — 사용자 확인 필요 | 19,227,515 | 494 | 커밋 `07cc59e` 로 worktree → `PLANNER_VERSION=v8-undated` 빌드 → dedupe. 바이트 일치 확인(09-24) |
 | 2 | 2026-09-23 | `v8.18-undated` | `ADHD-Wellness-Planner-Undated-502-pages.pdf` | 19,599,557 | 502 | 현재 코드로 v8.18 빌드 → dedupe → `upload/v8.18/` |
 | 3 | 2026-09-24 | `v8.20-undated` | `ADHD-Wellness-Planner-Undated-502-pages.pdf` (#2 와 같은 이름) | 16,517,551 | 502 | v8.20 빌드 → dedupe → `upload/v8.20/`. GoodNotes 바둑판 렌더링 + 도트 그리드 수정 |
+| 4 | 올리기 전 | `student-v1.1` | `ADHD-Student-Planner-Undated-437-pages.pdf` | 15,464,001 | 437 | **상품 2 (새 리스팅).** `PLANNER_VERSION=student-v1.1` 빌드 → dedupe → `upload/student-v1.1/`. 올리면 "올리기 전"을 날짜로 바꾼다 |
 
 **현재 판매 중: #3 (v8.20).** #3 은 v8.19 로 준비했다가 사용자가 iPad 에서 도트
 그리드 결함을 찾아 v8.20 으로 바꿨다. 사용자가 iPad 에서 최종 확인 후 2026-09-24 에
