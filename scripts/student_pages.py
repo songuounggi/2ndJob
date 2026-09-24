@@ -499,8 +499,34 @@ def p_notes():
 # 칩 그림자. flat_paint 에서는 box-shadow 대신 0.4pt 헤어라인 -- 흐린
 # 그림자가 칩마다 소프트마스크가 되어 Weeks 목차 한 장에 128개, 렌더
 # 545ms 였다(check_render, 2026-09-24). RELEASE.md 2 절 표 첫 줄.
-CHIP_EDGE = ("border:.4pt solid rgba(120,110,160,.22);" if A.FLAT
+CHIP_H = 19.0                  # 칩 높이 (app_style.CHIP_H 와 같게)
+CHIP_ROW_GAP = 4.5             # 칩 줄 사이
+CHIP_EDGE = ("" if A.CHIP_SHADOW       # v0.4~: 줄 단위로 구운 그림자(chip_card)
+             else "border:.4pt solid rgba(120,110,160,.22);" if A.FLAT
              else "box-shadow:0 1pt 5pt rgba(40,28,90,.12);")
+
+
+def chip_w(cols, single):
+    """칩 폭 pt. 그림자 PNG 를 칩 폭에 맞춰 굽는 데 쓴다. 격자 식과 같아야
+    한다: 학기당 1장은 본문 폭 8칸(간격 6), 여럿은 TERM 라벨(34+8) 뺀 폭."""
+    if single:
+        return (A.CW - 6 * 7) / 8.0
+    return (A.CW - 42 - 5 * (cols - 1)) / float(cols)
+
+
+def chip(href, text, w=None):
+    return '<a href="#%s" style="%s">%s</a>' % (href, CHIP, text)
+
+
+def grid_shadow(cols, rows, single):
+    """칩 묶음 전체의 그림자(v0.4~). 묶음 div 에 position:relative 를
+    주고 이것을 첫 자식으로 넣는다."""
+    if not A.CHIP_SHADOW:
+        return ""
+    if single:
+        return A.chip_grid_shadow_tag(8, 1, chip_w(8, True), 6.0, 0, 0)
+    return A.chip_grid_shadow_tag(cols, rows, chip_w(cols, False), 5.0,
+                                  CHIP_H + CHIP_ROW_GAP, 42.0)
 CHIP = ("display:flex;align-items:center;justify-content:center;"
         "height:19pt;border-radius:7pt;text-decoration:none;"
         "background:rgba(255,255,255,.55);" + CHIP_EDGE +
@@ -514,28 +540,29 @@ def chip_card(label, prefix, per_term, cols=16):
     아니다 -- Chrome 은 목적지 없는 <a href="#x"> 를 조용히 버린다.
     """
     if per_term == 1:
-        chips = "".join('<a href="#%s%d" style="%s">%d</a>' % (prefix, t, CHIP, t)
+        chips = "".join(chip("%s%d" % (prefix, t), t)
                         for t in range(1, TERMS + 1))
-        grid = ('<div style="display:grid;grid-template-columns:repeat(8,1fr);'
-                'gap:6pt">%s</div>' % chips)
+        grid = ('<div style="position:relative;display:grid;'
+                'grid-template-columns:repeat(8,1fr);gap:6pt">%s%s</div>'
+                % (grid_shadow(8, 1, True), chips))
         return ('<div class="card" style="flex:none">'
                 '<div class="label">%s</div>%s</div>' % (label, grid))
     blocks = []
     for t in range(1, TERMS + 1):
         chips = "".join(
-            '<a href="#%s%d" style="%s">%d</a>'
-            % (prefix, (t - 1) * per_term + i, CHIP, i)
+            chip("%s%d" % (prefix, (t - 1) * per_term + i), i)
             for i in range(1, per_term + 1))
         blocks.append(
             '<div style="display:flex;align-items:center;gap:8pt;'
-            'margin-bottom:4.5pt">'
+            'margin-bottom:%gpt">' % CHIP_ROW_GAP +
             '<div style="font-size:6.6pt;letter-spacing:.12em;font-weight:800;'
             'color:#4A4260;width:34pt;flex:none">TERM %d</div>'
             '<div style="flex:1;display:grid;'
             'grid-template-columns:repeat(%d,1fr);gap:5pt">%s</div></div>'
             % (t, cols, chips))
     return ('<div class="card" style="flex:none"><div class="label">%s</div>'
-            '%s</div>' % (label, "".join(blocks)))
+            '<div style="position:relative">%s%s</div></div>'
+            % (label, grid_shadow(cols, TERMS, False), "".join(blocks)))
 
 
 def chip_index(eyebrow, title, sub_, prefix, per_term, cols):

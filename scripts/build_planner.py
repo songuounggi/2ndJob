@@ -362,6 +362,10 @@ THEMES["student-v0.2"] = dict(THEMES["v9-student"], flat_paint=True)
 # student-v0.3  2026-09-24  표 점선 양 끝 페이드를 되살린다 -- 끝 점마다 옅은
 #                          단색으로. 그라데이션·소프트마스크 없이 (dash_fade)
 THEMES["student-v0.3"] = dict(THEMES["student-v0.2"], dash_fade=True)
+# student-v0.4  2026-09-24  칩 그림자·목차 색 점 그라데이션을 되살린다 --
+#                          미리 구운 PNG 로 (chip_shadow, orb_png)
+THEMES["student-v0.4"] = dict(THEMES["student-v0.3"], chip_shadow=True,
+                              orb_png=True)
 
 # Revisions of a shipped product get their own version name and their own
 # output file. The file a buyer already downloaded is never overwritten --
@@ -657,6 +661,8 @@ if T.get("app"):
     import app_style
     app_style.FLAT = bool(T.get("flat_paint"))   # RELEASE.md 2 절
     app_style.DASH_FADE = bool(T.get("dash_fade"))
+    app_style.CHIP_SHADOW = bool(T.get("chip_shadow"))
+    app_style.ORB_PNG = bool(T.get("orb_png"))
     app_style.VERSION = VERSION
 else:
     app_style = None
@@ -1039,6 +1045,9 @@ def app_orb(i):
     """목차 행의 색 점. flat_paint 면 그라데이션 대신 첫 색 단색 --
     작은 원 9개가 각각 셰이딩이 됐다. 표지(1p)는 예외라 그대로 쓴다."""
     g = APP_ORBS[i % len(APP_ORBS)]
+    if T.get("orb_png"):                    # v0.4~: 그라데이션을 PNG 로 굽는다
+        c1, c2 = re.findall(r"#[0-9A-Fa-f]{6}", g)
+        return "url('%s') 0 0/100%% 100%% no-repeat" % app_style.orb_png(c1, c2)
     return re.search(r"#[0-9A-Fa-f]{6}", g).group(0) if T.get("flat_paint") else g
 
 

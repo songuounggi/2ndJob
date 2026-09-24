@@ -70,6 +70,10 @@ FLAT = False
 # dash_fade (student-v0.3~): FLAT 에서 뺐던 표 점선 양 끝 페이드를 그라데이션
 # 없이 되살린다(_fade_dashes). 사용자 요청 2026-09-24.
 DASH_FADE = False
+# chip_shadow / orb_png (student-v0.4~): v0.2 에서 헤어라인·단색으로 바꿨던 칩
+# 그림자와 목차 색 점을 미리 구운 PNG 로 되살린다. 사용자 요청 2026-09-24.
+CHIP_SHADOW = False
+ORB_PNG = False
 VERSION = ""
 
 
@@ -706,3 +710,111 @@ def snap_lines(src, chrome):
     html = "".join(out)
     io.open(src, "w", encoding="utf-8").write(html)
     return n
+
+
+# ------------------------------------------------------------ 구운 이미지들
+# 그라데이션·blur 는 PDF 에서 셰이딩·소프트마스크가 되어 GoodNotes 를 느리게
+# 한다(RELEASE.md 2 절). 같은 모양을 PNG 로 한 번 굽고 여러 곳이 나눠 쓴다.
+# 이미지의 알파는 이미지 자체의 마스크라 check_render A 에 걸리지 않는다.
+CHIP_H = 19.0              # 칩 높이 pt (student_pages.CHIP 과 같아야 한다)
+CHIP_R = 7.0               # 칩 모서리
+CHIP_M = 6.0               # 그림자가 칩 밖으로 번지는 여백 pt
+
+
+def chip_shadow(w_pt):
+    """칩 폭 w_pt 에 맞춘 그림자 PNG 의 url. 없으면 굽는다.
+    원래 CSS: box-shadow 0 1pt 5pt rgba(40,28,90,.12). CSS 그림자처럼
+    칩 안쪽은 비운다 -- 반투명 칩 아래로 그림자가 비치면 안 된다."""
+    k = 4                                          # px / pt
+    name = "assets/app_chip_%d_%s.png" % (round(w_pt * 4), VERSION)
+    if not os.path.exists(name):
+        W = int(round((w_pt + 2 * CHIP_M) * k))
+        H = int(round((CHIP_H + 2 * CHIP_M) * k))
+        def rr(dy):
+            m = Image.new("L", (W, H), 0)
+            ImageDraw.Draw(m).rounded_rectangle(
+                [CHIP_M * k, (CHIP_M + dy) * k,
+                 (CHIP_M + w_pt) * k - 1, (CHIP_M + dy + CHIP_H) * k - 1],
+                radius=CHIP_R * k, fill=255)
+            return m
+        sh = rr(1.0).filter(ImageFilter.GaussianBlur(2.5 * k))   # blur 5pt = sigma 2.5pt
+        a = np.asarray(sh).astype(np.float64) * 0.12
+        a[np.asarray(rr(0.0)) > 0] = 0                           # 칩 안쪽 비움
+        rgba = np.zeros((H, W, 4), np.uint8)
+        rgba[..., 0], rgba[..., 1], rgba[..., 2] = 40, 28, 90
+        rgba[..., 3] = np.round(a).astype(np.uint8)
+        Image.fromarray(rgba, "RGBA").save(name, optimize=True)
+    return "../" + name
+
+
+def chip_shadow_tag(w_pt):
+    """칩 안에 넣는 그림자 요소. 칩(position:relative) 뒤로 깔린다."""
+    return ('<i style="position:absolute;left:-%gpt;top:-%gpt;'
+            'width:calc(100%% + %gpt);height:calc(100%% + %gpt);z-index:-1;'
+            "background:url('%s') 0 0/100%% 100%% no-repeat;"
+            'pointer-events:none"></i>'
+            % (CHIP_M, CHIP_M, 2 * CHIP_M, 2 * CHIP_M, chip_shadow(w_pt)))
+
+
+def orb_png(c1, c2, angle=140, d_pt=12.0):
+    """목차 색 점: linear-gradient(<angle>deg, c1, c2) 를 원에 칠한 PNG."""
+    name = "assets/app_orb_%s_%s_%s.png" % (c1[1:], c2[1:], VERSION)
+    if not os.path.exists(name):
+        n, ss = int(d_pt * 8), 4
+        N = n * ss
+        yy, xx = np.mgrid[0:N, 0:N].astype(np.float64) + .5
+        th = np.radians(angle)
+        dx, dy = np.sin(th), -np.cos(th)           # CSS 각도: 0deg = 위쪽
+        L = N * (abs(dx) + abs(dy))
+        t = np.clip(((xx - N / 2) * dx + (yy - N / 2) * dy) / L + .5, 0, 1)
+        col = lambda h: np.array([int(h[i:i + 2], 16) for i in (1, 3, 5)], float)
+        rgb = col(c1)[None, None, :] * (1 - t[..., None]) + col(c2)[None, None, :] * t[..., None]
+        inside = ((xx - N / 2) ** 2 + (yy - N / 2) ** 2) <= (N / 2) ** 2
+        rgba = np.dstack([rgb, inside * 255.0])
+        img = Image.fromarray(np.round(rgba).astype(np.uint8), "RGBA")
+        img.resize((n, n), Image.LANCZOS).save(name, optimize=True)
+    return "../" + name
+
+
+def chip_grid_shadow_tag(cols, rows, w_pt, gap_pt, pitch_pt, left_pt):
+    """칩 격자 전체(rows 줄 x cols 칸)의 그림자를 PNG 한 장으로.
+
+    칩마다 한 장이면 Weeks 목차에서 128번 그려 220ms, 줄마다 한 장이면
+    8번에 174ms 였다(check_render B, 기준 150). 격자 한 장 + pt 당 2px.
+    그림자는 흐린 모양이라 해상도를 낮춰도 티가 안 난다. 격자는 1fr 이라
+    칩 위치가 계산된다: 칸 폭 w, 칸 간격 gap, 줄 간격 pitch, 격자 왼쪽 left.
+    칩 묶음을 감싼 div(position:relative) 의 첫 자식으로 넣는다.
+    해상도: pt 당 2px 에서 Days 목차가 153ms(10회 중앙값, 칩 없는 v0.3 은
+    109). 반투명 이미지 합성 비용은 픽셀 수에 비례한다 -- pt 당 1px."""
+    k = 1
+    name = "assets/app_chipgrid_%d_%d_%d_%d_%s.png" % (
+        cols, rows, round(w_pt * 4), round(pitch_pt * 4), VERSION)
+    span_w = cols * w_pt + (cols - 1) * gap_pt
+    span_h = (rows - 1) * pitch_pt + CHIP_H
+    if not os.path.exists(name):
+        W = int(round((span_w + 2 * CHIP_M) * k))
+        H = int(round((span_h + 2 * CHIP_M) * k))
+        def rr(dy):
+            m = Image.new("L", (W, H), 0)
+            d = ImageDraw.Draw(m)
+            for r_ in range(rows):
+                for i in range(cols):
+                    x = CHIP_M + i * (w_pt + gap_pt)
+                    y = CHIP_M + r_ * pitch_pt + dy
+                    d.rounded_rectangle([x * k, y * k, (x + w_pt) * k - 1,
+                                         (y + CHIP_H) * k - 1],
+                                        radius=CHIP_R * k, fill=255)
+            return m
+        sh = rr(1.0).filter(ImageFilter.GaussianBlur(2.5 * k))
+        a = np.asarray(sh).astype(np.float64) * 0.12
+        a[np.asarray(rr(0.0)) > 0] = 0
+        rgba = np.zeros((H, W, 4), np.uint8)
+        rgba[..., 0], rgba[..., 1], rgba[..., 2] = 40, 28, 90
+        rgba[..., 3] = np.round(a).astype(np.uint8)
+        Image.fromarray(rgba, "RGBA").save(name, optimize=True)
+    return ('<i style="position:absolute;left:%gpt;top:-%gpt;width:%gpt;'
+            'height:%gpt;z-index:-1;'
+            "background:url('../%s') 0 0/100%% 100%% no-repeat;"
+            'pointer-events:none"></i>'
+            % (left_pt - CHIP_M, CHIP_M, span_w + 2 * CHIP_M,
+               span_h + 2 * CHIP_M, name))

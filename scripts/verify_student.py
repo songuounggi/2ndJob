@@ -285,6 +285,18 @@ _tables = re.findall(r'<svg class="rules" viewBox=.*?</svg>', h, re.S)
 _nofade = [t for t in _tables
            if "url(#" not in t and "stroke-opacity" not in t]
 add("양 끝 페이드 없는 표", len(_nofade), 0, not _nofade)
+# 칩 그림자와 목차 색 점. v0.2 에서 속도 때문에 헤어라인·단색으로 바꿨다가
+# 사용자가 살리라고 했다(2026-09-24). CSS(v0.1) 든 구운 PNG(v0.4~) 든 있어야
+# 한다. 칩 묶음마다 box-shadow 가 있거나, 묶음 그림자 이미지가 하나 있어야 한다.
+_chips_flat = [pid for pid, body in _sec.items()
+               if 'style="display:flex;align-items:center;justify-content:center;'
+                  'height:19pt' in body
+               and "box-shadow:0 1pt 5pt" not in body
+               and "app_chipgrid_" not in body]
+add("그림자 없는 칩", len(_chips_flat), 0, not _chips_flat)
+_orbs = re.findall(r'<div class="orb" style="background:([^"]*)"', _sec["index"])
+_orb_flat = [o for o in _orbs if "gradient" not in o and "url(" not in o]
+add("단색으로 납작해진 목차 색 점", len(_orb_flat), 0, not _orb_flat)
 
 _wide = wide_label_cols(h)
 add("짧은 내용 열이 넓은 표", len(_wide), 0, not _wide)
