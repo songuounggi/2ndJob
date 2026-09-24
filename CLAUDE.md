@@ -73,7 +73,7 @@ git 에 없어서 따라오지 않는다. 절차는 `SETUP.md`.
 | 결과물 | 다른 PC 에서 |
 |---|---|
 | `v8.18-undated` 판매본 | 현재 코드로 빌드. 19,599,557 B, 검증 13항목 통과 |
-| **마켓 판** `output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf` + 보관본 `upload/<#>/` | 해당 버전 `-FINAL` 을 이 이름으로 복사한 것. 빌드만 하고 끝내면 빠진다. 번호·버전은 `shop.md` 0-1절 |
+| **원본** `output/upload/ADHD-...pdf` + 올린 판 `upload/<버전>/` | 해당 버전 `-FINAL` 을 Etsy 이름으로 복사한 것. 빌드만 하고 끝내면 빠진다(`SETUP.md` 5단계) |
 | `v8-undated` 출시본 | 커밋 `07cc59e` 로 worktree 를 떠서 빌드. **19,227,515 B 로 바이트 수까지 일치** |
 | `v8.1`~`v8.17` | **재현 불가.** 이름만 다르고 지금 코드로는 전부 v8.18 이 나온다. 필요하면 각 커밋으로 빌드 |
 | `v2`~`v7` 시안 | 현재 코드로 빌드됨. `v1-admin` 은 `KeyError: 'tasks'` 로 깨져 있다 |
@@ -173,10 +173,10 @@ PLANNER_VERSION=v3-sunset python scripts/build_planner.py
 | 위치 | 담는 것 |
 |---|---|
 | `output/planner_<버전>-FINAL.pdf` | 작업본. 버전을 올려 가며 고친다(v8.20 → v8.21). 지우지 않는다 |
-| `output/upload/<Etsy 이름>` | **지금 마켓에 올라가 있는 판.** 최종 확인 전에는 절대 건드리지 않는다 |
-| `output/upload/<#>/<Etsy 이름>` | 마켓에 올렸던 판의 보관본. 이력 번호대로 쌓는다 |
+| `output/upload/<Etsy 이름>` | **원본(v8.18). 최종 확인 뒤에도 영원히 건드리지 않는다** |
+| `output/upload/<버전>/<Etsy 이름>` | Etsy 에 올린 판. 최종 확인이 나면 **버전 이름으로 폴더를 새로 만들어** 넣는다(`upload/v8.18/`, `upload/v8.20/` …). 가장 새 버전 폴더가 지금 마켓 판 |
 
-번호·버전 대응은 `shop.md` 0-1절. 대조는 `scripts/check_upload.py`.
+언제 무엇을 올렸는지는 `shop.md` 0-1절. 대조는 `scripts/check_upload.py`.
 **2026-09-24 에 확인 전인 v8.20 으로 마켓 판을 덮어썼다가 되돌렸다.**
 
 v8은 테마가 아니라 **구조**가 다르다(`undated` 플래그). 달력 페이지가 위치 기반
