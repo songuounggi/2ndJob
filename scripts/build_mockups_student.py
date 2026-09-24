@@ -33,6 +33,11 @@ OUT = os.path.join(ROOT, "output", "listing_student")
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 SIZE = 2000
 SAFE = 250          # 위아래 이만큼은 검색 결과에서 잘린다고 보고 비운다
+# 좌우. Etsy 검색 격자는 정사각을 양옆 약 140px 씩 잘라 간다. 상품 1 첫 대표
+# 이미지가 x=112 에서 시작해 "DHD & Wellness / igital Planner" 로 첫 글자가
+# 잘렸다(scripts/build_mockups.py). 읽혀야 하는 것은 양옆 260px 안쪽에.
+# 학생용은 130 이었다(사용자 지적 2026-09-24).
+SAFE_X = 260
 
 VIOLET = "#7C4DFF"
 PINK = "#F45D9B"
@@ -48,7 +53,7 @@ body{width:2000px;height:2000px;overflow:hidden;color:%(INKC)s;
      font-family:'Nunito',system-ui,sans-serif;background:%(PAPER)s}
 
 /* 검색 결과가 잘라 가는 띠. 핵심 문구는 이 안에 둔다. */
-.wrap{width:100%%;height:100%%;padding:%(SAFE)spx 130px;display:flex;
+.wrap{width:100%%;height:100%%;padding:%(SAFE)spx %(SAFE_X)spx;display:flex;
       flex-direction:column;position:relative;z-index:1}
 .aurora{position:absolute;inset:0;z-index:0}
 .aurora img{width:100%%;height:100%%;object-fit:cover}
@@ -101,7 +106,7 @@ h2{font-size:92px;font-weight:800;line-height:1.08;margin-top:36px;
         -webkit-mask-composite:source-in}
 .note b{font-size:42px;font-weight:800;display:block}
 .note span{font-size:30px;opacity:.62;display:block;margin-top:6px}
-""" % {"PAPER": PAPER, "INKC": INKC, "SAFE": SAFE}
+""" % {"PAPER": PAPER, "INKC": INKC, "SAFE": SAFE, "SAFE_X": SAFE_X}
 
 
 def html(body, extra=""):
@@ -116,6 +121,36 @@ def img(name):
     if not os.path.exists(p):
         raise SystemExit("페이지 PNG 가 없다: %s" % p)
     return "file:///" + p.replace("\\", "/")
+
+
+SAFE_JS = """
+const bad = [];
+document.querySelectorAll('h1,h2,.kicker,.sub,.chip,.tag,.pg b,.pg span,.note b,.note span,.foot').forEach(e => {
+  const r = e.getBoundingClientRect();
+  if (!r.width || !r.height) return;
+  if (r.left < %d - 0.5 || r.right > 2000 - %d + 0.5 || r.top < %d - 0.5 || r.bottom > 2000 - %d + 0.5)
+    bad.push((e.textContent || '').trim().slice(0, 30) + ' @' + [r.left, r.top, r.right, r.bottom].map(Math.round).join(','));
+});
+document.body.setAttribute('data-safe', JSON.stringify(bad));
+""" % (SAFE_X, SAFE_X, SAFE, SAFE)
+
+
+def check_safe(name, body, extra=""):
+    """글자가 안전 영역 밖이면 멈춘다 -- Etsy 검색·가로 배치에서 잘린다."""
+    import json, re
+    src = os.path.join(tempfile.gettempdir(), "mockst_safe_%s.html" % name)
+    with open(src, "w", encoding="utf-8") as f:
+        f.write(html(body, extra).replace("</body>", "<script>%s</script></body>" % SAFE_JS))
+    r = subprocess.run(
+        [CHROME, "--headless=new", "--disable-gpu",
+         "--user-data-dir=%s" % os.path.join(tempfile.gettempdir(), "mockup-safe-profile"),
+         "--window-size=%d,%d" % (SIZE, SIZE), "--virtual-time-budget=6000",
+         "--dump-dom", "file:///" + src.replace(chr(92), "/")],
+        capture_output=True, text=True, encoding="utf-8", errors="replace")
+    m = re.search(r'data-safe="([^"]*)"', r.stdout or "")
+    bad = json.loads(m.group(1).replace("&quot;", '"')) if m else ["(측정 실패)"]
+    if bad:
+        raise SystemExit("%s: 안전 영역 밖의 글자 %s" % (name, bad[:4]))
 
 
 def shoot(name, body, extra=""):
@@ -152,7 +187,7 @@ def page(name, label, note, cell=700):
             '<b>%s</b><span>%s</span></div>' % (cell, img(name), label, note))
 
 
-SHELF_W = 2000 - 2 * 130        # 목업 폭 - 좌우 패딩
+SHELF_W = 2000 - 2 * SAFE_X     # 목업 폭 - 좌우 안전 여백
 PAGE_RATIO = 612 / 792.0
 
 
@@ -232,7 +267,7 @@ def s3_templates():
         '<div class="kicker">32 PAGE DESIGNS</div>'
         '<h2>One set per term.<br>Eight terms inside.</h2>'
         '<div class="grow"><div class="shelf">%s</div></div>'
-        % shelf(cells, 520))
+        % shelf(cells, 440))
     # 카드 높이: 폭 2000 - 좌우 패딩 260 = 1740px 안에 들어가야 한다. 페이지
     # 비율 0.773 -> 4장이면 높이 <= 532, 3장이면 <= 722. 640/780 으로 두었을
     # 때 양 끝 카드가 잘려 "ss schedule", 탭 레일 없는 페이지가 나갔다.
@@ -257,11 +292,11 @@ def s4_navigation():
 
 def s5_structure():
     cards = "".join(
-        '<div style="flex:1;background:#FFF;border-radius:28px;padding:34px;'
+        '<div style="flex:1;background:#FFF;border-radius:24px;padding:22px 6px;'
         'text-align:center;box-shadow:0 16px 40px rgba(40,28,90,.10)">'
-        '<div style="font-size:30px;font-weight:800;letter-spacing:.1em;'
+        '<div style="font-size:26px;font-weight:800;letter-spacing:.06em;white-space:nowrap;'
         'color:%s">TERM %d</div>'
-        '<div style="font-size:26px;opacity:.55;margin-top:10px">16 weeks'
+        '<div style="font-size:24px;opacity:.55;margin-top:8px">16 weeks'
         '</div></div>' % (c, i + 1)
         for i, c in enumerate([VIOLET, VIOLET, PINK, PINK,
                                ORANGE, ORANGE, CYAN, CYAN]))
@@ -273,7 +308,7 @@ def s5_structure():
         + chips([("8", "terms"), ("128", "week pages"), ("112", "day pages")])
         + '<div class="grow" style="flex-direction:column;gap:34px">'
           '<div style="display:flex;gap:18px;width:100%%">%s</div>'
-          '<img src="%s" style="height:720px;border-radius:20px;'
+          '<img src="%s" style="flex:1;min-height:0;height:0;width:auto;border-radius:20px;'
           'box-shadow:0 30px 70px rgba(40,28,90,.22)"></div>'
           % (cards, img("t1")))
 
@@ -286,7 +321,7 @@ def s6_work():
         '<div class="kicker">WORK</div>'
         '<h2>From the deadline,<br>not from today.</h2>'
         '<div class="grow"><div class="shelf">%s</div></div>'
-        % shelf(cells, 700))
+        % shelf(cells, 600))
 
 
 def s7_study():
@@ -315,7 +350,7 @@ def s8_focus():
         '<div class="kicker">WHEN STARTING IS THE HARD PART</div>'
         '<h2>Eleven pages for the<br>part nobody sells you.</h2>'
         '<div class="grow"><div class="shelf">%s</div></div>'
-        % shelf(cells, 700))
+        % shelf(cells, 600))
 
 
 def s9_howto():
@@ -337,7 +372,7 @@ def s9_howto():
         '<div class="grow" style="justify-content:space-between;gap:60px">'
         '<div style="flex:none;max-width:820px">%s'
         '<div class="tags" style="margin-top:44px">%s</div></div>'
-        '<div class="tab" style="--tab:860px"><img src="%s"></div></div>'
+        '<div class="tab" style="--tab:760px"><img src="%s"></div></div>'
         '<div class="foot">A digital download &mdash; nothing is shipped.</div>'
         % (st, tags, img("timetable")))
 
@@ -397,4 +432,5 @@ if __name__ == "__main__":
     render_src(sys.argv[1] if len(sys.argv) > 1 else "student-v0.8")
     prep()
     for name, fn in SHOTS:
+        check_safe(name, fn())
         print("찍음:", shoot(name, fn()))

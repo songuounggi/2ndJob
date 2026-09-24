@@ -464,7 +464,18 @@ def p_term_review(term=1, i=1):
             + body(
                 card("What actually happened", fill(), flex="1"),
                 card("What I will do differently", fill(), flex="1"),
-                card("What worked &mdash; keep it", field(36))))
+                card("What worked &mdash; keep it", keep_it())))
+
+
+def keep_it():
+    """Term review 맨 아래 칸. 한 줄 입력칸(36pt)이라 필기칸 둘 아래에 덜렁
+    붙고 그 밑이 69pt 비었다(사용자 지적 2026-09-24, p.21). 돌아보는 글이라
+    두 줄짜리 필기칸으로(student-v0.9, review_lines). snap_lines 가 48pt 를
+    재서 2행으로 고정한다."""
+    if bp and bp.T.get("review_lines"):
+        return ('<div class="lines" style="flex:none;height:48pt">%s</div>'
+                % A.lines_svg())
+    return field(36)
 
 
 def p_meds():

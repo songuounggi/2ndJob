@@ -1157,3 +1157,22 @@ python scripts/build_mockups_student.py student-v0.8     # -> output/listing_stu
   쌍 최대 2탭 / 반복 400장 / 위클리 128 / 데일리 112 / 노트 9
 - 문구: 437 pages, 32 templates, "Over 4,900 working links", "no scrolling through 437 pages"
 - 전체 모음 `output/preview/review/34_mockups_v08.png`
+
+### student-v0.9 (2026-09-24) — Term review "What worked" 두 줄
+
+p.21 맨 아래가 한 줄 입력칸(36pt)이라 덜렁 붙고 밑이 69pt 비었다(사용자 지적). 두 줄
+필기칸(48pt, `review_lines`). 같은 모양의 다른 페이지(위클리 "One thing I will not drop",
+deciding "Picked", avoiding "The smallest possible first step")는 "한 가지만" 적는 칸이라
+그대로 -- avoiding 은 두 줄도 어울린다고 제안해 둠. v0.8 바이트 재현 확인.
+**v0.9 는 사용자가 모바일에서 "빠릿하게 잘 움직인다" 확인한 v0.8 + 이 한 칸.**
+
+### 목업 안전 영역 (2026-09-24, 사용자 지적 + 상품 1 경험)
+
+상품 1 `scripts/build_mockups.py`: Etsy 검색 격자는 정사각의 **양옆 약 140px** 을 자르고
+(첫 대표 이미지가 "DHD & Wellness / igital Planner" 로 잘렸다), 가로 4:3 자리는
+**가운데 1500px** 만 남긴다. 그래서 읽혀야 하는 것은 가로 260~1740, 세로 250~1750 안.
+학생용은 좌우 130px 이었다 → `SAFE_X = 260`. `check_safe()` 가 찍기 전에 글자 요소
+(h1/h2/kicker/sub/chip/tag/카드 이름/foot)의 위치를 재서 밖이면 멈춘다 -- 옛 배치
+(130px)에서 4장 모두 멈추는 것 확인. 카드 크기: 4장 440 / 3장 600. 5번은 학기 카드
+글자 크기와 페이지 그림 높이(남은 칸에 맞춤), 9번은 태블릿 760 으로 잘림 해결.
+모음 `output/preview/review/35_mockups_final.png`, 잘리는 선 겹친 판 `35_mockups_safe.png`.
