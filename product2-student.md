@@ -1247,3 +1247,8 @@ iPad 체크리스트는 v1.0 에서 통과. v1.1 에서 새로 생긴 건 표지
 - **180도 회전은 "뭐가 다른 거냐"** -- 색이 같아 구분이 안 됐다. **홀수 = 어두운 오로라, 짝수 = 밝은 파스텔
   오로라**로 확정(기본 `MOCK_ALT=pastel`). 파스텔은 내지 바닥 이미지를 채도 2.2배·밝기 0.93 으로 올려
   흰색에서 벗어나게 했다. 밝은 장의 탭 칩(4번)은 보라 글자로.
+- **1번 새 구성 -- "좀 더 눈에 띄게, Prod 1 참고" + "손글씨도"**. 상품 1 `01_hero` 짜임을 그대로 따른다:
+  가운데 정렬 큰 제목(한 줄 "ADHD Student Planner"), 숫자 알약 4개(437 pages / 32 designs / 8 terms / 10 tabs),
+  태블릿 두 대 겹침(앞 표지 p.1, 뒤 Syllabus unpack) + 뒤로 부채꼴 페이지 4장(Exam study plan, Lecture notes,
+  Term 1, Brain dump), Caveat 손글씨 5줄(우리 문장, 인용 아님): "I will start it tonight", "wait, when is that due?",
+  "just the first step", "not lazy", "due Friday, so start Monday". 손글씨는 제목·카드에 안 가리는 자리에만.

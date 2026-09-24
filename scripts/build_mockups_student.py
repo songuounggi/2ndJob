@@ -118,9 +118,9 @@ h2{font-size:92px;font-weight:800;line-height:1.08;margin-top:36px;
 
 def html(body, extra=""):
     return ("""<!DOCTYPE html><html><head><meta charset="utf-8">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@500;600&display=swap"
       rel="stylesheet"><style>%s%s</style></head><body>%s</body></html>"""
-            % (CSS, extra, body))
+            % (CSS + HERO_CSS, extra, body))
 
 
 def img(name):
@@ -307,28 +307,68 @@ def chips(items, dark_=False):
 #   Nine notes    = 노트 3종 x 3장 (10번)
 #   print 는 뺐다 -- 괘선 대비 1.14:1 이라 인쇄하면 거의 안 보인다(G)
 # 페이지 구성을 바꾸면 이 숫자들을 다시 잰다.
-def s1_hero():
-    """검색 결과에서 보이는 단 한 장.
+HERO_CSS = """
+/* 상품 1 01_hero 구성을 따른다(build_mockups.py HERO_CSS): 가운데 정렬 큰 제목,
+   숫자 알약, 태블릿 두 대 겹침 + 뒤로 부채꼴 페이지 네 장, 옅은 손글씨.
+   "1번은 좀 더 눈에 띄게"(사용자 2026-09-24). 전에는 왼쪽 글 + 태블릿 한 대라
+   다른 장들과 같은 모양이었다. */
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;
+      text-align:center;position:relative;min-height:0}
+.hero .kicker{align-self:center}
+.hero h1{font-size:128px;margin-top:26px;white-space:nowrap}
+.hero .sub{font-size:44px;margin-top:18px;opacity:.82}
+.hero .chips{justify-content:center;margin-top:28px}
+.hero .stage{flex:1;width:100%;position:relative;margin-top:30px;min-height:0}
+.hero .stage>*{position:absolute;left:50%;top:50%}
+.hero .stage .tab{padding:22px;border-radius:50px}
+.hero .stage .tab img{height:800px;border-radius:30px}
+.hero .stage .front{transform:translate(-50%,-50%) translateX(-150px);z-index:3}
+.hero .stage .back{transform:translate(-50%,-50%) translateX(200px) scale(.88);
+                   z-index:2}
+.hero .stage .pg img{height:400px;border-radius:14px;display:block;
+                     box-shadow:0 20px 50px rgba(10,5,40,.45)}
+.hero .stage .pg{z-index:1}
+.hero .stage .p1{transform:translate(-50%,-50%) translate(-690px,-190px) rotate(-9deg)}
+.hero .stage .p2{transform:translate(-50%,-50%) translate(-740px,250px) rotate(6deg)}
+.hero .stage .p3{transform:translate(-50%,-50%) translate(700px,-200px) rotate(8deg)}
+.hero .stage .p4{transform:translate(-50%,-50%) translate(750px,240px) rotate(-6deg)}
+/* 우리 문장. 인용이 아니다(상품 1 과 같은 이유). 제목 덩어리를 피해 둔다. */
+.hero .scribble{position:absolute;inset:0;z-index:0;pointer-events:none;
+   font-family:'Caveat',cursive;color:#FFF}
+.hero .scribble span{position:absolute;white-space:nowrap;font-weight:600}
+.hero .s1{top:3%;left:-6%;font-size:56px;opacity:.24;transform:rotate(-6deg)}
+.hero .s2{top:2%;right:-6%;font-size:56px;opacity:.24;transform:rotate(5deg)}
+.hero .s3{bottom:-2%;left:-4%;font-size:58px;opacity:.22;transform:rotate(-4deg)}
+.hero .s4{bottom:-1%;right:-3%;font-size:56px;opacity:.22;transform:rotate(6deg)}
+.hero .s5{bottom:-3%;left:50%;font-size:60px;opacity:.22;
+          transform:translateX(-50%) rotate(-2deg)}
+"""
 
-    자리 계산을 먼저 한다. 폭 2000 - 좌우 패딩 260 - 글 단 700 - 간격 60
-    = 980px 이 기기 몫이다. 태블릿 한 대(높이 1100 -> 폭 약 900)는 들어가고
-    두 대는 안 들어간다. 안 맞는 걸 억지로 넣으면 글자를 덮거나 잘린다.
-    """
+
+def s1_hero():
+    """검색 결과에서 보이는 단 한 장. 상품 1 첫 장과 같은 짜임."""
     return dark(
-        '<div style="flex:1;display:flex;align-items:center;gap:60px;'
-        'min-height:0">'
-        '<div style="flex:0 0 700px">'
+        '<div class="hero">'
+        '<div class="scribble"><span class="s1">I will start it tonight</span>'
+        '<span class="s2">wait, when is that due?</span>'
+        '<span class="s3">just the first step</span>'
+        '<span class="s4">not lazy</span>'
+        '<span class="s5">due Friday, so start Monday</span></div>'
         '<div class="kicker">UNDATED &middot; ADHD STUDENT</div>'
-        '<h1 style="font-size:96px">ADHD<br>Student<br>Planner</h1>'
-        '<div class="sub" style="font-size:42px">Syllabus, assignments and '
-        'exams &mdash; broken into pieces you can actually start.</div>'
-        + chips([("437", "pages"), ("32", "designs")])
-        + chips([("4", "years"), ("10", "tabs")])
-        + '</div>'
-          '<div style="flex:1;display:flex;justify-content:center;'
-          'min-width:0">'
-          '<div class="tab" style="--tab:1000px;transform:rotate(2deg)">'
-          '<img src="%s"></div></div></div>' % img("syllabus"))
+        '<h1>ADHD Student Planner</h1>'
+        '<div class="sub">Syllabus, assignments and exams &mdash; '
+        'broken into pieces you can actually start.</div>'
+        + chips([("437", "pages"), ("32", "designs"), ("8", "terms"), ("10", "tabs")])
+        + '<div class="stage">'
+          '<div class="pg p1"><img src="%s"></div>'
+          '<div class="pg p2"><img src="%s"></div>'
+          '<div class="pg p3"><img src="%s"></div>'
+          '<div class="pg p4"><img src="%s"></div>'
+          '<div class="tab back"><img src="%s"></div>'
+          '<div class="tab front"><img src="%s"></div>'
+          '</div></div>'
+        % (img("exam"), img("cornell"), img("t1"), img("braindump"),
+           img("syllabus"), img("cover")))
 
 
 def s2_syllabus():
@@ -494,7 +534,7 @@ SHOTS = [("1_hero", s1_hero), ("2_syllabus", s2_syllabus),
 
 
 # 목업에 쓰는 페이지 그림: 이름 -> 페이지 id (scale 2 로 뽑는다)
-SRC_PAGES = {"syllabus": "s1", "timetable": "h1", "grades": "g1",
+SRC_PAGES = {"cover": "cover", "syllabus": "s1", "timetable": "h1", "grades": "g1",
              "assignments": "a1", "exam": "e1", "t1": "t1", "d1": "d1",
              "cornell": "cornell", "braindump": "braindump",
              "backwards": "backwards", "group": "group",
