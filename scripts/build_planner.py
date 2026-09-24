@@ -384,6 +384,9 @@ THEMES["student-v0.9"] = dict(THEMES["student-v0.8"], review_lines=True)
 # student-v1.0  2026-09-24  출시판. v0.9 + "The smallest possible first step" 두 줄
 #                          (avoid_lines). 가격 $14.99 / 런칭 40%. product2-listing.md
 THEMES["student-v1.0"] = dict(THEMES["student-v0.9"], avoid_lines=True)
+# student-v1.1  2026-09-24  출시판. 최종 검수(에이전트 5종) 문구·링크·명칭 수정 (copy_v11):
+#                          목차 Notes 설명, 빈 라벨, 표지 카드 링크·제목, 약 25곳 문구
+THEMES["student-v1.1"] = dict(THEMES["student-v1.0"], copy_v11=True)
 
 # Revisions of a shipped product get their own version name and their own
 # output file. The file a buyer already downloaded is never overwritten --
@@ -2466,6 +2469,8 @@ def build_html():
 <link href="{font_url_v}" rel="stylesheet">
 <style>{CSS}</style></head>
 <body>{"".join(pages)}</body></html>"""
+    if student_pages and T.get("copy_v11"):
+        html = student_pages.apply_copy(html)   # 최종 검수 문구 (student-v1.1)
     os.makedirs(os.path.dirname(SRC), exist_ok=True)
     with open(SRC, "w", encoding="utf-8") as f:
         f.write(html)

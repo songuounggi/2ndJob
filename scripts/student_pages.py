@@ -267,6 +267,9 @@ def p_timetable(term=1, i=1):
     days = ["MON", "TUE", "WED", "THU", "FRI"]
     hours = ["08", "09", "10", "11", "12", "13", "14", "15", "16",
              "17", "18", "19", "20"]
+    if copy_v11():      # 미국 학생은 12시간제. 다른 페이지는 "11pm" 이었다
+        hours = ["8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM",
+                 "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM"]
     widths = A.T6
     hd = ('<tr><td style="width:%.2fpt"></td>' % widths[0]
           + "".join('<td style="width:%.2fpt">%s</td>' % (widths[i + 1], d)
@@ -665,9 +668,107 @@ def chip_card(label, prefix, per_term, cols=16):
             % (label, grid_shadow(cols, TERMS, False), "".join(blocks)))
 
 
+# ------------------------------------------------------------ v1.1 문구
+# 최종 검수(2026-09-24, 에이전트 5종)에서 나온 문구 수정. 옛 버전을 바이트까지
+# 다시 뽑을 수 있도록 코드 곳곳을 바꾸지 않고, copy_v11 이 켜졌을 때만 완성된
+# HTML 에 교체를 건다. (찾을 문자열, 바꿀 문자열, 나와야 할 횟수) -- 횟수가
+# 다르면 빌드를 멈춘다(원문이 바뀌어 교체가 조용히 빗나가는 것을 막는다).
+COPY_V11 = [
+    # p.2 목차: 옛 문구 / 영국식 timetable
+    ('<div class="cd">blank space</div>', '<div class="cd">ruled, dot grid, plain</div>', 1),
+    ('<div class="cd">timetable, one page per class</div>',
+     '<div class="cd">class schedule, one page per class</div>', 1),
+    ('<div class="sub">Timetable, and one page per class</div>',
+     '<div class="sub">Class schedule and one page per class</div>', 1),
+    # p.424 Life: 없는 "admin" 을 약속했다
+    ('<div class="sub">The admin that eats the week</div>',
+     '<div class="sub">Medication, sleep, mood</div>', 1),
+    # p.423 Energy: 적을 칸 없는 "this much", 에너지 표에 CLASS 열
+    ('<div class="label">Today I have about this much</div>',
+     '<div class="label">Where my energy goes today</div>', 1),
+    ('WHAT I WILL SPEND IT ON</td><td style="width:123.30pt">CLASS</td>',
+     'WHAT I WILL SPEND IT ON</td><td style="width:123.30pt">FOR</td>', 1),
+    ('<div class="sub">What you actually have today, not what you wish</div>',
+     '<div class="sub">What you actually have today, not what you wish you had</div>', 1),
+    # p.418 Focus 목록: 영국식 철자 + 유일한 축약형
+    ("pick, don't optimise", "pick one, do not overthink", 1),
+    ("name it and it shrinks", "name it and it gets smaller", 1),
+    # p.1 표지 카드
+    ('<div class="cd">what is due, and done</div>',
+     '<div class="cd">what is due, and what is done</div>', 1),
+    ('<div class="cv-t">Semester<br>Planner</div>',
+     '<div class="cv-t">Student<br>Planner</div>', 1),
+    # p.415 Reading log: "To read, and read" 가 "읽고 또 읽어라"로 읽혔다
+    ('<div class="sub">To read, and read</div>',
+     '<div class="sub">What to read, and what you have read</div>', 1),
+    ("to read, and read", "what to read, what you have read", 1),
+    # p.378 Group project: 시제가 섞였다
+    ('<div class="sub">The part that goes wrong is who was doing what.</div>',
+     '<div class="sub">What goes wrong is who is doing what.</div>', 1),
+    # p.424 Sleep 목록: 표(IN BED / ASLEEP)와 맞춘다
+    ("hours in, hours slept", "hours in bed, hours asleep", 1),
+    # 같은 형식으로 (라벨은 명사 둘을 &amp; 로)
+    ('<div class="label">Who, and when</div>', '<div class="label">Who &amp; when</div>', 1),
+    ('<div class="label">Professor / TA</div>', '<div class="label">Professor &amp; TA</div>', 40),
+    ('<div class="sub">For lists, sketches and diagrams</div>',
+     '<div class="sub">For lists, sketches, and diagrams</div>', 3),
+    # 괘선은 면 안쪽에만 있다 -- 종이 끝까지가 아니다
+    ('<div class="sub">Lined, edge to edge</div>', '<div class="sub">Lined, top to bottom</div>', 3),
+    # 이름 통일: 칩 라벨 = 북마크 = 리스팅 "class pages"
+    ('<div class="label">One page per class</div>', '<div class="label">Class pages</div>', 1),
+    # 학기당 한 장인 시간표에 "이번 주" 메모
+    ('<div class="label">Notes for the week</div>', '<div class="label">Notes</div>', 8),
+    # 모호한 열 / 다른 표와 다른 열 이름 / 표와 겹치는 라벨
+    ('<td style="width:61.65pt">CLEAR</td>', '<td style="width:61.65pt">DONE</td>', 8),
+    ('<td style="width:102.75pt">BY</td>', '<td style="width:102.75pt">BY WHEN</td>', 1),
+    ('<div class="label">The plan</div>', '<div class="label">The goal</div>', 1),
+    # 22행인데 "This month" (한 달을 못 채운다)
+    ('<div class="label">This month</div>', '<div class="label">Log</div>', 2),
+    # Days 목차("Fourteen a term") 와 같은 문형
+    ('<div class="sub">Sixteen weeks a term, eight terms</div>',
+     '<div class="sub">Sixteen a term, eight terms</div>', 1),
+]
+
+# 표지 카드 4줄이 목차와 같은 모양인데 눌리지 않았다 -- 링크로
+COVER_LINKS = {"Syllabus unpack": "s1", "Assignment tracker": "a1",
+               "Working backwards": "backwards", "Term at a glance": "t1"}
+
+
+def apply_copy(html):
+    """copy_v11: 문구 교체 + 표지 링크 + 학기 개요 머리말. 완성된 HTML 에 건다."""
+    import re
+    for old, new, n in COPY_V11:
+        got = html.count(old)
+        if got != n:
+            raise RuntimeError("copy_v11: %r 가 %d 번 (기대 %d)" % (old[:50], got, n))
+        html = html.replace(old, new)
+    # 표지 카드 줄 -> 링크 (목차 줄과 같은 › 표시)
+    for name, href in COVER_LINKS.items():
+        pat = re.compile('<div class="crow">(<div class="orb"[^>]*></div>'
+                         '<div class="cn">' + re.escape(name) +
+                         '<div class="cd">[^<]*</div></div>)</div>')
+        html, k = pat.subn('<a class="crow" href="#%s">\\1'
+                           '<span class="cq">&rsaquo;</span></a>' % href, html)
+        if k != 1:
+            raise RuntimeError("copy_v11: 표지 카드 %r 링크 %d 개" % (name, k))
+    # 학기 개요(t#): 머리말을 표지·칩·북마크의 이름 "Term at a glance" 로
+    html, k = re.subn('<div class="eyebrow">Semester</div><h1>(Term [0-9]+)</h1>',
+                      '<div class="eyebrow">Term at a glance</div><h1>\\1</h1>', html)
+    if k != TERMS:
+        raise RuntimeError("copy_v11: 학기 개요 머리말 %d 개" % k)
+    return html
+
+
+def copy_v11():
+    return bool(bp and bp.T.get("copy_v11"))
+
+
 def chip_index(eyebrow, title, sub_, prefix, per_term, cols):
+    # 빈 라벨은 색 막대만 떠 있었다(p.29, p.158) -- card() 는 이미 막아 둔
+    # 것을 chip_card() 에서 다시 밟았다. copy_v11 에서 "By term".
     return (bp.head(eyebrow, title, sub_)
-            + body(chip_card("", prefix, per_term, cols),
+            + body(chip_card("By term" if copy_v11() else "", prefix,
+                             per_term, cols),
                    card("Anything else", fill(), flex="1")))
 
 
@@ -832,7 +933,9 @@ def outline():
                 if label not in seen:
                     seen.append(label)
                     kids.append((label, k, []))
-        out.append((TAB_TITLES[key], key, kids))
+        # 북마크 맨 위 "Where to?" 는 레일 이름 "INDEX" 와 달랐다 (copy_v11)
+        name = "Index" if key == "index" and copy_v11() else TAB_TITLES[key]
+        out.append((name, key, kids))
     return out
 
 

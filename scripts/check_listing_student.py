@@ -113,6 +113,30 @@ has(r"\b%s exam study plans\b" % WORDS[count("e") // terms], "학기당 시험 �
 has(r"\b%s note pages\b" % WORDS[count("n")], "노트 수", count("n"))
 has(r"There are %s for every term" % WORDS[count("s") // terms], "학기당 Syllabus", count("s") // terms)
 
+# ------------------------------------------------------------- 썸네일 이름
+# 최종 검수(2026-09-24): 썸네일에 "Cornell notes", "Exam plans" 처럼 제품에
+# 없는 이름이 있었다. 썸네일 카드 이름과 7번 하단 목록의 이름이 제품의 페이지
+# 제목·라벨·목록 이름에 있어야 한다.
+mock = io.open(os.path.join(ROOT, "scripts", "build_mockups_student.py"),
+               encoding="utf-8").read()
+names_in_product = set(re.findall(r"<h1>([^<]+)</h1>", h))
+names_in_product |= set(re.findall(r'<div class="label">([^<]+)</div>', h))
+names_in_product |= set(re.findall(
+    r'<div style="font-size:10.5pt;font-weight:700">([^<]+)</div>', h))
+names_in_product |= {n + "s" for n in names_in_product}      # 복수형 허용
+cards = re.findall(r'\("[a-z0-9_]+", "([A-Z][^"]+)", "[^"]*"\)', mock)
+foot = re.search(r'class="foot" style="font-size:38px">(.*?)</div>', mock, re.S)
+foot_names = []
+if foot:
+    txt = re.sub(r"'\s*'", "", foot.group(1))
+    foot_names = [x.strip() for x in re.split(r"&middot;|<br>", txt)]
+unknown = sorted(set(n for n in cards + foot_names
+                     if n and n not in names_in_product
+                     and n not in ("Buy and download", "Open in your notes app",
+                                   "Tap the side tabs", "Assignments",
+                                   "Exams &amp; quizzes", "Reading")))
+add("썸네일의 페이지 이름이 제품에 있음", not unknown, unknown)
+
 fails = 0
 for name, ok, got in checks:
     fails += not ok

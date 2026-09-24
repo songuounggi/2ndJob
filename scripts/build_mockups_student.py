@@ -69,11 +69,13 @@ h2{font-size:92px;font-weight:800;line-height:1.08;margin-top:36px;
    letter-spacing:-.022em}
 .sub{font-size:46px;line-height:1.38;margin-top:26px;opacity:.74}
 .grow{flex:1;display:flex;align-items:center;justify-content:center;
-      min-height:0;gap:40px;overflow:hidden;position:relative}
+      min-height:0;gap:40px;position:relative}
+/* overflow:hidden 을 두면 태블릿 그림자가 칸 아래에서 칼같이 잘려
+   회색 띠가 된다(2·7번). 크기는 shelf() 와 고정 높이로 막는다. */
 .foot{font-size:36px;text-align:center;margin-top:28px;opacity:.6}
 
 .tab{background:#1C1830;border-radius:54px;padding:24px;position:relative;
-     box-shadow:0 60px 120px rgba(20,10,60,.45)}
+     box-shadow:0 36px 80px rgba(20,10,60,.38)}
 .tab img{display:block;border-radius:32px;height:var(--tab,860px);width:auto}
 
 .chips{display:flex;gap:22px;margin-top:34px;flex-wrap:wrap}
@@ -82,6 +84,9 @@ h2{font-size:92px;font-weight:800;line-height:1.08;margin-top:36px;
 .chip i{font-style:normal;font-weight:700;font-size:32px;opacity:.55;
         margin-left:12px}
 .dark .chip{background:rgba(255,255,255,.14);color:#FFF;box-shadow:none}
+.dark .pg b{color:#FFF}
+.dark .pg span{color:rgba(255,255,255,.72);opacity:1}
+.dark .note span{opacity:.75}
 
 .shelf{display:flex;gap:32px;align-items:flex-end;justify-content:center;
        width:100%%}
@@ -178,7 +183,17 @@ def dark(body):
             '<div class="wrap dark">%s</div>' % (img("cover_bg"), body))
 
 
+# 밝은 장의 바탕. 거의 흰 단색(PAPER)은 "흰 바탕은 아니다"(사용자 2026-09-24).
+# pastel = 제품 내지 바닥과 같은 연한 오로라, dark = 표지 오로라(dark() 와 같게).
+LIGHT_BG = os.environ.get("MOCK_LIGHT", "dark")
+
+
 def light(body):
+    if LIGHT_BG == "dark":
+        return dark(body)
+    if LIGHT_BG == "pastel":
+        return ('<div class="aurora"><img src="%s"></div>'
+                '<div class="wrap">%s</div>' % (img("light_bg"), body))
     return '<div class="wrap">%s</div>' % body
 
 
@@ -214,6 +229,9 @@ def chips(items, dark_=False):
 #   two taps      = 모든 페이지 쌍의 최단 탭 수 최대값 (링크 그래프 BFS)
 #   4,900 links   = PDF 링크 주석 4,933
 #   112 day pages = DAYS_PER_TERM 14 x 8
+#   12 / 20       = 학기마다 반복되는 디자인 12종 / 그 밖 20종 (32종, 3번)
+#   Five pages    = FOCUS 탭 아래 5장 (8번. 전에는 세 탭에서 모은 "Eleven")
+#   Nine notes    = 노트 3종 x 3장 (10번)
 #   print 는 뺐다 -- 괘선 대비 1.14:1 이라 인쇄하면 거의 안 보인다(G)
 # 페이지 구성을 바꾸면 이 숫자들을 다시 잰다.
 def s1_hero():
@@ -231,7 +249,7 @@ def s1_hero():
         '<h1 style="font-size:96px">ADHD<br>Student<br>Planner</h1>'
         '<div class="sub" style="font-size:42px">Syllabus, assignments and '
         'exams &mdash; broken into pieces you can actually start.</div>'
-        + chips([("437", "pages"), ("32", "templates")])
+        + chips([("437", "pages"), ("32", "designs")])
         + chips([("4", "years"), ("10", "tabs")])
         + '</div>'
           '<div style="flex:1;display:flex;justify-content:center;'
@@ -265,7 +283,7 @@ def s3_templates():
              ("braindump", "Brain dump", "no order, no rules")]
     return light(
         '<div class="kicker">32 PAGE DESIGNS</div>'
-        '<h2>One set per term.<br>Eight terms inside.</h2>'
+        '<h2>12 for every term.<br>20 for whenever you need them.</h2>'
         '<div class="grow"><div class="shelf">%s</div></div>'
         % shelf(cells, 440))
     # 카드 높이: 폭 2000 - 좌우 패딩 260 = 1740px 안에 들어가야 한다. 페이지
@@ -281,13 +299,15 @@ def s4_navigation():
     return dark(
         '<div class="kicker">TAP, DO NOT SCROLL</div>'
         '<h2>Ten tabs down the side.<br>Any page in two taps.</h2>'
-        '<div class="grow" style="gap:90px">'
-        '<img class="cut r" src="%s" style="height:1060px;flex:none">'
-        '<div style="flex:none;max-width:820px"><div class="tags">%s</div>'
+        '<div class="grow" style="gap:70px">'
+        '<div class="tab" style="--tab:960px;flex:none"><img src="%s"></div>'
+        '<div style="flex:none;max-width:600px"><div class="tags">%s</div>'
         '<div class="sub" style="font-size:40px;margin-top:34px">'
         'Over 4,900 working links inside. The tab you are on lights up, so you '
         'never lose your place.</div></div></div>'
-        % (img("rail_zoom"), t))
+        % (img("d1"), t))
+    # 전에는 레일만 잘라 오른쪽을 흐리게 지웠다(cut r). 7번과 같은 흐림이라
+    # 함께 뺐다(2026-09-24). 페이지 전체를 태블릿에 넣고 탭 이름은 옆에.
 
 
 def s5_structure():
@@ -296,7 +316,7 @@ def s5_structure():
         'text-align:center;box-shadow:0 16px 40px rgba(40,28,90,.10)">'
         '<div style="font-size:26px;font-weight:800;letter-spacing:.06em;white-space:nowrap;'
         'color:%s">TERM %d</div>'
-        '<div style="font-size:24px;opacity:.55;margin-top:8px">16 weeks'
+        '<div style="font-size:24px;color:#8A8499;margin-top:8px">16 weeks'
         '</div></div>' % (c, i + 1)
         for i, c in enumerate([VIOLET, VIOLET, PINK, PINK,
                                ORANGE, ORANGE, CYAN, CYAN]))
@@ -315,7 +335,7 @@ def s5_structure():
 
 def s6_work():
     cells = [("backwards", "Working backwards", "from the deadline"),
-             ("assignments", "Assignment tracker", "what is due, and done"),
+             ("assignments", "Assignment tracker", "what is due, and what is done"),
              ("group", "Group project", "who does what, by when")]
     return light(
         '<div class="kicker">WORK</div>'
@@ -330,31 +350,34 @@ def s7_study():
         '<div class="kicker">STUDY</div>'
         '<h2>Split the scope first.<br>Then give each piece a day.</h2>'
         '<div class="grow" style="gap:50px">'
-        '<img class="cut rb" src="%s" style="height:900px">'
+        '<div class="tab" style="--tab:880px"><img src="%s"></div>'
         '<div style="display:flex;flex-direction:column;gap:30px">'
-        '<img src="%s" style="height:430px;border-radius:18px;'
+        '<img src="%s" style="height:360px;border-radius:18px;'
         'box-shadow:0 30px 70px rgba(10,5,40,.45)">'
-        '<img src="%s" style="height:430px;border-radius:18px;'
+        '<img src="%s" style="height:360px;border-radius:18px;'
         'box-shadow:0 30px 70px rgba(10,5,40,.45)"></div></div>'
-        '<div class="foot" style="font-size:38px">Exam plans &middot; '
-        'Cornell notes &middot; Reading log &middot; Grade tracker &middot; '
+        '<div class="foot" style="font-size:38px">Exam study plans &middot; '
+        'Lecture notes &middot; Reading log<br>Grade tracker &middot; '
         'Study session log &middot; Office hours</div>'
-        % (img("exam_zoom"), img("cornell"), img("grades")))
+        % (img("exam"), img("cornell"), img("grades")))
+    # 전에는 시험 계획을 잘라 확대하고 오른쪽·아래를 흐리게 지웠다(cut rb).
+    # 흰 얼룩처럼 보였다 -- "이 그라데이션은 최악"(사용자). 페이지 전체를
+    # 2번처럼 태블릿 프레임에 넣는다.
 
 
 def s8_focus():
-    cells = [("braindump", "Brain dump", "empty your head first"),
-             ("avoiding", "Why I am avoiding it", "name it and it shrinks"),
+    cells = [("braindump", "Brain dump", "empty your head onto the page"),
+             ("avoiding", "Why I am avoiding it", "name it and it gets smaller"),
              ("energy", "Energy budget", "what you actually have today")]
     return light(
         '<div class="kicker">WHEN STARTING IS THE HARD PART</div>'
-        '<h2>Eleven pages for the<br>part nobody sells you.</h2>'
+        '<h2>Five pages for the<br>part nobody sells you.</h2>'
         '<div class="grow"><div class="shelf">%s</div></div>'
         % shelf(cells, 600))
 
 
 def s9_howto():
-    apps = ["GoodNotes", "Notability", "Noteshelf", "Xodo", "Adobe Acrobat"]
+    apps = ["GoodNotes", "Notability", "Xodo", "Adobe Acrobat"]
     tags = "".join('<div class="tag">%s</div>' % a for a in apps)
     steps = [("1", "Buy and download", "one PDF, instantly"),
              ("2", "Open in your notes app", "iPad or Android tablet"),
@@ -377,10 +400,24 @@ def s9_howto():
         % (st, tags, img("timetable")))
 
 
+def s10_notes():
+    """10번째 장 (2026-09-24, 사용자: 9장이 아니라 10장). 노트 9장은 기존 9장을
+    만든 뒤에 들어온 기능이라 어디에도 안 보였다. 리스팅은 "nine note pages"."""
+    cells = [("ruled", "Ruled", "lined, top to bottom"),
+             ("dots", "Dot grid", "lists, sketches, and diagrams"),
+             ("plain", "Plain", "nothing printed on it")]
+    return light(
+        '<div class="kicker">NOTES</div>'
+        '<h2>Nine note pages.<br>Three kinds of paper.</h2>'
+        '<div class="grow"><div class="shelf">%s</div></div>'
+        % shelf(cells, 600))
+
+
 SHOTS = [("1_hero", s1_hero), ("2_syllabus", s2_syllabus),
          ("3_templates", s3_templates), ("4_navigation", s4_navigation),
          ("5_structure", s5_structure), ("6_work", s6_work),
-         ("7_study", s7_study), ("8_focus", s8_focus), ("9_howto", s9_howto)]
+         ("7_study", s7_study), ("8_focus", s8_focus), ("9_howto", s9_howto),
+         ("10_notes", s10_notes)]
 
 
 # 목업에 쓰는 페이지 그림: 이름 -> 페이지 id (scale 2 로 뽑는다)
@@ -388,7 +425,8 @@ SRC_PAGES = {"syllabus": "s1", "timetable": "h1", "grades": "g1",
              "assignments": "a1", "exam": "e1", "t1": "t1", "d1": "d1",
              "cornell": "cornell", "braindump": "braindump",
              "backwards": "backwards", "group": "group",
-             "avoiding": "avoiding", "energy": "energy"}
+             "avoiding": "avoiding", "energy": "energy",
+             "ruled": "n1", "dots": "n4", "plain": "n7"}
 
 
 def render_src(version):
@@ -416,6 +454,11 @@ def prep():
                                   "app_cover_student-v0.1.png")).convert("RGB")
     cov.resize((SIZE, SIZE), Image.LANCZOS).save(
         os.path.join(SRC, "cover_bg.png"))
+    # 밝은 장 바탕 -- 제품 내지 바닥(sheet)과 같은 오로라
+    sheet = os.path.join(ROOT, "assets", "app_sheet_%s.png" % VERSION)
+    if os.path.exists(sheet):
+        Image.open(sheet).convert("RGB").resize((SIZE, SIZE), Image.LANCZOS).save(
+            os.path.join(SRC, "light_bg.png"))
     # 레일 클로즈업 -- '탭 10개'를 실제로 보이게
     d1 = Image.open(os.path.join(SRC, "d1.png")).convert("RGB")
     w, h = d1.size
@@ -423,13 +466,14 @@ def prep():
     # 시험 계획 표 클로즈업 -- 결을 보여 주는 한 장
     ex = Image.open(os.path.join(SRC, "exam.png")).convert("RGB")
     w, h = ex.size
-    ex.crop((int(w * 0.10), int(h * 0.20), w, int(h * 0.72))).save(
+    ex.crop((int(w * 0.05), int(h * 0.20), w, int(h * 0.72))).save(
         os.path.join(SRC, "exam_zoom.png"))
 
 
 if __name__ == "__main__":
     import sys
-    render_src(sys.argv[1] if len(sys.argv) > 1 else "student-v0.8")
+    VERSION = sys.argv[1] if len(sys.argv) > 1 else "student-v1.1"
+    render_src(VERSION)
     prep()
     for name, fn in SHOTS:
         check_safe(name, fn())

@@ -1,8 +1,8 @@
 # 상품 2 Etsy 리스팅 원고 — ADHD 학생용 플래너
 
 복사해서 붙여넣기용. 영문은 그대로 쓴다.
-**student-v1.0 FINAL (437p / 페이지 디자인 32종 / 15.5MB) 에서 실측한 값이다** (v0.9 와 숫자 동일).
-검사: `python scripts/check_listing_student.py student-v1.0` -- 버전을 바꾸면 다시 돌린다.
+**student-v1.1 FINAL (437p / 페이지 디자인 32종 / 15.5MB) 에서 실측한 값이다** (v0.9·v1.0 과 숫자 동일).
+검사: `python scripts/check_listing_student.py student-v1.1` -- 원고 숫자 + 썸네일에 쓴 페이지 이름까지 대조 -- 버전을 바꾸면 다시 돌린다.
 
 상품 1 원고(`listing.md`)의 형식과 교훈을 그대로 따른다: 제목 140자·대문자 단어 3개,
 태그 13개·20자, 문단 안 줄바꿈 금지, 의료 효과 주장 금지, 환불 문구는 숍 정책과 같게.
@@ -67,7 +67,7 @@ Eight terms (four years), each with its own set:
 • Term at a glance – all sixteen weeks on one sheet, with what is due and when exams fall
 • Term goals and a term review
 • 16 week pages and 14 day pages – use them on the weeks and days you need
-• A class schedule, and a page for professors and TAs with their office hours
+• A class schedule, and Who to ask – your professors and TAs, with their office hours
 • Five class pages and five syllabus pages
 • An assignment tracker, three exam study plans and a grade tracker
 
@@ -127,10 +127,10 @@ Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하�
 
 | 항목 | 값 |
 |---|---|
-| 파일 | `output/planner_student-v1.0-FINAL.pdf` (437p, 15,457,817 B) |
+| 파일 | `output/planner_student-v1.1-FINAL.pdf` (437p) — 최종 검수 반영판 |
 | Etsy 파일명 | `ADHD-Student-Planner-Undated-437-pages.pdf` (42자, 영숫자·`-`·`.` 만. 올린 뒤엔 못 고친다) |
-| 업로드 사본 | **올린 뒤에** `output/upload/student-v1.0/` 을 만들어 넣는다 (RELEASE.md 3-2. 미리 만들지 않는다) |
-| 목업 | `python scripts/build_mockups_student.py student-v1.0` → `output/listing_student/` 9장 |
+| 업로드 사본 | **올린 뒤에** `output/upload/student-v1.1/` 을 만들어 넣는다 (RELEASE.md 3-2. 미리 만들지 않는다) |
+| 목업 | `python scripts/build_mockups_student.py student-v1.1` → `output/listing_student/` **10장** (Etsy 는 20장까지) |
 
 ## 일부러 쓰지 않은 것
 
@@ -167,7 +167,7 @@ Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하�
 | Term at a glance – 16 weeks one sheet, due & exams | t# 표 WEEK(16)/WHAT IS DUE/EXAMS/CLEAR | 일치 |
 | Term goals, term review | o# 8, r# 8 | 일치 |
 | 16 week pages, 14 day pages per term | w# 128 = 16x8, d# 112 = 14x8 | 일치 |
-| class schedule; professors & TAs with office hours | h# 8; k# "Professors & TAs" NAME/CLASS/OFFICE HOURS/ASKED | 일치 |
+| class schedule; Who to ask – professors and TAs, office hours | h# 8 "Class schedule"; k# 제목 "Who to ask", 표 "Professors & TAs" NAME/CLASS/OFFICE HOURS/ASKED | 일치 |
 | Five class pages, five syllabus pages | c# 40, s# 40 | 일치 |
 | assignment tracker, three exam plans, grade tracker | a# 8, e# 24 = 3x8, g# 8 | 일치 |
 | Plus 목록 (all eight terms … nine notes) | terms, cornell, reading, session, office, braindump, focus-session, obstacle, meds, sleep, mood, n# 9 (Ruled/Dot grid/Plain) | 일치 |
@@ -175,6 +175,6 @@ Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하�
 | at most two taps, over 4,900 links | 링크 그래프 BFS 최대 2, 링크 주석 4,933 | 일치 |
 | The tab you are on lights up | verify "안 보이는 현재 탭 표시" 0 (L2) | 일치 |
 | WEEK OF / DATE box | w# datebox WEEK OF, d# datebox DATE | 일치 |
-| GoodNotes, Notability, Xodo, Acrobat; Android | 상품 1 원고와 같은 PDF 내부 링크 방식. **학생용은 사용자가 v0.8 을 모바일에서 확인("빠릿하게 잘 움직인다") -- 어느 앱인지는 미기록.** Notability·Xodo·Acrobat·Android 는 학생용에서 **미확인** | 부분 확인 |
+| GoodNotes, Notability, Xodo, Acrobat; Android | 상품 1 원고와 같은 PDF 내부 링크 방식. **학생용 확인: v0.8 모바일, v1.0 아이폰 미리보기(애플 기본 PDF 엔진)에서 RELEASE.md 1-3 체크리스트 1~8 통과** (속도·탭·링크·점지·흐림·개요). **GoodNotes·Notability·Xodo·Acrobat 앱과 Android 는 학생용에서 미확인** | 부분 확인 |
 | US Letter | 페이지 612 x 792 pt | 일치 |
 | 환불·개인 사용 문구 | 상품 1 `listing.md` 와 같은 문장 (숍 정책과 맞춘 것) | 일치 |

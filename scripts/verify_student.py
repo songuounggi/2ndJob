@@ -385,6 +385,20 @@ for n, pg in enumerate(r.pages, 1):
     if "&rsaquo;" in outside or "justify-content:center;height:19pt" in outside:
         _fake.append(ids[n - 1])
 add("HTML 링크 수 != PDF 링크 수", len(_n_bad), 0, not _n_bad)
+# 최종 검수(2026-09-24)에서 나온 것:
+#  · 표지 카드 줄이 목차 줄(<a class="crow">)과 같은 모양인데 <div> 라 안 눌렸다
+#  · Weeks·Days 목차의 라벨이 비어 색 막대만 떠 있었다(card() 는 막았는데
+#    chip_card() 가 다시 밟음)
+#  · 라벨·열 머리 끝 마침표는 규칙 위반(부제만 문장이면 마침표)
+_dead_rows = [pid for pid, body in _sec.items() if '<div class="crow">' in body]
+add("눌리지 않는 목록 줄 (crow)", len(_dead_rows), 0, not _dead_rows)
+_empty_lab = [pid for pid, body in _sec.items()
+              if re.search(r'<div class="label">\s*</div>', body)]
+add("빈 라벨 (색 막대만)", len(_empty_lab), 0, not _empty_lab)
+_dot_lab = sorted(set(t for t in re.findall(
+    r'<div class="label">([^<]+)</div>|<td style="width:[0-9.]+pt">([^<]+)</td>', h)
+    for t in t if t.strip().endswith(".")))
+add("마침표로 끝나는 라벨·열 머리", len(_dot_lab), 0, not _dot_lab)
 add("링크처럼 생겼는데 링크 아님", len(_fake), 0, not _fake)
 
 
