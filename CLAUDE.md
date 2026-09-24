@@ -22,6 +22,7 @@ Etsy에 판매할 디지털 다운로드 상품을 만드는 프로젝트.
 **상품 1 — 출시 완료.** ADHD & Wellness Digital Planner (v8-undated).
 502페이지 / 고유 61종 / 19.6MB. $16.99, 40% 런칭 세일(~10/20).
 2026-09-23 에 v8.18-undated 로 교체(노트 8장 추가, 선 규칙 정리).
+2026-09-24 에 v8.20-undated 로 교체(GoodNotes 렌더링 속도, 도트 그리드). 16.5MB.
 Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
 
 **상품 2 — 제작 중.** ADHD 학생용 플래너(v9-student). 기획·규모·테마 확정,
@@ -166,7 +167,7 @@ PLANNER_VERSION=v3-sunset python scripts/build_planner.py
 | `v8-undated` | 2026-09-21 출시본. 494p |
 | `v8.18-undated` | 2026-09-23 교체본. 노트 8장 + 선 규칙 정리. 502p |
 | `v8.19-undated` | GoodNotes 바둑판 렌더링 수정(`fast_paint`). 올리지 않음 |
-| **`v8.20-undated`** | **올릴 판.** v8.19 + 도트 그리드 벡터화(`vector_dots`). 16,517,551 B |
+| **`v8.20-undated`** | **판매 중 (2026-09-24 교체).** v8.19 + 도트 그리드 벡터화(`vector_dots`). 16,517,551 B |
 
 **파일 규칙** (2026-09-24 사용자 확정):
 
