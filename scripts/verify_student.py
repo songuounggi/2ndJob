@@ -192,6 +192,19 @@ for pid, body in _sec.items():
         if "flex:none" not in m.group(1) and 'class="lines"' not in m.group(2):
             _hole.append(pid)
 add("필기면 없이 늘어나는 행", len(_hole), 0, not _hole)
+# 학기 개요의 Week N 행은 그 학기 N주 페이지로 가야 한다. 링크가 없어서
+# 16주 표를 보고도 해당 주로 가려면 목차로 돌아가야 했다(2026-09-24).
+_wk_bad = []
+for pid, body in _sec.items():
+    m = re.fullmatch(r"t(\d+)", pid)
+    if not m:
+        continue
+    t = int(m.group(1))
+    want = ["w%d" % ((t - 1) * 16 + w) for w in range(1, 17)]
+    got = re.findall(r'<a href="#(w\d+)"[^>]*>Week \d+', body)
+    if got != want:
+        _wk_bad.append(pid)
+add("학기 개요 -> 주간 링크 틀림", len(_wk_bad), 0, not _wk_bad)
 # 행이 딱 떨어지게 끝나는가 (LINES.md 1-3 절). 필기면 높이가 flex 로
 # 정해지면 나머지(0~22pt)만큼 마지막 괘선이 바닥 위에 애매하게 뜬다.
 # 높이는 24pt 배수로 고정되어야 하고, 맨 아래 괘선은 그리지 않는다.

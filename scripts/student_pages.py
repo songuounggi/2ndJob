@@ -302,9 +302,17 @@ def p_terms():
 
 def p_term(term, i=1):
     """학기 개요 한 장. 16주를 한 장에 놓고, 무거운 주를 미리 본다."""
+    # Week N 은 그 주 페이지로 가는 링크다. 칸 전체를 덮어(display:flex)
+    # 손가락으로 누르기 쉽게 하고, 목차 행과 같은 › 로 눌린다는 걸 보인다.
     rows = "".join(
-        '<tr><td>Week %d</td><td></td><td></td><td class="bx"><i></i></td></tr>'
-        % w for w in range(1, WEEKS_PER_TERM + 1))
+        '<tr><td><a href="#w%d" style="display:flex;justify-content:'
+        'space-between;align-items:center;height:100%%;color:inherit;'
+        'text-decoration:none">Week %d<span style="color:#5B5375;'
+        'font-size:11pt">'
+        '&rsaquo;</span></a></td><td></td><td></td>'
+        '<td class="bx"><i></i></td></tr>'
+        % ((term - 1) * WEEKS_PER_TERM + w, w)
+        for w in range(1, WEEKS_PER_TERM + 1))
     widths = A.T4
     hd = "".join('<td style="width:%.2fpt">%s</td>' % (w, c)
                  for w, c in zip(widths, ["WEEK", "WHAT IS DUE", "EXAMS",
