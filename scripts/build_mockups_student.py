@@ -67,7 +67,8 @@ h1{font-size:132px;font-weight:800;line-height:1.04;margin-top:36px;
    letter-spacing:-.025em}
 h2{font-size:92px;font-weight:800;line-height:1.08;margin-top:36px;
    letter-spacing:-.022em}
-.sub{font-size:46px;line-height:1.38;margin-top:26px;opacity:.74}
+.sub{font-size:46px;line-height:1.38;margin-top:26px;opacity:.74;
+     text-wrap:balance}   /* 끝 단어 하나만 다음 줄로 떨어지지 않게(1번 start., 5번 score.) */
 .grow{flex:1;display:flex;align-items:center;justify-content:center;
       min-height:0;gap:40px;position:relative}
 /* overflow:hidden 을 두면 태블릿 그림자가 칸 아래에서 칼같이 잘려
@@ -128,7 +129,11 @@ def img(name):
     return "file:///" + p.replace("\\", "/")
 
 
+MIN_GAP = 24     # 세로로 쌓인 덩어리 사이 최소 간격(px)
+# 글꼴(Nunito)이 다 오기 전에 재면 줄바꿈이 촬영본과 달라진다 -- 5번 "score."
+# 가 검사에서는 윗줄에 붙어 있었다. fonts.ready 뒤에 잰다.
 SAFE_JS = """
+document.fonts.ready.then(() => {
 const bad = [];
 document.querySelectorAll('h1,h2,.kicker,.sub,.chip,.tag,.pg b,.pg span,.note b,.note span,.foot').forEach(e => {
   const r = e.getBoundingClientRect();
@@ -136,8 +141,51 @@ document.querySelectorAll('h1,h2,.kicker,.sub,.chip,.tag,.pg b,.pg span,.note b,
   if (r.left < %d - 0.5 || r.right > 2000 - %d + 0.5 || r.top < %d - 0.5 || r.bottom > 2000 - %d + 0.5)
     bad.push((e.textContent || '').trim().slice(0, 30) + ' @' + [r.left, r.top, r.right, r.bottom].map(Math.round).join(','));
 });
+// 세로로 쌓인 덩어리끼리 붙어 있으면 안 된다 -- 5번에서 숫자 칩 줄과 학기
+// 카드 줄이 0px 로 붙어 있었다(사용자 2026-09-24). 세로 흐름(.wrap, 세로 .grow)의
+// 이웃한 자식 사이 간격이 MIN_GAP 미만이면 잡는다.
+// .grow 는 칸이 크고 내용을 가운데 둔다 -- 칸이 아니라 보이는 내용의 범위를 잰다.
+const ink = k => {
+  if (!k.classList.contains('grow')) return k.getBoundingClientRect();
+  const rs = [...k.children].map(c => ink(c)).filter(r => r.height > 0);
+  if (!rs.length) return k.getBoundingClientRect();
+  const t = Math.min(...rs.map(r => r.top)), b = Math.max(...rs.map(r => r.bottom));
+  return {top: t, bottom: b, height: b - t};
+};
+document.querySelectorAll('.wrap, .grow').forEach(box => {
+  if (getComputedStyle(box).flexDirection !== 'column') return;
+  const kids = [...box.children].map(k => [k, ink(k)])
+    .filter(([k, r]) => r.height > 0).sort((x, y) => x[1].top - y[1].top);
+  for (let i = 1; i < kids.length; i++) {
+    const gap = kids[i][1].top - kids[i-1][1].bottom;
+    if (gap < %d) bad.push('붙음 ' + Math.round(gap) + 'px: ' +
+      (kids[i-1][0].textContent || kids[i-1][0].className).trim().slice(0, 20) + ' / ' +
+      (kids[i][0].textContent || kids[i][0].className).trim().slice(0, 20));
+  }
+});
+// 마지막 줄에 단어 하나만 남는 줄바꿈(5번 "score."). <br> 로 일부러 나눈
+// 줄(1번 "ADHD / Student / Planner")은 제외 -- 마지막 <br> 뒤 단어만 본다.
+document.querySelectorAll('h1,h2,.sub,.foot').forEach(e => {
+  let words = [];
+  const walk = n => [...n.childNodes].forEach(c => {
+    if (c.nodeType === 3) c.textContent.split(/(\s+)/).forEach(w => {
+      if (!w) return;
+      const s = document.createElement('span'); s.textContent = w;
+      c.parentNode.insertBefore(s, c); if (w.trim()) words.push(s);
+    }), c.remove();
+    else if (c.nodeName === 'BR') words = [];
+    else walk(c);
+  });
+  walk(e);
+  if (words.length < 3) return;
+  const tops = words.map(w => Math.round(w.getBoundingClientRect().top));
+  const last = tops[tops.length - 1];
+  if (tops.filter(t => t === last).length === 1 && tops[0] !== last)
+    bad.push('외톨이 단어: ' + words[words.length - 1].textContent);
+});
 document.body.setAttribute('data-safe', JSON.stringify(bad));
-""" % (SAFE_X, SAFE_X, SAFE, SAFE)
+});
+""" % (SAFE_X, SAFE_X, SAFE, SAFE, MIN_GAP)
 
 
 def check_safe(name, body, extra=""):
@@ -155,7 +203,7 @@ def check_safe(name, body, extra=""):
     m = re.search(r'data-safe="([^"]*)"', r.stdout or "")
     bad = json.loads(m.group(1).replace("&quot;", '"')) if m else ["(측정 실패)"]
     if bad:
-        raise SystemExit("%s: 안전 영역 밖의 글자 %s" % (name, bad[:4]))
+        raise SystemExit("%s: 안전 영역·간격·줄바꿈 %s" % (name, bad[:4]))
 
 
 def shoot(name, body, extra=""):
@@ -326,7 +374,7 @@ def s5_structure():
         '<div class="sub">Nothing is dated, so a gap costs you nothing. '
         'The page is not keeping score.</div>'
         + chips([("8", "terms"), ("128", "week pages"), ("112", "day pages")])
-        + '<div class="grow" style="flex-direction:column;gap:34px">'
+        + '<div class="grow" style="flex-direction:column;gap:34px;margin-top:44px">'
           '<div style="display:flex;gap:18px;width:100%%">%s</div>'
           '<img src="%s" style="flex:1;min-height:0;height:0;width:auto;border-radius:20px;'
           'box-shadow:0 30px 70px rgba(40,28,90,.22)"></div>'
