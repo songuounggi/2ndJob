@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """상품 2(학생용)의 Etsy 리스팅 이미지 9장.
 
-    PLANNER_VERSION=student-v0.1 python scripts/build_planner.py
-    python scripts/build_mockups_student.py
+    PLANNER_VERSION=<버전> python scripts/build_planner.py
+    python scripts/build_mockups_student.py <버전>      # 기본 student-v0.8
+
+페이지 그림(output/preview/listing_src/)은 스크립트가 그 버전 PDF 에서 직접
+뽑는다(render_src). 전에는 뽑는 방법이 기록에 없어 다른 PC 에서 재현이 안 됐다.
 
 상품 1의 `build_mockups.py` 는 건드리지 않는다. 톤도 파는 이야기도 다르다.
 다만 그 방에서 얻은 교훈은 그대로 가져온다:
@@ -169,11 +172,12 @@ def chips(items, dark_=False):
 
 
 # ------------------------------------------------------------------ 9장 --
-# 문구의 근거 (2026-09-24, student-v0.4 실측. product2-student.md "F" 절 표):
-#   30 templates  = 쓰는 페이지 디자인 수(목차·탭 페이지 제외). 포함하면 40
+# 문구의 근거 (2026-09-24, student-v0.8 실측. product2-student.md "F" 절 표):
+#   437 pages     = PDF 페이지 수
+#   32 templates  = 쓰는 페이지 디자인 수(목차·탭 페이지 제외, 노트 3종 포함)
 #   Eight terms   = TERMS 8, 반복 세트는 학기마다 한 벌
 #   two taps      = 모든 페이지 쌍의 최단 탭 수 최대값 (링크 그래프 BFS)
-#   4,800 links   = PDF 링크 주석 4,834
+#   4,900 links   = PDF 링크 주석 4,933
 #   112 day pages = DAYS_PER_TERM 14 x 8
 #   print 는 뺐다 -- 괘선 대비 1.14:1 이라 인쇄하면 거의 안 보인다(G)
 # 페이지 구성을 바꾸면 이 숫자들을 다시 잰다.
@@ -192,7 +196,7 @@ def s1_hero():
         '<h1 style="font-size:96px">ADHD<br>Student<br>Planner</h1>'
         '<div class="sub" style="font-size:42px">Syllabus, assignments and '
         'exams &mdash; broken into pieces you can actually start.</div>'
-        + chips([("428", "pages"), ("30", "templates")])
+        + chips([("437", "pages"), ("32", "templates")])
         + chips([("4", "years"), ("10", "tabs")])
         + '</div>'
           '<div style="flex:1;display:flex;justify-content:center;'
@@ -225,7 +229,7 @@ def s3_templates():
              ("grades", "Grade tracker", "what each piece is worth"),
              ("braindump", "Brain dump", "no order, no rules")]
     return light(
-        '<div class="kicker">30 PAGE DESIGNS</div>'
+        '<div class="kicker">32 PAGE DESIGNS</div>'
         '<h2>One set per term.<br>Eight terms inside.</h2>'
         '<div class="grow"><div class="shelf">%s</div></div>'
         % shelf(cells, 520))
@@ -246,7 +250,7 @@ def s4_navigation():
         '<img class="cut r" src="%s" style="height:1060px;flex:none">'
         '<div style="flex:none;max-width:820px"><div class="tags">%s</div>'
         '<div class="sub" style="font-size:40px;margin-top:34px">'
-        'Over 4,800 working links inside. The tab you are on lights up, so you '
+        'Over 4,900 working links inside. The tab you are on lights up, so you '
         'never lose your place.</div></div></div>'
         % (img("rail_zoom"), t))
 
@@ -319,7 +323,7 @@ def s9_howto():
     tags = "".join('<div class="tag">%s</div>' % a for a in apps)
     steps = [("1", "Buy and download", "one PDF, instantly"),
              ("2", "Open in your notes app", "iPad or Android tablet"),
-             ("3", "Tap the side tabs", "no scrolling through 428 pages")]
+             ("3", "Tap the side tabs", "no scrolling through 437 pages")]
     st = "".join(
         '<div class="note"><div class="dot" style="background:%s;width:44px;'
         'height:44px;margin-top:6px;color:#FFF;font-size:26px;'
@@ -344,6 +348,31 @@ SHOTS = [("1_hero", s1_hero), ("2_syllabus", s2_syllabus),
          ("7_study", s7_study), ("8_focus", s8_focus), ("9_howto", s9_howto)]
 
 
+# 목업에 쓰는 페이지 그림: 이름 -> 페이지 id (scale 2 로 뽑는다)
+SRC_PAGES = {"syllabus": "s1", "timetable": "h1", "grades": "g1",
+             "assignments": "a1", "exam": "e1", "t1": "t1", "d1": "d1",
+             "cornell": "cornell", "braindump": "braindump",
+             "backwards": "backwards", "group": "group",
+             "avoiding": "avoiding", "energy": "energy"}
+
+
+def render_src(version):
+    """listing_src 의 페이지 그림을 그 버전의 FINAL PDF 에서 뽑는다."""
+    import re
+    import pypdfium2 as pdfium
+    html = open(os.path.join(ROOT, "src", "planner_%s.html" % version),
+                encoding="utf-8").read()
+    ids = re.findall(r'<section class="page[^"]*" id="([^"]+)"', html)
+    pdf = os.path.join(ROOT, "output", "planner_%s-FINAL.pdf" % version)
+    with open(pdf, "rb") as fh:
+        doc = pdfium.PdfDocument(fh.read())
+    os.makedirs(SRC, exist_ok=True)
+    for name, pid in SRC_PAGES.items():
+        doc[ids.index(pid)].render(scale=2).to_pil().save(
+            os.path.join(SRC, name + ".png"))
+    doc.close()
+
+
 def prep():
     """합성에 필요한 원본 몇 장을 만든다."""
     from PIL import Image
@@ -364,6 +393,8 @@ def prep():
 
 
 if __name__ == "__main__":
+    import sys
+    render_src(sys.argv[1] if len(sys.argv) > 1 else "student-v0.8")
     prep()
     for name, fn in SHOTS:
         print("찍음:", shoot(name, fn()))

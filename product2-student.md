@@ -1145,3 +1145,15 @@ assignments=a1, exam=e1, 나머지는 id 그대로), scale 2.
 표지 카드만 "Term at a glance", 칩(p.3)·북마크는 "Term overview" 였다. 한 장에 16주가
 다 보이는 페이지라 사용자가 "at a glance" 로 통일(`term_glance`, `student_pages.term_label()`).
 verify "표지 카드와 실제가 다름" 0. v0.7 은 바이트까지 재현됨.
+
+### 리스팅 목업 9장 — v0.8 기준으로 갱신 (2026-09-24)
+
+```bash
+python scripts/build_mockups_student.py student-v0.8     # -> output/listing_student/
+```
+- 페이지 그림(`output/preview/listing_src/`)을 스크립트가 **그 버전 PDF 에서 직접 뽑는다**
+  (`render_src`, 이름 -> 페이지 id 는 `SRC_PAGES`). 전에는 만드는 법이 기록에 없었다
+- v0.8 실측: 437p / 디자인 32종(노트 3종 포함, 목차 제외) / 링크 4,933 / 모든 페이지
+  쌍 최대 2탭 / 반복 400장 / 위클리 128 / 데일리 112 / 노트 9
+- 문구: 437 pages, 32 templates, "Over 4,900 working links", "no scrolling through 437 pages"
+- 전체 모음 `output/preview/review/34_mockups_v08.png`
