@@ -308,67 +308,69 @@ def chips(items, dark_=False):
 #   print 는 뺐다 -- 괘선 대비 1.14:1 이라 인쇄하면 거의 안 보인다(G)
 # 페이지 구성을 바꾸면 이 숫자들을 다시 잰다.
 HERO_CSS = """
-/* 상품 1 01_hero 구성을 따른다(build_mockups.py HERO_CSS): 가운데 정렬 큰 제목,
-   숫자 알약, 태블릿 두 대 겹침 + 뒤로 부채꼴 페이지 네 장, 옅은 손글씨.
-   "1번은 좀 더 눈에 띄게"(사용자 2026-09-24). 전에는 왼쪽 글 + 태블릿 한 대라
-   다른 장들과 같은 모양이었다. */
-.hero{flex:1;display:flex;flex-direction:column;align-items:center;
-      text-align:center;position:relative;min-height:0}
-.hero .kicker{align-self:center}
-.hero h1{font-size:128px;margin-top:26px;white-space:nowrap}
-.hero .sub{font-size:44px;margin-top:18px;opacity:.82}
-.hero .chips{justify-content:center;margin-top:28px}
-.hero .stage{flex:1;width:100%;position:relative;margin-top:30px;min-height:0}
+/* 1번. 처음엔 상품 1 01_hero 짜임(가운데 제목, 대칭 부채꼴, 옅은 손글씨)을
+   따랐는데 "너무 똑같잖아"(사용자 2026-09-24). 눈에 띄는 밀도는 두고 모양을
+   학생용으로 바꿨다: 왼쪽 정렬 두 줄 제목, 손글씨는 포스트잇에, 태블릿과
+   페이지는 책상 위에 흩어 놓은 듯 비대칭으로. */
+.hero{flex:1;display:flex;flex-direction:column;position:relative;min-height:0}
+.hero .head{display:flex;gap:40px;align-items:flex-start}
+.hero .head .txt{flex:1;min-width:0}
+.hero h1{font-size:150px;line-height:.98;margin-top:26px}
+.hero .sub{font-size:44px;margin-top:22px;opacity:.82}
+.hero .notes{flex:0 0 400px;position:relative;height:520px}
+.hero .stage{flex:1;width:100%;position:relative;margin-top:10px;min-height:0}
 .hero .stage>*{position:absolute;left:50%;top:50%}
-.hero .stage .tab{padding:22px;border-radius:50px}
-.hero .stage .tab img{height:800px;border-radius:30px}
-.hero .stage .front{transform:translate(-50%,-50%) translateX(-150px);z-index:3}
-.hero .stage .back{transform:translate(-50%,-50%) translateX(200px) scale(.88);
-                   z-index:2}
-.hero .stage .pg img{height:400px;border-radius:14px;display:block;
+.hero .stage .tab{padding:20px;border-radius:46px}
+.hero .stage .tab img{border-radius:28px}
+.hero .stage .front{transform:translate(-50%,-50%) translate(-120px,30px) rotate(-4deg);z-index:3}
+.hero .stage .front img{height:720px}
+.hero .stage .back{transform:translate(-50%,-50%) translate(330px,10px) rotate(6deg);z-index:2}
+.hero .stage .back img{height:640px}
+.hero .stage .pg img{height:380px;border-radius:14px;display:block;
                      box-shadow:0 20px 50px rgba(10,5,40,.45)}
 .hero .stage .pg{z-index:1}
-.hero .stage .p1{transform:translate(-50%,-50%) translate(-690px,-190px) rotate(-9deg)}
-.hero .stage .p2{transform:translate(-50%,-50%) translate(-740px,250px) rotate(6deg)}
-.hero .stage .p3{transform:translate(-50%,-50%) translate(700px,-200px) rotate(8deg)}
-.hero .stage .p4{transform:translate(-50%,-50%) translate(750px,240px) rotate(-6deg)}
-/* 우리 문장. 인용이 아니다(상품 1 과 같은 이유). 제목 덩어리를 피해 둔다. */
-.hero .scribble{position:absolute;inset:0;z-index:0;pointer-events:none;
-   font-family:'Caveat',cursive;color:#FFF}
-.hero .scribble span{position:absolute;white-space:nowrap;font-weight:600}
-.hero .s1{top:3%;left:-6%;font-size:56px;opacity:.24;transform:rotate(-6deg)}
-.hero .s2{top:2%;right:-6%;font-size:56px;opacity:.24;transform:rotate(5deg)}
-.hero .s3{bottom:-2%;left:-4%;font-size:58px;opacity:.22;transform:rotate(-4deg)}
-.hero .s4{bottom:-1%;right:-3%;font-size:56px;opacity:.22;transform:rotate(6deg)}
-.hero .s5{bottom:-3%;left:50%;font-size:60px;opacity:.22;
-          transform:translateX(-50%) rotate(-2deg)}
+.hero .stage .p1{transform:translate(-50%,-50%) translate(-640px,120px) rotate(-11deg)}
+.hero .stage .p2{transform:translate(-50%,-50%) translate(760px,170px) rotate(10deg)}
+/* 포스트잇: 우리 문장(인용 아님). 테이프 한 조각으로 붙인 느낌. */
+.sticky{position:absolute;width:330px;padding:34px 30px 38px;z-index:6;
+        font-family:'Caveat',cursive;font-weight:600;font-size:54px;
+        line-height:1.02;color:#2A2340;text-align:center;
+        box-shadow:0 18px 36px rgba(10,5,40,.35)}
+.sticky::before{content:"";position:absolute;top:-18px;left:50%;width:120px;
+        height:38px;margin-left:-60px;background:rgba(255,255,255,.55);
+        transform:rotate(-3deg)}
+.sticky.y{background:#FFE27A}.sticky.p{background:#FFA6CB}
+.sticky.c{background:#94E8F2}.sticky.v{background:#CDBBFF}
+.hero .n1{top:30px;right:40px;transform:rotate(6deg)}
+.hero .n2{top:270px;right:0;transform:rotate(-5deg)}
+.hero .stage .n3{transform:translate(-50%,-50%) translate(-540px,-230px) rotate(-8deg)}
+.hero .stage .n4{transform:translate(-50%,-50%) translate(610px,-250px) rotate(7deg)}
 """
 
 
 def s1_hero():
-    """검색 결과에서 보이는 단 한 장. 상품 1 첫 장과 같은 짜임."""
+    """검색 결과에서 보이는 단 한 장."""
     return dark(
         '<div class="hero">'
-        '<div class="scribble"><span class="s1">I will start it tonight</span>'
-        '<span class="s2">wait, when is that due?</span>'
-        '<span class="s3">just the first step</span>'
-        '<span class="s4">not lazy</span>'
-        '<span class="s5">due Friday, so start Monday</span></div>'
+        '<div class="head"><div class="txt">'
         '<div class="kicker">UNDATED &middot; ADHD STUDENT</div>'
-        '<h1>ADHD Student Planner</h1>'
+        '<h1>ADHD Student<br>Planner</h1>'
         '<div class="sub">Syllabus, assignments and exams &mdash; '
         'broken into pieces you can actually start.</div>'
         + chips([("437", "pages"), ("32", "designs"), ("8", "terms"), ("10", "tabs")])
-        + '<div class="stage">'
+        + '</div><div class="notes">'
+          '<div class="sticky y n1">wait, when is that due?</div>'
+          '<div class="sticky p n2">just the first step</div>'
+          '</div></div>'
+          '<div class="stage">'
           '<div class="pg p1"><img src="%s"></div>'
           '<div class="pg p2"><img src="%s"></div>'
-          '<div class="pg p3"><img src="%s"></div>'
-          '<div class="pg p4"><img src="%s"></div>'
           '<div class="tab back"><img src="%s"></div>'
           '<div class="tab front"><img src="%s"></div>'
+          '<div class="sticky c n3">I will start it tonight</div>'
+          '<div class="sticky v n4">not lazy</div>'
           '</div></div>'
-        % (img("exam"), img("cornell"), img("t1"), img("braindump"),
-           img("syllabus"), img("cover")))
+        % (img("exam"), img("braindump"), img("syllabus"), img("cover")))
 
 
 def s2_syllabus():

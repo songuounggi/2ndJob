@@ -1252,3 +1252,6 @@ iPad 체크리스트는 v1.0 에서 통과. v1.1 에서 새로 생긴 건 표지
   태블릿 두 대 겹침(앞 표지 p.1, 뒤 Syllabus unpack) + 뒤로 부채꼴 페이지 4장(Exam study plan, Lecture notes,
   Term 1, Brain dump), Caveat 손글씨 5줄(우리 문장, 인용 아님): "I will start it tonight", "wait, when is that due?",
   "just the first step", "not lazy", "due Friday, so start Monday". 손글씨는 제목·카드에 안 가리는 자리에만.
+- **"너무 똑같잖아"(상품 1 첫 장과)** → 밀도는 두고 모양을 바꿨다: 왼쪽 정렬 두 줄 제목 "ADHD Student / Planner",
+  손글씨는 옅은 글자 대신 **포스트잇 4장**(노랑·분홍·하늘·보라, 테이프), 태블릿 두 대(표지·Syllabus)를 서로
+  반대로 기울이고 양옆 페이지 2장(Exam study plan, Brain dump)을 비대칭으로. 포스트잇은 안전 영역(x 260~1740) 안.
