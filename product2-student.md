@@ -1139,3 +1139,9 @@ assignments=a1, exam=e1, 나머지는 id 그대로), scale 2.
   **옮긴 뒤 v0.3 / v0.6 / v0.7 HTML 이 바이트까지 동일**함을 확인. 그 과정에서 옛 버전을
   바꾸던 두 가지(칩 격자 position:relative, 탭 색)를 플래그 뒤로 돌렸다
 - check_render 통과(평균 108 / 최대 128ms), 15.45MB
+
+### student-v0.8 (2026-09-24) — "Term at a glance" 로 통일
+
+표지 카드만 "Term at a glance", 칩(p.3)·북마크는 "Term overview" 였다. 한 장에 16주가
+다 보이는 페이지라 사용자가 "at a glance" 로 통일(`term_glance`, `student_pages.term_label()`).
+verify "표지 카드와 실제가 다름" 0. v0.7 은 바이트까지 재현됨.

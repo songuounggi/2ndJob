@@ -377,6 +377,8 @@ THEMES["student-v0.6"] = dict(THEMES["student-v0.4"], line_fade=True,
 #                          + 반복 페이지가 자기 탭 색을 따른다 (tab_colors)
 THEMES["student-v0.7"] = dict(THEMES["student-v0.6"], cover_copy=True,
                               notes9=True, tab_colors=True)
+# student-v0.8  2026-09-24  "Term overview" -> "Term at a glance" 로 통일 (term_glance)
+THEMES["student-v0.8"] = dict(THEMES["student-v0.7"], term_glance=True)
 
 # Revisions of a shipped product get their own version name and their own
 # output file. The file a buyer already downloaded is never overwritten --

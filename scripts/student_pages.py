@@ -504,6 +504,14 @@ NOTE_KINDS = [("Ruled", "ruled", 3, "Lined, edge to edge"),
               ("Plain", "plain", 3, "Nothing printed on it")]
 
 
+def term_label():
+    """학기 한 장짜리 16주 표의 이름. 표지 카드는 "Term at a glance", 칩·북마크는
+    "Term overview" 로 갈려 있었다 -- 사용자가 "at a glance" 로 통일(2026-09-24,
+    student-v0.8, term_glance). 한 장에 16주가 다 보이는 페이지라 뜻도 맞다."""
+    return ("Term at a glance" if bp and bp.T.get("term_glance")
+            else "Term overview")
+
+
 def notes9():
     return bool(bp and bp.T.get("notes9"))
 
@@ -695,7 +703,7 @@ def specs():
                             (lambda tt=t, ii=i, f=fn: lambda: f(tt, ii))()))
 
     group("semester", "Semester", "Eight terms, sixteen weeks each",
-          chip_card("Term overview", "t", 1),
+          chip_card(term_label(), "t", 1),
           chip_card("Term goals", "o", 1),
           chip_card("Term review", "r", 1))
     out.append(("terms", p_terms))
@@ -781,6 +789,7 @@ def outline():
     """
     order = {k: n for n, (k, _) in enumerate(specs())}
     reps = {pre: (per, label) for pre, per, label in REPEATS}
+    reps["t"] = (reps["t"][0], term_label())
 
     def terms(pre):
         per = reps[pre][0]
