@@ -2306,9 +2306,13 @@ def build_html():
             specs.append((f"w{w}", (lambda ww: lambda: p_week(f"Week {ww}"))(w)))
     pages = [page(k, fn()) for k, fn in specs]
     font_url_v = font_url()
+    # PDF 의 /Title 이 된다. 학생용에도 상품 1 이름이 박혀 있었다(2026-09-24).
+    # 상품 1 값은 그대로 둔다 -- 판매본을 바이트까지 다시 뽑을 수 있어야 한다.
+    doc_title = ("ADHD Student Planner &mdash; Undated Semester Planner"
+                 if T.get("student") else "ADHD &amp; Wellness Planner")
     html = f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<title>ADHD &amp; Wellness Planner</title>
+<title>{doc_title}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="{font_url_v}" rel="stylesheet">

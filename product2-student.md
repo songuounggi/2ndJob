@@ -869,4 +869,9 @@ dedupe` 의 파이프가 종료 코드를 삼켜 dedupe 가 낡은 PDF 로 새 F
 같은 상황을 재현해 옛 검사기는 통과, 새 검사기는 거부함을 확인했다.
 명령을 파이프로 이을 때는 `set -o pipefail` 을 먼저 켤 것.
 
-**다음:** 위 A·B·C(focus-session)·D·E·F·G·H.
+**A 완료 (2026-09-24).** PDF `/Title` 을 `ADHD Student Planner — Undated
+Semester Planner` 로. `build_planner.py` 가 테마의 `student` 플래그로 가른다.
+상품 1 값은 그대로 두어 판매본을 바이트까지 다시 뽑을 수 있다. 리스팅
+제목(F)을 정하면 여기도 맞춘다. 검사 "문서 제목에 Student" 추가(전: 실패).
+
+**다음:** 위 B·C(focus-session)·D·E·F·G·H.

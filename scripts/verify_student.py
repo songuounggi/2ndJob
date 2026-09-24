@@ -141,6 +141,11 @@ add("탭 하이라이트 오류", len(tabbad), 0, not tabbad)
 add("HTML 속 월 이름", sum(months.values()), 0, not months)
 add("HTML 속 연도", len(years), 0, not years)
 add("HTML 속 한글", len(korean), 0, not korean)
+# 문서 제목 메타. 뷰어 탭·파일 속성·GoodNotes 가져오기 이름에 뜬다.
+# 상품 1 의 "ADHD & Wellness Planner" 가 그대로 박혀 있었다(2026-09-24).
+_title = str((r.metadata or {}).get("/Title", ""))
+add("문서 제목에 Student", _title or "(없음)", "Student",
+    "Student" in _title and "Wellness" not in _title)
 # 행이 딱 떨어지게 끝나는가 (LINES.md 1-3 절). 필기면 높이가 flex 로
 # 정해지면 나머지(0~22pt)만큼 마지막 괘선이 바닥 위에 애매하게 뜬다.
 # 높이는 24pt 배수로 고정되어야 하고, 맨 아래 괘선은 그리지 않는다.
