@@ -27,8 +27,8 @@ def init(module):
 TABS = [
     ("index",    "INDEX"),
     ("semester", "SEMESTER"),
-    ("week",     "WEEK"),
-    ("day",      "DAY"),
+    ("week",     "WEEKS"),   # 목차·제목·북마크와 같은 복수형
+    ("day",      "DAYS"),
     ("classes",  "CLASSES"),
     ("work",     "WORK"),
     ("study",    "STUDY"),
@@ -100,10 +100,15 @@ def card(label, inner, flex="none", pad=""):
             % (flex, pad, head, inner))
 
 
-def tbl(kind, cols, rows, check_last=False):
+def tbl(kind, cols, rows, check_last=False, parts=None):
     """표 하나. kind 는 t4(4열) 또는 t6(6열) -- 가로 점선 규칙이 열 수마다
-    따로 만들어져 있으므로 새 열 수를 쓰려면 app_style 에 먼저 추가한다."""
-    widths = A.T4 if kind == "t4" else A.T6
+    따로 만들어져 있으므로 새 열 수를 쓰려면 app_style 에 먼저 추가한다.
+
+    parts 는 열 너비 비율. 기본 T4 는 첫 열이 가장 넓은 "과제명" 표에
+    맞춘 것이라, 첫 열에 짧은 것(DAY)을 적는 표에서는 빈 열이 가장
+    넓고 정작 길게 쓰는 열이 좁았다(2026-09-24 전수 검수)."""
+    widths = (A.prop(A.CW, parts) if parts
+              else A.T4 if kind == "t4" else A.T6)
     hd = "".join('<td style="width:%.2fpt">%s</td>' % (w, c)
                  for w, c in zip(widths, cols))
     cells = []
@@ -131,13 +136,22 @@ def body(*parts):
     return '<div class="body">%s</div>' % "".join(parts)
 
 
-def head(term, title, sub_):
+def head(term, title, sub_, date=None):
     """반복 페이지의 머리. eyebrow 에 학기를 적고 제목은 학기 내 번호다.
 
     전에는 제목이 통번호("Week 36")라, 목차에서 TERM 3 의 "4" 를 눌러
     도착하면 숫자가 달라 잘못 눌렀다고 판단했다.
+
+    date 를 주면 머리 오른쪽 빈자리에 날짜 칸을 둔다. 날짜 없는 상품인데
+    적을 칸이 한 곳도 없었다(2026-09-24). 머리는 높이 72pt 고정이라
+    본문은 한 줄도 줄지 않는다(시안 A/B/C 중 사용자가 A 선택).
     """
-    return bp.head("Term %d" % term, title, sub_)
+    h = bp.head("Term %d" % term, title, sub_)
+    if date:
+        assert h.endswith("</div>")
+        h = (h[:-6] + '<div class="datebox"><span>%s</span>'
+             '<div class="field"></div></div></div>' % date)
+    return h
 
 
 # --------------------------------------------------------- 핵심 페이지들
@@ -175,7 +189,7 @@ def p_assignments(term=1, i=1):
 
 def p_group_project():
     return (bp.head("Work", "Group project",
-                    "The part that goes wrong is who was doing what")
+                    "The part that goes wrong is who was doing what.")
             + body(
                 card("The project", field(24)),
                 card("Who does what, by when",
@@ -234,7 +248,7 @@ def p_reading():
 
 def p_session():
     return (bp.head("Study", "Study session log",
-                    "Notice when it works, and do that again")
+                    "Notice when it works, and do that again.")
             + body(card("Sessions",
                         tbl("t4", ["WHAT I STUDIED", "WHERE", "HOW LONG",
                                    "IT WORKED"], 22, check_last=True))))
@@ -242,7 +256,7 @@ def p_session():
 
 def p_office():
     return (bp.head("Study", "Office hours",
-                    "Write the question down when you have it, not later")
+                    "Write the question down when you have it, not later.")
             + body(
                 card("Who, and when", field(24)),
                 card("What I want to ask", fill(), flex="1"),
@@ -260,7 +274,7 @@ def p_timetable(term=1, i=1):
     rows = "".join("<tr><td>%s</td>%s</tr>" % (h, "<td></td>" * len(days))
                    for h in hours)
     return (head(term, "Class schedule",
-                    "Write it once, in week one")
+                    "Write it once, in week one.")
             + body('<div class="tbwrap" style="flex:none">'
                    '<table class="tb t6">%s%s</table>%s</div>'
                    % (hd, rows, A.rules_svg(widths, len(hours), head_h=24.0)),
@@ -296,7 +310,8 @@ def p_terms():
     return (bp.head("Semester", "All eight terms", "Four years, one page")
             + body(card("Terms",
                         tbl("t4", ["TERM", "WHAT IT IS FOR", "CREDITS",
-                                   "DONE"], 8, check_last=True)),
+                                   "DONE"], 8, check_last=True,
+                                 parts=[100, 240, 100, 60])),
                    card("Notes on the four years", fill(), flex="1")))
 
 
@@ -313,7 +328,10 @@ def p_term(term, i=1):
         '<td class="bx"><i></i></td></tr>'
         % ((term - 1) * WEEKS_PER_TERM + w, w)
         for w in range(1, WEEKS_PER_TERM + 1))
-    widths = A.T4
+    # WEEK 열은 라벨과 링크뿐이라 적을 게 없다. T4 의 첫 열(과제명용
+    # 220 비율)을 물려받아 넓고 비어 보였다(2026-09-24 지적). 좁히고 그
+    # 폭을 실제로 적는 WHAT IS DUE 에 준다.
+    widths = A.prop(A.CW, [100, 240, 100, 60])
     hd = "".join('<td style="width:%.2fpt">%s</td>' % (w, c)
                  for w, c in zip(widths, ["WEEK", "WHAT IS DUE", "EXAMS",
                                           "CLEAR"]))
@@ -327,7 +345,8 @@ def p_term(term, i=1):
 
 
 def p_week(term, i):
-    return (head(term, "Week %d" % i, "What has to happen this week")
+    return (head(term, "Week %d" % i, "What has to happen this week",
+                 date="WEEK OF")
             + body(
                 card("Due this week",
                      tbl("t4", ["WHAT", "CLASS", "DAY", "DONE"], 6,
@@ -337,7 +356,8 @@ def p_week(term, i):
 
 
 def p_day(term, i):
-    return (head(term, "Day %d" % i, "One thing. Then the rest.")
+    return (head(term, "Day %d" % i, "One thing. Then the rest.",
+                 date="DATE")
             + body(
                 card("Just one thing today", field(36)),
                 card("Due soon",
@@ -380,7 +400,7 @@ def p_deciding():
 
 def p_avoiding():
     return (bp.head("Focus", "Why I am avoiding it",
-                    "Name it and it gets smaller")
+                    "Name it and it gets smaller.")
             + body(
                 card("The thing", field(36)),
                 card("What I think will happen", fill(), flex="1"),
@@ -399,7 +419,7 @@ def p_energy():
 
 def p_backwards():
     return (bp.head("Work", "Working backwards",
-                    "Start at the deadline and walk back")
+                    "Start at the deadline and walk back.")
             + body(
                 card("Due", field(24)),
                 card("Steps, in reverse",
@@ -420,7 +440,7 @@ def p_estimate():
 
 def p_obstacle():
     return (bp.head("Work", "Obstacle plan",
-                    "Decide now what you will do when it goes wrong")
+                    "Decide now what you will do when it goes wrong.")
             + body(
                 card("The plan", field(36)),
                 card("What will get in the way",
@@ -451,14 +471,14 @@ def p_meds():
     return (bp.head("Life", "Medication log", "What you took, and when")
             + body(card("This month",
                         tbl("t4", ["DAY", "WHAT", "TIME", "TAKEN"], 22,
-                            check_last=True))))
+                            check_last=True, parts=[100, 240, 100, 60]))))
 
 
 def p_sleep():
     return (bp.head("Life", "Sleep log", "Hours in bed, hours asleep")
             + body(card("This month",
                         tbl("t4", ["DAY", "IN BED", "ASLEEP", "OK"], 22,
-                            check_last=True))))
+                            check_last=True, parts=[100, 170, 170, 60]))))
 
 
 def p_mood():
@@ -466,7 +486,7 @@ def p_mood():
             + body(
                 card("This week",
                      tbl("t4", ["DAY", "HOW IT FELT", "WHAT HAPPENED", "OK"],
-                         7, check_last=True)),
+                         7, check_last=True, parts=[100, 140, 200, 60])),
                 card("Anything else", fill(), flex="1")))
 
 

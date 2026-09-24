@@ -222,6 +222,64 @@ _narrow = [pid for pid, body in _sec.items()
            for m in re.finditer(_row_re, body, re.S)
            if re.search(r'<div class="card" style="flex:none', m.group(0))]
 add("가로 행 안에서 폭이 줄어든 카드", len(_narrow), 0, not _narrow)
+# 날짜 없는 플래너인데 날짜 적는 칸이 한 곳도 없었다(2026-09-24). 데일리는
+# DATE, 위클리는 WEEK OF 칸이 머리에 있어야 한다.
+_nodate = [pid for pid, body in _sec.items()
+           if re.fullmatch(r"[dw]\d+", pid)
+           and not re.search(r'<div class="datebox"><span>%s</span>'
+                             % ("DATE" if pid[0] == "d" else "WEEK OF"), body)]
+add("날짜 칸 없는 데일리·위클리", len(_nodate), 0, not _nodate)
+
+
+def wide_label_cols(html):
+    """짧은 것을 적거나 미리 인쇄된 라벨뿐인 열이 넓은 표. 기본 T4 의
+    첫 열(과제명용 226pt)을 물려받아, 학기 개요의 WEEK 열과 Mood 의 DAY
+    열이 가장 넓고 비어 보였다(2026-09-24 지적 후 전수 검수)."""
+    bad = set()
+    for m in re.finditer(r'<section class="page[^"]*" id="([^"]+)"(.*?)</section>',
+                         html, re.S):
+        for t in re.finditer(r'<table class="tb [^"]+">(.*?)</table>',
+                             m.group(2), re.S):
+            rows = re.findall(r"<tr>(.*?)</tr>", t.group(1), re.S)
+            head = re.findall(r'<td style="width:([0-9.]+)pt">([^<]*)</td>',
+                              rows[0])
+            if not head:
+                continue
+            first = [re.sub(r"<[^>]+>|&rsaquo;", "",
+                            re.findall(r"<td[^>]*>(.*?)</td>", r, re.S)[0]).strip()
+                     for r in rows[1:]]
+            w, name = float(head[0][0]), head[0][1]
+            if w > 110 and (name in ("DAY", "WEEK", "TERM") or all(first)):
+                bad.add(re.sub(r"\d+$", "#", m.group(1)))
+    return sorted(bad)
+
+
+# 같은 곳을 가리키는 이름은 어디서나 같아야 한다 -- 레일 탭 / 목차 목록 /
+# 탭 페이지 제목. 레일은 WEEK·DAY, 목차는 Weeks·Days 였다(2026-09-24 지적).
+_rail = re.findall(r'<a class="[^"]*" href="#([^"]+)"[^>]*>(.*?)</a>',
+                   _sec["index"].split("</nav>")[0], re.S)
+_list = dict(re.findall(r'<a class="crow" href="#([^"]+)">.*?'
+                        r'<div class="cn">([^<]+)<',
+                        _sec["index"].split("</nav>")[1], re.S))
+_name_bad = []
+for k, t in _rail:
+    t = re.sub(r"<[^>]+>", "", t).strip().lower()
+    title = re.search(r"<h1>(.*?)</h1>", _sec[k]).group(1).strip().lower()
+    li = _list.get(k, t).strip().lower()
+    # notes 는 목차가 아니라 바로 내용 페이지라 제목이 "Blank space" 다
+    if k not in ("index", "notes") and not (t == li == title):
+        _name_bad.append("%s: %s/%s/%s" % (k, t, li, title))
+add("탭·목차·제목 이름 불일치", len(_name_bad), 0, not _name_bad)
+# 부제 문장부호: 완전한 문장은 마침표, 조각은 없음(영어 UI 문구 관례,
+# 2026-09-24 정함). 문장인지는 기계로 못 가리므로 확실한 경우만 잰다 --
+# 문장이 둘 이상인데("A. B") 끝에 마침표가 없으면 틀린 것이다.
+_subs = set(re.findall(r'<div class="sub">([^<]*)</div>', h))
+_punct = sorted(s_ for s_ in _subs
+                if ". " in s_ and not s_.rstrip().endswith((".", "?", "!")))
+add("문장 여럿인데 마침표 없는 부제", len(_punct), 0, not _punct)
+
+_wide = wide_label_cols(h)
+add("짧은 내용 열이 넓은 표", len(_wide), 0, not _wide)
 # 행이 딱 떨어지게 끝나는가 (LINES.md 1-3 절). 필기면 높이가 flex 로
 # 정해지면 나머지(0~22pt)만큼 마지막 괘선이 바닥 위에 애매하게 뜬다.
 # 높이는 24pt 배수로 고정되어야 하고, 맨 아래 괘선은 그리지 않는다.

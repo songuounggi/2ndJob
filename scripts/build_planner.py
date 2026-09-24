@@ -1044,7 +1044,7 @@ def p_app_index():
         f'<div class="cn">{n}<div class="cd">{d}</div></div>'
         f'<span class="cq">&rsaquo;</span></a>'
         for i, (k, n, d) in enumerate(APP_GROUPS))
-    return (head("Index", "Where to?", "Use the side tabs, or pick here")
+    return (head("Index", "Where to?", "Use the side tabs, or pick here.")
             + '<div class="body"><div class="card" style="flex:none;'
               f'padding:6pt 22pt">{rows}</div>'
             + '<div class="card" style="flex:1">'

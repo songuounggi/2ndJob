@@ -244,6 +244,15 @@ h1{color:#241E3A}
    최소공배수가 12pt(=16px)다. 세로 방향 길이는 전부 12의 배수로 둔다. */
 .content{padding:48pt 0 36pt}
 .head{flex:none;height:72pt;overflow:hidden}
+/* 날짜 칸 -- 데일리 DATE / 위클리 WEEK OF. 머리 오른쪽 빈자리에 띄운다.
+   top 24pt / 높이 24pt 로 12pt 격자를 지킨다. 그림자(::after 11pt)까지
+   머리 72pt 안에 들어가야 overflow:hidden 에 안 잘린다(24+24+11=59). */
+.head{position:relative}
+.datebox{position:absolute;right:0;top:24pt;display:flex;align-items:center;
+    gap:8pt}
+.datebox span{font-size:6.6pt;letter-spacing:.14em;font-weight:800;
+    color:#403A5C}
+.datebox .field{width:132pt;height:24pt}
 .label{height:12pt;margin-bottom:12pt}
 .card{background:none;border:none;padding:0 0 12pt}
 .card::after{display:none}
