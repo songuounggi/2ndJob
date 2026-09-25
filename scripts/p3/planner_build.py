@@ -32,6 +32,7 @@ if _bad:
 sys.path.insert(0, str(HERE))
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
 SAMPLE = "--sample" in sys.argv
+KEYS = next((a.split("=", 1)[1].split(",") for a in sys.argv if a.startswith("--keys=")), None)   # --keys=admin,q1
 sys.argv = [sys.argv[0]] + ARGS          # p3_wireframe 는 argv 로 연도·주 시작을 읽는다
 import p3_content as C
 import p3_wireframe as W
@@ -41,7 +42,9 @@ ROOT = HERE.parents[1]
 Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.1 = 첫 전체 빌드(일간 맨 아래 칩의 누르는 영역이 칸 overflow 에 잘려 34px) / v0.2 = 그 수정
 # v0.3 = 발문의 & 이중 이스케이프(Morning &amp;amp; evening 등 3장) 수정
-VERSION = "v0.3"
+# v0.4 = (사용자 확정) 빈 입력 행 34px + 행 추가 + 줄마다 선 하나(8장), Project planner 좌우 첫 줄 맞춤,
+#        Life admin radar 월 칸 아래 줄 맞춤, Brain weather 이름 칸 52px(표와 겹침)
+VERSION = "v0.4"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -177,9 +180,11 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .bw{{border-collapse:collapse;width:100%;table-layout:fixed}}
 .bw th{{font-size:8px;font-weight:400;color:{N700}}}
 .bw th>a{{display:block;padding:2px 0}}.bw th.rl{{width:52px;text-align:left;font-size:9.5px;letter-spacing:.06em}}
+.bw tr:first-child>th:first-child{{width:52px}}   /* table-layout:fixed 는 첫 줄로 너비를 정한다 -- 빠져 있어 이름 칸이 17px, 글자가 표와 겹쳤다(v0.3) */
 .bw td{{border:1px solid {N400};height:26px}}.bw small{{font-size:7px;color:{N500}}}
 .ag{{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 22px}}.am b{{font-size:13px;font-weight:600}}
 .am>a{{display:block;padding:10px 0 9px;margin:-10px 0 -9px}}
+.am{{display:flex;flex-direction:column}}.am>.ln{{margin-top:auto}}   /* 월 칸 아래 줄을 칸 바닥에 -- 같은 줄 세 칸의 선 높이를 맞춘다(사용자) */
 .g2{{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:16px 26px;flex:1}}
 .g3{{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:14px 22px;flex:1}}
 .tr3{{display:flex;align-items:flex-end;gap:10px;height:30px;font-size:13px}}.tr3 b{{width:150px;font-weight:600}}
@@ -208,6 +213,8 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .p1 .lines{{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}}
 .p1 .lines>div{{flex:none;height:34px;border-bottom:1px solid {N400}}}
 .p1 .field{{background:none;border-bottom:1px solid {N400};border-radius:0;min-height:26px}}
+/* 빈 입력 행(.ir, ROWS_JS 가 표시)은 구분선을 빼고 항목|금액 밑줄만 -- 34px 에서 두 선이 4px 로 붙었다(사용자 확정 A안, 8장만) */
+.p1 .ir{{border-bottom:0!important}}
 .p1 .box{{flex:none;width:12px;height:12px;background:none;border:1px solid {N600};border-radius:1px}}
 .p1 .dot{{background:{N600}}}
 .p1 .chip{{margin:0}}
@@ -469,7 +476,7 @@ def specs():
             fn = (lambda i: lambda: p_note(i))(int(k[4:]))
         out.append((k, fn))
     if SAMPLE:
-        out = [s for s in out if s[0] in SAMPLE_KEYS]
+        out = [s for s in out if s[0] in (KEYS or SAMPLE_KEYS)]
     return out
 
 
@@ -513,6 +520,93 @@ FILL_JS = r"""
     if (n) { boxes++; added += n; }
   });
   return [boxes, added];
+}
+"""
+
+
+# 상품 1 도구의 빈 입력 행(flex:1 로 칸 높이를 행 수로 나눠 46~103px 이 됐다)을 괘선과 같은 34px 로.
+# 칸(카드) 크기는 먼저 고정해 페이지 배치는 그대로 두고, 남는 자리는 행을 늘리지 않고 같은 행을 더 넣는다(사용자).
+# 이름이 붙은 행(MON..SUN, 1..6, A/B/C)은 개수가 뜻이라 두지 않는다 -- 건드리지 않는다.
+ROW = 34
+ROWS_JS = r"""
+(ROW) => {
+  const isRow = r => /^flex:1;display:flex/.test(r.getAttribute('style') || '') && r.querySelector(':scope>.field');
+  const groups = new Map();
+  document.querySelectorAll('.p1 div').forEach(r => {
+    if (!isRow(r)) return;
+    const p = r.parentElement; if (!groups.has(p)) groups.set(p, []); groups.get(p).push(r);
+  });
+  let n = 0, added = 0;
+  const box = [...groups].filter(([p, rows]) => rows.length >= 3 && rows.every(r => !r.innerText.trim()));
+  // 칸의 폭·높이를 둘 다 지금 값으로 고정 (flex:none 만 주면 옆으로 나란한 칸의 폭이 줄어든다)
+  box.map(([p]) => [p, p.getBoundingClientRect()]).forEach(([p, r]) => { p.style.flex = 'none'; p.style.width = r.width + 'px'; p.style.height = r.height + 'px'; });
+  box.forEach(([p, rows]) => rows.forEach(r => { r.style.flex = 'none'; r.style.height = ROW + 'px'; }));
+  // 옆으로 나란한 칸끼리 첫 줄 높이를 맞춘다(사용자: Project planner 왼쪽 Steps / 오른쪽 Done looks like).
+  // 설명 글(be specific) 때문에 늦게 시작하는 쪽에 맞춰, 먼저 시작하는 쪽을 내린다. 간격은 그대로.
+  box.forEach(([, rows]) => rows.forEach(r => r.classList.add('ir')));   // 입력 행 표시 (style 글자는 JS 가 고치면 모양이 바뀐다)
+  const firstLine = c => { const f = c.querySelector('.ir>.field');
+    const l = c.querySelector('.lines>div'); const ys = [f && f.getBoundingClientRect().bottom, l && l.getBoundingClientRect().bottom].filter(Boolean);
+    return ys.length ? Math.min(...ys) : null; };
+  let aligned = 0;
+  new Set(box.map(([p]) => p.parentElement)).forEach(row => {
+    const cs = getComputedStyle(row); if (cs.display !== 'flex' || cs.flexDirection !== 'row') return;
+    const cards = [...row.children].map(c => [c, firstLine(c)]).filter(([, y]) => y !== null);
+    if (cards.length < 2) return;
+    const top = Math.max(...cards.map(([, y]) => y));
+    cards.forEach(([c, y]) => {
+      if (top - y < 0.5) return;
+      const t = box.find(([p]) => p === c) ? box.find(([p]) => p === c)[1][0] : c.querySelector('.lines');
+      t.style.marginTop = (parseFloat(getComputedStyle(t).marginTop) + top - y) + 'px'; aligned++;
+    });
+  });
+  box.forEach(([p, rows]) => {
+    const tpl = rows.find(r => /border-bottom/.test(r.getAttribute('style'))) || rows[0];
+    const last = rows[rows.length - 1];
+    for (let i = 0; i < 60; i++) {
+      const c = tpl.cloneNode(true); c.style.marginTop = '0'; p.insertBefore(c, last);   // 첫 행의 정렬 여백은 복제하지 않는다
+      if (p.scrollHeight > p.clientHeight + 0.5 || last.getBoundingClientRect().bottom > p.getBoundingClientRect().bottom + 0.5) { c.remove(); break; }
+      added++;
+    }
+    n++;
+  });
+  return [n, added, aligned];
+}
+"""
+
+
+# 레이아웃 결함 검사 (사용자가 iPad 에서 찾은 것, 2026-09-25)
+#  - Brain weather 이름 칸 글자가 칸을 넘친다(표와 겹침)
+#  - Life admin radar 같은 줄 세 칸의 아래 줄 높이가 다르다
+#  - 상품 1 도구의 빈 입력 행이 34px 이 아니다(칸 높이를 행 수로 나눠 46~103px)
+LAYOUT_JS = r"""
+() => {
+  const bad = [];
+  document.querySelectorAll('.bw th.rl').forEach(th => {
+    if (th.scrollWidth > th.clientWidth + 1) bad.push(th.closest('section').id + ' label overflow: ' + th.textContent.trim());
+  });
+  document.querySelectorAll('.ag').forEach(g => {
+    const rows = {};
+    g.querySelectorAll(':scope > .am').forEach(a => {
+      const ln = a.querySelector(':scope > .ln'); if (!ln) return;
+      const k = Math.round(a.getBoundingClientRect().top);
+      (rows[k] = rows[k] || []).push(Math.round(ln.getBoundingClientRect().bottom));
+    });
+    Object.values(rows).forEach(b => { if (new Set(b).size > 1) bad.push(g.closest('section').id + ' month lines ' + b.join('/')); });
+  });
+  const groups = new Map();
+  document.querySelectorAll('.p1 div:has(>.field)').forEach(r => {
+    if (getComputedStyle(r).display !== 'flex' || r.innerText.trim()) return;   // style 글자가 아니라 계산된 값으로
+    const p = r.parentElement; if (!groups.has(p)) groups.set(p, []); groups.get(p).push(r);
+  });
+  groups.forEach((rows, p) => {
+    if (rows.length < 3) return;
+    const hs = [...new Set(rows.map(r => Math.round(r.getBoundingClientRect().height)))];
+    if (hs.length !== 1 || hs[0] !== 34) bad.push(p.closest('section').id + ' input rows ' + hs.join('/'));
+    // 높이만 재면 행 사이 여백을 못 본다(복제 행에 정렬 여백이 따라간 적이 있다) -- 행 간격도 잰다
+    const gaps = [...new Set(rows.slice(1).map((r, i) => Math.round(r.getBoundingClientRect().top - rows[i].getBoundingClientRect().top)))];
+    if (gaps.length > 1 || (gaps.length && gaps[0] !== 34)) bad.push(p.closest('section').id + ' input row pitch ' + gaps.join('/'));
+  });
+  return bad;
 }
 """
 
@@ -587,8 +681,13 @@ def build():
         pg.goto(src.as_uri(), timeout=300000)
         pg.evaluate("document.fonts.ready")
         pg.wait_for_timeout(800)
+        rows = pg.evaluate(ROWS_JS, ROW)
+        print(f"  입력 행 34px: 칸 {rows[0]}개, 더한 행 {rows[1]}줄, 첫 줄 맞춘 칸 {rows[2]}개")
         filled = pg.evaluate(FILL_JS)
         print(f"  괘선 채움: 칸 {filled[0]}개에 {filled[1]}줄")
+        lay = pg.evaluate(LAYOUT_JS)
+        if lay:
+            raise SystemExit(f"레이아웃 결함 {len(lay)}개 {lay[:6]}")
         pg.pdf(path=str(raw), width="768px", height="1024px", print_background=True, prefer_css_page_size=False,
                margin={"top": "0", "right": "0", "bottom": "0", "left": "0"})
         br.close()

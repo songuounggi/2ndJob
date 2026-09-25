@@ -60,6 +60,11 @@ python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.
 | `editions/v0.2/` | 종이+탭 묶음 가운데 정렬 (좌우 25px) | `7e70a83` |
 | `wireframe/v0.1/` | 날짜형 와이어프레임 597p (미국 공휴일) + 문구 CSV | `490fee2` |
 | `wireframe/v0.2/` | 598p (공통 공휴일 + My holidays) + 문구 CSV | `33495b6` |
+| `planner/v0.1/` | **판매용 플래너** 첫 전체 빌드 4판(2026·2027 × 월·일) 598p. 일간 아래 칩 누르는 영역 34px | `eedabb1` |
+| `planner/v0.2/` | 그 수정 | `b361a3a` 직전 |
+| `planner/v0.3/` | 발문 `&amp;` 이중 이스케이프 수정 | `b361a3a` |
+| **`planner/v0.4/`** | **(사용자 확정)** 빈 입력 행 34px + 행 추가 + 줄마다 선 하나(8장), Project planner 좌우 첫 줄, Life admin radar 아래 줄, Brain weather 이름 칸. 리스팅 대조 `check_listing_p3.py` 통과 | 이 커밋 |
+| `planner/v*/sample-NN/TEST-sample-*.pdf` | 작업 중 몇 장씩 뽑은 **시험본**. 검수용 아님 | |
 | `archive_dated-v0.1/` | 상품 1 모양 날짜형 첫 시도 8판 (반려) | `eb3f67e` |
 | `archive_color-mocks/` | 색만 바꾼 시안 5종 PDF+PNG (반려) | `490fee2` 트리에서 재생성 |
 | `archive_concepts-A-D/` | 새 콘셉트 4종(시계·퀘스트·볼드·노트북) HTML·PDF·PNG (참고용) | `concepts_p3.py` |
