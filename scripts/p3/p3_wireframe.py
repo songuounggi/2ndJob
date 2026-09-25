@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """상품 3 와이어프레임 -- 디자인 없이 내용과 링크만. Prod 3 방 소유.
 
-    python scripts/p3_wireframe.py 2027 mon     # -> output/p3_wireframe_2027-mon.pdf
+    python scripts/p3/p3_wireframe.py 2027 mon     # -> output/p3_wireframe_2027-mon.pdf
 
 회색 상자 + 라벨 + 실제 문구(p3_content.py). 모든 링크가 살아 있어서 GoodNotes 에서
 흐름(Time links, SOS, 52 experiments)을 눌러 볼 수 있다. 디자인은 사용자가 입힌다.
@@ -19,7 +19,7 @@ import tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import p3_content as C
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # scripts/p3/ -> 저장소
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 Y = int(sys.argv[1]) if len(sys.argv) > 1 else 2027
 WS = 0 if (sys.argv[2] if len(sys.argv) > 2 else "mon") == "mon" else 6

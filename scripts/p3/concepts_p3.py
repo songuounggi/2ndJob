@@ -2,7 +2,7 @@
 """상품 3 새 콘셉트 4종 시안 (저장소 밖). 일간 + 월간 각 1장."""
 import math, os, random, subprocess, calendar, datetime as dt
 
-OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "preview", "concepts_p3")
+OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "output", "preview", "concepts_p3")
 os.makedirs(OUT, exist_ok=True)
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 Y, M, D = 2027, 3, 9

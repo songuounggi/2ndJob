@@ -4,7 +4,7 @@
 디자인과 무관한 "무엇을 적는가"만 담는다. 와이어프레임(p3_wireframe.py)과
 나중의 실제 빌드가 같은 데이터를 읽는다.
 
-    python scripts/p3_content.py          # 검사 + output/p3_content_<연도>.csv
+    python scripts/p3/p3_content.py          # 검사 + output/p3_content_<연도>.csv
 
 원칙 (product3-content.md 1절): 한 칸 = 한 가지, 70자 이내, 죄책감 금지,
 의학적 주장 금지(제안만), 미국 영어.
@@ -16,7 +16,7 @@ import os
 import re
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # scripts/p3/ -> 저장소
 
 # ------------------------------------------------------------ 4-1 intro --
 HOW_IT_WORKS = {

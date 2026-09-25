@@ -1,7 +1,7 @@
 # 상품 3 — 내용 계획 (2026-09-25)
 
 **디자인은 사용자, 내용은 Claude.** 이 파일은 "무슨 페이지에 무엇이 들어가는가"만 정한다.
-색·모양·배치는 사용자 몫이다. 문구 원본은 `scripts/p3_content.py` (검사·CSV 내보내기 포함).
+색·모양·배치는 사용자 몫이다. 문구 원본은 `scripts/p3/p3_content.py` (검사·CSV 내보내기 포함).
 
 사용자 요청: **"내용을 아주 알차게, 뻔하지 않고 아이디어가 돋보이게."**
 
@@ -111,7 +111,7 @@ NEW (상품 1 에 없던 ADHD 공감 코드):
 
 ## 3. 페이지 수 — 와이어프레임 실측 (2026-09-25)
 
-`python scripts/p3_wireframe.py 2027 mon` → `output/p3_wireframe_2027-mon.pdf`
+`python scripts/p3/p3_wireframe.py 2027 mon` → `output/p3_wireframe_2027-mon.pdf`
 
 | 부분 | 장 |
 |---|---|
@@ -133,7 +133,7 @@ NEW (상품 1 에 없던 ADHD 공감 코드):
 검사기 자체 확인: 3/8→3/9 연결 하나를 틀면 `handoff d3-8->d3-9`, 1주차 링크를 지우면 `[1]` 로 잡힌다.
 (1주차는 2026-12-28 에 시작해 처음엔 1분기에서 빠졌다 → 해를 넘는 주는 1월/12월에 붙인다: `home_month()`)
 
-## 4. 문구 데이터 (`scripts/p3_content.py`)
+## 4. 문구 데이터 (`scripts/p3/p3_content.py`)
 
 | § | 데이터 | 개수 |
 |---|---|---|
@@ -148,7 +148,7 @@ NEW (상품 1 에 없던 ADHD 공감 코드):
 | 4-8 | Weekly reset 고정 체크리스트 | 6 |
 | 4-9 | NEW 도구 4종 칸 문구 | 4 |
 
-검사: `python scripts/p3_content.py` → 개수·중복·길이·금지어(의학 주장) 검사 +
+검사: `python scripts/p3/p3_content.py` → 개수·중복·길이·금지어(의학 주장) 검사 +
 `output/p3_content_<연도>.csv` (날짜별로 그날 들어갈 문구 전부 — 엑셀로 검수).
 
 ## 5. 결정 필요 (사용자)

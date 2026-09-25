@@ -73,7 +73,7 @@
 ## 역할 분담 (2026-09-25, 사용자 확정)
 
 **디자인은 사용자가 직접 한다. Claude 는 내용(페이지 구성·문구·데이터) 계획과 생성만.**
-내용 계획은 `product3-content.md`, 문구 데이터는 `scripts/p3_content.py`.
+내용 계획은 `product3-content.md`, 문구 데이터는 `scripts/p3/p3_content.py`.
 Claude 가 만든 시안·색·레이아웃은 결정 사항이 아니다.
 
 ## 디자인 차별화 (2026-09-25) — 사용자에게 넘어감
@@ -92,6 +92,17 @@ Claude 가 만든 시안·색·레이아웃은 결정 사항이 아니다.
 | C | Bold | 네오 브루탈리즘. 굵은 외곽선, 원색 블록, 딱딱한 그림자, 거대한 날짜 숫자 |
 | D | Notebook | 불렛저널. 스프링 구멍, 점지 전면, 튀어나온 인덱스 탭, 손글씨 제목, 마스킹테이프·포스트잇 |
 
-시안 스크립트: `scripts/concepts_p3.py` (저장소 밖 스크래치에서 옮겨 둠). 콘셉트 키워드 자체는 검색 수요가 없다
+시안 스크립트: `scripts/p3/concepts_p3.py` (저장소 밖 스크래치에서 옮겨 둠). 콘셉트 키워드 자체는 검색 수요가 없다
 (`gamified planner`·`time blindness planner` 상위에 전용 상품 없음) — 파는 키워드는 여전히 `adhd planner 2027`,
 콘셉트는 썸네일·스토리 차별화용.
+
+## 파이프라인 분리 (2026-09-25, 사용자)
+
+상품 3 은 `scripts/p3/` 만 쓴다. `build_planner.py` 의 상품 3 훅을 걷어내 `eb3f67e` 직전으로 되돌렸고,
+상품 1 `v8.20-undated`·상품 2 `student-v1.1` HTML 이 상품 3 작업 전 기준선과 **바이트 동일**(cmp)함을 확인했다.
+위 dated-v0.1 절은 기록이다 — 코드는 `archive/p3_dated_v0.1/`. 규칙은 `scripts/p3/README.md`.
+
+## 디자인 확정본 → 에디션 PDF (2026-09-25)
+
+사용자 디자인 "Lifted Paper"(핸드오프 `ADHD Planner 디자인 컨셉_v0.1/`) → `python scripts/p3/editions_build.py`.
+결과·문제점은 `output/editions/check_report.json`, 보고는 대화 기록.
