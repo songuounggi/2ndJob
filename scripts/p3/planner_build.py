@@ -50,7 +50,8 @@ if SAMPLE:
     while (OUT / f"sample-{_n:02d}").exists():
         _n += 1
     OUT, SRC = OUT / f"sample-{_n:02d}", SRC / f"sample-{_n:02d}"
-FNAME = f"ADHD-Year-Planner-{TAG}"
+# 시험본은 이름부터 다르게 -- 진짜와 같은 이름이라 사용자가 20쪽짜리 시험본을 검수한 적이 있다(2026-09-25)
+FNAME = f"TEST-sample-ADHD-Year-Planner-{TAG}" if SAMPLE else f"ADHD-Year-Planner-{TAG}"
 P1 = json.loads((HERE / "p1_tools.json").read_text(encoding="utf-8"))
 
 # ------------------------------------------------------------------ colours --
