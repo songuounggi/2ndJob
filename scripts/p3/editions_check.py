@@ -116,7 +116,9 @@ def check_edition(ed):
     for i, pg in enumerate(doc):
         pix = pg.get_pixmap(matrix=fitz.Matrix(4 / 3, 4 / 3), alpha=False)
         a = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, 3).astype(int).mean(axis=2)
-        step = np.abs(np.diff(a[600:1024, 740:768], axis=1)).max()
+        # 탭 레일 아래(y 880~) 만 본다 -- 탭 모서리(청록 활성 탭)가 계단으로 잡혔다. 가장 긴 레일
+        # (Focus 9탭)도 y≈780px 에서 끝난다. 이음매가 났던 곳은 들린 모서리 그림자(오른쪽 아래)다.
+        step = np.abs(np.diff(a[880:1024, 740:768], axis=1)).max()
         if step > 3:
             F(f"{ids[i]}: 오른쪽 끝 이음매 (가로 밝기 계단 {step:.0f})")
 
