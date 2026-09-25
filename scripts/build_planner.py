@@ -437,6 +437,14 @@ THEMES["v8.19-undated"] = dict(THEMES["v8-undated"], fast_paint=True)
 THEMES["v8.20-undated"] = dict(THEMES["v8-undated"], fast_paint=True,
                                vector_dots=True)
 
+# 상품 3: 날짜형 (2026-09-25, Prod 3 방). v8.20 의 모양 그대로 달력만 날짜로.
+# undated=True 는 일부러 남긴다 -- 습관·복약·분기 템플릿은 계속 월 이름 없이
+# 쓰는 한 장이고, 반복 세트와 표지만 dated_pages.py 가 갈아 끼운다.
+for _y in (2026, 2027):
+    for _s, _wd in (("mon", 0), ("sun", 6)):
+        THEMES[f"dated-v0.1-{_y}-{_s}"] = dict(
+            THEMES["v8.20-undated"], dated=True, year=_y, week_start=_wd)
+
 VERSION = os.environ.get("PLANNER_VERSION", "v2-warm")
 if VERSION == "v9-student":
     VERSION = "student-v0.1"
@@ -887,6 +895,12 @@ if T.get("app"):
 else:
     student_pages = None
 
+if T.get("dated"):             # 상품 3 (Prod 3 방 소유)
+    import dated_pages
+    dated_pages.init(sys.modules[__name__])
+else:
+    dated_pages = None
+
 
 def section_colors(key):
     """(decorative accent, tint, text tone) for any page.
@@ -1140,6 +1154,8 @@ def p_app_index():
 def p_cover():
     if app_style:
         return p_app_cover()
+    if dated_pages:
+        return dated_pages.p_cover()
     # The cover card is the listing's hero shot, so it has to describe the
     # build it actually ships. The counts below are the real section sizes --
     # if a page is added to GROUPS, update them.
@@ -1262,14 +1278,19 @@ def p_month():
         <div class="field" style="flex:1"></div></div></div>""")
 
 
-def p_week(label=""):
+def p_week(label="", chips=None, head_html=None):
+    """chips/head_html: 날짜형(dated_pages)이 요일 칩과 머리를 갈아 끼운다.
+    둘 다 None 이면 상품 1 과 바이트까지 같은 출력."""
     days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+    if chips is None:
+        chips = [f'<span class="chip" style="{"" if i < 5 else "background:var(--field);color:var(--mid)"}">{d}</span>'
+                 for i, d in enumerate(days)]
     rows = "".join(
         f'<div style="flex:1;display:flex;align-items:flex-start;padding-top:8pt;'
-        f'{"" if i == len(days) - 1 else "border-bottom:1px solid var(--line)"}">'
-        f'<span class="chip" style="{"" if i < 5 else "background:var(--field);color:var(--mid)"}">{d}</span>'
-        f'</div>' for i, d in enumerate(days))
-    return (head("Weekly spread", label or "Week of", field_after=True)
+        f'{"" if i == len(chips) - 1 else "border-bottom:1px solid var(--line)"}">'
+        f'{c}'
+        f'</div>' for i, c in enumerate(chips))
+    return ((head_html or head("Weekly spread", label or "Week of", field_after=True))
             + f"""<div class="body"><div class="row">
       <div class="card" style="flex:1.45">{rows}</div>
       <div class="col" style="flex:1">
@@ -1289,7 +1310,7 @@ def p_week(label=""):
       </div></div></div>""")
 
 
-def p_day(label="", month=None):
+def p_day(label="", month=None, head_html=None):
     hours = ["7 AM", "9 AM", "11 AM", "1 PM", "3 PM", "5 PM", "7 PM", "9 PM"]
     blocks = "".join(
         f'<div style="flex:1;display:flex;align-items:center;'
@@ -1302,7 +1323,7 @@ def p_day(label="", month=None):
         for m in ["Low", "OK", "Good", "Great"])
     back = (f'<a href="#m{month}" class="chip" style="text-decoration:none;'
             f'margin-left:14pt">Month {month}</a>' if month else "")
-    return (head("Daily page", label or "Today", field_after=True, extra=back)
+    return ((head_html or head("Daily page", label or "Today", field_after=True, extra=back))
             + f"""<div class="body">
       <div class="card" style="flex:none;flex-direction:row;align-items:center;
            gap:14pt;padding:13pt 16pt">
@@ -2445,6 +2466,8 @@ def build_html():
     ]
     if student_pages:
         specs = student_pages.specs()
+    elif dated_pages:
+        specs = dated_pages.specs(specs)
     elif T.get("undated"):
         # the repeated sets: twelve month grids, each month's days, the weeks
         for m in range(1, MONTHS + 1):
