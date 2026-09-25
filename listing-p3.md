@@ -161,7 +161,7 @@ For personal use. Please do not resell or redistribute the files.
 
 ---
 
-## 리스팅 이미지 — **시안** `output/prod3/listing/draft-v0.7/` (사용자 확정 전)
+## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.9/` (사용자 확정 전)
 
 **안전 영역:** 글자·배지는 가로 260–1740, 세로 250–1750 안(Etsy 검색이 양옆 ~140px 을 자르고 4:3 자리는 가운데만 쓴다 --
 `product2-student.md` 목업 안전 영역, 상품 1 대표 이미지가 "DHD & Wellness" 로 잘린 적). `listing_images_p3.py` 가 찍기 전에 재고
@@ -181,3 +181,7 @@ For personal use. Please do not resell or redistribute the files.
 | 06 | 4 PDFs, Ten tabs on every page, two taps | check_listing_p3 | ✔ |
 | 06 | For GoodNotes, Notability and other PDF note apps | 상품 1 과 같은 범위 | △ iPad 확인 전 |
 | 06 | shaped for a tablet (3:4) | 768×1024 | ✔ |
+| 07 | Every month · four pages that work together / calendar, plan, brain weather tracker, review – linked to each other | `m#` `mp#` `bw#` `mr#` 12장씩, 달력 머리의 PLAN·BRAIN WEATHER·REVIEW 칩과 각 페이지의 달 칩이 서로 링크 | ✔ |
+| 08 | A user manual for your own brain / Keep the experiments that worked / Notes to future you wait in a year-end mailbox | 표지 문구, Playbook "Copy every ✓ from the 52 experiments", 12월 노트 → mailbox (시간 링크 검사) | ✔ |
+| 09 | Ten tabs on every page / Any day, two taps away (Tap YEAR, tap the date) | 탭 10개 전 페이지, Year at a glance 날짜 365개 링크 | ✔ |
+| 10 | Only dates shared worldwide are printed / My holidays page / Dot grid · Ruled · Plain · Grid | `holidays()` 6개, `myhol`, `note1-4` | ✔ (크리스마스는 사용자 결정으로 넣었다 -- "shared worldwide" 범위로 본다) |
