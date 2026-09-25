@@ -61,7 +61,7 @@ git clone https://github.com/songuounggi/2ndJob.git 2ndJob
 
 `~/AiProject/2ndJob` 이 생긴다. **이후 모든 명령은 이 폴더 안에서 친다.**
 
-> **경로는 회사 PC 와 같을 필요가 없다.** `D:\workndJob` 이든 어디든
+> **경로는 회사 PC 와 같을 필요가 없다.** `D:\work\2ndJob` 이든 어디든
 > 된다. git 은 폴더 위치를 기억하지 않는다. 회사와 맞추는 것은 순전히
 > 사람이 헷갈리지 않기 위해서다.
 
