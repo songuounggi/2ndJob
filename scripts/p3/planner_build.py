@@ -14,6 +14,7 @@ GoodNotes 안전: 그라데이션·블러·반투명 레이어 없음. 괘선은
 """
 import calendar
 import datetime as dt
+import html as htmllib
 import json
 import os
 import pathlib
@@ -23,6 +24,11 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = pathlib.Path(__file__).resolve().parent
+# 파이썬 문자열 안의 역참조(\1)가 제어 문자로 박힌 적이 두 번 있다(2026-09-25) -- 소스부터 확인한다
+_own = pathlib.Path(__file__).read_text(encoding="utf-8")
+_bad = [i for i, c in enumerate(_own) if ord(c) < 32 and ord(c) not in (9, 10, 13)]
+if _bad:
+    raise SystemExit(f"planner_build.py 소스에 제어 문자 {len(_bad)}개 (위치 {_bad[:5]}) -- 역참조 대신 lambda 로")
 sys.path.insert(0, str(HERE))
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
 SAMPLE = "--sample" in sys.argv
@@ -33,7 +39,9 @@ import editions_build as E
 
 ROOT = HERE.parents[1]
 Y, WS, TAG = W.Y, W.WS, W.TAG
-VERSION = "v0.1"
+# v0.1 = 첫 전체 빌드(일간 맨 아래 칩의 누르는 영역이 칸 overflow 에 잘려 34px) / v0.2 = 그 수정
+# v0.3 = 발문의 & 이중 이스케이프(Morning &amp;amp; evening 등 3장) 수정
+VERSION = "v0.3"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -324,8 +332,8 @@ def p_day(d):
               f'<div style="margin-top:6px;font-size:12px">mood{BTR * 5}</div></div></div></div>'
             + f'<div class="box" style="flex:none"><div class="lab">Question of the day · {cat}</div>'
               f'<div class="txt" style="font-style:italic;font-size:15px">{W.e(q)}</div>{W.lines(1)}</div>'
-            + f'<div class="rw" style="flex:none"><div class="box" style="flex:1"><div class="lab">Tomorrow starts with</div>{W.lines(1)}<div style="margin-top:6px">{tom}</div></div>'
-              f'<div class="box" style="flex:1"><div class="lab">Note to future me</div>{W.lines(1)}<div style="margin-top:6px">{fut_c}</div></div></div>'
+            + f'<div class="rw" style="flex:none"><div class="box" style="flex:1;overflow:visible"><div class="lab">Tomorrow starts with</div>{W.lines(1)}<div style="margin-top:6px">{tom}</div></div>'
+              f'<div class="box" style="flex:1;overflow:visible"><div class="lab">Note to future me</div>{W.lines(1)}<div style="margin-top:6px">{fut_c}</div></div></div>'
             + '</div>')
 
 
@@ -407,7 +415,7 @@ def footer_name(key, body):
             return name
     m = re.search(r"<h1[^>]*>(.*?)</h1>", body, re.S)
     if m:
-        return re.sub(r"<[^>]+>", "", m.group(1)).strip()
+        return htmllib.unescape(re.sub(r"<[^>]+>", "", m.group(1))).strip()   # 발문에서 W.e 가 다시 이스케이프한다
     return {"cover": "Cover", "focus": "Focus", "feel": "Feelings", "health": "Body", "life": "Life"}.get(key, key)
 
 
@@ -555,6 +563,10 @@ def build():
     ctrl = [c for c in html if ord(c) < 32 and c not in "\t\n\r"]
     if ctrl:
         raise SystemExit(f"HTML 에 제어 문자 {len(ctrl)}개 {sorted(set(map(repr, ctrl)))}")
+    # 이미 이스케이프된 글을 또 이스케이프하면 화면에 "&amp;" 가 글자로 찍힌다(v0.2 발문 3장)
+    dbl = re.findall(r"&amp;(?:amp|lt|gt|quot|#\d+);", html)
+    if dbl:
+        raise SystemExit(f"HTML 에 이중 이스케이프 {len(dbl)}개 {sorted(set(dbl))}")
     src = SRC / f"{FNAME}.html"
     src.write_text(html, encoding="utf-8")
     raw = OUT / f"{FNAME}.raw.pdf"
@@ -595,7 +607,9 @@ def build():
         raise SystemExit(f"Source Serif 4 가 아닌 폰트: {stray} -- GLYPHS 에 그 글자를 넣을 것")
     touch_report(final, ids)
     if not SAMPLE:
-        bad, miss = W.check_links(html)
+        norm = re.sub(r'<a class="hit" href="#([^"]+)"><span class="chip ?[a-z ]*">(.*?)</span></a>',
+                      lambda m: '<a class="chip " href="#' + m.group(1) + '">' + m.group(2) + '</a>', html)
+        bad, miss = W.check_links(norm)
         dead = sorted(set(re.findall(r'href="?#([^" >]+)', html)) - set(ids))
         print(f"  dead links {len(dead)} {dead[:5]} · time links broken {len(bad)} · weeks missing {miss}")
     return ids, html
