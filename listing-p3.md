@@ -158,3 +158,21 @@ For personal use. Please do not resell or redistribute the files.
 | Works in GoodNotes, Notability, Xodo, Acrobat | 상품 1 `listing.md` 와 같은 범위 | △ 상품 3 파일은 **iPad GoodNotes 실기기 확인 전** — 사용자 확인 후 확정 |
 | pages shaped for a tablet (3:4), not for printing | 768×1024px = 576×768pt | ✔ (인쇄를 약속하지 않는다 — 상품 1 은 US Letter 였다) |
 | not medical advice | 의학 주장 검사 `p3_content.check()` | ✔ |
+
+---
+
+## 리스팅 이미지 — **시안** `output/prod3/listing/draft-v0.2/` (사용자 확정 전)
+
+`python scripts/p3/listing_images_p3.py` -- v0.7 2027-mon 페이지를 렌더해 2000×2000 에 배치.
+색·글꼴은 핸드오프(종이·잉크·청록, Source Serif 4). 배치·구성은 **사용자가 확정**한다.
+
+| 이미지 | 문구 | 근거 | 결과 |
+|---|---|---|---|
+| 01 hero | The ADHD Year / One small experiment a week… | 표지 문구 그대로 (1쪽) | ✔ |
+| 02 | One strategy a week. Printed on that week's page. Mark it on Friday. Keep or drop it each quarter | 주간 `THIS WEEK EXPERIMENT`, Friday 표시, 분기 KEEP 3 · DROP 3 | ✔ |
+| 03 | Today links to tomorrow. Note to future you… 30 days later | 시간 링크 검사(끊김 0), Arrives +30 | ✔ |
+| 04 | SOS 세 문구 | `p3_content.SOS` | ✔ |
+| 05 | 598 pages a year · **45 tools** | 쪽 수 검사, 도구 Focus 11 + Feelings 10 + Body 10 + Life 14 = 45 | ✔ (설명문엔 없는 숫자 -- 이미지에서 새로 쓴 주장) |
+| 06 | 4 PDFs, Ten tabs on every page, two taps | check_listing_p3 | ✔ |
+| 06 | For GoodNotes, Notability and other PDF note apps | 상품 1 과 같은 범위 | △ iPad 확인 전 |
+| 06 | shaped for a tablet (3:4) | 768×1024 | ✔ |
