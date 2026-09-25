@@ -131,7 +131,9 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .dy{{flex:1;border-bottom:1px solid {N300};padding-top:5px}}
 .dy .chip{{margin-left:0}}
 .chips{{display:flex;flex-wrap:wrap;gap:3px}}
-.chips .chip{{min-width:0;padding:0 7px}}
+/* 분기의 주 번호 알약(W1-W13): 가운데 정렬, 두 줄(7+6), 알약 사이 10px (사용자: 다닥다닥 답답하다) */
+.chips.wk{{display:grid;grid-template-columns:repeat(7,48px);justify-content:center;gap:10px 12px;padding:10px 0 6px}}
+.chips.wk .chip{{min-width:0;width:48px;padding:0}}
 .chips .chip{{margin:0}}
 .yg{{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 22px}}
 .mname{{font-weight:600;font-size:13px}}
@@ -384,6 +386,8 @@ def mark_lead(key, body):
 def page(key, body, n):
     sheet = "b" if key in SHEET_B else "a"
     body = mark_lead(key, unwire(body))
+    if re.fullmatch(r"q\d", key):
+        body = body.replace('<div class="chips">', '<div class="chips wk">', 1)
     fname = footer_name(key, body)
     foot = "" if key == "cover" else f'<footer><span>The ADHD Year · {Y}</span><span>{W.e(fname)} · {n:03d}</span></footer>'
     return (f'<section class="pg" id="{key}"><img class="bg" src="bg/sheet-{sheet}-2x.jpg" alt="">'
