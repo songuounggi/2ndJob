@@ -106,3 +106,45 @@ Claude 가 만든 시안·색·레이아웃은 결정 사항이 아니다.
 
 사용자 디자인 "Lifted Paper"(핸드오프 `ADHD Planner 디자인 컨셉_v0.1/`) → `python scripts/p3/editions_build.py`.
 결과·문제점은 `output/prod3/editions/<버전>/check_report.json`, 보고는 대화 기록.
+
+## 출시 체크리스트 — 판매용 플래너 v0.7 (2026-09-26, `RELEASE.md` 1절 기준)
+
+파일: `output/prod3/planner/v0.7/ADHD-Year-Planner-{2026,2027}-{mon,sun}.pdf` (각 598쪽, 7.7MB)
+
+### 1-1. 자동 검사 — 전부 돌렸다
+
+| 검사 | 명령 | v0.7 |
+|---|---|---|
+| 구조·링크·시간 링크·폰트·누르는 영역·레이아웃 | 빌드가 함께 돈다 (`planner_build.py`) | 통과 (깨진 링크 0) |
+| 전수 레이아웃 (잘림·넘침·겹침·발문·삐져나옴, 598쪽 × 4) | `python scripts/p3/audit_layout_p3.py v0.7` | **0건** |
+| 리스팅 원고 ↔ 파일 | `python scripts/p3/check_listing_p3.py v0.7` | ALL OK |
+| 뷰어 위험·속도·용량 | `python scripts/check_render.py output/prod3/planner/v0.7/ADHD-Year-Planner-2027-mon.pdf` | A 0·0·0, D 7.7MB 통과. **B 렌더 최대 209ms — 기준 150ms 미달** |
+
+**B 는 알고 가는 미달이다.** 원인은 배경 이미지(2×, 핸드오프 README 지정) -- 페이지 시간의 ~90ms.
+사용자가 2× 유지로 결정(2026-09-25), 7쪽 버벅임은 "괜찮은 듯, 스킵"(2026-09-26).
+RELEASE.md 는 전부 통과를 요구하므로 **iPad 확인(아래 2번)을 사용자가 통과시켜야** 올린다.
+비교용: `output/prod3/ipad-test/v0.4-background/TEST-bg-{2x-now,1.5x}-p1-40.pdf` (1.5× = 98ms, 픽셀 차이 평균 0.06).
+
+### 1-3. iPad 실기기 — 사용자 (GoodNotes, `2027-mon` 한 판으로)
+
+| # | 할 일 | 페이지 (2027-mon) | 볼 것 |
+|---|---|---|---|
+| 1 | GoodNotes 에서 열기 | | 오래 걸리지 않는가, 598쪽인가 |
+| 2 | 1~30쪽 빠르게 넘기기 | 1–30 | 바둑판처럼 늦게 채워지지 않는가 (**B 미달이라 가장 중요**) |
+| 3 | **오른쪽** 탭 10개를 하나씩 | 아무 쪽 | 전부 이동하는가, 지금 탭이 진한 청록인가 |
+| 4 | YEAR 탭 → 날짜 하나 | 5 → 일간 | 2탭에 그날로 가는가 |
+| 5 | 일간 맨 아래 `Tomorrow →` / 위 `From yesterday ←` | 25 (1/1), 26 | 다음 날·전날로 가는가 |
+| 6 | 일간 `Arrives … →` | 25 | 30일 뒤(1/31)로 가는가 |
+| 7 | MONTH → January → 날짜 | 21 → 22 | 달력 칸 아무 데나 눌러도 그날로 가는가 |
+| 8 | 도트·격자 노트 확대 | 595, 598 | 흐리거나 간격이 이상하지 않은가 |
+| 9 | 펜으로 몇 줄 | 583 Monthly budget | 34px 줄에 쓰기 편한가 |
+
+바뀐 페이지 (v0.3 이후): 9 Life admin radar · 13 Where I put it · 15 Project planner · 22/331/400 달력(1·10·12월) ·
+89·106 (3월 달력, 3/15 NCW) · 24 Brain weather · 540 53주차 · 544 Year review · 556·567·570·583·585·586·588 입력 줄.
+
+### 올릴 때 (아직 하지 않는다)
+
+- Etsy 파일 이름 **제안** (사용자 확정 필요, RELEASE.md 3-3): `ADHD-Year-Planner-2027-Monday-start.pdf` 처럼
+  `mon`/`sun` 을 풀어 쓴다 -- 구매자가 받는 이름이라 약어가 헷갈린다. 70자 이내, 영숫자 `.` `_` `-`
+- 올린 판은 `output/prod3/upload/v0.7/` 에 복사, `shop.md` 0-1절 이력표에 한 줄
+- 가격: 정가 $19.99, 런칭 세일 35% = $12.99 (`listing-p3.md`)

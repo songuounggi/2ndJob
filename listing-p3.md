@@ -65,7 +65,7 @@ WHAT'S INSIDE
 
 Start – how it works, an index, and an SOS page: pick what is happening ("I can't start", "I'm overwhelmed", "Someone's words stung") and tap straight to the tool for it
 Year – year at a glance, systems not resolutions, the 52 experiments, year in pixels, a life admin radar, my holidays, birthdays and gift radar, where I put it, goals, project planner, vision, playbook, year review
-Quarters – 4 pages to keep or drop the last 13 weeks of experiments
+Quarters – 4 pages to keep or drop the last quarter's experiments
 Months – for each month: a calendar, a plan, a brain weather tracker, and a review
 Weeks – a weekly page and a Sunday reset for every week
 Days – one page for every day of the year: the one thing, energy lanes, a schedule, guess vs actual, a question of the day, and links to yesterday and tomorrow
@@ -147,7 +147,7 @@ For personal use. Please do not resell or redistribute the files.
 | note to future you ... 30 days later / December → year-end mailbox | `Arrives` 칩 → +30일, 12월 → `mailbox` | ✔ |
 | which day of the year / how many are left | 일간 머리 `DAY n · m LEFT` | ✔ |
 | SOS page examples | `p3_content.SOS` 14개 중 세 문구 그대로 | ✔ |
-| Quarters – 4 pages / 13 weeks | 분기 4장. **14주짜리 분기가 있다**(2026 Q4, 2027 Q3) | △ "the last 13 weeks" 는 14주 분기에서 틀린다 → **"the last quarter's experiments" 로 바꿀지 결정** |
+| Quarters – 4 pages, the last quarter's experiments | 분기 4장, 그 분기의 주(13주 또는 14주 -- 2026 Q4, 2027 Q3 은 14주) 알약 링크 | ✔ ("13 weeks" 는 14주 분기에서 틀려 바꿨다, 2026-09-26) |
 | Months – calendar, plan, brain weather, review | `m#` `mp#` `bw#` `mr#` 각 12장 | ✔ |
 | a weekly page and a Sunday reset for every week | `w#` `wr#` 각 53장(2027-mon) | ✔ |
 | Focus / Feelings / Body / Life 목록 | 페이지 제목과 대조(Focus 11, Feelings 10, Body 10, Life 14) | ✔ |
