@@ -18,7 +18,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # scripts/p3/ -> 저장소
 # 문구·와이어프레임 버전. 바꾸면 올린다 -- 출력은 output/prod3/wireframe/<VERSION>/, 덮어쓰지 않는다.
-VERSION = "v0.2"
+VERSION = "v0.3"   # v0.3 = Life admin radar 문구 한 줄로(잘림), Neurodiversity Celebration Week
 
 # ------------------------------------------------------------ 4-1 intro --
 HOW_IT_WORKS = {
@@ -101,16 +101,16 @@ MONTH_REVIEW = [  # 상품 1 review 4개 + 테마 질문(MONTHS[2]) 이 5번째
 # ------------------------------------------------ 4-4 life admin radar --
 ADMIN = [
     ["Set up this year's planner", "Review every subscription", "Book the yearly check-up", "Back up phone photos"],
-    ["Start a tax paperwork folder", "Check insurance renewal dates", "Clean out the fridge", "Plan one friend night"],
-    ["Clocks may change: test smoke alarms", "Declutter one zone", "Check car or license renewals", "Book a dental visit"],
-    ["Tax deadline in many places: check yours", "Swap seasonal clothes", "Review last month's spending", "Clean one window"],
-    ["Mental health check-in", "Check passport expiry before summer", "Replace your toothbrush", "Plan summer time off"],
-    ["Midyear money check", "Renew anything expiring in summer", "Restock first-aid and sunscreen", "Clear the car"],
-    ["Back up your devices", "Check refills and prescriptions", "Plan one real rest day", "Clean out one closet"],
-    ["Back-to-routine prep", "Book a dental visit", "Update emergency contacts", "Restock supplies"],
-    ["Fall reset of one room", "Check heating and filters", "Review every subscription", "Book seasonal appointments"],
-    ["Learn one thing about ADHD", "Test smoke alarms", "Start the gift list", "Plan autumn budget"],
-    ["Set a holiday budget", "Book holiday travel early", "Clocks may change: reset alarms", "Write three thank-yous"],
+    ['Start a tax folder', 'Check insurance renewals', "Clean out the fridge", "Plan one friend night"],
+    ['Test the smoke alarms', "Declutter one zone", 'Check license renewals', "Book a dental visit"],
+    ['Check your tax deadline', "Swap seasonal clothes", 'Look over your spending', "Clean one window"],
+    ["Mental health check-in", 'Check passport expiry', "Replace your toothbrush", "Plan summer time off"],
+    ["Midyear money check", 'Renew what expires soon', 'Restock the first-aid kit', "Clear the car"],
+    ["Back up your devices", 'Check your refills', "Plan one real rest day", "Clean out one closet"],
+    ["Back-to-routine prep", "Book a dental visit", 'Update emergency info', "Restock supplies"],
+    ["Fall reset of one room", "Check heating and filters", "Review every subscription", 'Book seasonal check-ups'],
+    ['Learn one new ADHD fact', "Test smoke alarms", "Start the gift list", "Plan next month's budget"],
+    ["Set a holiday budget", "Book holiday travel early", 'Reset clocks and alarms', "Write three thank-yous"],
     ["Use-it-or-lose-it benefits", "Donate one bag", "Year-end review", "Set up next year's planner"],
 ]
 
@@ -635,8 +635,12 @@ def holidays(y):
     어머니날·부활절·추수감사절처럼 나라마다 날짜가 다른 것은 넣지 않는다.
     """
     D = dt.date
+    # Neurodiversity Celebration Week (Siena Castellon, 전 세계) -- 해마다 날짜가 다르다. 공식 사이트 값만
+    # neurodiversityweek.com/events-2026 = 3/16-20, events-2027 = 3/15-19 (2026-09-25 확인). 첫날(월)에 인쇄
+    ncw = {2026: D(2026, 3, 16), 2027: D(2027, 3, 15)}
     return {
         D(y, 1, 1): "New Year's Day",
+        **({ncw[y]: "Neurodiversity Celebration Week"} if y in ncw else {}),
         D(y, 10, 1): "ADHD Awareness Month",
         D(y, 10, 10): "World Mental Health Day",
         D(y, 12, 25): "Christmas Day",
@@ -702,6 +706,9 @@ def check():
              + [x for a in ADMIN for x in a] + [s[0] + s[1] for s in SOS] + WEEKLY_RESET)
     long = [t for t in texts if len(t) > 70]
     need(not long, f"70자 초과 {len(long)}: {long[:3]}")
+    # Life admin radar 는 한 칸에 네 줄 -- 두 줄로 꺾이면 10~12월 줄이 잘렸다(v0.1~v0.5). 한 줄에 드는 길이만
+    wide = [x for a in ADMIN for x in a if len(x) > 26]
+    need(not wide, f"ADMIN 26자 초과(두 줄로 꺾인다) {wide}")
     bad = [t for t in texts if BANNED.search(t)]
     need(not bad, f"금지어 {bad[:3]}")
     # 인쇄 공휴일은 나라를 타지 않는 것만 (2026-09-25 결정). 미국 것이 다시 들어오면 잡는다.

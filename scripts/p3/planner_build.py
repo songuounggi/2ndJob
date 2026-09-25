@@ -44,7 +44,9 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.3 = 발문의 & 이중 이스케이프(Morning &amp;amp; evening 등 3장) 수정
 # v0.4 = (사용자 확정) 빈 입력 행 34px + 행 추가 + 줄마다 선 하나(8장), Project planner 좌우 첫 줄 맞춤,
 #        Life admin radar 월 칸 아래 줄 맞춤, Brain weather 이름 칸 52px(표와 겹침)
-VERSION = "v0.4"
+# v0.5 = 월 달력 공휴일 있는 줄만 길고 숫자와 겹치던 것(1·10·12월) 수정
+# v0.6 = (내용) Life admin radar 문구 한 줄로 -- 10~12월 넷째 항목이 잘렸다, Neurodiversity Celebration Week 인쇄
+VERSION = "v0.6"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -172,6 +174,9 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .cal td>a{{position:absolute;inset:0;padding:5px 4px}}
 .cal td.wk>a{{display:flex;align-items:center;justify-content:center;padding:0}}
 .hol{{margin-top:18px}}
+/* 칸 전체를 링크로 만들며 숫자를 띄웠더니 공휴일만 칸 안에 남아, 표가 그 줄에 높이를 몰아줬다(1·10·12월 첫 줄이 길고 숫자와 겹침, v0.1~v0.4).
+   공휴일도 띄워 숫자 아래(5 + 18px)에 둔다 -- 모든 줄이 같은 높이, 원래 모양 */
+.cal td>.hol{{position:absolute;top:23px;left:4px;right:4px;margin:0}}
 .cal td.wk{{width:30px;font-size:9.5px;font-weight:400;color:{N700};letter-spacing:.06em}}
 .cal td.out{{color:{N300}}}
 .hol{{font-size:9.5px;font-style:italic;font-weight:400;color:{N800};margin-top:3px}}
@@ -578,6 +583,7 @@ ROWS_JS = r"""
 #  - Brain weather 이름 칸 글자가 칸을 넘친다(표와 겹침)
 #  - Life admin radar 같은 줄 세 칸의 아래 줄 높이가 다르다
 #  - 상품 1 도구의 빈 입력 행이 34px 이 아니다(칸 높이를 행 수로 나눠 46~103px)
+#  - 월 달력 날짜 줄 높이가 다르다(공휴일 있는 줄만 길었다)
 LAYOUT_JS = r"""
 () => {
   const bad = [];
@@ -592,6 +598,12 @@ LAYOUT_JS = r"""
       (rows[k] = rows[k] || []).push(Math.round(ln.getBoundingClientRect().bottom));
     });
     Object.values(rows).forEach(b => { if (new Set(b).size > 1) bad.push(g.closest('section').id + ' month lines ' + b.join('/')); });
+  });
+  // 월 달력: 날짜 줄은 전부 같은 높이
+  document.querySelectorAll('table.cal').forEach(t => {
+    const hs = [...t.rows].slice(1).map(r => Math.round(r.getBoundingClientRect().height));
+    // 마지막 줄은 원래 5~8px 짧다(표 높이 나머지) -- 그건 두고, 한 줄만 크게 길어지는 것(v0.4 1월 270 vs 111)을 잡는다
+    if (Math.max(...hs) - Math.min(...hs) > 10) bad.push(t.closest('section').id + ' calendar rows ' + hs.join('/'));
   });
   const groups = new Map();
   document.querySelectorAll('.p1 div:has(>.field)').forEach(r => {
