@@ -5,7 +5,7 @@
 늦게 채워졌고, 도트 그리드는 4배 넓게·흐릿하게 나왔다. 둘 다 PC 의 pdfium
 렌더에서는 멀쩡했다. 그래서 "PC 에서 맞게 보인다"만으로는 통과시키지 않는다.
 
-    python scripts/check_render.py output/planner_v8.20-undated-FINAL.pdf
+    python scripts/check_render.py output/prod1/planner_v8.20-undated-FINAL.pdf
 
 재는 것:
   A. 구조 -- 뷰어마다 비싸거나 다르게 그리는 요소가 페이지에 있는가

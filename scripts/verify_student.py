@@ -31,12 +31,12 @@ from pypdf import PdfReader
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION = sys.argv[1] if len(sys.argv) > 1 else "student-v0.1"
-RAW = os.path.join(ROOT, "output", "planner_%s.pdf" % VERSION)
+RAW = os.path.join(ROOT, "output", "prod2", "planner_%s.pdf" % VERSION)
 HTML = os.path.join(ROOT, "src", "planner_%s.html" % VERSION)
 # 검사 대상은 파는 파일(dedupe 후)이다. 2026-09-23 까지 빌드 직후 파일을
 # 재서 21.21MB "상한 초과"로 판정했는데, 실제 판매본은 14.94MB 였다.
 # 빌드보다 오래된 FINAL 은 낡은 결과를 재는 것이므로 거부한다.
-PDF = os.path.join(ROOT, "output", "planner_%s-FINAL.pdf" % VERSION)
+PDF = os.path.join(ROOT, "output", "prod2", "planner_%s-FINAL.pdf" % VERSION)
 # 빌드는 HTML 을 먼저 쓰고(snap 이 한 번 더 고쳐 쓴다) PDF 를 나중에 쓴다.
 # PDF 가 HTML 보다 오래됐으면 Chrome 이 쓰지 못한 것이다. 2026-09-24 에
 # 빌드가 실패했는데 `빌드 | tail && dedupe` 의 파이프가 종료 코드를 삼켜

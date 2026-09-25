@@ -162,7 +162,7 @@ PLANNER_VERSION=v8.20-undated python scripts/build_planner.py
 넘는다.**
 
 ```bash
-python scripts/dedupe_pdf.py output/planner_v8.20-undated.pdf output/planner_v8.20-undated-FINAL.pdf
+python scripts/dedupe_pdf.py output/prod1/planner_v8.20-undated.pdf output/prod1/planner_v8.20-undated-FINAL.pdf
 ```
 
 기대 출력:
@@ -178,8 +178,8 @@ python scripts/dedupe_pdf.py output/planner_v8.20-undated.pdf output/planner_v8.
 이 이름이다(이유는 `shop.md` 5-5절). 내용은 `-FINAL` 과 바이트까지 같다.
 
 ```bash
-mkdir -p output/upload/v8.18
-cp output/planner_v8.18-undated-FINAL.pdf output/upload/v8.18/ADHD-Wellness-Planner-Undated-502-pages.pdf
+mkdir -p output/prod1/upload/v8.18
+cp output/prod1/planner_v8.18-undated-FINAL.pdf output/prod1/upload/v8.18/ADHD-Wellness-Planner-Undated-502-pages.pdf
 ```
 
 `upload/<버전>/` = Etsy 에 올린 판마다 하나. `upload/` 바로 아래에는 파일을 두지 않는다. 이후 올린 판이 생기면
@@ -200,7 +200,7 @@ python scripts/check_upload.py
 **페이지 수와 링크**
 
 ```bash
-python -c "import os; from pypdf import PdfReader; p='output/planner_v8.20-undated-FINAL.pdf'; r=PdfReader(p); print(len(r.pages),'pages /',len(r.named_destinations),'destinations / %.2f MB'%(os.path.getsize(p)/1048576))"
+python -c "import os; from pypdf import PdfReader; p='output/prod1/planner_v8.20-undated-FINAL.pdf'; r=PdfReader(p); print(len(r.pages),'pages /',len(r.named_destinations),'destinations / %.2f MB'%(os.path.getsize(p)/1048576))"
 ```
 
 기대값: `502 pages / 501 destinations / 15.75 MB`
@@ -209,7 +209,7 @@ python -c "import os; from pypdf import PdfReader; p='output/planner_v8.20-undat
 마지막 줄이 `FAILURES: 0` 이면 된다.
 
 ```bash
-python scripts/check_render.py output/planner_v8.20-undated-FINAL.pdf
+python scripts/check_render.py output/prod1/planner_v8.20-undated-FINAL.pdf
 ```
 
 **구조 검사 16항목** — 이것 하나로 위 숫자와 링크·탭까지 다 본다.
@@ -224,16 +224,16 @@ python scripts/verify_v8_20.py
 ```bash
 python -c "
 import pypdfium2 as pdfium, os
-os.makedirs('output/preview', exist_ok=True)
-with open('output/planner_v8.20-undated-FINAL.pdf','rb') as fh:
+os.makedirs('output/prod1/preview', exist_ok=True)
+with open('output/prod1/planner_v8.20-undated-FINAL.pdf','rb') as fh:
     d = pdfium.PdfDocument(fh.read())
 for n in [1,2,12,13,14,16,20,21,24,25,26,27,28,31,35,38,39,47,50,51,54,58]:
-    d[n-1].render(scale=2).to_pil().save(f'output/preview/v8_p{n}.png')
+    d[n-1].render(scale=2).to_pil().save(f'output/prod1/preview/v8_p{n}.png')
 d.close(); print('ok')
 "
 ```
 
-`output/preview/` 에 PNG가 생긴다. **반드시 열어서 눈으로 확인할 것.**
+`output/prod1/preview/` 에 PNG가 생긴다. **반드시 열어서 눈으로 확인할 것.**
 
 전체 검사 항목(죽은 앵커, 고아 페이지, 탭 하이라이트 등)은 `CLAUDE.md` 의
 "500페이지 규모에서 터진 것들" 절을 볼 것.
@@ -250,7 +250,7 @@ python scripts/check_lines.py src/planner_v8.18-undated.html   # 선 11항목
 python scripts/build_mockups.py           # 리스팅 이미지 10장
 ```
 
-`output/listing/` 에 2000x2000 PNG 8장이 생긴다.
+`output/prod1/listing/` 에 2000x2000 PNG 8장이 생긴다.
 
 ---
 
@@ -322,3 +322,17 @@ git add <고친 파일> && git commit -m "무엇을 했는지" && git push
 
 Etsy에 이미 올린 파일을 다시 뽑을 필요는 없다. 판매 중인 PDF를 바꿀 때만
 다시 빌드하고, 6단계 검수를 통과한 뒤 교체한다.
+
+
+## output 상품별 폴더로 옮기기 (2026-09-25, 한 번만)
+
+output 이 `output/prod1/` · `prod2/` · `prod3/` 로 나뉘었다. output 은 git 밖이라 pull 로 안 따라온다.
+이 PC 에 옛 배치(`output/planner_*.pdf`, `output/upload/…`)가 있으면:
+
+```bash
+python scripts/migrate_output_layout.py           # 무엇을 옮길지 먼저 본다
+python scripts/migrate_output_layout.py --apply   # 옮긴다 (지우지 않음, 해시 확인, 덮어쓰기 없음)
+python scripts/check_upload.py                    # 마켓 판 대조
+```
+
+회사 PC 에만 있는 `output/listing_v815/`, `output/preview/rail_strip_v815.png` 도 `prod1/` 로 간다.

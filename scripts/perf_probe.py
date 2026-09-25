@@ -11,7 +11,7 @@
   F  bloom 을 배경색에 미리 합성한 불투명 이미지로 (반투명 합성 제거)
   G  E + F
 
-    python scripts/perf_probe.py        -> output/perf/
+    python scripts/perf_probe.py        -> output/prod1/perf/
 
 2026-09-24 집 PC 결과: 0=248ms, E=118, F=139, G=63 ms/page.
 G 의 판매본 대비 차이는 평균 0.08 / 최대 4 단계(0~255).
@@ -23,7 +23,7 @@ import pypdfium2 as pdfium
 sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(ROOT, "output", "perf")
+OUT = os.path.join(ROOT, "output", "prod1", "perf")
 os.makedirs(OUT, exist_ok=True)
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 VERSION = os.environ.get("PLANNER_VERSION", "v8.18-undated")

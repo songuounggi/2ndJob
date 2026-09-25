@@ -44,7 +44,7 @@
 | `scripts/dated_pages.py` (새 파일, 이 방 소유) | 날짜형 반복 세트·표지·목차 |
 | `scripts/build_planner.py` (**공유**) | THEMES 등록 + `import dated_pages` 훅. 상품 1·2 출력은 바이트 단위로 그대로여야 한다 |
 
-버전: `dated-v0.1-{2026|2027}-{mon|sun}` → `output/planner_dated-v0.1-2027-mon.pdf` 등.
+버전: `dated-v0.1-{2026|2027}-{mon|sun}` → `output/planner_dated-v0.1-2027-mon.pdf` 등 (지금은 `output/prod3/archive_dated-v0.1/`).
 테마는 `v8.20-undated` 를 상속(`fast_paint`, `vector_dots` 켜짐) + `dated`, `year`, `week_start`.
 
 ## 진행
@@ -105,4 +105,4 @@ Claude 가 만든 시안·색·레이아웃은 결정 사항이 아니다.
 ## 디자인 확정본 → 에디션 PDF (2026-09-25)
 
 사용자 디자인 "Lifted Paper"(핸드오프 `ADHD Planner 디자인 컨셉_v0.1/`) → `python scripts/p3/editions_build.py`.
-결과·문제점은 `output/editions/check_report.json`, 보고는 대화 기록.
+결과·문제점은 `output/prod3/editions/<버전>/check_report.json`, 보고는 대화 기록.

@@ -13,7 +13,7 @@
 > 안 보였다. **student-v0.1 (09-24 11:49 빌드) 은 같은 결함이 더 크다:**
 >
 > ```
-> python scripts/check_render.py output/planner_student-v0.1-FINAL.pdf
+> python scripts/check_render.py output/prod2/planner_student-v0.1-FINAL.pdf
 >   FAIL  A. gradient shading     427 페이지   (카드 그림자 radial-gradient)
 >   FAIL  A. soft mask            427 페이지   (반투명 레이어)
 >   FAIL  A. image tile pattern   357 페이지   (반복 배경 -- 도트 그리드와 같은 결함)
@@ -316,7 +316,7 @@ s{n}-d1..d31      일간 248  (학기당 31장)
 넘치면 6학기(338p / 13.2MB)로 줄인다.
 
 ```bash
-python scripts/dedupe_pdf.py output/planner_v9-student.pdf output/planner_v9-student-FINAL.pdf
+python scripts/dedupe_pdf.py output/prod2/planner_v9-student.pdf output/prod2/planner_v9-student-FINAL.pdf
 python scripts/verify_v9.py
 ```
 
@@ -634,7 +634,7 @@ python scripts/verify_student.py
 |---|---|
 | 페이지 | 428 (고유 33종 + 학기 8 + 주간 128 + 일간 248) |
 | 용량 | 19.71 MB — **상한 20MB 대비 여유 1.4%** |
-| 파일 | `output/planner_student-v0.1.pdf` |
+| 파일 | `output/prod2/planner_student-v0.1.pdf` |
 
 > **용량 결정(2026-09-22):** 여유가 얇지만 **일단 올려 본다.** v8 이
 > 19.23MB 로 통과한 전례가 있다. 업로드가 막히면 일간을 학기당 31→27장
@@ -819,7 +819,7 @@ PDF 링크 주석에도 `/h1`~`/h8` 이 다 있는데, 검사기는 272~276 페�
 
 ```bash
 PLANNER_VERSION=student-v0.1 python scripts/build_planner.py
-python scripts/dedupe_pdf.py output/planner_student-v0.1.pdf output/planner_student-v0.1-FINAL.pdf
+python scripts/dedupe_pdf.py output/prod2/planner_student-v0.1.pdf output/prod2/planner_student-v0.1-FINAL.pdf
 python scripts/verify_student.py
 python scripts/check_lines.py src/planner_student-v0.1.html
 ```
@@ -920,7 +920,7 @@ N주 페이지로 가는 링크다(128개). 링크가 칸 전체(206x24pt)를 �
 1-3 함정 2 재발). 검사 2항목 추가: "고정한 면을 담고 늘어나는 카드"(전 369),
 "가로 행 안에서 폭이 줄어든 카드"(깨진 빌드에서 2 확인).
 
-**D 시안 (2026-09-24, 결정 대기).** `output/preview/review/12_date_options.png`
+**D 시안 (2026-09-24, 결정 대기).** `output/prod2/preview/review/12_date_options.png`
 A 머리 오른쪽 DATE/WEEK OF 칸(레이아웃 변화 0) / B A + 데일리에 월~일 칩 /
 C 본문 맨 위 입력칸(필기면 한 행 줄어듦).
 
@@ -950,10 +950,10 @@ C 본문 맨 위 입력칸(필기면 한 행 줄어듦).
 
 ```bash
 PLANNER_VERSION=student-v0.2 python scripts/build_planner.py
-python scripts/dedupe_pdf.py output/planner_student-v0.2.pdf output/planner_student-v0.2-FINAL.pdf
+python scripts/dedupe_pdf.py output/prod2/planner_student-v0.2.pdf output/prod2/planner_student-v0.2-FINAL.pdf
 python scripts/verify_student.py student-v0.2
 python scripts/check_lines.py src/planner_student-v0.2.html
-python scripts/check_render.py output/planner_student-v0.2-FINAL.pdf
+python scripts/check_render.py output/prod2/planner_student-v0.2-FINAL.pdf
 ```
 
 | check_render | v0.1 | **v0.2** |
@@ -975,7 +975,7 @@ python scripts/check_render.py output/planner_student-v0.2-FINAL.pdf
 | 셰이딩 (p.2) | 목차 색 점 `linear-gradient` | 첫 색 단색. 표지(1p)는 예외로 그대로 |
 
 눈으로: 페이지 평균 차이 0.05~0.88/255. 칩은 흐린 그림자 → 얇은 테두리로
-바뀌어 **가장 눈에 띄는 변화**다. 비교 PNG `output/preview/review/18*`.
+바뀌어 **가장 눈에 띄는 변화**다. 비교 PNG `output/prod2/preview/review/18*`.
 
 **남은 것 두 가지 (사용자 결정 대기)**
 1. `check_render` C(두 엔진 차이) 경고 14.2 는 **검사기 버그**. pdfium 쪽은
@@ -1076,10 +1076,10 @@ check_render 6항목 통과 (평균 106 / 최대 142ms, 14.37MB). **iPad 확인�
 - check_render 통과(평균 122 / 최대 146ms), 14.23MB
 - **verify 점선 균일 가짜 실패가 4 -> 6.** 섬유가 배경을 얼룩지게 해 전역 기준선
   판정이 더 흔들린다. 그 검사를 국소 배경 기준으로 고칠 이유가 하나 더 생겼다
-- 비교: `output/preview/review/22_hanji_page.png`, `22b_hanji_zoom.png`
+- 비교: `output/prod2/preview/review/22_hanji_page.png`, `22b_hanji_zoom.png`
 
 **F(리스팅 문구) 는 중단 상태.** 현재 문구 목업 9장을 `%TEMP%/mock_before` 에 찍어 뒀고,
-사실 확인 결과(아래)까지 했다. 수정안 목업은 아직. `output/preview/listing_src/` 는
+사실 확인 결과(아래)까지 했다. 수정안 목업은 아직. `output/prod2/preview/listing_src/` 는
 v0.4 에서 뽑은 페이지 PNG 13장(이름 대응: syllabus=s1, timetable=h1, grades=g1,
 assignments=a1, exam=e1, 나머지는 id 그대로), scale 2.
 - 30 page designs(목차 제외) / 40(포함), 400/428 장이 반복 세트
@@ -1112,7 +1112,7 @@ assignments=a1, exam=e1, 나머지는 id 그대로), scale 2.
 - verify 4항목: 세로선 끝 페이드 없는 표(v0.4=483) / 양 끝 페이드 없는 필기칸(369) /
   안 보이는 현재 탭 표시(38, 알약 안 vs 바로 위아래 밝기 차 < 4) / (기존) 양 끝 페이드 없는 표
 - check_render 통과, 14.57MB. 렌더 10회 중앙값 v0.4 평균 104 / v0.6 106ms
-- 검수 페이지: `output/preview/review/v06/index.html` -- `.claude/launch.json` 의 `review`
+- 검수 페이지: `output/prod2/preview/review/v06/index.html` -- `.claude/launch.json` 의 `review`
   (python http.server 8765) 로 미리보기 창에 띄운다. file:// 로는 이미지가 안 뜬다
 
 ### F 진행 상황 (목업 문구, 2026-09-24)
@@ -1134,7 +1134,7 @@ assignments=a1, exam=e1, 나머지는 id 그대로), scale 2.
   Dot grid 432~434 / Plain 435~437. 437p. 점지는 **상품 1 `dot_svg()` 그대로**(14pt,
   1.1px). 검사 "점지 점 간격 14pt" (12pt 로 만든 초안에서 실패 확인)
 - **반복 페이지가 자기 탭 색** (`tab_colors`): 시간표·Syllabus·시험 등이 전부 파랑이던 것.
-  라벨 앞 색 막대만 바뀐다. 비교 `output/preview/review/32_tab_colors.png`
+  라벨 앞 색 막대만 바뀐다. 비교 `output/prod2/preview/review/32_tab_colors.png`
 - **셀페이드 저장:** 흐림 계산을 `scripts/dashfade.py` 로 옮기고 app_style 은 연결만.
   **옮긴 뒤 v0.3 / v0.6 / v0.7 HTML 이 바이트까지 동일**함을 확인. 그 과정에서 옛 버전을
   바꾸던 두 가지(칩 격자 position:relative, 탭 색)를 플래그 뒤로 돌렸다
@@ -1149,14 +1149,14 @@ verify "표지 카드와 실제가 다름" 0. v0.7 은 바이트까지 재현됨
 ### 리스팅 목업 9장 — v0.8 기준으로 갱신 (2026-09-24)
 
 ```bash
-python scripts/build_mockups_student.py student-v0.8     # -> output/listing_student/
+python scripts/build_mockups_student.py student-v0.8     # -> output/prod2/listing_student/
 ```
-- 페이지 그림(`output/preview/listing_src/`)을 스크립트가 **그 버전 PDF 에서 직접 뽑는다**
+- 페이지 그림(`output/prod2/preview/listing_src/`)을 스크립트가 **그 버전 PDF 에서 직접 뽑는다**
   (`render_src`, 이름 -> 페이지 id 는 `SRC_PAGES`). 전에는 만드는 법이 기록에 없었다
 - v0.8 실측: 437p / 디자인 32종(노트 3종 포함, 목차 제외) / 링크 4,933 / 모든 페이지
   쌍 최대 2탭 / 반복 400장 / 위클리 128 / 데일리 112 / 노트 9
 - 문구: 437 pages, 32 templates, "Over 4,900 working links", "no scrolling through 437 pages"
-- 전체 모음 `output/preview/review/34_mockups_v08.png`
+- 전체 모음 `output/prod2/preview/review/34_mockups_v08.png`
 
 ### student-v0.9 (2026-09-24) — Term review "What worked" 두 줄
 
@@ -1175,7 +1175,7 @@ deciding "Picked", avoiding "The smallest possible first step")는 "한 가지�
 (h1/h2/kicker/sub/chip/tag/카드 이름/foot)의 위치를 재서 밖이면 멈춘다 -- 옛 배치
 (130px)에서 4장 모두 멈추는 것 확인. 카드 크기: 4장 440 / 3장 600. 5번은 학기 카드
 글자 크기와 페이지 그림 높이(남은 칸에 맞춤), 9번은 태블릿 760 으로 잘림 해결.
-모음 `output/preview/review/35_mockups_final.png`, 잘리는 선 겹친 판 `35_mockups_safe.png`.
+모음 `output/prod2/preview/review/35_mockups_final.png`, 잘리는 선 겹친 판 `35_mockups_safe.png`.
 
 ### 리스팅 원고 (2026-09-24) — `product2-listing.md`
 

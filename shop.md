@@ -39,8 +39,8 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 2. **Etsy 에 보이는 파일 이름 그대로** 적는다. 구매자가 받는 이름이고, 올린 뒤엔 못 고친다(5-5절)
 3. 바이트 수를 적는다. 다시 빌드한 파일이 올린 것과 같은지 이 숫자로 확인한다
 4. **파일 규칙은 하나다** (2026-09-24 확정):
-   - 작업본은 `output/planner_<버전>-FINAL.pdf`. 버전을 올려 가며 고치고 지우지 않는다
-   - **올린 판**은 `output/upload/<버전>/<Etsy 이름>` -- 최종 확인을 거쳐 Etsy 에
+   - 작업본은 `output/prod<N>/planner_<버전>-FINAL.pdf`. 버전을 올려 가며 고치고 지우지 않는다
+   - **올린 판**은 `output/prod<N>/upload/<버전>/<Etsy 이름>` -- 최종 확인을 거쳐 Etsy 에
      올린 판마다 **버전 이름으로 폴더**를 만든다(`upload/v8.18/`, `upload/v8.20/`).
      구매자가 받은 파일을 그대로 꺼내 보기 위해서다. **한 번 넣은 파일은 건드리지 않는다**
    - `upload/` 바로 아래에는 파일을 두지 않는다. 가장 새 버전 폴더가 지금 마켓 판이다
@@ -84,10 +84,10 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 
 | # | 날짜 | 올린 것 | 장수 | 소스 |
 |---|---|---|---|---|
-| 1 | 2026-09-21 | `output/listing/01~09_*.png` | 9 | 회사 PC 에만 있다. 개별 파일명 **미확인** |
-| 2 | 2026-09-23 | `output/listing_v815/01_hero.png` ~ `10_mosaic.png` (`10_closeup.png` 은 제외) | 10 | 회사 PC 에만 있다. 복귀 후 git 에 넣을 것(`CLAUDE.md`) |
+| 1 | 2026-09-21 | `output/prod1/listing/01~09_*.png` | 9 | 회사 PC 에만 있다. 개별 파일명 **미확인** |
+| 2 | 2026-09-23 | `output/prod1/listing_v815/01_hero.png` ~ `10_mosaic.png` (`10_closeup.png` 은 제외) | 10 | 회사 PC 에만 있다. 복귀 후 git 에 넣을 것(`CLAUDE.md`) |
 
-| 3 | 2026-09-24 | **상품 2:** `output/listing_student/1_hero.png` ~ `10_notes.png` (1→10 순서) | 10 | `python scripts/build_mockups_student.py student-v1.1` (기본 `MOCK_ALT=pastel`: 홀수 어두운·짝수 파스텔). 집 PC 에서 만듦 |
+| 3 | 2026-09-24 | **상품 2:** `output/prod2/listing_student/1_hero.png` ~ `10_notes.png` (1→10 순서) | 10 | `python scripts/build_mockups_student.py student-v1.1` (기본 `MOCK_ALT=pastel`: 홀수 어두운·짝수 파스텔). 집 PC 에서 만듦 |
 
 **현재 게시 중: 상품 1 = #2, 상품 2 = #3.**
 
@@ -196,7 +196,7 @@ Pricing & Shipping / How It's Made / Settings)은 같은 페이지의 앵커다.
 
 | 칸 | 값 |
 |---|---|
-| ★ **Photos** | **최대 20장** (10장이 아니다). `output/listing/` 의 9장을 01→09 순서로 |
+| ★ **Photos** | **최대 20장** (10장이 아니다). `output/prod1/listing/` 의 9장을 01→09 순서로 |
 | **Videos** | 최대 2개. 지금은 생략. GoodNotes에서 탭을 눌러 이동하는 10초 녹화는 효과가 확실하므로 나중에 추가할 것 |
 
 첫 번째 사진(`01_hero.png`)이 검색 결과 썸네일이다.
@@ -208,7 +208,7 @@ Pricing & Shipping / How It's Made / Settings)은 같은 페이지의 앵커다.
 | ★ **Category** | `planner` 검색 → **`Planner Templates`** 선택. 드롭다운의 `Physical or digital` / `Digital` 배지는 **그 카테고리가 디지털을 허용하는지**를 뜻한다 |
 | ★ **What type of item is it?** | **`Digital`** ← 카테고리를 고르면 바로 아래 나타난다 |
 | ★ **Title** | `listing.md` 제목 (119자). **대문자 단어 3개 제한**에 걸린 이력 있음 |
-| ★ **Digital files** | `output/planner_v8-undated-FINAL.pdf`. 최대 5개 |
+| ★ **Digital files** | `output/prod1/planner_v8-undated-FINAL.pdf`. 최대 5개 |
 | ★ **Description** | `listing.md` 의 상품 설명 블록 전체 (약 4,100자) |
 
 > **Title 위에 뜨는 "Suggested" 배너는 `Dismiss`.** `Apply suggestion` 을
@@ -582,7 +582,7 @@ Etsy 공식 문서 원문:
 다운로드 폴더에 버전 번호가 남는다. 업로드용 사본을 따로 만든다:
 
 ```
-output/upload/ADHD-Wellness-Planner-Undated-502-pages.pdf
+output/prod1/upload/<버전>/ADHD-Wellness-Planner-Undated-502-pages.pdf
 ```
 
 제약: **70자 이내**, 영숫자와 `.` `_` `-` 만. 공백 불가.
@@ -610,8 +610,8 @@ Etsy 에서 팔리는 파일은 이제 **v8.18-undated (502p)** 다. 다섯 단�
 
 | 올릴 것 | 경로 |
 |---|---|
-| PDF | `output/planner_v8.18-undated-FINAL.pdf` (502p, 19,599,557B) |
-| 이미지 10장 | `output/listing_v815/01_hero.png` ~ `10_mosaic.png` |
+| PDF | `output/prod1/planner_v8.18-undated-FINAL.pdf` (502p, 19,599,557B) |
+| 이미지 10장 | `output/prod1/listing_v815/01_hero.png` ~ `10_mosaic.png` |
 
 > `listing_v815/` 에 `10_closeup.png` 가 같이 있다. 그건 **옛 파일**이고
 > 올릴 것은 `10_mosaic.png` 다.

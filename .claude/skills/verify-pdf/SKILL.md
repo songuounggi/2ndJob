@@ -13,10 +13,10 @@ description: 완성된 PDF를 검수한다 — 페이지별 PNG 렌더 후 눈�
 ```bash
 python -c "
 import pypdfium2 as pdfium, os
-os.makedirs('output/preview', exist_ok=True)
+os.makedirs('output/prod<N>/preview', exist_ok=True)
 pdf = pdfium.PdfDocument('<대상파일>')
 for i in range(len(pdf)):
-    pdf[i].render(scale=2).to_pil().save(f'output/preview/page{i+1}.png')
+    pdf[i].render(scale=2).to_pil().save(f'output/prod<N>/preview/page{i+1}.png')
 print('rendered', len(pdf), 'pages')
 "
 ```

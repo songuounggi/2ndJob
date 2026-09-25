@@ -506,7 +506,7 @@ def build(path):
 
 
 if __name__ == "__main__":
-    out_dir = os.path.join(os.path.dirname(__file__), "..", "output")
+    out_dir = os.path.join(os.path.dirname(__file__), "..", "output", "prod1")
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, "adhd_wellness_planner_prototype.pdf")
     build(out_path)

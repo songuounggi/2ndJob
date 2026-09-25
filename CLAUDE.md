@@ -79,15 +79,15 @@ git 에 없어서 따라오지 않는다. 절차는 `SETUP.md`.
 | 결과물 | 다른 PC 에서 |
 |---|---|
 | `v8.18-undated` 판매본 | 현재 코드로 빌드. 19,599,557 B, 검증 13항목 통과 |
-| **올린 판** `output/upload/<버전>/ADHD-...pdf` | 해당 버전 `-FINAL` 을 Etsy 이름으로 복사한 것. 빌드만 하고 끝내면 빠진다(`SETUP.md` 5단계) |
+| **올린 판** `output/prod<N>/upload/<버전>/ADHD-...pdf` | 해당 버전 `-FINAL` 을 Etsy 이름으로 복사한 것. 빌드만 하고 끝내면 빠진다(`SETUP.md` 5단계) |
 | `v8-undated` 출시본 | 커밋 `07cc59e` 로 worktree 를 떠서 빌드. **19,227,515 B 로 바이트 수까지 일치** |
 | `v8.1`~`v8.17` | **재현 불가.** 이름만 다르고 지금 코드로는 전부 v8.18 이 나온다. 필요하면 각 커밋으로 빌드 |
 | `v2`~`v7` 시안 | 현재 코드로 빌드됨. `v1-admin` 은 `KeyError: 'tasks'` 로 깨져 있다 |
-| 리스팅 이미지 `output/listing_v815/` | **회사 PC 에만 있다.** 소스 `rail_strip_v815.png` 만드는 법이 기록에 없다 |
+| 리스팅 이미지 `output/prod1/listing_v815/` | **회사 PC 에만 있다.** 소스 `rail_strip_v815.png` 만드는 법이 기록에 없다 |
 
-**회사 PC 복귀 후 할 일:** `output/listing_v815/` 와 `output/preview/rail_strip_v815.png`
+**회사 PC 복귀 후 할 일:** `output/prod1/listing_v815/` 와 `output/prod1/preview/rail_strip_v815.png`
 를 커밋한다. 앞의 것은 `.gitignore` 에 예외를 열어 두었고, 뒤의 것은 한 장이라
-`git add -f output/preview/rail_strip_v815.png` 로 넣는다. 그리고 rail_strip 을 어떻게
+`git add -f output/prod1/preview/rail_strip_v815.png` 로 넣는다. 그리고 rail_strip 을 어떻게
 잘랐는지 `build_mockups.py` 에 적는다.
 
 | | 무엇이 오가는가 |
@@ -144,7 +144,7 @@ git commit -m "..." && git push
 
 ```bash
 "/c/Program Files/Google/Chrome/Application/chrome.exe" --headless --disable-gpu \
-  --no-pdf-header-footer --print-to-pdf="output/x.pdf" "file:///절대경로/x.html"
+  --no-pdf-header-footer --print-to-pdf="output/prod<N>/x.pdf" "file:///절대경로/x.html"
 ```
 
 - `<div id="p2">` + `<a href="#p2">` 형태의 내부 앵커가 **PDF named destination +
@@ -178,8 +178,8 @@ PLANNER_VERSION=v3-sunset python scripts/build_planner.py
 
 | 위치 | 담는 것 |
 |---|---|
-| `output/planner_<버전>-FINAL.pdf` | 작업본. 버전을 올려 가며 고친다(v8.20 → v8.21). 지우지 않는다 |
-| `output/upload/<버전>/<Etsy 이름>` | Etsy 에 올린 판. 최종 확인이 나면 **버전 이름으로 폴더를 새로 만들어** 넣는다(`upload/v8.18/`, `upload/v8.20/` …). 한 번 넣은 파일은 건드리지 않는다. 가장 새 버전 폴더가 지금 마켓 판. `upload/` 바로 아래에는 파일을 두지 않는다 |
+| `output/prod<N>/planner_<버전>-FINAL.pdf` | 작업본. 버전을 올려 가며 고친다(v8.20 → v8.21). 지우지 않는다 |
+| `output/prod<N>/upload/<버전>/<Etsy 이름>` | Etsy 에 올린 판. 최종 확인이 나면 **버전 이름으로 폴더를 새로 만들어** 넣는다(`upload/v8.18/`, `upload/v8.20/` …). 한 번 넣은 파일은 건드리지 않는다. 가장 새 버전 폴더가 지금 마켓 판. `upload/` 바로 아래에는 파일을 두지 않는다 |
 
 언제 무엇을 올렸는지는 `shop.md` 0-1절. 대조는 `scripts/check_upload.py`.
 **2026-09-24 에 확인 전인 v8.20 으로 마켓 판을 덮어썼다가 되돌렸다.**
@@ -191,7 +191,7 @@ v8은 테마가 아니라 **구조**가 다르다(`undated` 플래그). 달력 �
 
 ```bash
 PLANNER_VERSION=v8-undated python scripts/build_planner.py
-python scripts/dedupe_pdf.py output/planner_v8-undated.pdf output/planner_v8-undated-FINAL.pdf
+python scripts/dedupe_pdf.py output/prod1/planner_v8-undated.pdf output/prod1/planner_v8-undated-FINAL.pdf
 ```
 
 **기존 버전은 지우지 않는다.** 각 버전은 자기 파일명으로 출력되고
@@ -346,7 +346,7 @@ iPad 확인 대기 (2026-09-24).** 테마 플래그 `fast_paint`. v8.19: 502p, 1
 페이지당 5~6개)와 `.bg-bloom` 의 opacity .55 반투명 합성. 모양을 유지한 채
 **그림자를 공유 PNG 로, bloom 을 배경색에 미리 합성한 불투명 이미지로** 바꾸면
 248 → 63 ms/page, 픽셀 차이 평균 0.08 단계. 측정은 `scripts/perf_probe.py`.
-**남은 일:** ① iPad 에서 `output/ipad-test/` A/B 5장 비교 (PC 수치는 pdfium 이라
+**남은 일:** ① iPad 에서 `output/prod1/ipad-test/` A/B 5장 비교 (PC 수치는 pdfium 이라
 GoodNotes 와 다를 수 있다) ② Prod 2 가 `build_planner.py` 작업을 끝낸 뒤
 `v8.19-undated` 로 반영. 상품 2 도 같은 그림자·bloom 을 쓴다.
 
@@ -429,9 +429,9 @@ ids.index("vision") + 1        # -> 9
 ```bash
 python -c "
 import pypdfium2 as pdfium
-pdf = pdfium.PdfDocument('output/x.pdf')
+pdf = pdfium.PdfDocument('output/prod<N>/x.pdf')
 for i in range(len(pdf)):
-    pdf[i].render(scale=2).to_pil().save(f'output/preview/page{i+1}.png')
+    pdf[i].render(scale=2).to_pil().save(f'output/prod<N>/preview/page{i+1}.png')
 "
 ```
 
@@ -443,7 +443,7 @@ for i in range(len(pdf)):
 ```bash
 python -c "
 from pypdf import PdfReader
-r = PdfReader('output/x.pdf'); nd = r.named_destinations
+r = PdfReader('output/prod<N>/x.pdf'); nd = r.named_destinations
 idx = {id(p.indirect_reference.get_object()): n+1 for n,p in enumerate(r.pages)}
 for i,pg in enumerate(r.pages):
     print(i+1, [f\"{a.get_object()['/Dest']}->p{idx[id(nd[a.get_object()['/Dest']]['/Page'].get_object())]}\" for a in pg['/Annots']])
@@ -453,10 +453,16 @@ for i,pg in enumerate(r.pages):
 ## 디렉토리
 
 ```
-scripts/   생성 스크립트
-output/    완성 PDF
-output/preview/   검수용 페이지 렌더 PNG
+scripts/        생성 스크립트 (상품 3 은 scripts/p3/ 만)
+output/prod1/   상품 1 -- planner_v*.pdf, upload/<버전>/, preview/, pinterest_v815/, perf/, ipad-test/
+output/prod2/   상품 2 -- planner_student-*.pdf, upload/<버전>/, preview/, listing_student/ ...
+output/prod3/   상품 3 -- editions/<버전>/, wireframe/<버전>/, archive_*/ (scripts/p3/README.md)
 ```
+
+**output 은 상품별 폴더다 (2026-09-25 사용자 결정).** 문서의 `output/prod<N>/` 는 그 상품 번호로
+읽는다. `output/` 바로 아래에는 prod1·prod2·prod3 말고 두지 않는다(`check_upload.py` 가 잡는다).
+**만든 것은 지우지도 덮어쓰지도 않는다** -- 다시 빌드할 일이 생기면 버전을 올린다.
+다른 PC 에서 옛 배치(`output/planner_*.pdf` 등)가 남아 있으면 `python scripts/migrate_output_layout.py`.
 
 ## 참고
 

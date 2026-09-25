@@ -1,6 +1,6 @@
 # 핀터레스트 — 설정과 핀 원고
 
-이미지는 `output/pinterest/` 6장 (1000×1500, 2:3). 생성 스크립트는
+이미지는 `output/prod1/pinterest/` 6장 (1000×1500, 2:3). 생성 스크립트는
 `scripts/build_pinterest.py`.
 
 **왜 하는가** — Etsy 콜드 스타트를 끊기 위해서다. 조회가 0이면 Etsy 랭킹

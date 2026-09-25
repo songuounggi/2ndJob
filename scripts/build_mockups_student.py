@@ -4,7 +4,7 @@
     PLANNER_VERSION=<버전> python scripts/build_planner.py
     python scripts/build_mockups_student.py <버전>      # 기본 student-v0.8
 
-페이지 그림(output/preview/listing_src/)은 스크립트가 그 버전 PDF 에서 직접
+페이지 그림(output/prod2/preview/listing_src/)은 스크립트가 그 버전 PDF 에서 직접
 뽑는다(render_src). 전에는 뽑는 방법이 기록에 없어 다른 PC 에서 재현이 안 됐다.
 
 상품 1의 `build_mockups.py` 는 건드리지 않는다. 톤도 파는 이야기도 다르다.
@@ -28,8 +28,8 @@ import subprocess
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "output", "preview", "listing_src")
-OUT = os.path.join(ROOT, "output", "listing_student")
+SRC = os.path.join(ROOT, "output", "prod2", "preview", "listing_src")
+OUT = os.path.join(ROOT, "output", "prod2", "listing_student")
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 SIZE = 2000
 SAFE = 250          # 위아래 이만큼은 검색 결과에서 잘린다고 보고 비운다
@@ -551,7 +551,7 @@ def render_src(version):
     html = open(os.path.join(ROOT, "src", "planner_%s.html" % version),
                 encoding="utf-8").read()
     ids = re.findall(r'<section class="page[^"]*" id="([^"]+)"', html)
-    pdf = os.path.join(ROOT, "output", "planner_%s-FINAL.pdf" % version)
+    pdf = os.path.join(ROOT, "output", "prod2", "planner_%s-FINAL.pdf" % version)
     with open(pdf, "rb") as fh:
         doc = pdfium.PdfDocument(fh.read())
     os.makedirs(SRC, exist_ok=True)

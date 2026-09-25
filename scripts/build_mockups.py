@@ -3,7 +3,7 @@
 
 Etsy shows listing images as squares, so everything is composed at
 2000x2000 and shot with headless Chrome. Source art is the page PNGs the
-build already produces in output/preview/.
+build already produces in output/prod1/preview/.
 """
 
 import os
@@ -11,10 +11,10 @@ import subprocess
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PREVIEW = os.path.join(ROOT, "output", "preview")
-OUT = os.path.join(ROOT, "output", "listing_v815")
+PREVIEW = os.path.join(ROOT, "output", "prod1", "preview")
+OUT = os.path.join(ROOT, "output", "prod1", "listing_v815")
 # The shipped set was built from v8-undated and its source PNGs are
-# still in output/preview/v8_p*.png. This run reads the v8.15 renders
+# still in output/prod1/preview/v8_p*.png. This run reads the v8.15 renders
 # and writes beside the old images rather than over them.
 SRC = "v815_p"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"

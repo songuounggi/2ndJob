@@ -5,7 +5,7 @@ from collections import Counter
 from pypdf import PdfReader
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PDF = os.path.join(ROOT, 'output', 'planner_v8.15-undated-FINAL.pdf')
+PDF = os.path.join(ROOT, 'output', 'prod1', 'planner_v8.15-undated-FINAL.pdf')
 HTML = os.path.join(ROOT, 'src', 'planner_v8.15-undated.html')
 
 h = io.open(HTML, encoding='utf-8').read()

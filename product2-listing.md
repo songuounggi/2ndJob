@@ -127,10 +127,10 @@ Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하�
 
 | 항목 | 값 |
 |---|---|
-| 파일 | `output/planner_student-v1.1-FINAL.pdf` (437p) — 최종 검수 반영판 |
+| 파일 | `output/prod2/planner_student-v1.1-FINAL.pdf` (437p) — 최종 검수 반영판 |
 | Etsy 파일명 | `ADHD-Student-Planner-Undated-437-pages.pdf` (42자, 영숫자·`-`·`.` 만. 올린 뒤엔 못 고친다) |
-| 업로드 사본 | `output/upload/student-v1.1/ADHD-Student-Planner-Undated-437-pages.pdf` -- 사용자 최종 확인(09-24) 뒤 만들었다. **이 파일을 올린다.** 한 번 넣었으니 건드리지 않는다 |
-| 목업 | `python scripts/build_mockups_student.py student-v1.1` → `output/listing_student/` **10장** (Etsy 는 20장까지) |
+| 업로드 사본 | `output/prod2/upload/student-v1.1/ADHD-Student-Planner-Undated-437-pages.pdf` -- 사용자 최종 확인(09-24) 뒤 만들었다. **이 파일을 올린다.** 한 번 넣었으니 건드리지 않는다 |
+| 목업 | `python scripts/build_mockups_student.py student-v1.1` → `output/prod2/listing_student/` **10장** (Etsy 는 20장까지) |
 
 ## Etsy 입력 순서 — 새 리스팅 (2026-09-24 정리)
 
@@ -138,12 +138,12 @@ Planner"(리뷰 111) 세일 $14.40 / 정가 $35.99, futureadhd.com AUD $23. 하�
 Shop Manager → Listings → `+ Add a listing`. ★ = 필수.
 
 **0. 올리기 전** -- iPad 에서 p.1 표지 목록 줄을 눌러 해당 페이지로 가는지 확인(v1.1 에서 새로 생긴 링크).
-그다음 Etsy 이름 사본: `output/upload/student-v1.1/ADHD-Student-Planner-Undated-437-pages.pdf`
+그다음 Etsy 이름 사본: `output/prod2/upload/student-v1.1/ADHD-Student-Planner-Undated-437-pages.pdf`
 (`planner_student-v1.1-FINAL.pdf` 와 바이트 동일, 15,464,001 B -- 09-24 만듦). **이 사본을 올린다** -- 올린 뒤엔 이름을 못 고친다.
 
 | # | 구역 | 칸 | 넣을 값 |
 |---|---|---|---|
-| 1 | Photo and video | ★ Photos | `output/listing_student/` **1_hero → 10_notes 순서로 10장**. 파일 선택창은 `10_notes` 를 `1_hero` 바로 뒤에 놓으니 올린 뒤 **순서를 끌어서 확인**. 첫 장이 검색 썸네일 |
+| 1 | Photo and video | ★ Photos | `output/prod2/listing_student/` **1_hero → 10_notes 순서로 10장**. 파일 선택창은 `10_notes` 를 `1_hero` 바로 뒤에 놓으니 올린 뒤 **순서를 끌어서 확인**. 첫 장이 검색 썸네일 |
 | 2 | 〃 | Videos | 생략 |
 | 3 | Item details | ★ Category | `planner` 검색 → **`Planner Templates`** |
 | 4 | 〃 | ★ What type of item | **`Digital`** -- 바뀌면 Digital files 칸이 생기고 배송 설정이 사라져야 정상 |

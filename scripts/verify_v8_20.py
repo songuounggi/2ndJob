@@ -6,7 +6,7 @@ from collections import Counter
 from pypdf import PdfReader
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PDF = os.path.join(ROOT, 'output', 'planner_v8.20-undated-FINAL.pdf')
+PDF = os.path.join(ROOT, 'output', 'prod1', 'planner_v8.20-undated-FINAL.pdf')
 HTML = os.path.join(ROOT, 'src', 'planner_v8.20-undated.html')
 # 인자로 다른 판을 재볼 수 있다: python scripts/verify_v8_20.py output/x.pdf src/x.html
 if len(sys.argv) == 3:

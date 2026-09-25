@@ -6,10 +6,14 @@ src/
 
 # 예외: 올릴 핀 이미지는 다른 PC 로 따라가야 한다. 다시 뽑으려면 PDF
 # 빌드부터 페이지 렌더까지 사슬이 길고, 6장에 850KB 뿐이다.
-!output/pinterest_v815/
+# output 은 상품별(prod1/prod2/prod3, 2026-09-25). 안쪽 폴더를 예외로 열려면
+# 한 단계씩 연다: prod1 을 열고, 그 안을 다시 닫고, 필요한 것만 연다.
+!output/prod1/
+output/prod1/*
+!output/prod1/pinterest_v815/
 # Etsy 에 올린 리스팅 이미지도 같은 이유. 소스인 rail_strip_v815.png 를
 # 만든 방법이 기록에 없어 다른 PC 에서 다시 뽑을 수 없다(2026-09-24).
-!output/listing_v815/
+!output/prod1/listing_v815/
 
 # 검수용 임시 렌더
 scratch_*.png

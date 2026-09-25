@@ -51,7 +51,7 @@ DF.v_cells(xs, cells, y0, offset)       # 세로 점선, 칸(행)마다
 2. 새 버전 이름 + 플래그로 켠다 (RELEASE.md 3-1). 옛 버전은 바이트까지 재현돼야 한다
 3. 빌드 → dedupe → 검사:
    ```bash
-   python scripts/check_render.py output/planner_<버전>-FINAL.pdf   # A 셋 다 0, B < 150ms
+   python scripts/check_render.py output/prod<N>/planner_<버전>-FINAL.pdf   # A 셋 다 0, B < 150ms
    ```
    상품 2 는 `verify_student.py` 에 이미 있다: "양 끝 페이드 없는 표",
    "세로선 끝 페이드 없는 표", "양 끝 페이드 없는 필기칸". 다른 상품이면 이 셋을

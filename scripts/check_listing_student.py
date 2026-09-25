@@ -29,7 +29,7 @@ tags = [t for t in blocks[1].splitlines() if t.strip()]
 h = io.open(os.path.join(ROOT, "src", "planner_%s.html" % VERSION), encoding="utf-8").read()
 ids = re.findall(r'<section class="page[^"]*" id="([^"]+)"', h)
 sec = dict(re.findall(r'<section class="page[^"]*" id="([^"]+)"(.*?)</section>', h, re.S))
-r = PdfReader(os.path.join(ROOT, "output", "planner_%s-FINAL.pdf" % VERSION))
+r = PdfReader(os.path.join(ROOT, "output", "prod2", "planner_%s-FINAL.pdf" % VERSION))
 nd = r.named_destinations
 idx = {id(p.indirect_reference.get_object()): n for n, p in enumerate(r.pages)}
 G = [set() for _ in r.pages]

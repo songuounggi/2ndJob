@@ -14,8 +14,8 @@ Etsy에 판매할 ADHD/웰니스 디지털 플래너. HTML/CSS를 헤드리스 C
 PDF 출력한다. 구매자는 iPad + GoodNotes 사용자.
 
 - 생성 스크립트: `scripts/build_planner.py`
-- 결과물: `output/planner_*.pdf`
-- 페이지 렌더: `output/preview/p*.png`
+- 결과물: `output/prod<N>/planner_*.pdf`
+- 페이지 렌더: `output/prod<N>/preview/p*.png`
 
 ## 엘리베이션이 이 프로젝트의 최우선 항목이다
 
@@ -35,7 +35,7 @@ PDF 출력한다. 구매자는 iPad + GoodNotes 사용자.
 
 ```python
 import pypdfium2 as pdfium
-pdf = pdfium.PdfDocument('output/planner_XXX.pdf')
+pdf = pdfium.PdfDocument('output/prod<N>/planner_XXX.pdf')
 S = 8; W, H = 612, 792
 g = pdf[0].render(scale=S).to_pil().convert('L')
 def px(xp, yp): return g.getpixel((int(xp*S), int((H-yp)*S)))

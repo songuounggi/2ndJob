@@ -37,7 +37,7 @@
 ```bash
 python scripts/verify_<버전>.py                          # 구조: 페이지·링크·탭·날짜 (상품별)
 python scripts/check_lines.py src/planner_<버전>.html    # 선 일관성 (LINES.md)
-python scripts/check_render.py output/planner_<버전>-FINAL.pdf   # 뷰어 위험·속도·용량
+python scripts/check_render.py output/prod<N>/planner_<버전>-FINAL.pdf   # 뷰어 위험·속도·용량
 python scripts/check_upload.py                            # 업로드 이력표 ↔ 파일 (상품 1)
 ```
 
@@ -131,16 +131,16 @@ THEMES["v8.21-undated"] = dict(THEMES["v8-undated"], fast_paint=True, vector_dot
 
 ```bash
 PLANNER_VERSION=v8.21-undated python scripts/build_planner.py
-python scripts/dedupe_pdf.py output/planner_v8.21-undated.pdf output/planner_v8.21-undated-FINAL.pdf
+python scripts/dedupe_pdf.py output/prod1/planner_v8.21-undated.pdf output/prod1/planner_v8.21-undated-FINAL.pdf
 ```
 
 ### 3-2. 파일이 어디에 있는가
 
 | 위치 | 담는 것 | 규칙 |
 |---|---|---|
-| `output/planner_<버전>-FINAL.pdf` | 작업본 | 버전마다 하나. **지우지 않는다** |
-| `output/upload/<버전>/<Etsy 이름>.pdf` | **Etsy 에 실제로 올린 판** | 사용자 최종 확인 → 올린 뒤에 **버전 이름 폴더를 새로** 만든다. **한 번 넣은 파일은 건드리지 않는다** |
-| `output/upload/` 바로 아래 | — | **파일을 두지 않는다** |
+| `output/prod<N>/planner_<버전>-FINAL.pdf` | 작업본 | 버전마다 하나. **지우지 않는다** |
+| `output/prod<N>/upload/<버전>/<Etsy 이름>.pdf` | **Etsy 에 실제로 올린 판** | 사용자 최종 확인 → 올린 뒤에 **버전 이름 폴더를 새로** 만든다. **한 번 넣은 파일은 건드리지 않는다** |
+| `output/prod<N>/upload/` 바로 아래 | — | **파일을 두지 않는다** |
 
 - 폴더 이름은 짧은 버전명: `upload/v8.18/`, `upload/v8.20/`. **숫자 폴더(2/, 3/) 쓰지 않는다**
 - 가장 새 버전 폴더 = 지금 마켓 판

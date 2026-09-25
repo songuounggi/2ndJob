@@ -3,7 +3,7 @@
 
 Separate from build_mockups.py on purpose. Etsy wants 2000x2000 squares;
 Pinterest ranks 2:3 verticals and buries squares, so the two sets do not
-share a canvas. Same source art (output/preview/v8_p*.png), same Chrome
+share a canvas. Same source art (output/prod1/preview/v8_p*.png), same Chrome
 --screenshot approach.
 
 A pin is read at thumbnail size in a scrolling feed, so each one carries a
@@ -18,9 +18,9 @@ import subprocess
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PREVIEW = os.path.join(ROOT, "output", "preview")
-# 9/22 에 뽑은 핀(494/58 기준)은 output/pinterest/ 에 그대로 둔다.
-OUT = os.path.join(ROOT, "output", "pinterest_v815")
+PREVIEW = os.path.join(ROOT, "output", "prod1", "preview")
+# 9/22 에 뽑은 핀(494/58 기준)은 output/prod1/pinterest/ 에 그대로 둔다.
+OUT = os.path.join(ROOT, "output", "prod1", "pinterest_v815")
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 W, H = 1000, 1500          # Pinterest's recommended 2:3

@@ -442,7 +442,8 @@ if VERSION == "v9-student":
     VERSION = "student-v0.1"
 T = THEMES[VERSION]
 SRC = os.path.join(ROOT, "src", f"planner_{VERSION}.html")
-OUT = os.path.join(ROOT, "output", f"planner_{VERSION}.pdf")
+# output 은 상품별 폴더 (2026-09-25 사용자). 학생용(상품 2)은 prod2, 나머지(상품 1 계열)는 prod1.
+OUT = os.path.join(ROOT, "output", "prod2" if T.get("student") else "prod1", f"planner_{VERSION}.pdf")
 
 ROOT_VARS = f""":root{{
   --bg:{T['bg']}; --card:{T['card']}; --ink:{T['ink']}; --mid:{T['mid']};
