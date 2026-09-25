@@ -240,7 +240,7 @@ def p_myhol():
 
 def p_where():
     items = ["Passport & ID", "Spare keys", "Warranties & receipts", "Important papers",
-             "Password hints (not passwords)", "Chargers & cables", "Medical records", "Gift wrap & cards"]
+             "Password hints only", "Chargers & cables", "Medical records", "Gift wrap & cards"]
     rows = "".join(f'<div class="tr3"><b>{e(t)}</b><div class="ln fl"></div></div>' for t in items)
     return (head("LIFE", "Where I put it", "For the things you only need once a year, and can never find.")
             + f'<div class="bd">{box("THING — WHERE IT LIVES", rows + lines(4))}</div>')
@@ -346,7 +346,7 @@ def p_week(n, first):
     exp = (f'<div class="txt"><b>{e(name)}</b></div><div class="txt">Try: {e(try_)}</div>'
            f'<div class="hint">Why: {e(why)}</div><div class="txt" style="margin-top:6pt">Friday — did it help? &nbsp;✓ helped &nbsp; ~ sort of &nbsp; ✗ not for me</div>')
     return (head(f"{Y} · WEEK {n}", f"{md(first)} – {md(last)}", "", mchips + chip(f"wr{n}", "Reset"))
-            + f'<div class="bd">{box(f"THIS WEEK EXPERIMENT · {n}/52", exp, "none", style="background:#EDEDED")}'
+            + f'<div class="bd">{box(f"THIS WEEK EXPERIMENT · {n}/52" if n <= 52 else "BONUS WEEK · WRAP-UP", exp, "none", style="background:#EDEDED")}'
             f'<div class="rw" style="flex:1">{box("SEVEN DAYS", days, "1.4")}'
             f'<div class="col">{box("TOP 3", lines(3), "none")}{box("BRAIN DUMP", lines(6))}</div></div></div>')
 

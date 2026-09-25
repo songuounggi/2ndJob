@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """상품 3 리스팅 원고(listing-p3.md)의 주장을 실제 판매 파일에 대조한다. Prod 3 방 소유.
 
-    python scripts/p3/check_listing_p3.py            # 기본 v0.4
+    python scripts/p3/check_listing_p3.py            # 기본 v0.6
     python scripts/p3/check_listing_p3.py v0.5
 
 구매자 글은 기억으로 쓰지 않는다(shop.md 0-1절) -- 원고의 숫자·문장을 네 파일 모두에서 잰다.
@@ -15,7 +15,7 @@ import pikepdf
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-VER = sys.argv[1] if len(sys.argv) > 1 else "v0.4"
+VER = sys.argv[1] if len(sys.argv) > 1 else "v0.7"
 sys.path.insert(0, str(ROOT / "scripts" / "p3"))
 sys.argv = [sys.argv[0], "2027", "mon"]          # p3_content/p3_wireframe 는 argv 로 연도를 읽는다
 import p3_content as C                           # noqa: E402
@@ -68,6 +68,7 @@ for y in (2026, 2027):
         ok(len(re.findall(r"Day \d+ · \d+ left", html)) == ndays, "every daily shows day n · m left")
         ok(html.count("Tomorrow starts") >= ndays and html.count("From yesterday") >= ndays - 1, "tomorrow/yesterday on dailies")
         ok(len(re.findall(r"this week", html, re.I)) >= len(wk), "this week's experiment on weekly pages")
+        ok(all(int(x) <= 52 for x in re.findall(r"(\d+)/52", html)), "no week numbered past 52/52 (53rd is BONUS WEEK)")
         rail = re.search(r'<nav class="rail">(.*?)</nav>', html, re.S).group(1)
         tabs = re.findall(r'<span class="tv">([A-Za-z]+)<', rail)
         ok(tabs == ["Index", "SOS", "Year", "Month", "Week", "Focus", "Feel", "Body", "Life", "Notes"], f"ten tabs {tabs}")
@@ -81,9 +82,14 @@ for y in (2026, 2027):
             ok(s.replace("'", "&#x27;") in html or s in html, f"SOS has {s!r}")
         for t in ("Dot grid", "Ruled", "Plain", "Grid"):
             ok(f">{t}<" in html, f"note page {t}")
-        hol = [h[1] if isinstance(h, (tuple, list)) else h for h in C.holidays(y)]
+        hol = list(C.holidays(y).values())          # dict 를 돌면 날짜(키)만 나와 검사가 헛돈다
         ok(not any(re.search(r"Thanksgiving|Independence|Memorial|Labor Day|Halloween", str(h)) for h in hol),
            f"only worldwide holidays ({len(hol)})")
+        # 원고에 적은 인쇄 기념일 목록과 실제가 같은가
+        named = {"New Year's Day", "Neurodiversity Celebration Week", "ADHD Awareness Month",
+                 "World Mental Health Day", "Christmas Day", "New Year's Eve"}
+        ok(set(hol) == named and all(n in desc for n in named), "printed dates == listed dates")
+        ok(all(n.replace("'", "&#x27;") in html or n in html for n in named), "every listed date is printed in the file")
 
 print(f"\n{'ALL OK' if not fails else f'FAILURES: {len(fails)}'}")
 sys.exit(1 if fails else 0)

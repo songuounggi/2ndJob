@@ -1,7 +1,7 @@
 # 상품 3 리스팅 원고 — ADHD Year Planner 2026-2027 (초안, 2026-09-25)
 
 **초안이다.** 확정: 가격(B안 $19.99 − 35% = $12.99), 파일 4개. 미확정: 제목·원고 문구·이미지·세일 기간.
-숫자는 전부 `output/prod3/planner/v0.4/` 네 파일에서 스크립트로 잰 값(`scripts/p3/check_listing_p3.py`).
+숫자는 전부 `output/prod3/planner/v0.6/` 네 파일에서 스크립트로 잰 값(`scripts/p3/check_listing_p3.py`).
 구매자 글 규칙(`shop.md` 0-1절): 문장마다 파일과 대조한다 → 맨 아래 **대조표**.
 
 판매 형태: **한 리스팅에 PDF 4개** (Etsy 디지털 파일은 리스팅당 5개, 파일당 20MB까지).
@@ -81,7 +81,7 @@ Ten tabs run down the side of every page: Index, SOS, Year, Month, Week, Focus, 
 
 WORKS ANYWHERE
 
-Only holidays shared around the world are printed – New Year's Day, ADHD Awareness Month, World Mental Health Day, Christmas Day and New Year's Eve. Write your own country's days on the My holidays page.
+Only dates shared around the world are printed – New Year's Day, Neurodiversity Celebration Week, ADHD Awareness Month, World Mental Health Day, Christmas Day and New Year's Eve. Write your own country's days on the My holidays page.
 
 HOW IT WORKS
 
@@ -139,7 +139,7 @@ For personal use. Please do not resell or redistribute the files.
 
 | 문장 | 확인한 곳 | 결과 |
 |---|---|---|
-| 4 PDFs, Monday-start and Sunday-start | `output/prod3/planner/v0.4/` 파일 4개 | ✔ |
+| 4 PDFs, Monday-start and Sunday-start | `output/prod3/planner/v0.6/` 파일 4개 | ✔ |
 | Each year is 598 pages, January to December | 각 PDF 쪽 수, 일간 첫 장 1/1 · 마지막 12/31 | ✔ |
 | one strategy per week, printed on that week's page | 주간 페이지마다 `THIS WEEK'S EXPERIMENT` | ✔ |
 | quarterly keep-or-drop check | 분기 4장 `KEEP 3 · DROP 3` | ✔ |
@@ -154,7 +154,7 @@ For personal use. Please do not resell or redistribute the files.
 | Notes – dot grid, ruled, plain, grid | `note1~4` | ✔ |
 | Ten tabs ... every page | 탭 이름 10개, 표지 제외 전 페이지에 레일 | ✔ |
 | Every day two taps away – Year, then the date | Year at a glance 미니 달력의 날짜가 일간으로 링크 | ✔ |
-| Only worldwide holidays printed (5개) | `p3_content.holidays()` + 인쇄 검사(미국 공휴일 0) | ✔ |
+| Only worldwide dates printed (6개, NCW 포함) | `p3_content.holidays()` + 인쇄 검사(미국 공휴일 0). NCW 날짜는 neurodiversityweek.com 공식(2026-03-16, 2027-03-15) | ✔ |
 | Works in GoodNotes, Notability, Xodo, Acrobat | 상품 1 `listing.md` 와 같은 범위 | △ 상품 3 파일은 **iPad GoodNotes 실기기 확인 전** — 사용자 확인 후 확정 |
 | pages shaped for a tablet (3:4), not for printing | 768×1024px = 576×768pt | ✔ (인쇄를 약속하지 않는다 — 상품 1 은 US Letter 였다) |
 | not medical advice | 의학 주장 검사 `p3_content.check()` | ✔ |

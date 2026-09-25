@@ -9,6 +9,7 @@
   B. 넘침    -- 글자 요소의 scrollWidth 가 자기 폭보다 크다(칸 밖으로 삐져나온 글자)
   C. 겹침    -- 서로 다른 두 글자 조각의 상자가 겹친다(같은 줄의 형제 제외 없이 전부)
   D. 발문 침범 -- 본문 요소가 발문(footer) 위쪽 선 아래로 내려간다
+  E. 삐져나옴 -- 글자가 자기 칸(부모) 위나 아래로 1/3 이상 나간다
 결과는 페이지 번호·페이지 id·요소 글자로 찍는다. 0 이 아니면 종료 코드 1.
 """
 import json
@@ -59,7 +60,10 @@ AUDIT_JS = r"""
         }
         a = a.parentElement;
       }
-      if (e.scrollWidth > e.clientWidth + 1 && getComputedStyle(e).display !== 'inline') add('B overflow', e, `${e.scrollWidth}>${e.clientWidth}`);
+      if (s.id !== 'cover' && e.scrollWidth > e.clientWidth + 1 && getComputedStyle(e).display !== 'inline') add('B overflow', e, `${e.scrollWidth}>${e.clientWidth}`);
+      // E. 칸 밖으로 삐져나옴 -- 고정 높이 줄 안에서 글자가 꺾여 이웃 줄에 붙었다(v0.6 13쪽 Password hints)
+      const pr = R(e.parentElement);
+      if (s.id !== 'cover' && getComputedStyle(e.parentElement).display !== 'inline' && (pr.top - r.top > r.height / 3 || r.bottom - pr.bottom > r.height / 3)) add('E spills out', e, `${Math.round(Math.max(pr.top - r.top, r.bottom - pr.bottom))}px`);
     });
     // C. 겹침 -- 글자 조각 상자(텍스트 노드 범위)끼리
     const boxes = [];

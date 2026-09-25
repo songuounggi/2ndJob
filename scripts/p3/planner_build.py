@@ -45,8 +45,10 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.4 = (사용자 확정) 빈 입력 행 34px + 행 추가 + 줄마다 선 하나(8장), Project planner 좌우 첫 줄 맞춤,
 #        Life admin radar 월 칸 아래 줄 맞춤, Brain weather 이름 칸 52px(표와 겹침)
 # v0.5 = 월 달력 공휴일 있는 줄만 길고 숫자와 겹치던 것(1·10·12월) 수정
-# v0.6 = (내용) Life admin radar 문구 한 줄로 -- 10~12월 넷째 항목이 잘렸다, Neurodiversity Celebration Week 인쇄
-VERSION = "v0.6"
+# v0.6 = (내용) Life admin radar 문구 한 줄로 -- 10~12월 넷째 항목이 잘렸다, Neurodiversity Celebration Week 인쇄,
+#        (사용자 B안) Year review ADHD tax 월 버튼 가로 -- Three things 칸이 잘렸다
+# v0.7 = (내용, 눈 검사) 53주차 "53/52" -> BONUS WEEK, Where I put it "Password hints only"(두 줄로 꺾여 윗줄과 붙음)
+VERSION = "v0.7"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -452,6 +454,11 @@ def page(key, body, n):
                   lambda m: f'<a class="hit" href="#{m.group(2)}"><span class="chip{m.group(1) or ""}">{m.group(3)}</span></a>', body)
     if re.fullmatch(r"q\d", key):
         body = body.replace('<div class="chips">', '<div class="chips wk">', 1)
+    if key == "yearreview":
+        # ADHD tax 월 버튼 12개를 가로로 (사용자 확정 B안, 2026-09-26). 세로로 쌓여 아래
+        # "Three things to carry into next year" 칸이 통째로 잘렸다(v0.1~v0.5)
+        body = re.sub(r'(?:<a class="hit" href="#mr\d+">.*?</a>)+',
+                      lambda m: f'<div class="chips" style="flex:none">{m.group(0)}</div>', body, count=1)
     fname = footer_name(key, body)
     foot = "" if key == "cover" else f'<footer><span>The ADHD Year · {Y}</span><span>{W.e(fname)} · {n:03d}</span></footer>'
     return (f'<section class="pg" id="{key}"><img class="bg" src="bg/sheet-{sheet}-2x.jpg" alt="">'
