@@ -80,28 +80,36 @@ a{{color:inherit;text-decoration:none}}
 .pg>img.bg{{position:absolute;inset:0;width:768px;height:1024px;display:block}}
 .sheet{{position:absolute;left:{38 - E.SHIFT}px;top:38px;width:692px;height:948px;isolation:isolate}}
 .ink{{position:absolute;inset:0;padding:40px 44px 30px;display:flex;flex-direction:column}}
-.rail{{position:absolute;left:100%;top:64px;display:flex;flex-direction:column;gap:6px;z-index:-1}}
-.rail a{{position:relative;display:flex;align-items:center;justify-content:center;width:22px;height:70px;
+.rail{{position:absolute;left:100%;top:61px;display:flex;flex-direction:column;z-index:-1}}
+/* 누르는 영역(링크) = 47x76px(9.8x15.9mm): 탭 오른쪽 책상 여백 25px 와 위아래 틈 3px 씩까지.
+   보이는 탭(.tv)은 그대로 22x70 (활성 26). Apple 권장 최소 44pt = 8.5mm = 이 페이지에서 41px */
+.rail a{{position:relative;display:block;width:{22 + 38 - E.SHIFT}px;height:76px}}
+.rail .tv{{position:absolute;left:0;top:3px;display:flex;align-items:center;justify-content:center;width:22px;height:70px;
   writing-mode:vertical-rl;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
   background:{PAPER};color:{N800};border-radius:0 2px 2px 0}}
-.rail a.on{{width:26px;background:{CYAN};color:#f3f2f2}}
-.rail a img{{position:absolute;z-index:-1;pointer-events:none}}
-footer{{flex:none;display:flex;justify-content:space-between;margin-top:14px;font-size:10px;
+/* 활성 탭은 진한 시안: 흰 글자 대비 3.65 -> 5.72 (작은 글자 기준 4.5 이상) */
+.rail a.on .tv{{width:26px;background:{CYAN700};color:#f3f2f2}}
+.rail .tv img{{position:absolute;z-index:-1;pointer-events:none}}
+footer{{flex:none;display:flex;justify-content:space-between;margin-top:14px;font-size:10.5px;
   letter-spacing:.1em;text-transform:uppercase;color:{N700}}}
 
 /* ---- head ---- */
 .hd{{flex:none}}
-.eb{{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:{N700}}}
+.eb{{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:{N700}}}
 .tr{{display:flex;align-items:flex-end;gap:8px;margin-top:8px}}.sp{{flex:1}}
 h1{{font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}}
 .sub{{font-style:italic;font-size:14px;line-height:1.45;color:{N800};margin-top:8px;max-width:470px}}
 /* 칩 = 레퍼런스 표 7c 의 알약 칸: 양 끝 반원, 1px neutral-400 선 (2026-09-25 사용자: 직사각형 버튼이 촌스럽다) */
 .chip{{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:22px;
-  font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1;
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;line-height:1;
   border:1px solid {N400};border-radius:999px;padding:0 10px;margin:1px 0 1px 4px;color:{N800};white-space:nowrap;gap:5px}}
 .chip.note{{background:{INK};border-color:{INK};color:{PAPER}}}
 .chip.off{{border-style:dotted;color:{N500}}}
 .lead .chip{{border-color:{CYAN}}}
+/* 링크 칩의 누르는 영역: 알약(22px) + 위아래 10px = 42px(8.8mm). 음수 여백으로 레이아웃은 그대로 */
+a.hit{{display:inline-flex;box-sizing:content-box;padding:10px 4px;margin:-10px -4px;vertical-align:middle}}
+a.hit>.chip{{margin-left:0}}
+.tr a.hit,.rw.a a.hit{{margin-left:0}}
 .holchip{{font-style:italic;font-size:12px;color:{N800};margin-right:6px}}
 
 /* ---- body (wireframe classes, re-inked) ---- */
@@ -110,13 +118,13 @@ h1{{font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}}
 .col{{display:flex;flex-direction:column;gap:16px;min-height:0}}
 .box{{display:flex;flex-direction:column;min-height:0;overflow:hidden}}
 .box .box{{padding-top:2px}}
-.lab{{flex:none;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:{N700};line-height:1.2}}
+.lab{{flex:none;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:{N700};line-height:1.2}}
 .hint{{text-transform:none;letter-spacing:0;font-style:italic;color:{N800};font-size:11.5px}}
 .txt{{font-size:13.5px;line-height:1.5;margin-top:3px}}
 .txt b{{font-weight:600}}
 .ln{{flex:none;height:34px;border-bottom:1px solid {N400}}}.ln.fl{{flex:1;height:22px}}
 .fill{{flex:1;border-bottom:1px solid {N300}}}
-a.row{{display:flex;align-items:baseline;gap:12px;padding:10px 0 9px;border-bottom:1px solid {N300};font-size:15px}}
+a.row{{display:flex;align-items:baseline;gap:12px;padding:11px 0 10px;border-bottom:1px solid {N300};font-size:15px}}
 a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}}
 .ck{{display:flex;align-items:center;gap:9px;font-size:13px;padding:5px 0}}
 .ck i{{flex:none;width:11px;height:11px;border:1px solid {N600};border-radius:1px}}
@@ -126,43 +134,54 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .bt{{display:inline-block;width:12px;height:12px;border:1px solid {N600};border-radius:1px;margin-left:5px;vertical-align:-1px}}
 .bt.r{{border-radius:50%}}
 .hr{{flex:1;display:flex;align-items:flex-start;border-bottom:1px solid {N300};font-size:11px;color:{N700};padding-top:3px}}
-.tb4{{display:flex;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:{N700};margin-top:4px}}
+.tb4{{display:flex;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:{N700};margin-top:4px}}
 .tb4 span{{flex:1}}.tb4 span:first-child{{flex:2}}
 .dy{{flex:1;border-bottom:1px solid {N300};padding-top:5px}}
 .dy .chip{{margin-left:0}}
-.chips{{display:flex;flex-wrap:wrap;gap:3px}}
+.chips{{display:flex;flex-wrap:wrap;gap:8px}}
 /* 분기의 주 번호 알약(W1-W13): 한 줄 가운데 정렬, 간격 8px (사용자: 다닥다닥 답답하다 -> 한 줄로)
    38px x 13 + 8px x 12 = 590px < 본문 604px */
 .chips.wk{{display:flex;flex-wrap:nowrap;justify-content:center;gap:8px;padding:10px 0 8px}}
+.chips.wk a.hit{{flex:0 1 38px;min-width:0}}
+.chips.wk a.hit>.chip{{width:100%}}
 /* 14주짜리 분기도 있다(2026 Q4, 2027 Q3) -> 38px 에서 모자라면 줄어든다: 14 x 35.7 + 13 x 8 = 604 */
-.chips.wk .chip{{min-width:0;flex:0 1 38px;padding:0;margin:0}}
+.chips.wk .chip{{min-width:0;padding:0;margin:0}}
 .chips .chip{{margin:0}}
 .yg{{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 22px}}
 .mname{{font-weight:600;font-size:13px}}
 .mini{{width:100%;border-collapse:collapse;margin-top:4px}}
-.mini td,.mini th{{text-align:center;font-size:9px;padding:1.5px 0;font-weight:400}}.mini th{{color:{N700};font-size:8px}}
+.mini td,.mini th{{text-align:center;font-size:9px;padding:0;font-weight:400}}
+.mini td>a{{display:block;padding:1.5px 0}}.mini th{{color:{N700};font-size:8px}}
 .cal{{width:100%;height:100%;border-collapse:collapse;table-layout:fixed}}
 .cal tr:first-child{{height:18px}}
 .cal th{{font-size:9.5px;font-weight:400;letter-spacing:.08em;color:{N700};padding:0 0 6px;text-align:left}}
-.cal td{{border-top:1px solid {N400};vertical-align:top;padding:5px 4px;font-size:13px;font-weight:600}}
+.cal td{{position:relative;border-top:1px solid {N400};vertical-align:top;padding:5px 4px;font-size:13px;font-weight:600}}
+/* 달력 칸 전체가 그날로 가는 링크 (숫자 글자만 누르던 것) */
+.cal td>a{{position:absolute;inset:0;padding:5px 4px}}
+.cal td.wk>a{{display:flex;align-items:center;justify-content:center;padding:0}}
+.hol{{margin-top:18px}}
 .cal td.wk{{width:30px;font-size:9.5px;font-weight:400;color:{N700};letter-spacing:.06em}}
 .cal td.out{{color:{N300}}}
 .hol{{font-size:9.5px;font-style:italic;font-weight:400;color:{N800};margin-top:3px}}
 .px{{border-collapse:collapse;width:100%}}.px th{{font-size:9px;font-weight:400;color:{N700};width:18px}}
 .px td{{border:1px solid {N400};height:21px}}.px td.x{{background:{N300}}}
 .bw{{border-collapse:collapse;width:100%;table-layout:fixed}}
-.bw th{{font-size:8px;font-weight:400;color:{N700}}}.bw th.rl{{width:52px;text-align:left;font-size:9.5px;letter-spacing:.06em}}
+.bw th{{font-size:8px;font-weight:400;color:{N700}}}
+.bw th>a{{display:block;padding:2px 0}}.bw th.rl{{width:52px;text-align:left;font-size:9.5px;letter-spacing:.06em}}
 .bw td{{border:1px solid {N400};height:26px}}.bw small{{font-size:7px;color:{N500}}}
 .ag{{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 22px}}.am b{{font-size:13px;font-weight:600}}
+.am>a{{display:block;padding:10px 0 9px;margin:-10px 0 -9px}}
 .g2{{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:16px 26px;flex:1}}
 .g3{{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:14px 22px;flex:1}}
 .tr3{{display:flex;align-items:flex-end;gap:10px;height:30px;font-size:13px}}.tr3 b{{width:150px;font-weight:600}}
 .xl{{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(27,auto);grid-auto-flow:column;gap:0 24px}}
-.xr{{display:flex;align-items:center;gap:8px;font-size:11.5px;height:24px;border-bottom:1px solid {N300}}}
+.xr{{display:flex;align-items:center;gap:8px;font-size:12.5px;height:41px;border-bottom:1px solid {N300}}}
+/* 52 실험 목록만 촘촘하게(한 장에 53줄) -- 누르는 영역 24px 는 알려진 예외 */
+.xl .xr{{height:24px;font-size:11.5px}}
 .wn{{width:28px;font-size:9.5px;letter-spacing:.06em;color:{N700}}}.xn{{flex:1}}
 .xd{{color:{N600};font-size:10px;font-style:italic}}.rate{{color:{N600};font-size:10px;letter-spacing:.1em}}
 .wg{{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}}
-.wc{{border-bottom:1px solid {N400};padding:8px 2px 6px;font-size:12px}}.wc b{{font-weight:600;margin-right:4px}}
+.wc{{border-bottom:1px solid {N400};padding:12px 2px 11px;font-size:12px}}.wc b{{font-weight:600;margin-right:4px}}
 
 /* ---- lead: 시안은 리드 항목에만 ---- */
 .lead>.lab{{color:{CYAN700}}}
@@ -175,7 +194,7 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .p1 .col{{display:flex;flex-direction:column;gap:16px;min-height:0}}
 .p1 .card{{display:flex;flex-direction:column;min-height:0;overflow:hidden;background:none;border:0;padding:0}}
 .p1 .card::after{{display:none}}
-.p1 .label{{flex:none;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:{N700};margin-bottom:2px}}
+.p1 .label{{flex:none;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:{N700};margin-bottom:2px}}
 .p1 .label::before{{display:none}}
 .p1 .lines{{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}}
 .p1 .lines>div{{flex:none;height:34px;border-bottom:1px solid {N400}}}
@@ -225,7 +244,7 @@ def p_cover():
            ("Year at a glance", "year"), ("Months", "month"), ("Weeks", "week"),
            ("Focus tools", "focus"), ("Feelings tools", "feel"), ("Body tools", "health"),
            ("Life admin", "life"), ("My ADHD playbook", "playbook"), ("Notes", "notes")]
-    rows = "".join(f'<a href="#{k}" style="display:flex;gap:8px;font-size:13.5px"><span style="flex:1">{t}</span>'
+    rows = "".join(f'<a href="#{k}" style="display:flex;gap:8px;font-size:13.5px;padding:12px 0 10px;border-bottom:1px solid {N300}"><span style="flex:1">{t}</span>'
                    f'<span style="color:{N700}" data-pn="{k}"></span></a>' for t, k in idx)
     start = "Monday" if WS == 0 else "Sunday"
     return f"""
@@ -238,7 +257,7 @@ def p_cover():
       <div style="font-style:italic;font-size:19px;line-height:1.4;max-width:250px;color:{N800}">
         Fifty-two things to try. Keep the ones that work. Skip the weeks that don't.</div></div>
     <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:{CYAN700};margin-bottom:8px">In this planner</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 40px">{rows}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">{rows}</div>
     <div style="margin-top:28px;display:flex;align-items:flex-end;gap:8px;font-size:13px">
       <span style="font-style:italic">Belongs to</span><span style="flex:1;height:1px;background:{N500}"></span></div>"""
 
@@ -255,7 +274,7 @@ def p_group(g):
     title, intro = GROUP_INTRO[g]
     _, items = W.P1[g]
     extra = [(k, C.TOOLS[k][0]) for k in W.NEW_TOOLS] if g == "life" else []
-    rows = "".join(f'<a href="#{k}" style="display:flex;gap:8px;font-size:14px;padding:3px 0">'
+    rows = "".join(f'<a href="#{k}" style="display:flex;gap:8px;font-size:14px;padding:11px 0 10px;border-bottom:1px solid {N300};break-inside:avoid">'
                    f'<span style="flex:1">{t}</span><span style="color:{N700}" data-pn="{k}"></span></a>'
                    for k, t in items + extra)
     return f"""
@@ -315,6 +334,26 @@ def unwire(body):
     return body.replace("background:#EDEDED", "")
 
 
+def p_mreview(m):
+    """월 리뷰 -- 문구·칸은 와이어프레임과 같고 배치만 두 칸씩.
+    라벨 11.5px·실험 줄 41px(누르는 영역) 로 키우자 한 장을 넘쳐 W13 줄이 잘렸다(2026-09-25)."""
+    _, _, q = C.MONTHS[m - 1]
+    wk = [n for n, f in enumerate(W.WEEKS, 1) if W.home_month(f) == m]
+    exps = "".join(f'<a class="xr" href="#w{n}"><span class="wn">W{n}</span><span class="xn">{W.e(C.experiment(n)[0])}</span>'
+                   f'<span class="rate">✓ ~ ✗</span></a>' for n in wk)
+    (t1, h1), (t2, h2), (t3, h3), (t4, h4) = C.MONTH_REVIEW
+    b = lambda t, h="": W.box(t.upper(), W.lines(2), "1", h)
+    return (W.head(f"{W.MN[m].upper()} {Y} · REVIEW", "Month review", "Not a report card. Just a look back.", W.chip(f"m{m}", W.MA[m]))
+            + f'<div class="bd">{W.box(t1.upper(), W.lines(2), "none", h1)}'
+            + f'<div class="rw">{b(t2, h2)}{b(t3, h3)}</div>'
+            + f'<div class="rw">{b(t4, h4)}{b(q)}</div>'
+            + '<div class="rw">' + W.box("ADHD TAX THIS MONTH", '<div class="hint">late fees, rebuys, forgotten subscriptions</div>'
+                                         + '<div class="tb4"><span>what</span><span></span><span></span><span>$</span></div>' + W.lines(2)
+                                         + '<div class="txt"><b>Total $ ____</b></div>')
+            + W.box("HYPERFOCUS HARVEST", '<div class="hint">what grabbed you · useful? · fun?</div>' + W.lines(3)) + '</div>'
+            + W.box("THIS MONTH'S EXPERIMENTS", exps, "1") + '</div>')
+
+
 def p_p1(key, name):
     t = P1.get(key)
     if not t:
@@ -357,7 +396,7 @@ def rail(on):
         w, h = (26 if a else 22), 70
         sh = (f'<img src="bg/tabshadow-{w}x{h}.png" alt="" style="left:-{E.SHADOW_M}px;top:-{E.SHADOW_M}px;'
               f'width:{w + 2 * E.SHADOW_M}px;height:{h + 2 * E.SHADOW_M}px">')
-        out.append(f'<a href="#{k}" class="{"on" if a else ""}">{t}{sh}</a>')
+        out.append(f'<a href="#{k}" class="{"on" if a else ""}"><span class="tv">{t}{sh}</span></a>')
     return f'<nav class="rail">{"".join(out)}</nav>'
 
 
@@ -388,6 +427,8 @@ def mark_lead(key, body):
 def page(key, body, n):
     sheet = "b" if key in SHEET_B else "a"
     body = mark_lead(key, unwire(body))
+    body = re.sub(r'<a class="chip( [a-z ]*)?" href="#([^"]+)">(.*?)</a>',   # class="chip " (공백 하나)도
+                  lambda m: f'<a class="hit" href="#{m.group(2)}"><span class="chip{m.group(1) or ""}">{m.group(3)}</span></a>', body)
     if re.fullmatch(r"q\d", key):
         body = body.replace('<div class="chips">', '<div class="chips wk">', 1)
     fname = footer_name(key, body)
@@ -411,6 +452,8 @@ def specs():
         elif re.fullmatch(r"d\d+-\d+", k):
             m, d = map(int, k[1:].split("-"))
             fn = (lambda dd: lambda: p_day(dd))(dt.date(Y, m, d))
+        elif re.fullmatch(r"mr\d+", k):
+            fn = (lambda mm: lambda: p_mreview(mm))(int(k[2:]))
         elif k in P1:
             fn = (lambda kk: lambda: p_p1(kk, kk))(k)
         elif re.fullmatch(r"note\d", k):
@@ -439,10 +482,62 @@ def vectorize_glyphs(html):
     return head + body
 
 
+# 괘선이 있는 칸 중, 크기가 바깥 레이아웃으로 정해져서 아래가 비어 있는 칸에만 괘선을 더 긋는다.
+# 한 줄 넣어 칸 높이가 바뀌면(내용 따라 크는 칸) 그 줄을 빼고 멈춘다 -- 레이아웃은 흔들리지 않는다.
+FILL_JS = r"""
+() => {
+  let boxes = 0, added = 0;
+  document.querySelectorAll('.box').forEach(b => {
+    const lns = b.querySelectorAll(':scope > .ln:not(.fl)');
+    if (!lns.length || !b.lastElementChild.classList.contains('ln')) return;   // 괘선 아래 다른 것(알약 등)이 있으면 두지 않는다
+    const last = lns[lns.length - 1];
+    let n = 0;
+    for (let i = 0; i < 40; i++) {
+      const h0 = b.getBoundingClientRect().height;
+      const room = b.getBoundingClientRect().bottom - last.parentNode.lastElementChild.getBoundingClientRect().bottom;
+      if (room < 34) break;
+      const ln = document.createElement('div'); ln.className = 'ln';
+      b.appendChild(ln);
+      if (Math.abs(b.getBoundingClientRect().height - h0) > 0.5 || ln.getBoundingClientRect().bottom > b.getBoundingClientRect().bottom + 0.5) { ln.remove(); break; }
+      n++;
+    }
+    if (n) { boxes++; added += n; }
+  });
+  return [boxes, added];
+}
+"""
+
+
+MIN_TOUCH = 41      # px -- Apple 권장 최소 44pt = 8.5mm (iPad 11 세로, 페이지 폭 맞춤: 1px = 0.209mm)
+
+
+def touch_report(pdf_path, ids):
+    """PDF 안 모든 링크의 누르는 영역을 잰다. 짧은 변이 MIN_TOUCH 미만인 것을 종류별로 센다."""
+    import collections
+    import pymupdf
+    small, total = collections.Counter(), 0
+    ex = {}
+    for i, pg in enumerate(pymupdf.open(pdf_path)):
+        for l in pg.get_links():
+            r = l["from"]
+            w, h = r.width / 0.75, r.height / 0.75
+            total += 1
+            if min(w, h) < MIN_TOUCH:
+                src = re.sub(r"\d+(-\d+)?", "#", ids[i])
+                kind = f"{src} {int(w)}x{int(h)}"
+                small[kind] += 1
+    print(f"  링크 {total}개 · 누르는 영역 {MIN_TOUCH}px(8.5mm) 미만 {sum(small.values())}개")
+    for k, v in small.most_common(12):
+        print(f"    {v:5d}  {k}")
+    return small
+
+
 def build():
     from playwright.sync_api import sync_playwright
     import pikepdf
-    E.refuse_overwrite(OUT)
+    # 한 버전 폴더에 판 4개(2026/2027 x 월/일)가 들어간다 -> 폴더가 아니라 그 판 파일이 있으면 멈춘다
+    if (OUT / f"{FNAME}.pdf").exists():
+        raise SystemExit(f"{OUT / (FNAME + '.pdf')} 는 이미 있다. 덮어쓰지 않는다 -- VERSION 을 올릴 것.")
     (SRC / "bg").mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
     for s in ("a", "b"):
@@ -479,6 +574,8 @@ def build():
         pg.goto(src.as_uri(), timeout=300000)
         pg.evaluate("document.fonts.ready")
         pg.wait_for_timeout(800)
+        filled = pg.evaluate(FILL_JS)
+        print(f"  괘선 채움: 칸 {filled[0]}개에 {filled[1]}줄")
         pg.pdf(path=str(raw), width="768px", height="1024px", print_background=True, prefer_css_page_size=False,
                margin={"top": "0", "right": "0", "bottom": "0", "left": "0"})
         br.close()
@@ -496,6 +593,7 @@ def build():
     print(f"  fonts {sorted(fonts)}")
     if stray:
         raise SystemExit(f"Source Serif 4 가 아닌 폰트: {stray} -- GLYPHS 에 그 글자를 넣을 것")
+    touch_report(final, ids)
     if not SAMPLE:
         bad, miss = W.check_links(html)
         dead = sorted(set(re.findall(r'href="?#([^" >]+)', html)) - set(ids))
