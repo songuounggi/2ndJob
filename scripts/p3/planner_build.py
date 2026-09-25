@@ -95,10 +95,13 @@ footer{{flex:none;display:flex;justify-content:space-between;margin-top:14px;fon
 .tr{{display:flex;align-items:flex-end;gap:8px;margin-top:8px}}.sp{{flex:1}}
 h1{{font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}}
 .sub{{font-style:italic;font-size:14px;line-height:1.45;color:{N800};margin-top:8px;max-width:470px}}
-.chip{{display:inline-block;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1;
-  border:1px solid {N600};border-radius:1px;padding:4px 6px 3px;margin:1px 0 1px 4px;color:{N800};white-space:nowrap}}
+/* 칩 = 레퍼런스 표 7c 의 알약 칸: 양 끝 반원, 1px neutral-400 선 (2026-09-25 사용자: 직사각형 버튼이 촌스럽다) */
+.chip{{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:22px;
+  font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1;
+  border:1px solid {N400};border-radius:999px;padding:0 10px;margin:1px 0 1px 4px;color:{N800};white-space:nowrap;gap:5px}}
 .chip.note{{background:{INK};border-color:{INK};color:{PAPER}}}
 .chip.off{{border-style:dotted;color:{N500}}}
+.lead .chip{{border-color:{CYAN}}}
 .holchip{{font-style:italic;font-size:12px;color:{N800};margin-right:6px}}
 
 /* ---- body (wireframe classes, re-inked) ---- */
@@ -128,6 +131,7 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .dy{{flex:1;border-bottom:1px solid {N300};padding-top:5px}}
 .dy .chip{{margin-left:0}}
 .chips{{display:flex;flex-wrap:wrap;gap:3px}}
+.chips .chip{{min-width:0;padding:0 7px}}
 .chips .chip{{margin:0}}
 .yg{{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 22px}}
 .mname{{font-weight:600;font-size:13px}}
@@ -187,7 +191,10 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
    (사분면 "Now · Important" 의 가운뎃점이 굴림으로 나왔다). 잉크 규칙대로 600 으로 */
 .p1 [style*="font-weight:700"],.p1 [style*="font-weight:800"],.p1 b,.p1 strong{{font-weight:600!important}}
 .p1 .q4>div>div>div{{font-weight:400!important}}
-.p1 .q4>div{{border-top:1px solid {N400}}}
+/* 사분면: 원본은 색칠한 네모 4개를 8pt 간격으로 띄웠다. 선으로 바꾸면 그 간격 때문에 세로선이 끊겨
+   T 자 두 개로 보였다(사용자 지적) -> 간격을 없애 + 자 하나로 */
+.p1 .q4{{gap:0!important}}
+.p1 .q4>div{{gap:0!important;border-top:1px solid {N400}}}
 .p1 .q4>div>div{{border-left:1px solid {N400};padding:6px 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:{N700}}}
 .p1 .q4>div>div:first-child{{border-left:0}}
 /* ---- 표지·구분·일간 (여기서 새로 짠 것) ---- */
