@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Lifted Paper 에디션 PDF 빌드 (디자인 핸드오프 README 대로). Prod 3 방 소유.
 
-    python scripts/p3/editions_build.py            # 4개 PDF -> output/editions/
+    python scripts/p3/editions_build.py            # 4개 PDF -> output/prod3/editions/<VERSION>/
 
 레퍼런스 `design/Admin Tables v17.dc.html` 을 Playwright(설치된 Chrome)로 연 뒤,
 페이지마다 DOM 을 고쳐서 떼어낸다:
@@ -29,8 +29,11 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]      # scripts/p3/ -> 저장�
 HAND = ROOT / "ADHD Planner 디자인 컨셉_v0.1" / "design_handoff_adhd_planner_pdf"
 REF = HAND / "design" / "Admin Tables v17.dc.html"
 CSS = next((HAND / "design" / "_ds").glob("*/styles.css"))
-OUT = ROOT / "output" / "editions"
-SRC = ROOT / "src" / "editions"
+# 버전마다 폴더. 한 번 만든 버전은 덮어쓰지 않는다(refuse_overwrite).
+# v0.1 = 핸드오프 첫 판(탭 오른쪽, 커밋 6f73359) / v0.2 = 종이+탭 가운데(7e70a83)
+VERSION = "v0.2"
+OUT = ROOT / "output" / "prod3" / "editions" / VERSION
+SRC = ROOT / "src" / "prod3" / "editions" / VERSION
 
 # 에디션: (파일명, 탭 세트[(라벨, 키)], 페이지[(새 id, 레퍼런스 id, 활성 탭 라벨)])
 # 키가 None 이면 페이지가 없는 탭 -> Home 으로 (README "Tabs")
@@ -65,6 +68,14 @@ EDITIONS["directions"] = ("ADHD-Planner-Directions-Sampler", None, [
     for d in ("3a", "3b", "3c") for k in ("home", "day")])
 COVER_OR_DIVIDER = {"pg-fe-home", "pg-fe-track", "pg-ae-home", "pg-ee-home",
                     "pg-dd-3a-home", "pg-dd-3b-home", "pg-dd-3c-home"}
+
+
+def refuse_overwrite(folder):
+    """이미 만든 버전은 절대 덮어쓰지 않는다 (2026-09-25 사용자: "절대 지우면 안돼").
+    같은 이름으로 다시 빌드해서 첫 판이 사라졌던 적이 있다 -> 고치면 VERSION 을 올린다."""
+    folder = pathlib.Path(folder)
+    if folder.exists() and any(folder.glob("*.pdf")):
+        raise SystemExit(f"{folder} 는 이미 있는 버전이다. 덮어쓰지 않는다 -- VERSION 을 올려서 다시 빌드할 것.")
 
 
 def tabs_for(edition, new_id):
@@ -298,6 +309,7 @@ a{{color:inherit}}
 
 
 def build():
+    refuse_overwrite(OUT)
     OUT.mkdir(parents=True, exist_ok=True)
     SRC.mkdir(parents=True, exist_ok=True)
     (SRC / "bg").mkdir(exist_ok=True)

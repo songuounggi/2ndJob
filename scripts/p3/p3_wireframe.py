@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """상품 3 와이어프레임 -- 디자인 없이 내용과 링크만. Prod 3 방 소유.
 
-    python scripts/p3/p3_wireframe.py 2027 mon     # -> output/p3_wireframe_2027-mon.pdf
+    python scripts/p3/p3_wireframe.py 2027 mon     # -> output/prod3/wireframe/<VERSION>/p3_wireframe_2027-mon.pdf
 
 회색 상자 + 라벨 + 실제 문구(p3_content.py). 모든 링크가 살아 있어서 GoodNotes 에서
 흐름(Time links, SOS, 52 experiments)을 눌러 볼 수 있다. 디자인은 사용자가 입힌다.
@@ -24,8 +24,10 @@ CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 Y = int(sys.argv[1]) if len(sys.argv) > 1 else 2027
 WS = 0 if (sys.argv[2] if len(sys.argv) > 2 else "mon") == "mon" else 6
 TAG = f"{Y}-{'mon' if WS == 0 else 'sun'}"
-SRC = os.path.join(ROOT, "src", f"p3_wireframe_{TAG}.html")
-OUT = os.path.join(ROOT, "output", f"p3_wireframe_{TAG}.pdf")
+# 버전마다 폴더, 덮어쓰기 금지. v0.1 = 597p 미국 공휴일(490fee2) / v0.2 = 598p 공통 공휴일 + My holidays(33495b6)
+VERSION = C.VERSION
+SRC = os.path.join(ROOT, "src", "prod3", "wireframe", VERSION, f"p3_wireframe_{TAG}.html")
+OUT = os.path.join(ROOT, "output", "prod3", "wireframe", VERSION, f"p3_wireframe_{TAG}.pdf")
 
 WEEKS = C.year_weeks(Y, WS)
 WEEK_OF = {w + dt.timedelta(i): n for n, w in enumerate(WEEKS, 1) for i in range(7)}
@@ -528,6 +530,9 @@ h1{font-size:18pt;font-weight:700}.sub{font-size:7.5pt;color:#666;margin-top:3pt
 
 
 def build():
+    if os.path.exists(OUT):
+        raise SystemExit(f"{OUT} 는 이미 있다. 덮어쓰지 않는다 -- p3_content.VERSION 을 올릴 것.")
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
     sp = specs()
     body = "".join(page(k, fn()) for k, fn in sp)
     html = (f'<!DOCTYPE html><html><head><meta charset="utf-8"><title>{Y} ADHD Year Planner — wireframe</title>'

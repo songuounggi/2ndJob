@@ -6,7 +6,7 @@
 |---|---|
 | `scripts/build_planner.py` · `student_pages.py` · `app_style.py` | **import 하지 않는다. 고치지 않는다.** 상품 1·2 의 것이다 |
 | 공용 도구 `dedupe_pdf.py` · `check_render.py` | 읽기 전용으로 **호출만** 한다(파일을 인자로 넘겨 실행). 고칠 일이 생기면 여기로 복사해서 고친다 |
-| 출력 | `output/editions/` · `output/p3_*` · `src/editions/` · `src/p3_*` — 상품 1·2 파일명과 겹치지 않는다 |
+| 출력 | **`output/prod3/`** 와 `src/prod3/` 아래에만 쓴다 (2026-09-25 사용자: output 을 상품별로) |
 
 ## 파일
 
@@ -19,9 +19,9 @@
 | `concepts_p3.py` | 반려된 디자인 콘셉트 시안(참고용) |
 
 ```bash
-python scripts/p3/editions_build.py      # -> output/editions/*.pdf
+python scripts/p3/editions_build.py      # -> output/prod3/editions/*.pdf
 python scripts/p3/editions_check.py      # README 체크리스트
-python scripts/check_render.py output/editions/ADHD-Planner-Focus-Edition.pdf   # GoodNotes 위험
+python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.pdf   # GoodNotes 위험
 ```
 
 필요: `pip install playwright` (브라우저는 받지 않는다 — `channel="chrome"` 으로 설치된 Chrome 사용).
@@ -42,3 +42,20 @@ python scripts/check_render.py output/editions/ADHD-Planner-Focus-Edition.pdf   
 | `→` = SVG | Source Serif 4 에 없는 글리프 (맑은 고딕으로 대체됐다) |
 | inset box-shadow 선 → border/outline | 표 페이지 렌더 267ms. 크기가 1px 이라도 바뀌면 되돌림(0건) |
 | 페이지 없는 탭 → Home, Directions 의 Home/Day = 그 방향의 표지/일간 | README "Tabs" |
+
+## output/prod3/ 지도 — 버전마다 폴더, 절대 덮어쓰지 않는다
+
+2026-09-25: 같은 이름으로 다시 빌드해 첫 판을 덮어쓴 적이 있다(사용자: "절대 지우면 안돼").
+빌드 스크립트는 이미 있는 버전 폴더면 멈춘다(`refuse_overwrite`) -- 고치면 `VERSION` 을 올린다.
+
+| 폴더 | 담는 것 | 만든 커밋 |
+|---|---|---|
+| `editions/v0.1/` | 에디션 4종 첫 판 (핸드오프 그대로, 탭 오른쪽) | `6f73359` |
+| `editions/v0.2/` | 종이+탭 묶음 가운데 정렬 (좌우 25px) | `7e70a83` |
+| `wireframe/v0.1/` | 날짜형 와이어프레임 597p (미국 공휴일) + 문구 CSV | `490fee2` |
+| `wireframe/v0.2/` | 598p (공통 공휴일 + My holidays) + 문구 CSV | `33495b6` |
+| `archive_dated-v0.1/` | 상품 1 모양 날짜형 첫 시도 8판 (반려) | `eb3f67e` |
+| `archive_color-mocks/` | 색만 바꾼 시안 5종 PDF+PNG (반려) | `490fee2` 트리에서 재생성 |
+| `archive_concepts-A-D/` | 새 콘셉트 4종(시계·퀘스트·볼드·노트북) HTML·PDF·PNG (참고용) | `concepts_p3.py` |
+| `preview/` | 검수용 렌더 PNG | |
+| `upload/<버전>/` | (앞으로) Etsy 에 올린 판. 한 번 넣으면 건드리지 않는다 | |
