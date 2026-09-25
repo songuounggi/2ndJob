@@ -16,7 +16,7 @@ import pypdfium2 as pdfium
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 VER = "v0.7"
-DRAFT = "draft-v0.2"   # v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다
+DRAFT = "draft-v0.3"   # v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
 PDF = ROOT / "output" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.pdf"
 HTML = ROOT / "src" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.html"
 OUT = ROOT / "output" / "prod3" / "listing" / DRAFT
@@ -59,6 +59,10 @@ p.s{{font-size:46px;font-style:italic;color:{N700};line-height:1.3;max-width:150
 .list{{font-size:44px;line-height:1.55;margin-top:40px}}
 .list b{{color:{CYAN};font-weight:600}}
 .pill{{display:inline-block;border:2px solid {N700};border-radius:999px;padding:10px 34px;font-size:40px;margin:0 16px 20px 0}}
+.cv{{position:relative}}.cv img{{width:100%;box-shadow:0 14px 30px rgba(0,0,0,.15)}}
+.bdg{{position:absolute;top:-26px;right:-18px;border-radius:26px;padding:16px 26px 14px;text-align:center;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.22)}}
+.bdg b{{display:block;font-size:64px;font-weight:600;line-height:1}}.bdg span{{display:block;font-size:30px;margin-top:6px;letter-spacing:.04em}}
+.bdg.mon{{background:{CYAN}}}.bdg.sun{{background:{INK}}}
 .foot{{font-size:34px;color:{N700};margin-top:40px;letter-spacing:.04em}}
 """
 
@@ -93,7 +97,9 @@ SHOTS = {
         <span class="pill">2027 · Monday start</span><span class="pill">2027 · Sunday start</span></div>
       <div class="list"><b>Ten tabs</b> on every page · every day <b>two taps</b> away<br>
         For GoodNotes, Notability and other PDF note apps · shaped for a tablet (3:4)</div>
-      <div class="grid" style="margin-top:50px">{"".join(img(f"cover-{y}-{w}", "") for y in ("2026", "2027") for w in ("mon", "sun"))}</div>
+      <div class="grid" style="margin-top:70px;gap:56px">{"".join(
+          f'<div class="cv">{img(f"cover-{y}-{w}", "")}<div class="bdg {w}"><b>{y}</b><span>{"Monday" if w == "mon" else "Sunday"} start</span></div></div>'
+          for y in ("2026", "2027") for w in ("mon", "sun"))}</div>
       <div class="foot">Digital download – nothing is shipped.</div>""",
 }
 
