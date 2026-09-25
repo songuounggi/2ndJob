@@ -603,6 +603,7 @@ TOOLS = {
 }
 
 # --------------------------------------------------- 4-6 holidays --
+# 아래 둘은 지금 인쇄에 쓰지 않는다. 나라별 공휴일 스티커(§5-2 ④)를 만들 때 쓴다.
 def nth_weekday(y, m, wd, n):
     """n 번째(1..) 요일. n=-1 이면 마지막."""
     days = [d for d in calendar.Calendar().itermonthdates(y, m) if d.month == m and d.weekday() == wd]
@@ -624,28 +625,25 @@ def easter(y):
 
 
 def holidays(y):
-    """결정 필요(product3-content.md §5-2). 미국 연방 공휴일 + 몇 개 기념일."""
+    """전 세계 어디서도 틀리지 않는 날만 인쇄한다 (2026-09-25 사용자 결정, product3-content.md §5-2).
+
+    나라별 공휴일은 날짜도 이름도 다르다 -- 미국 공휴일을 박으면 미국 밖 구매자에게는
+    틀린 정보가 된다(첫 구매자가 브라질이었다). 자기 나라 날은 "My holidays" 페이지에
+    적는다. 크리스마스는 예외로 넣는다(사용자: "크리스마스는 못 참지").
+    어머니날·부활절·추수감사절처럼 나라마다 날짜가 다른 것은 넣지 않는다.
+    """
     D = dt.date
     return {
         D(y, 1, 1): "New Year's Day",
-        nth_weekday(y, 1, 0, 3): "Martin Luther King Jr. Day",
-        D(y, 2, 14): "Valentine's Day",
-        nth_weekday(y, 2, 0, 3): "Presidents' Day",
-        easter(y): "Easter",
-        nth_weekday(y, 5, 6, 2): "Mother's Day",
-        nth_weekday(y, 5, 0, -1): "Memorial Day",
-        nth_weekday(y, 6, 6, 3): "Father's Day",
-        D(y, 6, 19): "Juneteenth",
-        D(y, 7, 4): "Independence Day",
-        nth_weekday(y, 9, 0, 1): "Labor Day",
+        D(y, 10, 1): "ADHD Awareness Month",
         D(y, 10, 10): "World Mental Health Day",
-        D(y, 10, 31): "Halloween",
-        D(y, 11, 11): "Veterans Day",
-        nth_weekday(y, 11, 3, 4): "Thanksgiving",
-        D(y, 12, 24): "Christmas Eve",
         D(y, 12, 25): "Christmas Day",
         D(y, 12, 31): "New Year's Eve",
     }
+
+
+MY_HOLIDAYS = ("My holidays",
+               "Public holidays, school breaks, days off. Write the ones where you live.")
 
 
 # ---------------------------------------------------------- accessors --
@@ -704,6 +702,13 @@ def check():
     need(not long, f"70자 초과 {len(long)}: {long[:3]}")
     bad = [t for t in texts if BANNED.search(t)]
     need(not bad, f"금지어 {bad[:3]}")
+    # 인쇄 공휴일은 나라를 타지 않는 것만 (2026-09-25 결정). 미국 것이 다시 들어오면 잡는다.
+    local = re.compile(r"Thanksgiving|Memorial|Independence|Labor|Presidents|King|Juneteenth|Veterans|"
+                       r"Mother|Father|Easter|Halloween|Valentine", re.I)
+    for y in (2026, 2027):
+        leak = [v for v in holidays(y).values() if local.search(v)]
+        need(not leak, f"{y} 나라별 공휴일이 인쇄됨: {leak}")
+        need(holidays(y).get(dt.date(y, 12, 25)) == "Christmas Day", f"{y} 크리스마스 없음")
     return fails
 
 
@@ -740,7 +745,6 @@ if __name__ == "__main__":
     print(f"질문 {n} / 실험 {len(EXPERIMENTS)} / 테마 {len(MONTHS)} / admin {sum(map(len, ADMIN))} "
           f"/ SOS {len(SOS)} / 도구 {len(TOOLS)}")
     for y in (2026, 2027):
-        print(export_csv(y), "|", ", ".join(f"{k:%m-%d} {v}" for k, v in sorted(holidays(y).items())
-                                            if v in ("Easter", "Memorial Day", "Thanksgiving")))
+        print(export_csv(y), "|", ", ".join(f"{k:%m-%d} {v}" for k, v in sorted(holidays(y).items())))
     print("전부 통과" if not f else f"FAIL {len(f)}")
     sys.exit(1 if f else 0)

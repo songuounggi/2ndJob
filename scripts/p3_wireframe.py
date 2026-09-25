@@ -108,7 +108,7 @@ def rail_of(key):
         return "month"
     if re.fullmatch(r"(w|wr)\d+", key) or key == "week":
         return "week"
-    if key in ("year", "how", "kickoff", "goals", "project", "vision", "experiments", "pixels", "admin", "bday1", "bday2", "where",
+    if key in ("year", "how", "kickoff", "goals", "project", "vision", "myhol", "experiments", "pixels", "admin", "bday1", "bday2", "where",
                "playbook", "mailbox", "yearreview"):
         return "year"
     for g, (_, items) in P1.items():
@@ -226,6 +226,14 @@ def p_bday(part):
                    for m in ms)
     return (head(str(Y), f"Birthdays & gift radar {part}/2", "Write the buy-by date ten days early.")
             + f'<div class="bd"><div class="g2">{cols}</div></div>')
+
+
+def p_myhol():
+    t, sub = C.MY_HOLIDAYS
+    cols = "".join(box(MN[m].upper(), '<div class="tb4"><span>what</span><span></span><span>date</span><span>off?</span></div>' + lines(3), "1")
+                   for m in range(1, 13))
+    return (head(str(Y), t, sub)
+            + f'<div class="bd"><div class="g3">{cols}</div></div>')
 
 
 def p_where():
@@ -439,7 +447,7 @@ def p_notes():
 def specs():
     s = [("cover", p_cover), ("how", p_how), ("index", p_index), ("sos", p_sos),
          ("year", p_year), ("kickoff", p_kickoff), ("experiments", p_experiments), ("pixels", p_pixels),
-         ("admin", p_admin), ("bday1", lambda: p_bday(1)), ("bday2", lambda: p_bday(2)), ("where", p_where),
+         ("admin", p_admin), ("myhol", p_myhol), ("bday1", lambda: p_bday(1)), ("bday2", lambda: p_bday(2)), ("where", p_where),
          # 상품 1 YEAR 그룹에서 그대로 오는 세 장
          ("goals", lambda: p_p1("goals", "Goals")), ("project", lambda: p_p1("project", "Project planner")),
          ("vision", lambda: p_p1("vision", "Vision page"))]
@@ -509,6 +517,7 @@ h1{font-size:18pt;font-weight:700}.sub{font-size:7.5pt;color:#666;margin-top:3pt
 .bw{border-collapse:collapse;width:100%;table-layout:fixed}.bw th{font-size:5pt;color:#777;font-weight:700}.bw th.rl{width:34pt;text-align:left}
 .bw td{border:.6pt solid #bbb;height:22pt;background:#fff}.bw small{font-size:4.5pt;color:#aaa}
 .ag{display:grid;grid-template-columns:repeat(3,1fr);gap:8pt}.am b{font-size:8pt}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:6pt;flex:1}
 .g2{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:6pt;flex:1}
 .tr3{display:flex;align-items:end;gap:8pt;height:22pt;font-size:8pt}.tr3 b{width:110pt}
 .xl{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(27,auto);grid-auto-flow:column;gap:0 10pt}
