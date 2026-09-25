@@ -31,3 +31,14 @@ python scripts/check_render.py output/editions/ADHD-Planner-Focus-Edition.pdf   
 `archive/p3_dated_v0.1/` — 상품 1 모양 그대로 달력만 날짜로 바꾼 첫 시도(dated-v0.1). "상품 1 과 너무 똑같다"로
 반려(2026-09-25). `build_planner.py` 에 훅을 넣어야 돌아가는 구조였고, 그 훅은 이번 분리 때 걷어냈다.
 다시 돌리려면 커밋 `eb3f67e` 로 worktree 를 떠서 빌드한다.
+
+## 레퍼런스와 다르게 한 것 (사용자 요청·결함 수정)
+
+| 무엇 | 왜 |
+|---|---|
+| **종이+탭 묶음을 페이지 가운데로** (왼쪽으로 13px, 좌우 여백 25px) | 사용자: 탭이 우측에 쏠려 누르기 어렵다. 배경은 옮겨 다시 굽고(`shift_background`) 오른쪽 띠는 끝 열을 늘려 채운다 — 책상색으로 칠하면 모서리 그림자에서 이음매가 생긴다 |
+| 탭 그림자 = 구운 PNG | 블러 box-shadow 가 페이지당 소프트 마스크 10개 → GoodNotes 바둑판 위험 |
+| 폰트 = Google Fonts 정적 WOFF | 가변 폰트는 Chrome 이 Type3 로 넣는다 |
+| `→` = SVG | Source Serif 4 에 없는 글리프 (맑은 고딕으로 대체됐다) |
+| inset box-shadow 선 → border/outline | 표 페이지 렌더 267ms. 크기가 1px 이라도 바뀌면 되돌림(0건) |
+| 페이지 없는 탭 → Home, Directions 의 Home/Day = 그 방향의 표지/일간 | README "Tabs" |

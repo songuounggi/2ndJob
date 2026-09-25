@@ -77,7 +77,7 @@ def check_edition(ed):
     for i, pg in enumerate(doc):
         want = B.tabs_for(ed, ids[i])
         links = [l for l in pg.get_links() if l.get("kind") == fitz.LINK_GOTO or l.get("kind") == fitz.LINK_NAMED]
-        tabs = sorted([l for l in links if l["from"].x0 >= 725 * 0.75], key=lambda l: l["from"].y0)
+        tabs = sorted([l for l in links if l["from"].x0 >= 480], key=lambda l: l["from"].y0)
         if len(tabs) != len(want):
             F(f"{ids[i]}: 탭 링크 {len(tabs)}개 (기대 {len(want)})")
             continue
@@ -87,6 +87,38 @@ def check_edition(ed):
                 dest = doc.resolve_names().get(l["nameddest"], {}).get("page")
             if dest != ids.index(target):
                 F(f"{ids[i]}: 탭 {label} -> p{None if dest is None else dest + 1} (기대 {ids.index(target) + 1} {target})")
+
+    # 3-2. 종이+탭 묶음이 가운데인가 -- 코드의 SHIFT 값이 아니라 PDF 안의 실제 위치로 잰다
+    #      (같은 숫자로 만들고 같은 숫자로 재면 틀려도 맞다고 나온다).
+    #      종이 왼쪽 = 배경 이미지의 x + 38px (이미지에 종이가 구워져 있다), 오른쪽 = 가장 오른쪽 탭 링크 끝.
+    sheet_left = None
+    for x in big:
+        pix = fitz.Pixmap(doc, x)
+        row = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, pix.n)[pix.h // 2, :, :3].mean(axis=1)
+        sheet_left = int(np.argmax(row > 240)) / (pix.w / 768)     # 2x -> px
+        break
+    for i, pg in enumerate(doc):
+        tabs = [l["from"] for l in pg.get_links() if l["from"].x0 >= 480]
+        bg = [pg.get_image_bbox(im) for im in pg.get_images(full=True) if (im[2], im[3]) == (1536, 2048)]
+        if not tabs or not bg:
+            F(f"{ids[i]}: 가운데 검사 불가 (탭 {len(tabs)}, 배경 {len(bg)})")
+            continue
+        # 배경 이미지는 이미 SHIFT 만큼 옮겨 구웠으므로(0,0 에 놓인다) 종이 왼쪽 = 38 - 옮긴 양.
+        # 옮긴 양은 이미지에서 잰다: 종이 가장자리(밝은 종이 vs 책상)가 처음 나타나는 x.
+        left_gap = bg[0].x0 / 0.75 + sheet_left
+        right_gap = 768 - max(t.x1 for t in tabs) / 0.75
+        res["info"].setdefault("gaps", {})[ids[i]] = (round(left_gap, 1), round(right_gap, 1))
+        if abs(right_gap - left_gap) > 1:
+            F(f"{ids[i]}: 가운데 아님 — 왼쪽 {left_gap:.1f}px / 오른쪽 {right_gap:.1f}px")
+
+    # 3-3. 배경 오른쪽 끝에 세로 이음매가 없는가. 묶음을 옮기고 빈 띠를 책상색으로 칠했을 때
+    #      오른쪽 아래(들린 모서리 그림자)에서 x=755px 을 경계로 225 -> 231 로 끊겼다(2026-09-25).
+    for i, pg in enumerate(doc):
+        pix = pg.get_pixmap(matrix=fitz.Matrix(4 / 3, 4 / 3), alpha=False)
+        a = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, 3).astype(int).mean(axis=2)
+        step = np.abs(np.diff(a[600:1024, 740:768], axis=1)).max()
+        if step > 3:
+            F(f"{ids[i]}: 오른쪽 끝 이음매 (가로 밝기 계단 {step:.0f})")
 
     # 4. Sheet B 는 표지·섹션 구분 페이지에만
     sheet_of_xref = {}
@@ -131,6 +163,10 @@ def check_edition(ed):
         pix = pg.get_pixmap(matrix=fitz.Matrix(4 / 3, 4 / 3), alpha=False)
         mine = Image.frombytes("RGB", (pix.w, pix.h), pix.samples).convert("L")
         ref = Image.open(shot).convert("L").resize(mine.size)
+        # 묶음을 왼쪽으로 SHIFT 옮겼으니 레퍼런스도 같이 옮겨 비교한다(오른쪽 빈 띠는 책상색)
+        sh = Image.new("L", ref.size, 231)
+        sh.paste(ref, (-B.SHIFT, 0))
+        ref = sh
         d = np.abs(np.asarray(mine, int) - np.asarray(ref, int))
         res["info"]["diff"][ids[i]] = round(float(d.mean()), 2)
         mine.save(B.SRC / f"_render_{ids[i]}.png")
@@ -147,6 +183,7 @@ if __name__ == "__main__":
         print("   images:", r["info"]["images"])
         print("   fonts :", r["info"]["fonts"])
         print("   diff vs screenshot (mean |Δ| 0-255):", r["info"]["diff"])
+        print("   gaps L/R px:", sorted(set(r["info"].get("gaps", {}).values())))
         print("   accent:", {k: (v["plates"], v["cmyk_num"], v["cyan_refs"]) for k, v in r["info"]["accent"].items()})
         for f in r["fail"]:
             print("   FAIL", f)

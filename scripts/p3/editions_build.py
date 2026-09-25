@@ -250,10 +250,36 @@ def bake_tab_shadows(br):
     ctx.close()
 
 
+# 종이+탭 묶음을 페이지 가운데로 (2026-09-25 사용자: "탭이 우측에 쏠려 누르기 어렵다").
+# 레퍼런스는 종이(692)만 가운데라 탭 오른쪽 여백이 12px 였다. 묶음 = 종이 692 + 활성 탭 26 = 718
+# -> 좌우 25px. 종이·탭·배경 이미지를 함께 왼쪽으로 13px 옮기고, 오른쪽에 드러나는 띠는 책상색.
+TAB_MAX = 26
+SHIFT = TAB_MAX // 2          # 13
+DESK = "#eae7e7"
+
+
+def shift_background(src_png, dst_jpg):
+    """배경을 SHIFT 만큼 왼쪽으로 옮긴 새 배경(2x). 오른쪽에 드러나는 띠는 맨 오른쪽 열을 늘려 채운다.
+
+    처음엔 이미지를 옮기고 빈 띠를 책상색으로 칠했는데, 오른쪽 아래는 들린 모서리 그림자가
+    페이지 끝까지 깔려 있어서 x=755px 에서 밝기가 5~6 단계 끊겼다(세로 이음매).
+    PNG 마스터에서 만들어 JPEG 을 두 번 압축하지 않는다. 품질은 원본처럼 q90."""
+    from PIL import Image
+    im = Image.open(src_png).convert("RGB")
+    w, h = im.size
+    d = SHIFT * 2                                   # 2x 이미지
+    out = Image.new("RGB", (w, h))
+    out.paste(im.crop((d, 0, w, h)), (0, 0))
+    edge = im.crop((w - 1, 0, w, h)).resize((d, h))
+    out.paste(edge, (w - d, 0))
+    out.save(dst_jpg, quality=90, optimize=True)
+
+
 def page_html(inner, sheet, new_id):
     bg = f"bg/sheet-{sheet.lower()}-2x.jpg"
     # 레퍼런스의 페이지 div 는 768x1024 relative. 섹션이 그 자리를 대신한다.
-    inner = re.sub(r'^<div[^>]*>', '<div style="position:absolute;inset:0">', inner, count=1)
+    inner = re.sub(r'^<div[^>]*>', f'<div style="position:absolute;top:0;bottom:0;left:{-SHIFT}px;width:768px">',
+                   inner, count=1)
     inner = re.sub(r'\sdata-dc-tpl="\d+"', "", inner)
     return (f'<section class="page" id="{new_id}">'
             f'<img class="bg" src="{bg}" alt="">{inner}</section>')
@@ -264,7 +290,7 @@ DOC = """<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>{titl
 <style>
 @page{{size:768px 1024px;margin:0}}
 html,body{{margin:0;padding:0;background:none}}
-.page{{position:relative;width:768px;height:1024px;overflow:hidden;break-after:page}}
+.page{{position:relative;width:768px;height:1024px;overflow:hidden;break-after:page;background:{desk}}}
 .page:last-child{{break-after:auto}}
 .page>img.bg{{position:absolute;inset:0;width:768px;height:1024px;display:block}}
 a{{color:inherit}}
@@ -276,7 +302,7 @@ def build():
     SRC.mkdir(parents=True, exist_ok=True)
     (SRC / "bg").mkdir(exist_ok=True)
     for s in ("a", "b"):
-        shutil.copy(HAND / "backgrounds" / f"sheet-{s}-2x.jpg", SRC / "bg" / f"sheet-{s}-2x.jpg")
+        shift_background(HAND / "backgrounds" / f"sheet-{s}-2x.png", SRC / "bg" / f"sheet-{s}-2x.jpg")
     shutil.copy(CSS, SRC / "styles.css")
     report = {}
     with sync_playwright() as p:
@@ -295,7 +321,7 @@ def build():
                 body.append(page_html(res["html"], res["rep"]["sheet"], new_id))
                 reps[new_id] = res["rep"]
             html_path = SRC / f"{fname}.html"
-            html_path.write_text(DOC.format(title=fname.replace("-", " "), body="".join(body)), encoding="utf-8")
+            html_path.write_text(DOC.format(title=fname.replace("-", " "), body="".join(body), desk=DESK), encoding="utf-8")
             # Google Fonts 는 최신 브라우저에 가변 폰트(VF)를 준다. Chrome 은 VF 의 400/600 인스턴스를
             # PDF 에 Type3(글자를 도형으로)으로 넣어서, pdffonts 에 Source Serif 4 로 안 잡힌다.
             # 옛 브라우저라고 하면 두께별 정적 WOFF 를 준다 -> Type0 서브셋으로 들어간다.
