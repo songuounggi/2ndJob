@@ -131,9 +131,11 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .dy{{flex:1;border-bottom:1px solid {N300};padding-top:5px}}
 .dy .chip{{margin-left:0}}
 .chips{{display:flex;flex-wrap:wrap;gap:3px}}
-/* 분기의 주 번호 알약(W1-W13): 가운데 정렬, 두 줄(7+6), 알약 사이 10px (사용자: 다닥다닥 답답하다) */
-.chips.wk{{display:grid;grid-template-columns:repeat(7,48px);justify-content:center;gap:10px 12px;padding:10px 0 6px}}
-.chips.wk .chip{{min-width:0;width:48px;padding:0}}
+/* 분기의 주 번호 알약(W1-W13): 한 줄 가운데 정렬, 간격 8px (사용자: 다닥다닥 답답하다 -> 한 줄로)
+   38px x 13 + 8px x 12 = 590px < 본문 604px */
+.chips.wk{{display:flex;flex-wrap:nowrap;justify-content:center;gap:8px;padding:10px 0 8px}}
+/* 14주짜리 분기도 있다(2026 Q4, 2027 Q3) -> 38px 에서 모자라면 줄어든다: 14 x 35.7 + 13 x 8 = 604 */
+.chips.wk .chip{{min-width:0;flex:0 1 38px;padding:0;margin:0}}
 .chips .chip{{margin:0}}
 .yg{{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 22px}}
 .mname{{font-weight:600;font-size:13px}}
@@ -395,7 +397,7 @@ def page(key, body, n):
             f'<div class="ink">{body}{foot}</div></div></section>')
 
 
-SAMPLE_KEYS = ["cover", "how", "sos", "experiments", "year", "kickoff", "m3", "mp3", "bw3", "d3-9", "mr3",
+SAMPLE_KEYS = ["cover", "how", "sos", "experiments", "year", "kickoff", "q3", "m3", "mp3", "bw3", "d3-9", "mr3",
                "w11", "wr11", "playbook", "focus", "rsd", "tasks", "dopamine", "q1", "pixels"]
 
 
