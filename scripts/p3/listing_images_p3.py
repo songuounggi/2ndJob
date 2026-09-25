@@ -16,7 +16,7 @@ import pypdfium2 as pdfium
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 VER = "v0.7"
-DRAFT = "draft-v0.5"   # v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
+DRAFT = "draft-v0.7"   # v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
 PDF = ROOT / "output" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.pdf"
 HTML = ROOT / "src" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.html"
 OUT = ROOT / "output" / "prod3" / "listing" / DRAFT
@@ -47,21 +47,21 @@ CSS = f"""
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=block');
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{width:2000px;height:2000px;overflow:hidden;background:#e9e6e3;color:{INK};font-family:'Source Serif 4',Georgia,serif}}
-.wrap{{position:absolute;inset:0;padding:120px;display:flex;flex-direction:column}}
+.wrap{{position:absolute;inset:0;padding:250px 260px;display:flex;flex-direction:column}}   /* 안전 영역: Etsy 검색은 양옆 ~140px 을 자르고 4:3 자리는 가운데만 -- product2-student.md 목업 안전 영역 */
 .k{{font-size:34px;letter-spacing:.14em;text-transform:uppercase;color:{CYAN}}}
-h1{{font-size:118px;font-weight:600;line-height:1.02;margin:22px 0 26px;letter-spacing:-.01em}}
-p.s{{font-size:46px;font-style:italic;color:{N700};line-height:1.3;max-width:1500px}}
-.row{{flex:1;display:flex;gap:60px;align-items:flex-end;justify-content:center;margin-top:60px}}
-.pg{{height:100%;max-height:1180px;box-shadow:0 30px 60px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.08)}}
+h1{{font-size:104px;font-weight:600;line-height:1.02;margin:22px 0 26px;letter-spacing:-.01em}}
+p.s{{font-size:42px;font-style:italic;color:{N700};line-height:1.3}}
+.row{{flex:1;min-height:0;display:flex;gap:50px;align-items:flex-end;justify-content:center;margin-top:50px}}
+.pg{{height:100%;max-height:1000px;max-width:48%;object-fit:contain;box-shadow:0 30px 60px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.08)}}
 .pg.t{{transform:rotate(-2deg)}} .pg.u{{transform:rotate(1.5deg)}}
-.grid{{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:36px;margin-top:60px}}
+.grid{{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;margin-top:50px}}
 .grid img{{width:100%;box-shadow:0 14px 30px rgba(0,0,0,.15)}}
-.list{{font-size:44px;line-height:1.55;margin-top:40px}}
+.list{{font-size:38px;line-height:1.55;margin-top:34px}}
 .list b{{color:{CYAN};font-weight:600}}
-.pill{{display:inline-block;border:2px solid {N700};border-radius:999px;padding:10px 34px;font-size:40px;margin:0 16px 20px 0}}
+.pill{{display:inline-block;border:2px solid {N700};border-radius:999px;padding:8px 28px;font-size:34px;margin:0 14px 16px 0}}
 .cv{{position:relative}}.cv img{{width:100%;box-shadow:0 14px 30px rgba(0,0,0,.15)}}
-.bdg{{position:absolute;top:-26px;right:-18px;border-radius:26px;padding:16px 26px 14px;text-align:center;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.22);transform:rotate(8deg)}}
-.bdg b{{display:block;font-size:64px;font-weight:600;line-height:1}}.bdg span{{display:block;font-size:30px;margin-top:6px;letter-spacing:.04em}}
+.bdg{{position:absolute;top:-22px;right:8px;border-radius:22px;padding:12px 20px 10px;text-align:center;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.22);transform:rotate(5deg)}}
+.bdg b{{display:block;font-size:52px;font-weight:600;line-height:1}}.bdg span{{display:block;font-size:24px;margin-top:6px;letter-spacing:.04em}}
 .bdg.mon{{background:{CYAN}}}.bdg.sun{{background:{INK}}}
 .foot{{font-size:34px;color:{N700};margin-top:40px;letter-spacing:.04em}}
 """
@@ -115,6 +115,12 @@ with sync_playwright() as p:
         pg.goto(f.as_uri())
         pg.evaluate("document.fonts.ready")
         pg.wait_for_timeout(500)
+        out_of = pg.evaluate("""() => [...document.querySelectorAll('.k,h1,p.s,.pill,.list,.foot,.bdg')].map(e => {
+            const r = e.getBoundingClientRect();
+            return (r.left < 260 || r.right > 1740 || r.top < 250 || r.bottom > 1750) ? e.textContent.trim().slice(0, 30) + ' ' + JSON.stringify([r.left|0, r.top|0, r.right|0, r.bottom|0]) : null;
+        }).filter(Boolean)""")
+        if out_of:
+            raise SystemExit(f"{name}: 안전 영역(가로 260-1740, 세로 250-1750) 밖 글자 {out_of}")
         pg.screenshot(path=str(OUT / f"{name}.png"))
         print(OUT / f"{name}.png")
     br.close()
