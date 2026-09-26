@@ -64,6 +64,16 @@ python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.
 | `planner/v0.2/` | 그 수정 | `b361a3a` 직전 |
 | `planner/v0.3/` | 발문 `&amp;` 이중 이스케이프 수정 | `b361a3a` |
 | **`planner/v0.4/`** | **(사용자 확정)** 빈 입력 행 34px + 행 추가 + 줄마다 선 하나(8장), Project planner 좌우 첫 줄, Life admin radar 아래 줄, Brain weather 이름 칸. 리스팅 대조 `check_listing_p3.py` 통과 | 이 커밋 |
+| `planner/v0.5/` | 달력 공휴일 줄 복구 | `c2d8a86` |
+| `planner/v0.6/` | Life admin radar 문구, NCW | `c2d8a86` |
+| `planner/v0.7/` | Year review B안, BONUS WEEK, Password hints only | `7bf550f` |
+| `planner/v0.8/` | 영문 교정 | `7fc58b7` |
+| `planner/v0.9/` | **불완전 -- 빌드 도중 멈춰 3판만. 쓰지 않는다** | `4ed425e`+ |
+| **`planner/v0.10/`** | 기록표 행 추가(높이 그대로), 마인드맵 노드, 줄마다 선 하나(4장), BONUS WEEK 리드, 문구 줄 34px | 이 커밋 전후 |
+| `stickers/draft-v0.1~0.4/` | 스티커 시안 → v0.4 전체 키트(137종, 255개) | `dba4742` |
+| `guide/draft-v0.1/` | Goodnotes 설치 안내서 5쪽 | `bcbec45` |
+| `listing/draft-v0.1~0.18/` | 리스팅 이미지 시안 (최신 v0.18) | |
+| `ipad-test/v0.4-background/` | 배경 2× / 1.5× 비교 (1~40쪽) | |
 | `planner/v*/sample-NN/TEST-sample-*.pdf` | 작업 중 몇 장씩 뽑은 **시험본**. 검수용 아님 | |
 | `archive_dated-v0.1/` | 상품 1 모양 날짜형 첫 시도 8판 (반려) | `eb3f67e` |
 | `archive_color-mocks/` | 색만 바꾼 시안 5종 PDF+PNG (반려) | `490fee2` 트리에서 재생성 |
