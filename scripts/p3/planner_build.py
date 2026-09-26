@@ -49,7 +49,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 #        (사용자 B안) Year review ADHD tax 월 버튼 가로 -- Three things 칸이 잘렸다
 # v0.7 = (내용, 눈 검사) 53주차 "53/52" -> BONUS WEEK, Where I put it "Password hints only"(두 줄로 꺾여 윗줄과 붙음)
 # v0.8 = (내용, 영문 교정) 미국식 표기·문법·섹션 이름 Body·THIS WEEK'S·5월 미국 기념달 문구 삭제·남반구 계절 문구
-VERSION = "v0.8"
+# v0.9 = (사용자) 기록표 빈 공간을 행 수로만 채움(행 높이 그대로), 마인드맵 가지 노드 복구(A안: 얇은 테두리)
+VERSION = "v0.9"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -242,6 +243,7 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .p1 .field{{background:none;border-bottom:1px solid {N400};border-radius:0;min-height:26px}}
 /* 빈 입력 행(.ir, ROWS_JS 가 표시)은 구분선을 빼고 항목|금액 밑줄만 -- 34px 에서 두 선이 4px 로 붙었다(사용자 확정 A안, 8장만) */
 .p1 .ir{{border-bottom:0!important}}
+.p1 div[style*='width:112pt;height:32pt']{{border:1px solid {N400};border-radius:8px;background:{PAPER}}}   /* 마인드맵 가지 끝 노드 -- 상품 1 의 회색 면을 벗기며 사라졌다. 사용자 A안(2026-09-26) */
 .p1 .box{{flex:none;width:12px;height:12px;background:none;border:1px solid {N600};border-radius:1px}}
 .p1 .dot{{background:{N600}}}
 .p1 .chip{{margin:0}}
@@ -606,6 +608,38 @@ ROWS_JS = r"""
 """
 
 
+# 기록표(.trk) 아래 빈 공간은 **행 수만** 늘려 채운다 -- 행 높이·선·모양은 그대로(사용자, 2026-09-26).
+# 마지막 행을 복제해 이름 칸을 비운다. 요일 표(Mon..Sun)는 7행 그대로. 칸(카드)이 커지거나 넘치면 그 행을 빼고 멈춘다.
+TRK_FILL_JS = r"""
+() => {
+  let tables = 0, added = 0; const bad = [];
+  document.querySelectorAll('.p1 table.trk').forEach(t => {
+    const rows = [...t.rows];
+    if (rows.length < 2 || rows.some(r => /^(Mon|Tue|Wed)$/.test(r.cells[0].textContent.trim()))) return;
+    const card = t.closest('.card') || t.parentElement;
+    const last = rows[rows.length - 1];
+    const rh = last.getBoundingClientRect().height;          // 원래 행 높이 -- 빈 칸만 복제하면 낮아진다(v0.8 표본)
+    let n = 0;
+    for (let i = 0; i < 60; i++) {
+      const h0 = card.getBoundingClientRect().height;
+      const r = last.cloneNode(true);
+      r.querySelectorAll('td').forEach(c => { c.textContent = ''; c.style.height = rh + 'px'; c.style.boxSizing = 'border-box'; });
+      last.parentNode.appendChild(r);
+      const pb = parseFloat(getComputedStyle(card).paddingBottom) || 0;
+      if (Math.abs(card.getBoundingClientRect().height - h0) > 0.5 ||
+          t.getBoundingClientRect().bottom > card.getBoundingClientRect().bottom - pb + 0.5) { r.remove(); break; }
+      n++;
+    }
+    if (n) { tables++; added += n; }
+    // 검사: 더한 행이 원래 행과 같은 높이인가
+    const hs = [...t.rows].slice(rows.length - 1).map(x => Math.round(x.getBoundingClientRect().height));
+    if (new Set(hs).size > 1) bad.push(t.closest('section').id + ' added rows ' + [...new Set(hs)].join('/'));
+  });
+  return [tables, added, bad];
+}
+"""
+
+
 # 레이아웃 결함 검사 (사용자가 iPad 에서 찾은 것, 2026-09-25)
 #  - Brain weather 이름 칸 글자가 칸을 넘친다(표와 겹침)
 #  - Life admin radar 같은 줄 세 칸의 아래 줄 높이가 다르다
@@ -723,6 +757,10 @@ def build():
         rows = pg.evaluate(ROWS_JS, ROW)
         print(f"  입력 행 34px: 칸 {rows[0]}개, 더한 행 {rows[1]}줄, 첫 줄 맞춘 칸 {rows[2]}개")
         filled = pg.evaluate(FILL_JS)
+        tf = pg.evaluate(TRK_FILL_JS)
+        print(f"  기록표 행 추가: 표 {tf[0]}개에 {tf[1]}행 (행 높이 그대로)")
+        if tf[2]:
+            raise SystemExit(f"기록표 더한 행 높이가 원래와 다르다 {tf[2]}")
         print(f"  괘선 채움: 칸 {filled[0]}개에 {filled[1]}줄")
         lay = pg.evaluate(LAYOUT_JS)
         if lay:
