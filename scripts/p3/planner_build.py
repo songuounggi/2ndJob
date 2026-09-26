@@ -55,7 +55,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 #        + 라벨 간격(첫 줄 맞춤·넘친 줄·줄 묶음), 도착한 메모 알약 검정 -> 청록 테두리(사용자)
 #        + Year-end mailbox 알약 7칸 격자(B안), 라벨 아래 알약 12px
 # v0.11 = v0.10 + 위 모두(메일박스 격자·도착 메모 청록·라벨 간격·표 너비·쓰기 표 34px·도구 줄 끊기·에너지 칸). 이름 붙은 행 5장은 그대로(사용자)
-VERSION = "v0.11"
+# v0.12 = v0.11 + Year-end mailbox 격자 줄 높이 고정(PDF 에서만 흔들려 라벨과 겹침), PDF 겹침 검사 audit_pdf_overlap_p3.py
+VERSION = "v0.12"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -149,7 +150,7 @@ h1{{font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}}
 .lab + .chips{{margin-top:12px}}
 .p1 .card:has(> table.trk){{padding-left:0!important;padding-right:0!important}}   /* 표 너비 = 아래 줄 너비 (상품 1 카드 안쪽 여백 18pt 가 남아 표만 좁았다, 사용자) */
 .p1 table.trk:not(:has(td:nth-child(29))) tr + tr td{{height:34px!important;box-sizing:border-box}}   /* 쓰기 표 행 = 괘선 34px (사용자: Screen time·Guess vs actual 위아래 간격이 다르다). 체크 격자(1~31일)는 그대로. 남는 공간은 행·아래 줄을 늘려 채운다 */   /* 라벨 바로 아래 알약: 12px 띄운다(사용자) */
-#mailbox .chips{{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}}#mailbox .chips a.hit{{display:block}}#mailbox .chips .chip{{width:100%;justify-content:center;margin:0}}   /* Year-end mailbox: 7칸 격자, 같은 폭 (사용자 B안) */   /* 도착한 메모: 청록 테두리 알약 (검정 채움은 사용자: 바퀴벌레 같다, 2026-09-26) */
+#mailbox .chips{{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:42px;gap:0 10px}}#mailbox .chips a.hit{{display:flex;align-items:center;margin:0;padding:0}}#mailbox .chips .chip{{width:100%;justify-content:center;margin:0}}   /* Year-end mailbox: 7칸 격자, 같은 폭 (사용자 B안). 줄 높이 42px 고정 -- 음수 여백 누르는 영역을 격자에 두면 PDF 인쇄에서만 줄이 흔들려 라벨과 겹쳤다(v0.11) */   /* 도착한 메모: 청록 테두리 알약 (검정 채움은 사용자: 바퀴벌레 같다, 2026-09-26) */
 .chip.off{{border-style:dotted;color:{N500}}}
 .lead .chip{{border-color:{CYAN}}}
 /* 링크 칩의 누르는 영역: 알약(22px) + 위아래 10px = 42px(8.8mm). 음수 여백으로 레이아웃은 그대로 */
