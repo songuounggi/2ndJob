@@ -8,7 +8,8 @@
 
 쓰는 줄 = 괘선(.ln), 상품 1 줄 묶음(.lines>div), 입력 행(밑줄 칸이 든 행), 문구 붙은 줄(.tr3),
          기록표 행(.trk, 체크 격자 1~31일 제외)
-빼는 것  = 체크 격자(1~31일 칸 -- 간격을 건드리지 말라고 확정), 실험 줄(.xr, 누르는 영역 41px), 칸 밖에 잘려 안 보이는 줄
+빼는 것  = 체크 격자(1~31일 칸 -- 간격을 건드리지 말라고 확정), 실험 줄(.xr, 누르는 영역 41px), 칸 밖에 잘려 안 보이는 줄,
+           이름 붙은 행 5장(Gratitude·Meals·Focus session·Stuck on deciding·Goals -- 넓은 게 의도, 사용자 확정), 일간 에너지 칸(24px, 사용자 확정)
 기준 34px. 페이지마다 34 가 아닌 줄의 종류·높이·개수를 찍는다.
 """
 import collections
@@ -34,9 +35,10 @@ PITCH_JS = r"""
     return r; };
   document.querySelectorAll('section.pg').forEach((s, i) => {
     const add = (kind, e) => { const r = vis(s, e); if (r) out.push([i + 1, s.id, kind, Math.round(r.height)]); };
-    s.querySelectorAll('.ln:not(.fl)').forEach(e => add('rule', e));
+    s.querySelectorAll('.ln:not(.fl)').forEach(e => { if (!e.closest('.lane')) add('rule', e); });
     s.querySelectorAll('.p1 .lines > div').forEach(e => add('lines', e));
-    s.querySelectorAll('.p1 div:has(> .field)').forEach(e => { if (getComputedStyle(e).display === 'flex') add('input', e); });
+    // 이름 붙은 입력 행(MON..SUN, 1..6, A/B/C, SMART)은 넓은 게 의도 -- 사용자 확정(2026-09-26) 예외. 빈 입력 행만 잰다
+    s.querySelectorAll('.p1 div:has(> .field)').forEach(e => { if (getComputedStyle(e).display === 'flex' && !e.innerText.trim() && !['meals','goals','gratitude','session','paralysis'].includes(s.id)) add('input', e); });
     s.querySelectorAll('.tr3').forEach(e => add('labeled', e));
     s.querySelectorAll('.p1 table.trk').forEach(t => { if (t.rows[0].cells.length >= 29) return;
       [...t.rows].slice(1).forEach(r => add('table', r)); });

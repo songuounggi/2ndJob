@@ -54,7 +54,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.10 = v0.9 + 문구 붙은 줄(.tr3) 30 -> 34px (Where I put it, Playbook). v0.9 는 빌드 도중 멈춰 3판만 있다(불완전, 쓰지 않는다)
 #        + 라벨 간격(첫 줄 맞춤·넘친 줄·줄 묶음), 도착한 메모 알약 검정 -> 청록 테두리(사용자)
 #        + Year-end mailbox 알약 7칸 격자(B안), 라벨 아래 알약 12px
-VERSION = "v0.10"
+# v0.11 = v0.10 + 위 모두(메일박스 격자·도착 메모 청록·라벨 간격·표 너비·쓰기 표 34px·도구 줄 끊기·에너지 칸). 이름 붙은 행 5장은 그대로(사용자)
+VERSION = "v0.11"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
