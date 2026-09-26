@@ -16,7 +16,7 @@ import pypdfium2 as pdfium
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 VER = "v0.7"
-DRAFT = "draft-v0.15"   # v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
+DRAFT = "draft-v0.16"   # v0.15: 배지를 페이지 밖으로 올린 것보다 v0.14(페이지 윗가장자리에 걸침, 본문은 안 가림)가 낫다(사용자) -> v0.14 위치로 / v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
 PDF = ROOT / "output" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.pdf"
 HTML = ROOT / "src" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.html"
 OUT = ROOT / "output" / "prod3" / "listing" / DRAFT
@@ -89,12 +89,12 @@ def img(k, cls="pg"):
 def fan(items, h, step, drop, tag="", top=False):
     """페이지를 크게 겹쳐 펼친다 -- 뒤 페이지가 위에 온다. h = 페이지 높이(px), step = 가로 간격, drop = 세로 어긋남"""
     w = round(h * 3 / 4)
-    # 아래 배지는 펼침 전체 기준 한 줄(첫 페이지 바닥 위), 위 배지(top=True)는 페이지마다 왼쪽 위 바깥(본문을 가리지 않게) -- 계단을 따른다
+    # 아래 배지는 펼침 전체 기준 한 줄(첫 페이지 바닥 위), 위 배지(top=True)는 페이지마다 왼쪽 위 가장자리에 걸친다(본문은 안 가린다, 사용자 확정) -- 계단을 따른다
     out = "".join(f'<div class="fp" style="left:{i * step}px;top:{i * drop}px;height:{h}px;width:{w}px;z-index:{i}">'
                   f'<img src="_pages/{k}.png"></div>' for i, (k, c) in enumerate(items))
-    out += "".join(f'<span class="tag {tag}" style="left:{i * step + 18}px;top:{(i * drop - 50) if top else (h - 72)}px;z-index:{len(items) + 1}">{c}</span>'
+    out += "".join(f'<span class="tag {tag}" style="left:{i * step + 18}px;top:{(i * drop + 18) if top else (h - 72)}px;z-index:{len(items) + 1}">{c}</span>'
                    for i, (k, c) in enumerate(items))
-    return f'<div class="fan" style="width:{w + step * (len(items) - 1)}px;{"margin-top:100px" if top else ""}">{out}</div>'
+    return f'<div class="fan" style="width:{w + step * (len(items) - 1)}px;""">{out}</div>'
 
 
 SHOTS = {

@@ -161,12 +161,13 @@ For personal use. Please do not resell or redistribute the files.
 
 ---
 
-## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.15/` (사용자 확정 전)
+## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.16/` (사용자 확정 전)
 
 **안전 영역:** 글자·배지는 가로 260–1740, 세로 250–1750 안(Etsy 검색이 양옆 ~140px 을 자르고 4:3 자리는 가운데만 쓴다 --
 `product2-student.md` 목업 안전 영역, 상품 1 대표 이미지가 "DHD & Wellness" 로 잘린 적). `listing_images_p3.py` 가 찍기 전에 재고
 밖이면 멈춘다(draft-v0.6 에서 06 마지막 배지로 멈춘 것 확인). 확인용 `_overview_safe.png` 에 선을 그어 둔다.
 06 배지: 연도 + 시작 요일, 월 = 청록 / 일 = 잉크, 5도(15도·8도는 너무 기울었다).
+07 라벨(사용자 확정): 청록 한 색(06 의 두 색은 월/일 뜻이라 07 에 번갈아 쓰면 엉뚱하게 읽힌다), 기울이지 않음, 각 페이지 **왼쪽 위 가장자리에 걸치게** 계단을 따라 -- 본문을 가리지 않는다. 페이지 밖으로 올린 v0.15 보다 낫다. 08 은 테두리 알약.
 
 `python scripts/p3/listing_images_p3.py` -- v0.7 2027-mon 페이지를 렌더해 2000×2000 에 배치.
 색·글꼴은 핸드오프(종이·잉크·청록, Source Serif 4). 배치·구성은 **사용자가 확정**한다.
