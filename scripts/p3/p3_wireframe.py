@@ -110,7 +110,9 @@ def rail_of(key):
         return "month"
     if re.fullmatch(r"(w|wr)\d+", key) or key == "week":
         return "week"
-    if key in ("year", "how", "kickoff", "goals", "project", "vision", "myhol", "experiments", "pixels", "admin", "bday1", "bday2", "where",
+    if key == "how":           # 안내 페이지 -- 목차(INDEX) 앞에 있다. YEAR 가 켜져 있어 사용자가 헷갈렸다(2026-09-26)
+        return "index"
+    if key in ("year", "kickoff", "goals", "project", "vision", "myhol", "experiments", "pixels", "admin", "bday1", "bday2", "where",
                "playbook", "mailbox", "yearreview"):
         return "year"
     for g, (_, items) in P1.items():
