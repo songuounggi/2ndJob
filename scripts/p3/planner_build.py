@@ -50,6 +50,7 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.7 = (내용, 눈 검사) 53주차 "53/52" -> BONUS WEEK, Where I put it "Password hints only"(두 줄로 꺾여 윗줄과 붙음)
 # v0.8 = (내용, 영문 교정) 미국식 표기·문법·섹션 이름 Body·THIS WEEK'S·5월 미국 기념달 문구 삭제·남반구 계절 문구
 # v0.9 = (사용자) 기록표 빈 공간을 행 수로만 채움(행 높이 그대로), 마인드맵 가지 노드 복구(A안: 얇은 테두리)
+#        + Gratitude·Meals·Focus session·Stuck on deciding 줄마다 선 하나(사용자), 53주차 BONUS WEEK 청록 리드
 VERSION = "v0.9"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
@@ -99,7 +100,7 @@ SHEET_B = {"cover", "focus", "feel", "health", "life"}      # 표지·섹션 구
 # 페이지마다 시안을 받을 "리드" 칸 (라벨 글자로 찾는다). 없으면 그 페이지는 시안 없음.
 LEAD = [
     (r"^mp\d+$", "THIS MONTH, ONE THING"), (r"^q\d$", "THIS QUARTER, ONE THING"),
-    (r"^w\d+$", "THIS WEEK'S EXPERIMENT"), (r"^wr\d+$", "SUNDAY SETUP"),
+    (r"^w\d+$", "THIS WEEK'S EXPERIMENT"), (r"^w\d+$", "BONUS WEEK · WRAP-UP"), (r"^wr\d+$", "SUNDAY SETUP"),
     (r"^kickoff$", "IF I ONLY DO ONE THING THIS YEAR"), (r"^year$", "THREE THINGS THAT MATTER THIS YEAR"),
     (r"^mr\d+$", "WHAT WENT WELL"), (r"^playbook$", "WHAT WORKED"), (r"^yearreview$", "TEN WINS FROM THIS YEAR"),
     (r"^mailbox$", "NOTES WAITING FOR YOU"), (r"^sos$", "WHAT IS HAPPENING?"),
@@ -243,6 +244,8 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .p1 .field{{background:none;border-bottom:1px solid {N400};border-radius:0;min-height:26px}}
 /* 빈 입력 행(.ir, ROWS_JS 가 표시)은 구분선을 빼고 항목|금액 밑줄만 -- 34px 에서 두 선이 4px 로 붙었다(사용자 확정 A안, 8장만) */
 .p1 .ir{{border-bottom:0!important}}
+/* 이름 붙은 입력 행(MON..SUN, 1..6, A/B/C)도 줄마다 선 하나 -- 사용자 확정(2026-09-26), 행 높이는 그대로 */
+#gratitude .p1 div[style*='border-bottom']:has(>.field),#meals .p1 div[style*='border-bottom']:has(>.field),#session .p1 div[style*='border-bottom']:has(>.field),#paralysis .p1 div[style*='border-bottom']:has(>.field){{border-bottom:0!important}}
 .p1 div[style*='width:112pt;height:32pt']{{border:1px solid {N400};border-radius:8px;background:{PAPER}}}   /* 마인드맵 가지 끝 노드 -- 상품 1 의 회색 면을 벗기며 사라졌다. 사용자 A안(2026-09-26) */
 .p1 .box{{flex:none;width:12px;height:12px;background:none;border:1px solid {N600};border-radius:1px}}
 .p1 .dot{{background:{N600}}}
