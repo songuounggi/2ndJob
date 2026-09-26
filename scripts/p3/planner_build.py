@@ -52,6 +52,7 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.9 = (사용자) 기록표 빈 공간을 행 수로만 채움(행 높이 그대로), 마인드맵 가지 노드 복구(A안: 얇은 테두리)
 #        + Gratitude·Meals·Focus session·Stuck on deciding 줄마다 선 하나(사용자), 53주차 BONUS WEEK 청록 리드
 # v0.10 = v0.9 + 문구 붙은 줄(.tr3) 30 -> 34px (Where I put it, Playbook). v0.9 는 빌드 도중 멈춰 3판만 있다(불완전, 쓰지 않는다)
+#        + 라벨 간격(첫 줄 맞춤·넘친 줄·줄 묶음), 도착한 메모 알약 검정 -> 청록 테두리(사용자)
 VERSION = "v0.10"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
@@ -142,7 +143,7 @@ h1{{font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}}
 .chip{{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:22px;
   font-size:10px;letter-spacing:.08em;text-transform:uppercase;line-height:1;
   border:1px solid {N400};border-radius:999px;padding:0 10px;margin:1px 0 1px 4px;color:{N800};white-space:nowrap;gap:5px}}
-.chip.note{{background:{INK};border-color:{INK};color:{PAPER}}}
+.chip.note{{background:none;border-color:{CYAN};color:{CYAN700}}}   /* 도착한 메모: 청록 테두리 알약 (검정 채움은 사용자: 바퀴벌레 같다, 2026-09-26) */
 .chip.off{{border-style:dotted;color:{N500}}}
 .lead .chip{{border-color:{CYAN}}}
 /* 링크 칩의 누르는 영역: 알약(22px) + 위아래 10px = 42px(8.8mm). 음수 여백으로 레이아웃은 그대로 */
@@ -156,7 +157,7 @@ a.hit>.chip{{margin-left:0}}
 .rw{{display:flex;gap:26px;min-height:0}}.rw.a{{align-items:center;gap:6px;flex:none}}
 .col{{display:flex;flex-direction:column;gap:16px;min-height:0}}
 .box{{display:flex;flex-direction:column;min-height:0;overflow:hidden}}
-.box .box{{padding-top:2px}}
+.box .box{{padding-top:2px}}.box > .box + .box{{margin-top:14px}}   /* 칸 안의 칸(일간 Medium/Full)도 라벨이 윗줄에서 16px */
 .lab{{flex:none;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:{N700};line-height:1.2}}
 .hint{{text-transform:none;letter-spacing:0;font-style:italic;color:{N800};font-size:11.5px}}
 .txt{{font-size:13.5px;line-height:1.5;margin-top:3px}}
@@ -399,7 +400,7 @@ def p_mreview(m):
             + '<div class="rw">' + W.box("ADHD TAX THIS MONTH", '<div class="hint">late fees, rebuys, forgotten subscriptions</div>'
                                          + '<div class="tb4"><span>what</span><span></span><span></span><span>$</span></div>' + W.lines(2)
                                          + '<div class="txt"><b>Total $ ____</b></div>')
-            + W.box("HYPERFOCUS HARVEST", '<div class="hint">what grabbed you · useful? · fun?</div>' + W.lines(3)) + '</div>'
+            + W.box("HYPERFOCUS HARVEST", '<div class="hint">what grabbed you · useful? · fun?</div>' + W.lines(2)) + '</div>'
             + W.box("THIS MONTH'S EXPERIMENTS", exps, "1") + '</div>')
 
 
@@ -644,6 +645,42 @@ TRK_FILL_JS = r"""
 """
 
 
+# 라벨·줄 간격 (사용자, 2026-09-26: 라벨은 윗줄에서 떨어져야 한다 -- Brain weather "Pattern detective" 16px 가 기준)
+# 라벨을 밀어 내리는 방식은 칸을 망가뜨렸다(월 계획 줄 사라짐, 일간 겹침) -> 원인별로 고친다.
+#  ALIGN: 옆으로 나란한 칸은 첫 줄 높이를 맞춘다(월 리뷰 One thing / Which space, ADHD tax / Hyperfocus)
+#  FIT:   칸보다 긴 줄은 뺀다 -- 칸 밖으로 삐져나온 줄이 다음 라벨에 붙었다(월 계획 Dates 6번째 줄)
+#  SNAP:  상품 1 도구의 줄 묶음 높이는 34px 배수, 다음 라벨은 16px 아래. 자투리는 칸 맨 아래로
+LABEL_GAP = 16
+GAP_JS = r"""
+(G) => {
+  let aligned = 0, fitted = 0, snapped = 0;
+  document.querySelectorAll('.bd > .rw').forEach(rw => {
+    const bs = [...rw.children].filter(b => b.matches('.box') && b.querySelector(':scope > .ln'));
+    if (bs.length < 2) return;
+    const top = Math.max(...bs.map(b => b.querySelector(':scope > .ln').getBoundingClientRect().top));
+    bs.forEach(b => { const l = b.querySelector(':scope > .ln'); const d = top - l.getBoundingClientRect().top;
+      if (d > 0.5) { l.style.marginTop = d + 'px'; aligned++; } });
+  });
+  document.querySelectorAll('.box').forEach(b => {
+    for (let i = 0; i < 30 && b.scrollHeight > b.clientHeight + 0.5; i++) {
+      const last = b.lastElementChild;
+      if (!last || !last.matches('.ln:not(.fl)')) break;
+      last.remove(); fitted++;
+    }
+  });
+  document.querySelectorAll('.p1 .lines').forEach(ls => {
+    const nx = ls.nextElementSibling;
+    if (!nx || !nx.matches('.label')) return;
+    const h = ls.getBoundingClientRect().height;
+    const n = Math.max(1, Math.floor((h - G) / 34));
+    ls.style.flex = 'none'; ls.style.height = (n * 34) + 'px';
+    nx.style.marginTop = G + 'px'; snapped++;
+  });
+  return [aligned, fitted, snapped];
+}
+"""
+
+
 # 레이아웃 결함 검사 (사용자가 iPad 에서 찾은 것, 2026-09-25)
 #  - Brain weather 이름 칸 글자가 칸을 넘친다(표와 겹침)
 #  - Life admin radar 같은 줄 세 칸의 아래 줄 높이가 다르다
@@ -673,6 +710,16 @@ LAYOUT_JS = r"""
   // 문구 붙은 줄(.tr3)과 빈 괘선(.ln)은 같은 높이
   document.querySelectorAll('.tr3').forEach(r => { const h = Math.round(r.getBoundingClientRect().height);
     if (h !== 34) bad.push(r.closest('section').id + ' labeled row ' + h); });
+  // 라벨과 윗줄(보이는 것) 간격 >= 14px -- 기준 16px (Brain weather Pattern detective)
+  document.querySelectorAll('section.pg').forEach(s => s.querySelectorAll('.lab, .p1 .label').forEach(l => {
+    const r = l.getBoundingClientRect(); if (!r.width) return;
+    const vis = e => { const r = e.getBoundingClientRect(); let a = e.parentElement;      // 칸 밖으로 잘려 안 보이는 줄은 빼고 잰다
+      while (a && a !== s) { const cs = getComputedStyle(a); if (cs.overflow !== 'visible' && r.bottom > a.getBoundingClientRect().bottom + 1) return null; a = a.parentElement; }
+      return r; };
+    const above = [...s.querySelectorAll('.ln, .p1 .lines>div, .p1 div[style*="border-bottom"], .xr, .tr3, .p1 .trk tr')].map(vis).filter(Boolean)
+      .filter(x => x.width > 40 && x.bottom <= r.top + 1 && x.left < r.right - 5 && x.right > r.left + 5 && r.top - x.bottom < 80);
+    if (above.length) { const g = r.top - Math.max(...above.map(x => x.bottom)); if (g < 13.5) bad.push(s.id + ' label gap ' + Math.round(g) + ' ' + l.textContent.trim().slice(0, 20)); }
+  }));
   const groups = new Map();
   document.querySelectorAll('.p1 div:has(>.field)').forEach(r => {
     if (getComputedStyle(r).display !== 'flex' || r.innerText.trim()) return;   // style 글자가 아니라 계산된 값으로
@@ -763,6 +810,8 @@ def build():
         pg.wait_for_timeout(800)
         rows = pg.evaluate(ROWS_JS, ROW)
         print(f"  입력 행 34px: 칸 {rows[0]}개, 더한 행 {rows[1]}줄, 첫 줄 맞춘 칸 {rows[2]}개")
+        gp = pg.evaluate(GAP_JS, LABEL_GAP)
+        print(f"  줄 맞춤: 첫 줄 맞춘 칸 {gp[0]}, 넘친 줄 뺌 {gp[1]}, 줄 묶음 끊음 {gp[2]}")
         filled = pg.evaluate(FILL_JS)
         tf = pg.evaluate(TRK_FILL_JS)
         print(f"  기록표 행 추가: 표 {tf[0]}개에 {tf[1]}행 (행 높이 그대로)")
