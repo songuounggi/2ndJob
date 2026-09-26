@@ -182,7 +182,7 @@ RELEASE.md 는 전부 통과를 요구하므로 **iPad 확인(아래 2번)을 �
 | 다운로드 횟수 제한 없음 / 폰·태블릿은 파일 관리 앱으로 ZIP 풀기 | 같은 글 | |
 | 파일 앱에서 ZIP 탭 → 폴더 생성 | support.apple.com 102532 | |
 | Open in Goodnotes → New Document → Import to… / + New → Import → Open | support.goodnotes.com 7353717816463 (2026-05-22) | |
-| **무료 Goodnotes: 노트 3개, 파일당 5MB** | 같은 글 (원문 직접 확인) | 우리 PDF 7.7MB -- 안내서·리스팅에 명시 (A안, 사용자 확정 대기) |
+| **무료 Goodnotes: 노트 3개, 파일당 5MB** | 같은 글 (원문 직접 확인) | 우리 PDF 7.7MB -- 안내서·리스팅에 명시 (**A안 확정 2026-09-26**). 상품 1(16.5MB)·2(15.5MB) 원고에는 이 안내가 없다 -- 각 방에 전달 필요 |
 | 링크: 그냥 탭. 선이 그어지면 Read Only Mode(Nav Bar 아이콘) 또는 길게 눌러 Open Link | 13623343439631, 7353757120655 (2026-09) | |
 | 스티커: Elements → 목록 끝 + → 이름 → Import from… → Create | 7353727577359 (2026-09-16) | **투명 PNG 유지 미확인** -- 사용자 iPad 확인 |
 | Notability: +New → Import | support.gingerlabs.com 206061357 | Notability 링크 동작은 미확인이라 약속하지 않는다 |
