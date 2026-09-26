@@ -53,6 +53,7 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 #        + Gratitude·Meals·Focus session·Stuck on deciding 줄마다 선 하나(사용자), 53주차 BONUS WEEK 청록 리드
 # v0.10 = v0.9 + 문구 붙은 줄(.tr3) 30 -> 34px (Where I put it, Playbook). v0.9 는 빌드 도중 멈춰 3판만 있다(불완전, 쓰지 않는다)
 #        + 라벨 간격(첫 줄 맞춤·넘친 줄·줄 묶음), 도착한 메모 알약 검정 -> 청록 테두리(사용자)
+#        + Year-end mailbox 알약 7칸 격자(B안), 라벨 아래 알약 12px
 VERSION = "v0.10"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
@@ -143,7 +144,9 @@ h1{{font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}}
 .chip{{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:22px;
   font-size:10px;letter-spacing:.08em;text-transform:uppercase;line-height:1;
   border:1px solid {N400};border-radius:999px;padding:0 10px;margin:1px 0 1px 4px;color:{N800};white-space:nowrap;gap:5px}}
-.chip.note{{background:none;border-color:{CYAN};color:{CYAN700}}}   /* 도착한 메모: 청록 테두리 알약 (검정 채움은 사용자: 바퀴벌레 같다, 2026-09-26) */
+.chip.note{{background:none;border-color:{CYAN};color:{CYAN700}}}
+.lab + .chips{{margin-top:12px}}   /* 라벨 바로 아래 알약: 12px 띄운다(사용자) */
+#mailbox .chips{{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}}#mailbox .chips a.hit{{display:block}}#mailbox .chips .chip{{width:100%;justify-content:center;margin:0}}   /* Year-end mailbox: 7칸 격자, 같은 폭 (사용자 B안) */   /* 도착한 메모: 청록 테두리 알약 (검정 채움은 사용자: 바퀴벌레 같다, 2026-09-26) */
 .chip.off{{border-style:dotted;color:{N500}}}
 .lead .chip{{border-color:{CYAN}}}
 /* 링크 칩의 누르는 영역: 알약(22px) + 위아래 10px = 42px(8.8mm). 음수 여백으로 레이아웃은 그대로 */
