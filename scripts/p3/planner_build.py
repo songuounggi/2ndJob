@@ -56,7 +56,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 #        + Year-end mailbox 알약 7칸 격자(B안), 라벨 아래 알약 12px
 # v0.11 = v0.10 + 위 모두(메일박스 격자·도착 메모 청록·라벨 간격·표 너비·쓰기 표 34px·도구 줄 끊기·에너지 칸). 이름 붙은 행 5장은 그대로(사용자)
 # v0.12 = v0.11 + Year-end mailbox 격자 줄 높이 고정(PDF 에서만 흔들려 라벨과 겹침), PDF 겹침 검사 audit_pdf_overlap_p3.py
-VERSION = "v0.12"
+# v0.13 = 페이지 순서 = 탭 순서(목차 2쪽, How 3쪽 INDEX, Year-end 3장 YEAR 구역, Months 목차가 분기 앞) + 빌드 검사
+VERSION = "v0.13"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -800,6 +801,20 @@ def build():
     ctrl = [c for c in html if ord(c) < 32 and c not in "\t\n\r"]
     if ctrl:
         raise SystemExit(f"HTML 에 제어 문자 {len(ctrl)}개 {sorted(set(map(repr, ctrl)))}")
+    # 넘기는 순서 = 탭 순서, 탭은 그 구역 첫 페이지로 (사용자 2026-09-26)
+    act = [(m.group(1), (re.findall(r'<a href="#([^"]+)" class="on"', m.group(0)) or [None])[0])
+           for m in re.finditer(r'<section class="pg" id="([^"]+)".*?</nav>', html, re.S)]
+    order = [k for k, _ in TABS]
+    seq = []
+    for _, t in act[1:]:
+        if t and (not seq or seq[-1] != t):
+            seq.append(t)
+    if seq != [t for t in order if t in seq]:
+        raise SystemExit(f"넘길 때 탭 순서가 뒤섞였다: {seq}")
+    pid = [p for p, _ in act]
+    wrong = [t for t in order if t in pid and next(i for i, (_, a) in enumerate(act) if a == t and i > 0) != pid.index(t)]
+    if wrong:
+        raise SystemExit(f"탭이 구역 첫 페이지로 가지 않는다: {wrong}")
     # 이미 이스케이프된 글을 또 이스케이프하면 화면에 "&amp;" 가 글자로 찍힌다(v0.2 발문 3장)
     dbl = re.findall(r"&amp;(?:amp|lt|gt|quot|#\d+);", html)
     if dbl:
