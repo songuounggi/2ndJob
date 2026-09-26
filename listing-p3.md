@@ -1,7 +1,7 @@
 # 상품 3 리스팅 원고 — ADHD Year Planner 2026-2027 (초안, 2026-09-25)
 
 **초안이다.** 확정: 가격(B안 $19.99 − 35% = $12.99), 파일 4개. 미확정: 제목·원고 문구·이미지·세일 기간.
-숫자는 전부 `output/prod3/planner/v0.6/` 네 파일에서 스크립트로 잰 값(`scripts/p3/check_listing_p3.py`).
+숫자는 전부 `output/prod3/planner/v0.8/` 네 파일에서 스크립트로 잰 값(`scripts/p3/check_listing_p3.py`).
 구매자 글 규칙(`shop.md` 0-1절): 문장마다 파일과 대조한다 → 맨 아래 **대조표**.
 
 판매 형태: **한 리스팅에 PDF 4개** (Etsy 디지털 파일은 리스팅당 5개, 파일당 20MB까지).
@@ -18,7 +18,7 @@
 ## 제목 (140자 이내, 대문자 단어 3개 이내)
 
 ```
-ADHD Planner 2027 Digital Planner, 2026 2027 Dated GoodNotes iPad Planner, Hyperlinked PDF, 52 Weekly Experiments, Adult ADHD
+ADHD Planner 2027 Digital Planner, 2026 2027 Dated Goodnotes iPad Planner, Hyperlinked PDF, 52 Weekly Experiments, Adult ADHD
 ```
 
 - 앞 40자에 `ADHD Planner 2027 Digital Planner` — 검색 앞머리
@@ -48,45 +48,45 @@ adhd gift
 ```
 One small experiment a week. By December, a user manual for your own brain.
 
-This is a dated ADHD planner for 2026 and 2027. Instead of asking you to "be more consistent", it gives you one strategy to try each week – body doubling, a brain dump first, timer sprints – and a place to mark on Friday whether it helped, sort of helped, or did not. Keep the ones that work. Drop the rest. At the end of the year the keepers go into your own ADHD playbook.
+This is a dated ADHD planner for 2026 and 2027. Instead of asking you to "be more consistent," it gives you one strategy to try each week — body doubling, a brain dump first, timer sprints — and a place to mark on Friday whether it helped, sort of helped, or did not. Keep the ones that work. Drop the rest. At the end of the year the keepers go into your own ADHD playbook.
 
 WHAT YOU GET
 
-4 PDFs – 2026 and 2027, each in a Monday-start and a Sunday-start version. Use the one that matches how your week feels.
+4 PDFs — 2026 and 2027, each in a Monday-start and a Sunday-start version. Use the one that matches how your week feels.
 Each year is 598 pages, January to December.
 
 THREE THINGS YOU WILL NOT FIND IN A NORMAL PLANNER
 
-• 52 experiments – one strategy per week, printed on that week's page, with a quarterly keep-or-drop check
-• Time links – "Tomorrow starts with" on today's page links to tomorrow, and tomorrow links back. Write a note to future you and it links to the day it arrives, 30 days later. December notes wait in a year-end mailbox
-• Visible time – every daily page shows which day of the year it is and how many are left
+• 52 experiments — one strategy per week, printed on that week's page, with a quarterly keep-or-drop check
+• Time links — "Tomorrow starts with" on today's page links to tomorrow, and tomorrow links back. Write a note to future you and it links to the day it arrives, 30 days later. December notes wait in a year-end mailbox
+• Visible time — every daily page shows which day of the year it is and how many are left
 
 WHAT'S INSIDE
 
-Start – how it works, an index, and an SOS page: pick what is happening ("I can't start", "I'm overwhelmed", "Someone's words stung") and tap straight to the tool for it
-Year – year at a glance, systems not resolutions, the 52 experiments, year in pixels, a life admin radar, my holidays, birthdays and gift radar, where I put it, goals, project planner, vision, playbook, year review
-Quarters – 4 pages to keep or drop the last quarter's experiments
-Months – for each month: a calendar, a plan, a brain weather tracker, and a review
-Weeks – a weekly page and a Sunday reset for every week
-Days – one page for every day of the year: the one thing, energy lanes, a schedule, guess vs actual, a question of the day, and links to yesterday and tomorrow
-Focus – task breakdown, brain dump, focus sessions, obstacle plan, stuck on deciding, mind map, hyperfocus log, screen time, guess vs actual, why I am avoiding it, working backwards
-Feelings – Stop/Think/Act, the worry cycle, rejection sensitivity, talking to yourself kindly, D.O.S.E., gratitude, reframing, naming the feeling, boundaries, energy budget
-Body – habits, morning and evening, medication, sleep, symptoms, doctor visits, therapy notes, water and food, movement, cycle tracker
-Life – meals and groceries, wheel of life, cleaning, budget, before you buy it, reading log, dates to remember, subscriptions, trips, who does what, plus dopamine menu, doom pile triage, hobby graveyard and a waiting-mode kit
-Notes – dot grid, ruled, plain and grid pages
+Start — how it works, an index, and an SOS page: pick what is happening ("I can't start", "I'm overwhelmed", "Someone's words stung") and tap straight to the tool for it
+Year — year at a glance, a "systems, not resolutions" page, the 52 experiments, year in pixels, a life admin radar, my holidays, birthdays and gift radar, where I put it, goals, project planner, vision, playbook, year review
+Quarters — 4 pages to keep or drop the last quarter's experiments
+Months — for each month: a calendar, a plan, a brain weather tracker, and a review
+Weeks — a weekly page and a Sunday reset for every week
+Days — one page for every day of the year: the one thing, energy lanes, a schedule, guess vs actual, a question of the day, and links to yesterday and tomorrow
+Focus — task breakdown, brain dump, focus sessions, obstacle plan, stuck on deciding, mind map, hyperfocus log, screen time, guess vs actual, why I am avoiding it, working backwards
+Feelings — Stop/Think/Act, the worry cycle, rejection sensitivity, talking to yourself kindly, D.O.S.E., gratitude, reframing, naming the feeling, boundaries, energy budget
+Body — habits, morning and evening, medication, sleep, symptoms, doctor visits, therapy notes, water and food, movement, cycle tracker
+Life — meals and groceries, wheel of life, cleaning, budget, before you buy it, reading log, dates to remember, subscriptions, trips, who does what, plus dopamine menu, doom pile triage, hobby graveyard, and a waiting-mode kit
+Notes — dot grid, ruled, plain and grid pages
 
 FINDING THINGS
 
-Ten tabs run down the side of every page: Index, SOS, Year, Month, Week, Focus, Feel, Body, Life, Notes. Every day of the year is two taps away – Year, then the date.
+Ten tabs run down the side of every page: Index, SOS, Year, Month, Week, Focus, Feel, Body, Life, Notes. Every day of the year is two taps away — Year, then the date.
 
 WORKS ANYWHERE
 
-Only dates shared around the world are printed – New Year's Day, Neurodiversity Celebration Week, ADHD Awareness Month, World Mental Health Day, Christmas Day and New Year's Eve. Write your own country's days on the My holidays page.
+Only dates shared around the world are printed — New Year's Day, Neurodiversity Celebration Week, ADHD Awareness Month, World Mental Health Day, Christmas Day, and New Year's Eve. Write your own country's days on the My holidays page.
 
 HOW IT WORKS
 
-1. Buy and download – four PDFs, instantly, nothing is shipped to you
-2. Open the one you want in your note app – GoodNotes, Notability, Noteful, Xodo
+1. Buy and download — four PDFs, instantly, nothing is shipped to you
+2. Open the one you want in your note app — Goodnotes, Notability, Xodo
 3. Write on it with a stylus
 
 WHAT YOU NEED
@@ -95,13 +95,13 @@ A tablet and a note-taking app that opens PDFs. The pages are shaped for a table
 
 A NOTE ON THE LINKS
 
-The tabs, calendars and day-to-day links are real PDF links. They work in GoodNotes, Notability, Xodo, Adobe Acrobat and most tablet readers. Some basic in-browser PDF viewers ignore internal links – open it in a proper note app and they work.
+The tabs, calendars, and day-to-day links are real PDF links. They work in Goodnotes, Notability, Xodo, Adobe Acrobat, and most tablet readers. Some basic in-browser PDF viewers ignore internal links — open it in a proper note app and they work.
 
 PLEASE NOTE
 
 This is a planner and a set of writing prompts. It is not medical advice and not a substitute for care from a professional.
 
-This is a digital download. No physical item will be shipped. Because the files are delivered instantly, returns and exchanges are not accepted – but if anything is wrong with a file, message me and I will fix it.
+This is a digital download. No physical item will be shipped. Because the files are delivered instantly, returns and exchanges are not accepted — but if anything is wrong with a file, message me and I will fix it.
 
 For personal use. Please do not resell or redistribute the files.
 ```
@@ -139,7 +139,7 @@ For personal use. Please do not resell or redistribute the files.
 
 | 문장 | 확인한 곳 | 결과 |
 |---|---|---|
-| 4 PDFs, Monday-start and Sunday-start | `output/prod3/planner/v0.6/` 파일 4개 | ✔ |
+| 4 PDFs, Monday-start and Sunday-start | `output/prod3/planner/v0.8/` 파일 4개 | ✔ |
 | Each year is 598 pages, January to December | 각 PDF 쪽 수, 일간 첫 장 1/1 · 마지막 12/31 | ✔ |
 | one strategy per week, printed on that week's page | 주간 페이지마다 `THIS WEEK'S EXPERIMENT` | ✔ |
 | quarterly keep-or-drop check | 분기 4장 `KEEP 3 · DROP 3` | ✔ |
@@ -161,7 +161,7 @@ For personal use. Please do not resell or redistribute the files.
 
 ---
 
-## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.17/` (사용자 확정 전)
+## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.18/` (사용자 확정 전)
 
 **안전 영역:** 글자·배지는 가로 260–1740, 세로 250–1750 안(Etsy 검색이 양옆 ~140px 을 자르고 4:3 자리는 가운데만 쓴다 --
 `product2-student.md` 목업 안전 영역, 상품 1 대표 이미지가 "DHD & Wellness" 로 잘린 적). `listing_images_p3.py` 가 찍기 전에 재고

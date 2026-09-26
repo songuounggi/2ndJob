@@ -48,7 +48,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.6 = (내용) Life admin radar 문구 한 줄로 -- 10~12월 넷째 항목이 잘렸다, Neurodiversity Celebration Week 인쇄,
 #        (사용자 B안) Year review ADHD tax 월 버튼 가로 -- Three things 칸이 잘렸다
 # v0.7 = (내용, 눈 검사) 53주차 "53/52" -> BONUS WEEK, Where I put it "Password hints only"(두 줄로 꺾여 윗줄과 붙음)
-VERSION = "v0.7"
+# v0.8 = (내용, 영문 교정) 미국식 표기·문법·섹션 이름 Body·THIS WEEK'S·5월 미국 기념달 문구 삭제·남반구 계절 문구
+VERSION = "v0.8"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -60,6 +61,25 @@ if SAMPLE:
 # 시험본은 이름부터 다르게 -- 진짜와 같은 이름이라 사용자가 20쪽짜리 시험본을 검수한 적이 있다(2026-09-25)
 FNAME = f"TEST-sample-ADHD-Year-Planner-{TAG}" if SAMPLE else f"ADHD-Year-Planner-{TAG}"
 P1 = json.loads((HERE / "p1_tools.json").read_text(encoding="utf-8"))
+# 상품 1 문구 교정 (2026-09-26 영문 교정: 미국식 표기·문법·섹션 이름 통일). 스냅숏 json 은 그대로 두고 여기서 바꾼다
+# -- extract_p1_tools.py 를 다시 돌려도 교정이 살아남게
+P1_FIX = {
+    "tasks": [("eyebrow", "Task breakdown", "Focus"), ("sub", "One piece at a time", "One piece at a time."),
+              ("body", "Doesn't need doing", "Doesn't need to be done")],
+    "habits-grid": [("eyebrow", "Habit tracker", "Body")], "routines": [("eyebrow", "Habits", "Body")],
+    "meds": [("eyebrow", "Medication log", "Body"), ("sub", "Track the dose and how it felt", "Track the dose and how it felt.")],
+    **{k: [("eyebrow", "Health", "Body")] for k in ("sleep", "symptoms", "doctor", "therapy", "intake", "movement", "cycle")},
+    "rsd": [("body", "0-10", "0–10")], "energy": [("body", "1 to 5", "1–5")], "dose": [("body", "Endorphin", "Endorphins")],
+    "reading": [("sub", "Finished, abandoned, both count.", "Finished or abandoned, both count.")],
+    "subs": [("body", "Cancelling", "Canceling")],
+    "travel": [("body", "Cover for pets", "Pet care"), ("body", "Something for the journey", "Something for the trip")],
+    "chores": [("sub", "before it turns into a row", "before it turns into a fight")],
+}
+for _k, _fixes in P1_FIX.items():
+    for _f, _a, _b in _fixes:
+        if _a not in P1[_k][_f]:
+            raise SystemExit(f"P1_FIX: {_k}.{_f} 에 {_a!r} 가 없다")
+        P1[_k][_f] = P1[_k][_f].replace(_a, _b)
 
 # ------------------------------------------------------------------ colours --
 PAPER, INK = "#f8f4f4", "#201e1d"
@@ -78,7 +98,7 @@ SHEET_B = {"cover", "focus", "feel", "health", "life"}      # 표지·섹션 구
 # 페이지마다 시안을 받을 "리드" 칸 (라벨 글자로 찾는다). 없으면 그 페이지는 시안 없음.
 LEAD = [
     (r"^mp\d+$", "THIS MONTH, ONE THING"), (r"^q\d$", "THIS QUARTER, ONE THING"),
-    (r"^w\d+$", "THIS WEEK EXPERIMENT"), (r"^wr\d+$", "SUNDAY SETUP"),
+    (r"^w\d+$", "THIS WEEK'S EXPERIMENT"), (r"^wr\d+$", "SUNDAY SETUP"),
     (r"^kickoff$", "IF I ONLY DO ONE THING THIS YEAR"), (r"^year$", "THREE THINGS THAT MATTER THIS YEAR"),
     (r"^mr\d+$", "WHAT WENT WELL"), (r"^playbook$", "WHAT WORKED"), (r"^yearreview$", "TEN WINS FROM THIS YEAR"),
     (r"^mailbox$", "NOTES WAITING FOR YOU"), (r"^sos$", "WHAT IS HAPPENING?"),

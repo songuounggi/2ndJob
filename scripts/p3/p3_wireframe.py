@@ -55,7 +55,7 @@ P1 = {
                                 ("kind", "Talk to yourself kindly"), ("dose", "D.O.S.E."), ("gratitude", "Gratitude"),
                                 ("reframe", "Reframe a belief"), ("name-it", "Name the feeling"),
                                 ("boundaries", "Boundaries"), ("energy", "Energy budget")]),
-    "health": ("Health & habits", [("habits-grid", "Habit tracker"), ("routines", "Morning & evening"),
+    "health": ("Body tools", [("habits-grid", "Habit tracker"), ("routines", "Morning & evening"),
                                    ("meds", "Medication log"), ("sleep", "Sleep"), ("symptoms", "Symptom tracker"),
                                    ("doctor", "Doctor visit"), ("therapy", "Therapy notes"), ("intake", "Water & food"),
                                    ("movement", "Movement"), ("cycle", "Cycle tracker")]),
@@ -152,8 +152,8 @@ def p_how():
 def p_index():
     rows = [("how", "How this planner works"), ("sos", "SOS — I'm stuck"), ("year", "Year at a glance"),
             ("experiments", "The 52 experiments"), ("goals", "Goals · Project · Vision"), ("month", "Months"), ("week", "Weeks"),
-            ("focus", "Focus tools"), ("feel", "Feelings tools"), ("health", "Health & habits"),
-            ("life", "Life admin & new tools"), ("playbook", "My ADHD playbook (December)"), ("notes", "Notes")]
+            ("focus", "Focus tools"), ("feel", "Feelings tools"), ("health", "Body tools"),
+            ("life", "Life admin & extras"), ("playbook", "My ADHD playbook (December)"), ("notes", "Notes")]
     inner = "".join(f'<a class="row" href="#{k}">{e(t)}<span>›</span></a>' for k, t in rows)
     return head("INDEX", "Where to?") + f'<div class="bd">{box("GO TO", inner)}</div>'
 
@@ -345,8 +345,9 @@ def p_week(n, first):
                                                             if (first + dt.timedelta(i)).year == Y}))
     exp = (f'<div class="txt"><b>{e(name)}</b></div><div class="txt">Try: {e(try_)}</div>'
            f'<div class="hint">Why: {e(why)}</div><div class="txt" style="margin-top:6pt">Friday — did it help? &nbsp;✓ helped &nbsp; ~ sort of &nbsp; ✗ not for me</div>')
+    lab = f"THIS WEEK'S EXPERIMENT · {n}/52" if n <= 52 else "BONUS WEEK · WRAP-UP"   # f'...' 안에 ' 를 못 쓴다(3.10)
     return (head(f"{Y} · WEEK {n}", f"{md(first)} – {md(last)}", "", mchips + chip(f"wr{n}", "Reset"))
-            + f'<div class="bd">{box(f"THIS WEEK EXPERIMENT · {n}/52" if n <= 52 else "BONUS WEEK · WRAP-UP", exp, "none", style="background:#EDEDED")}'
+            + f'<div class="bd">{box(lab, exp, "none", style="background:#EDEDED")}'
             f'<div class="rw" style="flex:1">{box("SEVEN DAYS", days, "1.4")}'
             f'<div class="col">{box("TOP 3", lines(3), "none")}{box("BRAIN DUMP", lines(6))}</div></div></div>')
 
@@ -437,7 +438,7 @@ def p_tool(k):
     title, sub, parts = C.TOOLS[k]
     boxes = "".join(box(p.upper(), (f'<div class="hint">e.g. {e(ex)}</div>' if ex else "") + lines(3), "1", f" {h}" if h else "")
                     for p, h, ex in parts)
-    return head("NEW TOOL", e(title), e(sub)) + f'<div class="bd">{boxes}</div>'
+    return head("LIFE", e(title), e(sub)) + f'<div class="bd">{boxes}</div>'
 
 
 def p_notes():

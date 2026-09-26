@@ -15,7 +15,7 @@ import pikepdf
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-VER = sys.argv[1] if len(sys.argv) > 1 else "v0.7"
+VER = sys.argv[1] if len(sys.argv) > 1 else "v0.8"
 sys.path.insert(0, str(ROOT / "scripts" / "p3"))
 sys.argv = [sys.argv[0], "2027", "mon"]          # p3_content/p3_wireframe 는 argv 로 연도를 읽는다
 import p3_content as C                           # noqa: E402
