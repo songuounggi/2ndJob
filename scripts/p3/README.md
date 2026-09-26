@@ -74,6 +74,9 @@ python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.
 | `guide/draft-v0.1/` | Goodnotes 설치 안내서 5쪽 | `bcbec45` |
 | `listing/draft-v0.1~0.18/` | 리스팅 이미지 시안 (최신 v0.18) | |
 | `ipad-test/v0.4-background/` | 배경 2× / 1.5× 비교 (1~40쪽) | |
+| `planner/v0.10/` | 문구 줄 34px | |
+| `planner/v0.11/` | 라벨 간격·표 너비·쓰기 표 34px·도구 줄 끊기·에너지 칸·메일박스 격자. **mailbox 가 PDF 에서 겹침 -- 쓰지 않는다** | |
+| **`planner/v0.12/`** | v0.11 + mailbox 격자 고정. 검사 6종 전부 0 (링크·PDF 겹침·레이아웃·줄 간격·라벨 간격·리스팅) | |
 | `planner/v*/sample-NN/TEST-sample-*.pdf` | 작업 중 몇 장씩 뽑은 **시험본**. 검수용 아님 | |
 | `archive_dated-v0.1/` | 상품 1 모양 날짜형 첫 시도 8판 (반려) | `eb3f67e` |
 | `archive_color-mocks/` | 색만 바꾼 시안 5종 PDF+PNG (반려) | `490fee2` 트리에서 재생성 |
