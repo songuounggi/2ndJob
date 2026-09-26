@@ -51,7 +51,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.8 = (내용, 영문 교정) 미국식 표기·문법·섹션 이름 Body·THIS WEEK'S·5월 미국 기념달 문구 삭제·남반구 계절 문구
 # v0.9 = (사용자) 기록표 빈 공간을 행 수로만 채움(행 높이 그대로), 마인드맵 가지 노드 복구(A안: 얇은 테두리)
 #        + Gratitude·Meals·Focus session·Stuck on deciding 줄마다 선 하나(사용자), 53주차 BONUS WEEK 청록 리드
-VERSION = "v0.9"
+# v0.10 = v0.9 + 문구 붙은 줄(.tr3) 30 -> 34px (Where I put it, Playbook). v0.9 는 빌드 도중 멈춰 3판만 있다(불완전, 쓰지 않는다)
+VERSION = "v0.10"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -216,7 +217,7 @@ a.row b{{font-weight:600}} a.row span:last-child{{margin-left:auto;color:{N600}}
 .am{{display:flex;flex-direction:column}}.am>.ln{{margin-top:auto}}   /* 월 칸 아래 줄을 칸 바닥에 -- 같은 줄 세 칸의 선 높이를 맞춘다(사용자) */
 .g2{{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:16px 26px;flex:1}}
 .g3{{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:14px 22px;flex:1}}
-.tr3{{display:flex;align-items:flex-end;gap:10px;height:30px;font-size:13px}}.tr3 b{{width:150px;font-weight:600}}
+.tr3{{display:flex;align-items:flex-end;gap:10px;height:34px;font-size:13px}}   /* 괘선(.ln 34px)과 같은 높이 -- 30px 라 문구 줄만 촘촘했다(Where I put it, Playbook) */.tr3 b{{width:150px;font-weight:600}}
 .xl{{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(27,auto);grid-auto-flow:column;gap:0 24px}}
 .xr{{display:flex;align-items:center;gap:8px;font-size:12.5px;height:41px;border-bottom:1px solid {N300}}}
 /* 52 실험 목록만 촘촘하게(한 장에 53줄) -- 누르는 영역 24px 는 알려진 예외 */
@@ -669,6 +670,9 @@ LAYOUT_JS = r"""
     // 마지막 줄은 원래 5~8px 짧다(표 높이 나머지) -- 그건 두고, 한 줄만 크게 길어지는 것(v0.4 1월 270 vs 111)을 잡는다
     if (Math.max(...hs) - Math.min(...hs) > 10) bad.push(t.closest('section').id + ' calendar rows ' + hs.join('/'));
   });
+  // 문구 붙은 줄(.tr3)과 빈 괘선(.ln)은 같은 높이
+  document.querySelectorAll('.tr3').forEach(r => { const h = Math.round(r.getBoundingClientRect().height);
+    if (h !== 34) bad.push(r.closest('section').id + ' labeled row ' + h); });
   const groups = new Map();
   document.querySelectorAll('.p1 div:has(>.field)').forEach(r => {
     if (getComputedStyle(r).display !== 'flex' || r.innerText.trim()) return;   // style 글자가 아니라 계산된 값으로
