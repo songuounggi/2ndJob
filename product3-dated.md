@@ -186,3 +186,14 @@ RELEASE.md 는 전부 통과를 요구하므로 **iPad 확인(아래 2번)을 �
 | 링크: 그냥 탭. 선이 그어지면 Read Only Mode(Nav Bar 아이콘) 또는 길게 눌러 Open Link | 13623343439631, 7353757120655 (2026-09) | |
 | 스티커: Elements → 목록 끝 + → 이름 → Import from… → Create | 7353727577359 (2026-09-16) | **투명 PNG 유지 미확인** -- 사용자 iPad 확인 |
 | Notability: +New → Import | support.gingerlabs.com 206061357 | Notability 링크 동작은 미확인이라 약속하지 않는다 |
+
+## 해마다 운영 (2026-09-26)
+
+날짜형이라 해가 지나면 끝난다. **같은 리스팅에서 2년 묶음을 굴린다**: 지금 2026+2027 → 2027년 9~10월에
+2026 을 빼고 2028 을 넣어 2027+2028 로 교체(성수기 12~1월 몇 주 앞). 같은 리스팅을 고치면 리뷰·판매 기록이
+남는다(일반적으로 알려진 사실, 미확인). 새 리스팅은 0 부터다.
+
+다음 해 판 만들기: `python scripts/p3/planner_build.py 2028 mon` (sun 도). 달력·요일·53주차·윤년(2028 = 366일)·
+날짜 링크는 자동. **사람이 할 것:** ① `p3_content.holidays()` 의 Neurodiversity Celebration Week 날짜를
+neurodiversityweek.com 공식 값으로 추가 -- 없으면 빌드가 멈춘다 ② 리스팅 제목·태그·이미지의 연도
+③ 검사 전부(`audit_*`, `check_listing_p3.py`) + iPad 확인 ④ `upload/<버전>/` 과 `shop.md` 이력표.

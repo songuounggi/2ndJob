@@ -638,6 +638,8 @@ def holidays(y):
     # Neurodiversity Celebration Week (Siena Castellon, 전 세계) -- 해마다 날짜가 다르다. 공식 사이트 값만
     # neurodiversityweek.com/events-2026 = 3/16-20, events-2027 = 3/15-19 (2026-09-25 확인). 첫날(월)에 인쇄
     ncw = {2026: D(2026, 3, 16), 2027: D(2027, 3, 15)}
+    if y not in ncw:   # 해마다 날짜가 바뀐다 -- 없는 해를 빌드하면 조용히 빠졌다. 공식 사이트 값을 넣을 것
+        raise SystemExit(f"Neurodiversity Celebration Week {y} 날짜가 없다 -- neurodiversityweek.com/events-{y} 에서 확인해 ncw 에 넣을 것")
     return {
         D(y, 1, 1): "New Year's Day",
         **({ncw[y]: "Neurodiversity Celebration Week"} if y in ncw else {}),
