@@ -173,3 +173,16 @@ RELEASE.md 는 전부 통과를 요구하므로 **iPad 확인(아래 2번)을 �
   `mon`/`sun` 을 풀어 쓴다 -- 구매자가 받는 이름이라 약어가 헷갈린다. 70자 이내, 영숫자 `.` `_` `-`
 - 올린 판은 `output/prod3/upload/v0.7/` 에 복사, `shop.md` 0-1절 이력표에 한 줄
 - 가격: 정가 $19.99, 런칭 세일 35% = $12.99 (`listing-p3.md`)
+
+## 설치 안내서 근거 (2026-09-26 조사, 공식 도움말만) — `scripts/p3/guide_p3.py`
+
+| 안내서 문장 | 출처 | 비고 |
+|---|---|---|
+| Etsy 앱은 디지털 파일을 못 받는다, Safari 로 Your account → Purchases → Download Files | help.etsy.com 115013328108 (2026-09-26) | iPad Safari 의 정확한 탭 경로는 미확인 |
+| 다운로드 횟수 제한 없음 / 폰·태블릿은 파일 관리 앱으로 ZIP 풀기 | 같은 글 | |
+| 파일 앱에서 ZIP 탭 → 폴더 생성 | support.apple.com 102532 | |
+| Open in Goodnotes → New Document → Import to… / + New → Import → Open | support.goodnotes.com 7353717816463 (2026-05-22) | |
+| **무료 Goodnotes: 노트 3개, 파일당 5MB** | 같은 글 (원문 직접 확인) | 우리 PDF 7.7MB -- 안내서·리스팅에 명시 (A안, 사용자 확정 대기) |
+| 링크: 그냥 탭. 선이 그어지면 Read Only Mode(Nav Bar 아이콘) 또는 길게 눌러 Open Link | 13623343439631, 7353757120655 (2026-09) | |
+| 스티커: Elements → 목록 끝 + → 이름 → Import from… → Create | 7353727577359 (2026-09-16) | **투명 PNG 유지 미확인** -- 사용자 iPad 확인 |
+| Notability: +New → Import | support.gingerlabs.com 206061357 | Notability 링크 동작은 미확인이라 약속하지 않는다 |
