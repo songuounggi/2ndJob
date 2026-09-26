@@ -161,7 +161,7 @@ For personal use. Please do not resell or redistribute the files.
 
 ---
 
-## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.16/` (사용자 확정 전)
+## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.17/` (사용자 확정 전)
 
 **안전 영역:** 글자·배지는 가로 260–1740, 세로 250–1750 안(Etsy 검색이 양옆 ~140px 을 자르고 4:3 자리는 가운데만 쓴다 --
 `product2-student.md` 목업 안전 영역, 상품 1 대표 이미지가 "DHD & Wellness" 로 잘린 적). `listing_images_p3.py` 가 찍기 전에 재고
