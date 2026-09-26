@@ -12,7 +12,7 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.1"
+DRAFT = "draft-v0.3"   # v0.2: 색 조합 CSS 중괄호가 두 겹이라 통째로 무시됐다 / v0.1: 바탕이 종이색 하나 -> 핸드오프 색 전부로 색 조합(사용자)
 OUT = ROOT / "output" / "prod3" / "stickers" / DRAFT
 if OUT.exists():
     raise SystemExit(f"{OUT} 는 이미 있다. 덮어쓰지 않는다 -- DRAFT 를 올릴 것.")
@@ -20,14 +20,24 @@ OUT.mkdir(parents=True)
 
 PAPER, INK, N700, CYAN, CYAN7 = "#f8f4f4", "#201e1d", "#605d5d", "#0088b0", "#006786"
 MAG = "rgba(214,0,108,.55)"
-PLATE = f"2.5px 2px 0 {MAG}"
+PLATE = "2.5px 2px 0 var(--plate)"
+# 색 조합: 핸드오프 팔레트만 (종이·잉크·청록 3단·마젠타 판·회색). 이름 -> (바탕, 글자, 어긋난 판)
+WAYS = {
+    "paper":   ("#f8f4f4", "#201e1d", "rgba(214,0,108,.55)"),
+    "cyan":    ("#0088b0", "#f8f4f4", "rgba(32,30,29,.55)"),
+    "deep":    ("#006786", "#f8f4f4", "rgba(214,0,108,.75)"),
+    "mist":    ("#95c9d9", "#201e1d", "rgba(214,0,108,.55)"),
+    "ink":     ("#201e1d", "#f8f4f4", "rgba(0,136,176,.9)"),
+    "blush":   ("#efc9d7", "#201e1d", "rgba(0,136,176,.6)"),     # 마젠타 판을 종이 위에 옅게 -- 표지 판색
+    "stone":   ("#d7d3d3", "#201e1d", "rgba(214,0,108,.55)"),
+}
 
 
 def plate_svg(inner, w, h, off=3):
     """같은 도형을 마젠타로 한 번, 잉크/청록으로 한 번 -- 판이 어긋난 인쇄"""
     return (f'<svg width="{w}" height="{h}" viewBox="0 0 {w} {h}" xmlns="http://www.w3.org/2000/svg">'
-            f'<g transform="translate({off},{off * .7})" style="mix-blend-mode:multiply;opacity:.55" '
-            f'stroke="#d6006c" fill="none">{inner.replace("currentColor", "#d6006c")}</g>'
+            f'<g transform="translate({off},{off * .7})" style="opacity:.6;stroke:var(--plate);color:var(--plate)" '
+            f'fill="none">{inner}</g>'
             f'<g stroke="currentColor" fill="none">{inner}</g></svg>')
 
 
@@ -62,10 +72,13 @@ body{{width:2000px;height:2000px;background:#e6e2de;font-family:'Source Serif 4'
   padding:110px 120px;overflow:hidden}}
 h1{{font-size:64px;font-weight:600}} .sub{{font-size:30px;font-style:italic;color:{N700};margin:8px 0 46px}}
 .grid{{display:flex;flex-wrap:wrap;gap:40px 44px;align-items:center}}
-.st{{background:{PAPER};border-radius:26px;padding:20px 28px;display:inline-flex;align-items:center;gap:16px;
-  box-shadow:0 0 0 10px #fff,0 14px 24px rgba(0,0,0,.18);color:{INK}}}
+.st{{background:var(--bg);--bg:{PAPER};--plate:rgba(214,0,108,.55);border-radius:26px;padding:20px 28px;display:inline-flex;align-items:center;gap:16px;
+  box-shadow:0 0 0 10px #fff,0 14px 24px rgba(0,0,0,.18);color:var(--fg,{INK})}}
 .st.round{{border-radius:50%;width:210px;height:210px;flex-direction:column;justify-content:center;gap:4px;padding:0}}
-.st.cy{{color:{CYAN7}}} .st.mg{{color:#b0005a}}
+.st.cy{{--fg:{CYAN7}}} .st.mg{{--fg:#b0005a}}
+"""
+CSS += "".join(f".w-{k}{{--bg:{b};--fg:{f}!important;--plate:{pl}}}" for k, (b, f, pl) in WAYS.items())
+CSS += f"""
 .t{{font-size:34px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-shadow:{PLATE}}}
 .t.sm{{font-size:24px}} .it{{font-style:italic;font-size:26px;color:{N700};text-transform:none;letter-spacing:0;text-shadow:none}}
 .blank{{display:inline-block;width:120px;border-bottom:3px solid currentColor;height:30px;vertical-align:bottom}}
@@ -104,6 +117,18 @@ BODY = f"""
   <div class="st"><span class="t sm">Public holiday <span class="blank"></span></span></div>
   <div class="st"><span class="t sm">Day off</span></div>
 </div>"""
+
+PICK = [
+    lambda w: f'<div class="st round w-{w}">{plate_svg(CHECK, 68, 68)}<span class="t sm">Helped</span></div>',
+    lambda w: f'<div class="st wx w-{w}">{plate_svg(SUN, 80, 80)}<span class="t sm">Great</span></div>',
+    lambda w: f'<div class="st w-{w}" style="padding:14px 18px">{plate_svg(battery(3), 80, 68)}</div>',
+    lambda w: f'<div class="st w-{w}">{plate_svg(ENVELOPE, 88, 80)}<span class="t sm">To future me</span></div>',
+    lambda w: f'<div class="st w-{w}"><span class="t">Did the thing</span></div>',
+    lambda w: f'<div class="st tag w-{w}"><span class="t">Keep</span></div>',
+]
+BODY = (f'<h1>Sticker colorways</h1><div class="sub">Every color comes from the planner itself: paper, ink, three cyans, the magenta plate, stone.</div>'
+        + "".join(f'<div class="sec">{k}</div><div class="grid">' + "".join(f(k) for f in PICK) + "</div>" for k in WAYS))
+CSS += ".sec{margin:18px 0 14px!important}.grid{gap:26px 30px;zoom:.78}h1{font-size:54px}.sub{margin-bottom:20px}"
 
 from playwright.sync_api import sync_playwright  # noqa: E402
 
