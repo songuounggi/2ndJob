@@ -57,7 +57,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.11 = v0.10 + 위 모두(메일박스 격자·도착 메모 청록·라벨 간격·표 너비·쓰기 표 34px·도구 줄 끊기·에너지 칸). 이름 붙은 행 5장은 그대로(사용자)
 # v0.12 = v0.11 + Year-end mailbox 격자 줄 높이 고정(PDF 에서만 흔들려 라벨과 겹침), PDF 겹침 검사 audit_pdf_overlap_p3.py
 # v0.13 = 페이지 순서 = 탭 순서(목차 2쪽, How 3쪽 INDEX, Year-end 3장 YEAR 구역, Months 목차가 분기 앞) + 빌드 검사
-VERSION = "v0.13"
+# v0.14 = v0.13 순서 변경 되돌림(기획서대로) + How 탭 INDEX + 표지 탭 없음 + 라벨 링크 3종(생일·admin·ADHD tax). v0.13 은 쓰지 않는다
+VERSION = "v0.14"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -149,6 +150,7 @@ h1{{font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}}
   border:1px solid {N400};border-radius:999px;padding:0 10px;margin:1px 0 1px 4px;color:{N800};white-space:nowrap;gap:5px}}
 .chip.note{{background:none;border-color:{CYAN};color:{CYAN700}}}
 .lab + .chips{{margin-top:12px}}
+a.ll{{color:inherit;text-decoration:none}}
 .p1 .card:has(> table.trk){{padding-left:0!important;padding-right:0!important}}   /* 표 너비 = 아래 줄 너비 (상품 1 카드 안쪽 여백 18pt 가 남아 표만 좁았다, 사용자) */
 .p1 table.trk:not(:has(td:nth-child(29))) tr + tr td{{height:34px!important;box-sizing:border-box}}   /* 쓰기 표 행 = 괘선 34px (사용자: Screen time·Guess vs actual 위아래 간격이 다르다). 체크 격자(1~31일)는 그대로. 남는 공간은 행·아래 줄을 늘려 채운다 */   /* 라벨 바로 아래 알약: 12px 띄운다(사용자) */
 #mailbox .chips{{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:42px;gap:0 10px}}#mailbox .chips a.hit{{display:flex;align-items:center;margin:0;padding:0}}#mailbox .chips .chip{{width:100%;justify-content:center;margin:0}}   /* Year-end mailbox: 7칸 격자, 같은 폭 (사용자 B안). 줄 높이 42px 고정 -- 음수 여백 누르는 영역을 격자에 두면 PDF 인쇄에서만 줄이 흔들려 라벨과 겹쳤다(v0.11) */   /* 도착한 메모: 청록 테두리 알약 (검정 채움은 사용자: 바퀴벌레 같다, 2026-09-26) */
@@ -489,6 +491,13 @@ def page(key, body, n):
                   lambda m: f'<a class="hit" href="#{m.group(2)}"><span class="chip{m.group(1) or ""}">{m.group(3)}</span></a>', body)
     if re.fullmatch(r"q\d", key):
         body = body.replace('<div class="chips">', '<div class="chips wk">', 1)
+    # 기획 2-3: 월 계획 생일 -> gift radar, admin radar -> 전체 radar / 월 리뷰 ADHD tax -> 연 합계. 라벨 글자에 링크만 (모양 그대로)
+    if re.fullmatch(r"mp\d+", key):
+        bd = "bday1" if int(key[2:]) <= 6 else "bday2"
+        body = re.sub(r'<div class="lab">(BIRTHDAYS.*?)</div>', lambda m: f'<div class="lab"><a class="ll" href="#{bd}">{m.group(1)}</a></div>', body, count=1)
+        body = re.sub(r'<div class="lab">(ADMIN RADAR)</div>', lambda m: f'<div class="lab"><a class="ll" href="#admin">{m.group(1)}</a></div>', body, count=1)
+    if re.fullmatch(r"mr\d+", key):
+        body = re.sub(r'<div class="lab">(ADHD TAX THIS MONTH)</div>', lambda m: f'<div class="lab"><a class="ll" href="#yearreview">{m.group(1)}</a></div>', body, count=1)
     if key == "yearreview":
         # ADHD tax 월 버튼 12개를 가로로 (사용자 확정 B안, 2026-09-26). 세로로 쌓여 아래
         # "Three things to carry into next year" 칸이 통째로 잘렸다(v0.1~v0.5)
@@ -497,7 +506,7 @@ def page(key, body, n):
     fname = footer_name(key, body)
     foot = "" if key == "cover" else f'<footer><span>The ADHD Year · {Y}</span><span>{W.e(fname)} · {n:03d}</span></footer>'
     return (f'<section class="pg" id="{key}"><img class="bg" src="bg/sheet-{sheet}-2x.jpg" alt="">'
-            f'<div class="sheet">{rail(W.rail_of(key) if key != "cover" else "index")}'
+            f'<div class="sheet">{rail(W.rail_of(key))}'
             f'<div class="ink">{body}{foot}</div></div></section>')
 
 
@@ -806,15 +815,16 @@ def build():
            for m in re.finditer(r'<section class="pg" id="([^"]+)".*?</nav>', html, re.S)]
     order = [k for k, _ in TABS]
     seq = []
-    for _, t in act[1:]:
+    for p_, t in act[1:]:
+        if p_ in ("playbook", "mailbox", "yearreview"):     # 기획 2-6 "12월 뒤" -- 순서 예외
+            continue
         if t and (not seq or seq[-1] != t):
             seq.append(t)
     if seq != [t for t in order if t in seq]:
         raise SystemExit(f"넘길 때 탭 순서가 뒤섞였다: {seq}")
     pid = [p for p, _ in act]
-    wrong = [t for t in order if t in pid and next(i for i, (_, a) in enumerate(act) if a == t and i > 0) != pid.index(t)]
-    if wrong:
-        raise SystemExit(f"탭이 구역 첫 페이지로 가지 않는다: {wrong}")
+    if act[0][1] is not None:
+        raise SystemExit(f"표지에 켜진 탭이 있다: {act[0][1]}")
     # 이미 이스케이프된 글을 또 이스케이프하면 화면에 "&amp;" 가 글자로 찍힌다(v0.2 발문 3장)
     dbl = re.findall(r"&amp;(?:amp|lt|gt|quot|#\d+);", html)
     if dbl:

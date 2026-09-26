@@ -450,18 +450,17 @@ def p_notes():
 
 # ------------------------------------------------------------ build --
 def specs():
-    # 페이지 순서 = 탭 순서 (INDEX > SOS > YEAR > MONTH > WEEK > FOCUS > FEEL > BODY > LIFE > NOTES).
-    # 넘길 때 탭이 한 방향으로만 흐르고, 탭은 그 구역의 첫 페이지로 간다 (사용자, 2026-09-26: How 가 YEAR 로 켜진 2쪽,
-    # MONTH 탭 앞의 분기 4장, WEEK 뒤의 Year-end 3장이 순서를 깼다). planner_build 가 빌드 때 검사한다.
-    s = [("cover", p_cover), ("index", p_index), ("how", p_how), ("sos", p_sos),
+    # 페이지 순서 = 기획서(product3-content.md 2절) 순서. 탭 구역 순서도 따른다(INDEX > SOS > YEAR > MONTH > WEEK > ...).
+    # 예외 하나: 연말 3장(Playbook·Mailbox·Year review)은 기획대로 "12월 뒤" -- WEEK 다음에 YEAR 가 한 번 더 온다.
+    # (v0.13 에서 기획서를 안 보고 순서를 바꿨다가 되돌렸다, 2026-09-26)
+    s = [("cover", p_cover), ("how", p_how), ("index", p_index), ("sos", p_sos),
          ("year", p_year), ("kickoff", p_kickoff), ("experiments", p_experiments), ("pixels", p_pixels),
          ("admin", p_admin), ("myhol", p_myhol), ("bday1", lambda: p_bday(1)), ("bday2", lambda: p_bday(2)), ("where", p_where),
          # 상품 1 YEAR 그룹에서 그대로 오는 세 장
          ("goals", lambda: p_p1("goals", "Goals")), ("project", lambda: p_p1("project", "Project planner")),
-         ("vision", lambda: p_p1("vision", "Vision page")),
-         ("playbook", p_playbook), ("mailbox", p_mailbox), ("yearreview", p_yreview)]   # Year-end 3장도 YEAR 구역에
+         ("vision", lambda: p_p1("vision", "Vision page"))]
+    s += [(f"q{q}", (lambda qq: lambda: p_quarter(qq))(q)) for q in range(1, 5)]   # 기획 2-2: 분기가 월보다 앞
     s += [("month", p_months)]
-    s += [(f"q{q}", (lambda qq: lambda: p_quarter(qq))(q)) for q in range(1, 5)]
     for m in range(1, 13):
         s += [(f"m{m}", (lambda mm: lambda: p_month(mm))(m)), (f"mp{m}", (lambda mm: lambda: p_mplan(mm))(m)),
               (f"bw{m}", (lambda mm: lambda: p_bweather(mm))(m))]
@@ -470,6 +469,7 @@ def specs():
     s += [("week", p_weeks)]
     for n, f in enumerate(WEEKS, 1):
         s += [(f"w{n}", (lambda nn, ff: lambda: p_week(nn, ff))(n, f)), (f"wr{n}", (lambda nn, ff: lambda: p_wreset(nn, ff))(n, f))]
+    s += [("playbook", p_playbook), ("mailbox", p_mailbox), ("yearreview", p_yreview)]   # 기획 2-6: 연말, 12월 뒤
     for g, (_, items) in P1.items():
         s += [(g, (lambda gg: lambda: p_group(gg))(g))]
         s += [(k, (lambda kk, nn: lambda: p_p1(kk, nn))(k, n)) for k, n in items]
