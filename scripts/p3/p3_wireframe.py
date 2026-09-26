@@ -156,7 +156,14 @@ def p_index():
             ("experiments", "The 52 experiments"), ("goals", "Goals · Project · Vision"), ("month", "Months"), ("week", "Weeks"),
             ("focus", "Focus tools"), ("feel", "Feelings tools"), ("health", "Body tools"),
             ("life", "Life admin & extras"), ("playbook", "My ADHD playbook (December)"), ("notes", "Notes")]
-    inner = "".join(f'<a class="row" href="#{k}">{e(t)}<span>›</span></a>' for k, t in rows)
+    # 목차에서 못 가던 세부 페이지를 알약으로 (기획 대조 2026-09-26, 사용자 승인)
+    sub = {"year": [("kickoff", "Kickoff"), ("pixels", "Year in pixels"), ("admin", "Life admin radar"), ("myhol", "My holidays"),
+                    ("bday1", "Birthdays"), ("where", "Where I put it")],
+           "goals": [("goals", "Goals"), ("project", "Project"), ("vision", "Vision")],
+           "month": [(f"q{i}", f"Q{i}") for i in range(1, 5)]}
+    inner = "".join(f'<a class="row" href="#{k}">{e(t)}<span>›</span></a>'
+                    + (f'<div class="chips sub">{"".join(chip(sk, st) for sk, st in sub[k])}</div>' if k in sub else "")
+                    for k, t in rows)
     return head("INDEX", "Where to?") + f'<div class="bd">{box("GO TO", inner)}</div>'
 
 
@@ -190,6 +197,7 @@ def p_kickoff():
             + box("WHAT WORKED LAST YEAR", lines(4)) + box("WHAT DIDN'T", lines(4)) + '</div>'
             + box("THREE SYSTEMS I'LL SET UP", "".join(f'<div class="ck"><i></i><div class="ln fl"></div></div>' for _ in range(3)), "none")
             + box("IF I ONLY DO ONE THING THIS YEAR", lines(2), "none")
+            + box("WILL I STILL USE IT IN MARCH?", lines(2), "none")        # 기획 2-1 (기획 대조 2026-09-26, 사용자 승인)
             + box("WHAT I'M LEAVING IN LAST YEAR", lines(3), "1") + '</div>')
 
 

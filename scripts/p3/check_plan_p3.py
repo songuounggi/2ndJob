@@ -72,15 +72,18 @@ for k, ls in links.items():
             inc[l] += 1
 TABS = {"index", "sos", "year", "month", "week", "focus", "feel", "health", "life", "notes"}
 orph = [k for k in ids if inc[k] == 0 and k not in TABS and k != "cover"]
-PENDING_ORPH = {"kickoff", "pixels", "myhol", "where", "project", "vision", "q1", "q2", "q3", "q4"}   # 목차 배치 결정 대기(사용자)
+PENDING_ORPH = set()   # v0.15 에서 목차 알약으로 해결
 new_orph = [k for k in orph if k not in PENDING_ORPH]
 ok(not new_orph, f"링크로 닿지 않는 페이지 (결정 대기 제외) {[(pno(k), k) for k in new_orph]}")
 if orph:
     pend.append(f"목차에서 갈 수 없는 페이지 {len(orph)}장 -- 목차 배치 결정 대기: {[(pno(k), k) for k in orph]}")
 
 # ---- 결정 대기 (FAIL 아님, 목록으로) -----------------------------------------
-PENDING = ["일간 Guess vs actual 2줄(기획) / 지금 1줄", "일간 Schedule buffer 칸(기획) / 지금 안내 글자", "Kickoff '3월에도 쓰고 있을 것' 칸",
-           "Doom pile 15분 타이머 칸", "Playbook: ✓ 실험 표 + 주 링크(기획) / 지금 빈 W__ 줄"]
+ok("WILL I STILL USE IT IN MARCH" in text["kickoff"], "2-1 Kickoff: 3월에도 쓸까 칸")
+# 사용자 확정(2026-09-26)으로 기획과 다르게 둔 것 -- FAIL 아님
+DECIDED = ["일간 Guess vs actual 1줄·buffer 는 안내 글자 (오른쪽 열 공간 없음)", "Doom pile 타이머는 부제로 안내",
+           "Playbook 은 빈 W__ 줄 + 52 experiments 버튼 (어느 주에 ✓할지 미리 알 수 없다)"]
+PENDING = ["(확정) " + d for d in DECIDED]
 pend += PENDING
 print("\n결정 대기 (사용자):")
 for p in pend:
