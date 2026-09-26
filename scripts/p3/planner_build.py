@@ -162,7 +162,7 @@ a.hit>.chip{{margin-left:0}}
 .rw{{display:flex;gap:26px;min-height:0}}.rw.a{{align-items:center;gap:6px;flex:none}}
 .col{{display:flex;flex-direction:column;gap:16px;min-height:0}}
 .box{{display:flex;flex-direction:column;min-height:0;overflow:hidden}}
-.box .box{{padding-top:2px}}.box > .box + .box{{margin-top:14px}}   /* 칸 안의 칸(일간 Medium/Full)도 라벨이 윗줄에서 16px */
+.box .box{{padding-top:2px}}.lane + .lane{{margin-top:14px}}.lane > .ln{{height:24px}}   /* 일간 에너지 칸: BY ENERGY 제목은 두고 MEDIUM·FULL 라벨도 윗줄에서 16px -- 그만큼 세 칸의 쓰는 줄을 24px 로 (사용자) */
 .lab{{flex:none;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:{N700};line-height:1.2}}
 .hint{{text-transform:none;letter-spacing:0;font-style:italic;color:{N800};font-size:11.5px}}
 .txt{{font-size:13.5px;line-height:1.5;margin-top:3px}}
@@ -356,7 +356,7 @@ def p_day(d):
     frm = W.chip(W.dk(yd), "From yesterday ←") if yd.year == Y else '<span class="chip off">Day one</span>'
     hours = ["7am", "8", "9", "10", "11", "12", "1pm", "2", "3", "4", "5", "6", "7", "8", "9"]
     sched = "".join(f'<div class="hr">{h}</div>' for h in hours)
-    lanes = "".join(f'<div class="box" style="flex:none"><div class="lab">{t}<span class="hint"> {h}</span></div>{W.lines(1)}</div>'
+    lanes = "".join(f'<div class="box lane" style="flex:none"><div class="lab">{t}<span class="hint"> {h}</span></div>{W.lines(1)}</div>'
                     for t, h in [("Low battery", "easy wins"), ("Medium", ""), ("Full", "the hard thing")])
     tom = W.chip(W.dk(td), "Tomorrow →") if td.year == Y else W.chip("yearreview", "Year review →")
     fut_c = W.chip(W.dk(fut), f"Arrives {W.md(fut)} →") if fut else W.chip("mailbox", "To the year-end mailbox →")
