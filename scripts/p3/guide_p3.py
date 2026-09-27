@@ -13,7 +13,8 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts" / "p3"))
-DRAFT = "draft-v0.2"   # v0.2 = 종이색 W1 #fdfcfa (플래너 v0.22 와 같게, 사용자 2026-09-27)
+DRAFT = "draft-v0.3"   # v0.3 = 단계 문구를 원형 숫자와 세로 가운데 맞춤 (사용자). 행 높이·간격 그대로
+# v0.2   # v0.2 = 종이색 W1 #fdfcfa (플래너 v0.22 와 같게, 사용자 2026-09-27)
 OUT = ROOT / "output" / "prod3" / "guide" / DRAFT
 if OUT.exists():
     raise SystemExit(f"{OUT} 는 이미 있다. 덮어쓰지 않는다 -- DRAFT 를 올릴 것.")
@@ -31,7 +32,7 @@ section{{width:768px;height:1024px;padding:78px 76px 60px;display:flex;flex-dire
 h1{{font-size:46px;font-weight:600;line-height:1.05;margin:10px 0 8px}}
 h1.big{{font-size:78px;text-shadow:{PLATE}}}
 .sub{{font-size:18px;font-style:italic;color:{N700};margin-bottom:30px}}
-.step{{display:flex;gap:18px;padding:16px 0;border-bottom:1px solid {N300}}}
+.step{{display:flex;align-items:center;gap:18px;padding:16px 0;border-bottom:1px solid {N300}}}   /* 문구를 원형 숫자 가운데에 (한 줄은 8px 위, 두 줄은 5px 아래였다 -- 사용자 v0.3). 행 높이는 그대로 */
 .n{{flex:none;width:40px;height:40px;border-radius:50%;background:{CYAN7};color:#fff;font-size:20px;font-weight:600;
   display:flex;align-items:center;justify-content:center;text-shadow:{PLATE}}}
 .step p{{font-size:17px;line-height:1.5}} .step b{{font-weight:600}}
@@ -120,6 +121,17 @@ with sync_playwright() as p:
     br = p.chromium.launch(channel="chrome")
     pg = br.new_context(user_agent=E.STATIC_FONT_UA).new_page()
     pg.goto(html.as_uri()); pg.evaluate("document.fonts.ready"); pg.wait_for_timeout(800)
+    # 검사: 단계 문구 가운데 = 원형 숫자 가운데 (±1px). 글줄 상자로 잰다(p 상자는 행 높이만큼 늘어날 수 있다)
+    off = pg.evaluate("""() => [...document.querySelectorAll('.step')].map(s => {
+      const n = s.querySelector('.n'), t = s.querySelector('p'); if (!n || !t) return null;
+      const r = document.createRange(); r.selectNodeContents(t); const rs = [...r.getClientRects()];
+      const a = n.getBoundingClientRect();
+      return (Math.min(...rs.map(x => x.top)) + Math.max(...rs.map(x => x.bottom))) / 2 - (a.top + a.bottom) / 2;
+    }).filter(v => v !== null)""")
+    bad = [round(v, 1) for v in off if abs(v) > 1]
+    if bad:
+        raise SystemExit(f"단계 문구가 원형 숫자 가운데에서 벗어났다 {bad}")
+    print(f"  단계 {len(off)}개: 문구 가운데 = 원형 숫자 가운데 (최대 {max(abs(v) for v in off):.1f}px)")
     pg.pdf(path=str(pdf), width="768px", height="1024px", print_background=True, prefer_css_page_size=True)
     br.close()
 with open(pdf, "rb") as fh:
