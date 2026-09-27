@@ -13,13 +13,13 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts" / "p3"))
-DRAFT = "draft-v0.1"
+DRAFT = "draft-v0.2"   # v0.2 = 종이색 W1 #fdfcfa (플래너 v0.22 와 같게, 사용자 2026-09-27)
 OUT = ROOT / "output" / "prod3" / "guide" / DRAFT
 if OUT.exists():
     raise SystemExit(f"{OUT} 는 이미 있다. 덮어쓰지 않는다 -- DRAFT 를 올릴 것.")
 OUT.mkdir(parents=True)
 
-PAPER, INK, N300, N400, N700, CYAN, CYAN7 = "#f8f4f4", "#201e1d", "#d7d3d3", "#bab6b6", "#605d5d", "#0088b0", "#006786"
+PAPER, INK, N300, N400, N700, CYAN, CYAN7 = "#fdfcfa", "#201e1d", "#d7d3d3", "#bab6b6", "#605d5d", "#0088b0", "#006786"
 PLATE = "2.5px 2px 0 rgba(214,0,108,.45)"
 
 CSS = f"""

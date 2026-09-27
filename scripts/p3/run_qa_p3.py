@@ -6,6 +6,7 @@
 2026-09-26 사용자: "몇 시간 검사한 결과는 대체 어디 있냐" -- 그때까지 결과는 터미널에만 찍혔다. 이제 판마다 파일로 남는다.
 """
 import datetime as dt
+import re
 import pathlib
 import subprocess
 import sys
@@ -24,9 +25,14 @@ CHECKS = [("5-1 기획서 대조", [P("scripts/p3/check_plan_p3.py", VER, y, w) 
           ("5-2 디자인: 줄 간격", [P("scripts/p3/audit_pitch_p3.py", VER, y, w) for y, w in EDS]),
           ("5-2 디자인: 잘림·넘침·겹침(화면)", [P("scripts/p3/audit_layout_p3.py", VER)]),
           ("5-2 디자인: 겹침(PDF)", [P("scripts/p3/audit_pdf_overlap_p3.py", VER)]),
+          ("5-2 디자인: 스티커(아이콘 가운데·종이색)", [P("scripts/p3/check_stickers_p3.py")]),
           ("5-3 논리: 링크·탭·날짜(PDF)", [P("scripts/p3/check_links_p3.py", VER)]),
           ("5-4 수치·문구: 리스팅 대조", [P("scripts/p3/check_listing_p3.py", VER)]),
-          ("5-5 뷰어·용량", [P("scripts/check_render.py", f"output/prod3/planner/{VER}/ADHD-Year-Planner-2027-mon.pdf")])]
+          ("5-5 뷰어·용량", [P("scripts/check_render.py", f"output/prod3/planner/{VER}/ADHD-Year-Planner-2027-mon.pdf")]),
+          ("6 직접 써 보기", [P("scripts/p3/dogfood_p3.py", VER, y, w) for y, w in EDS])]
+# 사용자 확정 예외: 렌더 시간 B 는 배경 2x 때문. 사용자가 GoodNotes 에서 느리지 않음을 확인(2026-09-26).
+# 매번 FAIL 로 찍혀 보고서가 시끄러웠다 -> 평균이 이 값 이하이고 다른 FAIL 이 없으면 "통과(확정 예외)". 더 느려지면 다시 FAIL
+RENDER_OK_AVG_MS = 160
 rows = []
 for name, cmds in CHECKS:
     ok = True
@@ -36,9 +42,16 @@ for name, cmds in CHECKS:
             r = subprocess.run(c, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
             fh.write("$ " + " ".join(c[1:]) + "\n" + r.stdout + r.stderr + "\n")
             ok &= r.returncode == 0
-    last = [l for l in log.read_text(encoding="utf-8").splitlines() if l.strip()][-1]
-    rows.append((name, ok, log.name, last))
-    print(("OK   " if ok else "FAIL ") + name)
+    text = log.read_text(encoding="utf-8")
+    last = [l for l in text.splitlines() if l.strip()][-1]
+    note = ""
+    if not ok and name.startswith("5-5"):
+        fl = [l for l in text.splitlines() if l.strip().startswith("FAIL ")]
+        m = re.search(r"렌더 시간\s+평균 (\d+) ms", text)
+        if len(fl) == 1 and "렌더 시간" in fl[0] and m and int(m.group(1)) <= RENDER_OK_AVG_MS:
+            ok, note = True, f"확정 예외: 렌더 평균 {m.group(1)} ms (2x 배경, 사용자 GoodNotes 확인, 한도 {RENDER_OK_AVG_MS} ms)"
+    rows.append((name, ok, log.name, note or last))
+    print(("OK   " if ok else "FAIL ") + name + (f"  ({note})" if note else ""))
 known = "5-5 는 렌더 시간 B 가 기준(150ms) 미달 -- 배경 2x 때문, 사용자 iPad 확인으로 넘김(product3-dated.md)"
 md = [f"# 상품 3 검수 보고서 — {VER}", "", f"{dt.datetime.now():%Y-%m-%d %H:%M} · 네 판(2026·2027 × 월·일) · PROCESS.md 5단계", "",
       "| 검수 | 결과 | 로그 | 마지막 줄 |", "|---|---|---|---|"]

@@ -13,20 +13,21 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.5"   # v0.4 전체 키트 -> v0.5 스티커 검수 반영: 작은 칸용 아이콘·색 점·Top 3, 요일·월·시간링크 중복 삭제, 문구를 플래너에 맞춤
+DRAFT = "draft-v0.6"   # v0.6 = ✓ ~ ✗ 아이콘 가운데 맞춤(80칸에서 왼쪽 위로 4~8 쏠림, 사용자) + 종이색 W1 #fdfcfa (플래너 v0.22 와 같게)
+# v0.5   # v0.4 전체 키트 -> v0.5 스티커 검수 반영: 작은 칸용 아이콘·색 점·Top 3, 요일·월·시간링크 중복 삭제, 문구를 플래너에 맞춤
 OUT = ROOT / "output" / "prod3" / "stickers" / DRAFT
 if OUT.exists():
     raise SystemExit(f"{OUT} 는 이미 있다. 덮어쓰지 않는다 -- DRAFT 를 올릴 것.")
 (OUT / "sheets").mkdir(parents=True)
 
-PAPER, INK, N700, CYAN, CYAN7 = "#f8f4f4", "#201e1d", "#605d5d", "#0088b0", "#006786"
+PAPER, INK, N700, CYAN, CYAN7 = "#fdfcfa", "#201e1d", "#605d5d", "#0088b0", "#006786"
 # 색 조합: 핸드오프 팔레트만. 이름 -> (바탕, 글자, 어긋난 판)
 WAYS = {
-    "paper": ("#f8f4f4", "#201e1d", "rgba(214,0,108,.55)"),
-    "cyan":  ("#0088b0", "#f8f4f4", "rgba(32,30,29,.55)"),
-    "deep":  ("#006786", "#f8f4f4", "rgba(214,0,108,.75)"),
+    "paper": ("#fdfcfa", "#201e1d", "rgba(214,0,108,.55)"),
+    "cyan":  ("#0088b0", "#fdfcfa", "rgba(32,30,29,.55)"),
+    "deep":  ("#006786", "#fdfcfa", "rgba(214,0,108,.75)"),
     "mist":  ("#95c9d9", "#201e1d", "rgba(214,0,108,.55)"),
-    "ink":   ("#201e1d", "#f8f4f4", "rgba(0,136,176,.9)"),
+    "ink":   ("#201e1d", "#fdfcfa", "rgba(0,136,176,.9)"),
     "blush": ("#efc9d7", "#201e1d", "rgba(0,136,176,.6)"),
     "stone": ("#d7d3d3", "#201e1d", "rgba(214,0,108,.55)"),
 }
@@ -44,8 +45,8 @@ def battery(n):
 
 
 ICON = {
-    "check": P("M14 34l13 13 27-30", 7), "tilde": P("M12 36c8-12 16-12 24 0s16 12 24 0", 7),
-    "cross": P("M18 18l32 32M50 18l-32 32", 7),
+    "check": P("M20 42l13 13 27-30", 7), "tilde": P("M16 40c8-12 16-12 24 0s16 12 24 0", 7),   # 가운데(40,40) 맞춤 v0.6
+    "cross": P("M24 24l32 32M56 24l-32 32", 7),
     "sun": '<circle cx="40" cy="40" r="13" stroke-width="6"/>' + "".join(
         f'<path d="M40 16v-8" stroke-width="6" stroke-linecap="round" transform="rotate({a} 40 40)"/>' for a in range(0, 360, 45)),
     "cloud": P("M22 56h36a13 13 0 0 0 0-26 18 18 0 0 0-34-4 14 14 0 0 0-2 30z"),
