@@ -64,6 +64,12 @@ ok(all("BATTERY" in text[d] and "NOT TODAY" in text[d] and "GUESS VS ACTUAL" in 
 ok(all("THIS WEEK" in text[w] for w in ids if re.fullmatch(r"w\d+", w) and int(w[1:]) <= 52), "2-4 주간: 이번 주 실험 카드 (53주차는 BONUS WEEK)")
 ok("mailbox" in {l for d in days if d.startswith("d12-") for l in links[d]}, "12월 메모 -> Year-end mailbox")
 
+# ---- 목록 줄은 끝에 › (알약·탭·달력 칸 제외) -- 사용자 2026-09-27 ---------------
+for k in ("cover", "index", "sos", "focus", "feel", "health", "life", "notes"):
+    rows_ = re.findall(r'<a (?:class="row" )?href="#[^"]+"[^>]*style="display:flex[^"]*"[^>]*>(.*?)</a>|<a class="row" href="#[^"]+">(.*?)</a>', body[k], re.S)
+    rows_ = [a or b for a, b in rows_]
+    ok(rows_ and all("›" in r for r in rows_), f"{k}: 목록 줄 {len(rows_)}개 끝에 ›")
+
 # ---- 들어오는 링크 없는 페이지 (넘겨서만 닿는 곳) ----------------------------
 inc = {k: 0 for k in ids}
 for k, ls in links.items():

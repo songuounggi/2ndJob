@@ -59,7 +59,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.13 = 페이지 순서 = 탭 순서(목차 2쪽, How 3쪽 INDEX, Year-end 3장 YEAR 구역, Months 목차가 분기 앞) + 빌드 검사
 # v0.14 = v0.13 순서 변경 되돌림(기획서대로) + How 탭 INDEX + 표지 탭 없음 + 라벨 링크 3종(생일·admin·ADHD tax). v0.13 은 쓰지 않는다
 # v0.15 = 목차에 세부 페이지 알약(10장 길 생김), Kickoff "Will I still use it in March?" (기획 대조, 사용자 승인)
-VERSION = "v0.15"
+# v0.16 = 표지·섹션 표지 목록 줄 끝에 › (쪽 번호는 그대로, 사용자)
+VERSION = "v0.16"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -307,7 +308,7 @@ def p_cover():
            ("Focus tools", "focus"), ("Feelings tools", "feel"), ("Body tools", "health"),
            ("Life admin", "life"), ("My ADHD playbook", "playbook"), ("Notes", "notes")]
     rows = "".join(f'<a href="#{k}" style="display:flex;gap:8px;font-size:13.5px;padding:12px 0 10px;border-bottom:1px solid {N300}"><span style="flex:1">{t}</span>'
-                   f'<span style="color:{N700}" data-pn="{k}"></span></a>' for t, k in idx)
+                   f'<span style="color:{N700}" data-pn="{k}"></span><span style="color:{N700};margin-left:10px">›</span></a>' for t, k in idx)   # 쪽 번호는 두고 그 오른쪽에 › (사용자)
     start = "Monday" if WS == 0 else "Sunday"
     return f"""
     <div class="cv-top"><span>Jan – Dec {Y} · {start} start</span><span>Vol. {Y}</span></div>
@@ -337,7 +338,7 @@ def p_group(g):
     _, items = W.P1[g]
     extra = [(k, C.TOOLS[k][0]) for k in W.NEW_TOOLS] if g == "life" else []
     rows = "".join(f'<a href="#{k}" style="display:flex;gap:8px;font-size:14px;padding:11px 0 10px;border-bottom:1px solid {N300};break-inside:avoid">'
-                   f'<span style="flex:1">{t}</span><span style="color:{N700}" data-pn="{k}"></span></a>'
+                   f'<span style="flex:1">{t}</span><span style="color:{N700}" data-pn="{k}"></span><span style="color:{N700};margin-left:10px">›</span></a>'
                    for k, t in items + extra)
     return f"""
     <div class="cv-top"><span>Part · Tools</span><span>{Y}</span></div>
