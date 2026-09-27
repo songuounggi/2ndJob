@@ -63,7 +63,7 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.17 = Kickoff 윗글 "YEAR KICKOFF" (목차 알약과 이름 맞춤, 사용자 A안). ADHD tax 링크는 그대로(사용자)
 # v0.18 = 의도 검수 문구·링크: How(흐름·time blindness·2탭), 표지 Drop, 한 칸 두 질문 정리, 원본 표시 안내, mailbox, 링크 2(dopamine·playbook)
 # v0.19 = Year review 달 버튼 같은 폭(6칸 격자, 사용자) + 일간 주 알약에 이번 주 실험, 분기 (W1) 알약+실험 2열 목록, Playbook Q1~Q4 keeps + 12줄, SOS "I fell off the planner" (사용자)
-# v0.20 = 일간 "Note from" 알약 검정 채움으로 되돌림 (청록 테두리는 Year-end mailbox 만, 사용자 2026-09-27)
+# v0.20 = 도착한 메모 알약 검정 채움으로 되돌림 -- 일간·Year-end mailbox 모두. mailbox 7칸 같은 폭 격자는 그대로 (사용자 2026-09-27)
 VERSION = "v0.20"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
@@ -154,8 +154,7 @@ h1{{font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}}
 .chip{{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:22px;
   font-size:10px;letter-spacing:.08em;text-transform:uppercase;line-height:1;
   border:1px solid {N400};border-radius:999px;padding:0 10px;margin:1px 0 1px 4px;color:{N800};white-space:nowrap;gap:5px}}
-.chip.note{{background:{INK};border-color:{INK};color:{PAPER}}}   /* 일간 '도착한 메모' 알약은 검정 채움 그대로 (디자인 원안) */
-#mailbox .chip.note{{background:none;border-color:{CYAN};color:{CYAN700}}}   /* 청록 테두리는 Year-end mailbox 페이지만 -- 사용자는 그 페이지만 '바퀴벌레 같다'고 했다(2026-09-26). 전체를 바꾼 것은 잘못, 2026-09-27 되돌림 */
+.chip.note{{background:{INK};border-color:{INK};color:{PAPER}}}   /* 도착한 메모 알약은 검정 채움 (디자인 원안). Year-end mailbox 도 검정 -- 색만, 7칸 같은 폭 격자는 그대로 (사용자 2026-09-27) */
 .lab + .chips{{margin-top:12px}}
 .qlist{{columns:2;column-gap:26px;margin:8px 0 4px}}.qi{{display:flex;align-items:center;gap:10px;height:32px;break-inside:avoid;font-size:12.5px;color:{N800}}}.qi a.hit{{flex:none}}.qi .chip{{min-width:46px;margin:0}}   /* 분기 실험 목록 */
 .chips.pbq{{margin:10px 0 6px;flex:none}}   /* Playbook 분기 KEEP 알약 */

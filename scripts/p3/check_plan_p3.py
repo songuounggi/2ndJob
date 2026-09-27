@@ -70,12 +70,14 @@ for k in ("cover", "index", "sos", "focus", "feel", "health", "life", "notes"):
     rows_ = [a or b for a, b in rows_]
     ok(rows_ and all("›" in r for r in rows_), f"{k}: 목록 줄 {len(rows_)}개 끝에 ›")
 
-# ---- 도착한 메모 알약: 일간은 검정 채움, 청록 테두리는 Year-end mailbox 만 (사용자 2026-09-27) ----------
-# 사용자는 mailbox 페이지만 "바퀴벌레 같다"고 했는데 v0.15~v0.19 는 전체 .chip.note 를 청록으로 바꿨다
+# ---- 도착한 메모 알약: 검정 채움, mailbox 는 7칸 같은 폭 격자 유지 (사용자 2026-09-27) ----------------
+# 사용자는 mailbox 페이지 하나를 말했는데 v0.15~v0.19 는 전체 .chip.note 를 청록으로 바꿨다. 결국 전부 검정으로,
+# 단 mailbox 의 같은 폭 정렬은 되돌리지 않는다
 _nt = re.search(r"(?<![#\w ])\.chip\.note\{background:(#[0-9a-fA-F]{6})", html)
 _lum = sum(int(_nt.group(1)[i:i + 2], 16) for i in (1, 3, 5)) / 3 if _nt else 255
-ok(_lum < 80 and "#mailbox .chip.note{background:none" in html,
-   f"일간 Note from 알약 검정 채움 (밝기 {_lum:.0f}), mailbox 만 청록 테두리")
+ok(_lum < 80 and "#mailbox .chip.note" not in html, f"도착한 메모 알약 검정 채움, 페이지별 색 예외 없음 (밝기 {_lum:.0f})")
+ok("#mailbox .chips{display:grid;grid-template-columns:repeat(7,1fr)" in html and "#mailbox .chips .chip{width:100%" in html,
+   "Year-end mailbox 알약 7칸 같은 폭 격자 유지")
 
 # ---- 들어오는 링크 없는 페이지 (넘겨서만 닿는 곳) ----------------------------
 inc = {k: 0 for k in ids}
