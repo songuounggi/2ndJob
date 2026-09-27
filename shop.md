@@ -239,6 +239,8 @@ Pricing & Shipping / How It's Made / Settings)은 같은 페이지의 앵커다.
 | Custom options | 건너뜀 |
 | **Tags** | `listing.md` 태그 13개. **Description 칸과 헷갈리지 말 것** |
 
+> 2026-09-27 상품 3: 태그 `goodnotes planner` 가 **`oodnotes planner`(g 빠짐)** 로 들어갔다 -- 입력 후 Tags 화면을 캡처해 원고와 한 글자씩 대조했더니 잡혔다. **태그는 넣은 뒤 반드시 화면으로 대조한다.** 순서는 검색에 상관없다.
+
 > 2026-09-21에 **태그 목록을 Description 칸에 붙여넣는 실수**를 했다.
 > 그대로 발행하면 상품 설명란이 검색어 나열이 되고, 키워드 스터핑으로
 > 보일 수 있다. 두 칸은 화면에서 멀리 떨어져 있다 —
