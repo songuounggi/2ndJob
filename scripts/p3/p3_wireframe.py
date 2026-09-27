@@ -406,11 +406,12 @@ def p_day(d):
 
 # ---------------------------------------------------------- year end --
 def p_playbook():
-    rows = "".join(f'<div class="tr3"><b>W__</b><div class="ln fl"></div><span class="hint">why it worked</span><div class="ln fl"></div></div>' for _ in range(10))
+    rows = "".join(f'<div class="tr3"><b>W__</b><div class="ln fl"></div><span class="hint">why it worked</span><div class="ln fl"></div></div>' for _ in range(12))   # 분기 KEEP 3 x 4
+    qk = '<div class="chips pbq">' + "".join(chip(f"q{i}", f"Q{i} keeps") for i in range(1, 5)) + "</div>"   # 사용자 승인 2026-09-27
     return (head(f"{Y} · DECEMBER", "My ADHD playbook",
                  "Copy every ✓ from The 52 experiments and your quarterly KEEPs. Your brain's user manual, tested on you.",
                  chip("experiments", "The 52 experiments"))
-            + f'<div class="bd">{box("WHAT WORKED", rows)}<div class="rw">{box("MY TOP 5 MOVES", lines(5))}'
+            + f'<div class="bd">{box("WHAT WORKED — FROM THE 52 EXPERIMENTS AND YOUR QUARTERLY KEEPS", qk + rows)}<div class="rw">{box("MY TOP 5 MOVES", lines(5))}'
             f'{box("NOT FOR ME (AND THAT IS FINE)", lines(5))}</div></div>')
 
 

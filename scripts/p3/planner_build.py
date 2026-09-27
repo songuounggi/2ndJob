@@ -62,7 +62,7 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.16 = 표지·섹션 표지 목록 줄 끝에 › (쪽 번호는 그대로, 사용자)
 # v0.17 = Kickoff 윗글 "YEAR KICKOFF" (목차 알약과 이름 맞춤, 사용자 A안). ADHD tax 링크는 그대로(사용자)
 # v0.18 = 의도 검수 문구·링크: How(흐름·time blindness·2탭), 표지 Drop, 한 칸 두 질문 정리, 원본 표시 안내, mailbox, 링크 2(dopamine·playbook)
-# v0.19 = Year review 달 버튼 같은 폭(6칸 격자, 사용자)
+# v0.19 = Year review 달 버튼 같은 폭(6칸 격자, 사용자) + 일간 주 알약에 이번 주 실험, 분기 (W1) 알약+실험 2열 목록, Playbook Q1~Q4 keeps + 12줄, SOS "I fell off the planner" (사용자)
 VERSION = "v0.19"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
@@ -155,6 +155,8 @@ h1{{font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}}
   border:1px solid {N400};border-radius:999px;padding:0 10px;margin:1px 0 1px 4px;color:{N800};white-space:nowrap;gap:5px}}
 .chip.note{{background:none;border-color:{CYAN};color:{CYAN700}}}
 .lab + .chips{{margin-top:12px}}
+.qlist{{columns:2;column-gap:26px;margin:8px 0 4px}}.qi{{display:flex;align-items:center;gap:10px;height:32px;break-inside:avoid;font-size:12.5px;color:{N800}}}.qi a.hit{{flex:none}}.qi .chip{{min-width:46px;margin:0}}   /* 분기 실험 목록 */
+.chips.pbq{{margin:10px 0 6px;flex:none}}   /* Playbook 분기 KEEP 알약 */
 a.ll{{color:inherit;text-decoration:none}}
 .chips.sub{{padding:6px 0 12px 18px;flex:none}}.chips.sub .chip{{font-style:normal}}   /* 목차 세부 페이지 알약 -- 다른 알약처럼 똑바로 */
 .p1 .card:has(> table.trk){{padding-left:0!important;padding-right:0!important}}   /* 표 너비 = 아래 줄 너비 (상품 1 카드 안쪽 여백 18pt 가 남아 표만 좁았다, 사용자) */
@@ -362,7 +364,7 @@ def p_day(d):
     arrived = "".join(W.chip(W.dk(s), f"Note from {W.md(s)} ←", "note") for s in W.NOTES_IN.get(d, []))
     hol = f'<span class="holchip">{W.e(W.HOL[d])}</span>' if d in W.HOL else ""
     head = W.head(f"{Y} · Week {n} · {calendar.day_name[d.weekday()]}", W.md(d), "",
-                  hol + W.chip(f"m{d.month}", W.MA[d.month]) + W.chip(f"w{n}", f"Week {n}"))
+                  hol + W.chip(f"m{d.month}", W.MA[d.month]) + W.chip(f"w{n}", f"Week {n} · {C.experiment(n)[0]}"))   # 매일 이번 주 실험 (사용자 승인)
     prog = (f'<div class="prog"><span>Day {doy} · {W.TOTAL - doy} left</span><div class="bar"><i style="width:{doy / W.TOTAL * 100:.1f}%"></i></div>'
             f'<span>{W.MA[d.month]} {d.day} of {nd}</span><div class="bar sm"><i style="width:{d.day / nd * 100:.1f}%"></i></div></div>')
     frm = W.chip(W.dk(yd), "From yesterday ←") if yd.year == Y else '<span class="chip off">Day one</span>'
@@ -497,7 +499,13 @@ def page(key, body, n):
     body = re.sub(r'<a class="chip( [a-z ]*)?" href="#([^"]+)">(.*?)</a>',   # class="chip " (공백 하나)도
                   lambda m: f'<a class="hit" href="#{m.group(2)}"><span class="chip{m.group(1) or ""}">{m.group(3)}</span></a>', body)
     if re.fullmatch(r"q\d", key):
-        body = body.replace('<div class="chips">', '<div class="chips wk">', 1)
+        # 알약 한 줄 대신 2열 목록: (W1) 알약 + 실험 이름 (사용자 2026-09-27)
+        def qlist(m):
+            ns = [int(x) for x in re.findall(r'href="#w(\d+)"', m.group(1))]
+            items = "".join(f'<div class="qi"><a class="hit" href="#w{n}"><span class="chip">W{n}</span></a>'
+                            f'<span>{W.e(C.experiment(n)[0])}</span></div>' for n in ns)
+            return f'<div class="qlist">{items}</div>'
+        body = re.sub(r'<div class="chips">(.*?)</div>', qlist, body, count=1, flags=re.S)
     # 기획 2-3: 월 계획 생일 -> gift radar, admin radar -> 전체 radar / 월 리뷰 ADHD tax -> 연 합계. 라벨 글자에 링크만 (모양 그대로)
     if re.fullmatch(r"mp\d+", key):
         bd = "bday1" if int(key[2:]) <= 6 else "bday2"

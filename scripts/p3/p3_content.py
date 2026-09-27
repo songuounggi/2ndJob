@@ -63,6 +63,7 @@ SOS = [
     ("Bored and restless", "Order from your dopamine menu", "dopamine"),
     ("Mess everywhere", "Triage one doom pile", "doompile"),
     ("I have an appointment later", "Beat waiting mode", "waiting"),
+    ("I fell off the planner", "Start from today. Nothing to catch up on.", "year"),   # 의도 검수 2026-09-27, 사용자 승인
 ]
 
 # ----------------------------------------------------- 4-3 month themes --
