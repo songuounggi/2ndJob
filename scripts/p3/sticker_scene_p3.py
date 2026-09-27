@@ -16,10 +16,10 @@ from playwright.sync_api import sync_playwright
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.6"   # v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
+DRAFT = "draft-v0.7"   # v0.7 = 플래너 v0.23 페이지(모서리 하이라이트 고침) / v0.6 v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
 # v0.3   # v0.3 = 손글씨 대조: 금요일 "keep it for March" -> 분기 흐름대로 "keeper → Q1 review", Brain dump "2-min rule next wk"(7주차) -> 13주차 실제 실험 "decide once", 책상 위 NOT FOR ME -> IN MY PLAYBOOK (광고에 부정어 X)
 # v0.2   # v0.2 = 형광펜을 "due Fri!" 위로, Top 3 글자가 체크에 가리지 않게, 연필이 Brain dump 를 덜 덮게, 수요일 글 왼쪽으로
-PLANNER, STICKERS = "v0.22", "draft-v0.8"
+PLANNER, STICKERS = "v0.23", "draft-v0.8"
 OUT = ROOT / "output/prod3/preview/sticker_scene" / DRAFT
 if OUT.exists():
     raise SystemExit(f"{OUT} 는 이미 있다. 덮어쓰지 않는다 -- DRAFT 를 올릴 것.")
