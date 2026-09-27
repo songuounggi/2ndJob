@@ -162,7 +162,7 @@ def p_index():
            "goals": [("goals", "Goals"), ("project", "Project"), ("vision", "Vision")],
            "month": [(f"q{i}", f"Q{i}") for i in range(1, 5)]}
     inner = "".join(f'<a class="row" href="#{k}">{e(t)}<span>›</span></a>'
-                    + (f'<div class="chips sub">{"".join(chip(sk, st) for sk, st in sub[k])}</div>' if k in sub else "")
+                    + (f'<div class="chips sub{" eq" if k == "year" else ""}">{"".join(chip(sk, st) for sk, st in sub[k])}</div>' if k in sub else "")
                     for k, t in rows)
     return head("INDEX", "Where to?") + f'<div class="bd">{box("GO TO", inner)}</div>'
 

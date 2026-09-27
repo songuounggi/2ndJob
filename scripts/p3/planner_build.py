@@ -66,7 +66,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.20 = 도착한 메모 알약 검정 채움으로 되돌림 -- 일간·Year-end mailbox 모두(청록 테두리도 없음). mailbox 7칸 같은 폭 격자는 그대로.
 #         2쪽 How it works 탭 없음(표지처럼) (사용자 2026-09-27)
 # v0.21 = 리드 칸 알약 청록 테두리 규칙 삭제 -> 542쪽 Playbook Q1~Q4 KEEPS 도 흰+회색 (사용자 2026-09-27)
-VERSION = "v0.21"
+# v0.22 = 종이 W1 "Soft white" #fdfcfa (배경 전체 +5,+8,+6, 시안 섞은 색 다시 계산) + 목차 Year 알약 같은 폭 왼쪽 정렬 D안 (사용자 2026-09-27)
+VERSION = "v0.22"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -99,11 +100,22 @@ for _k, _fixes in P1_FIX.items():
         P1[_k][_f] = P1[_k][_f].replace(_a, _b)
 
 # ------------------------------------------------------------------ colours --
-PAPER, INK = "#f8f4f4", "#201e1d"
+# 종이 W1 "Soft white" (사용자 2026-09-27). 핸드오프 #f8f4f4 는 빨강만 높아(R248 G244 B244) 따뜻함이 분홍으로 읽혔다.
+# 배경 PNG 전체(종이·책상·그림자)를 같은 만큼 옮긴다 -> 그림자 깊이(종이와의 차이)는 그대로, 분홍기만 빠진다
+PAPER_HAND = (248, 244, 244)
+PAPER, INK = "#fdfcfa", "#201e1d"
+_P = tuple(int(PAPER[i:i + 2], 16) for i in (1, 3, 5))
+
+
+def _on_paper(rgb, a):
+    """반투명 색을 종이 위에 미리 섞은 불투명색 (반투명 레이어를 만들지 않는다)"""
+    return "#" + "".join(f"{round(p * (1 - a) + c * a):02x}" for p, c in zip(_P, rgb))
+
+
 N300, N400, N500, N600, N700, N800 = "#d7d3d3", "#bab6b6", "#9b9797", "#7d7979", "#605d5d", "#444141"
 CYAN, CYAN700, CYAN800 = "#0088b0", "#006786", "#004961"
-CYAN40 = "#95c9d9"          # 시안 40% 를 종이 위에 미리 섞은 불투명색 (반투명 레이어를 만들지 않는다)
-CYAN6 = "#e9eef0"
+CYAN40 = _on_paper((0, 136, 176), .40)   # 옛 종이에서 #95c9d9 -- 종이가 바뀌면 같이 바뀐다
+CYAN6 = _on_paper((0, 136, 176), .06)    # 옛 종이에서 #e9eef0
 MAG = "#d6006c"
 PLATE = "2.5px 2px 0 rgba(214,0,108,.45)"   # 번짐 없는 text-shadow = 벡터 사본 한 벌
 BT, BTR = '<span class="bt"></span>', '<span class="bt r"></span>'   # 칸 / 동그라미
@@ -461,6 +473,27 @@ def grid_svg(w, h, step=17):
 
 
 # -------------------------------------------------------------------- chrome --
+def paper_background(src_png, dst_jpg):
+    """E.shift_background 와 같은 이동(탭 자리) + 종이색 W1. PNG 마스터에서 한 번만 JPEG 으로 (두 번 압축하지 않는다).
+    색은 전체를 같은 만큼 옮긴다(+5,+8,+6): 종이 -> W1, 책상·그림자도 같은 만큼 -> 그림자 깊이 그대로.
+    구석 하이라이트(252,251,251)는 255 에서 잘린다 -- 거의 흰 종이라 원래 보이지 않는 차이"""
+    import numpy as np
+    from PIL import Image
+    im = Image.open(src_png).convert("RGB")
+    w, h = im.size
+    d = E.SHIFT * 2
+    out = Image.new("RGB", (w, h))
+    out.paste(im.crop((d, 0, w, h)), (0, 0))
+    out.paste(im.crop((w - 1, 0, w, h)).resize((d, h)), (w - d, 0))
+    a = np.asarray(out).astype(np.int16) + np.array([p - q for p, q in zip(_P, PAPER_HAND)], dtype=np.int16)
+    out = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
+    out.save(dst_jpg, quality=90, optimize=True)
+    # 검사: 종이 한가운데가 W1, 책상에 분홍기 없음 (JPEG 오차 1~2)
+    c = out.getpixel((w // 2, h // 2)); desk = out.getpixel((10, h // 2))
+    if max(abs(x - y) for x, y in zip(c, _P)) > 2 or desk[0] - desk[1] > 1:
+        raise SystemExit(f"배경 종이색 {c} (기대 {_P}), 책상 {desk}")
+
+
 def rail(on):
     out = []
     for k, t in TABS:
@@ -690,6 +723,16 @@ TRK_FILL_JS = r"""
 #  FIT:   칸보다 긴 줄은 뺀다 -- 칸 밖으로 삐져나온 줄이 다음 라벨에 붙었다(월 계획 Dates 6번째 줄)
 #  SNAP:  상품 1 도구의 줄 묶음 높이는 34px 배수, 다음 라벨은 16px 아래. 자투리는 칸 맨 아래로
 LABEL_GAP = 16
+# 목차 Year at a glance 알약 6개 = 가장 긴 것(LIFE ADMIN RADAR) 폭, 왼쪽 정렬 (사용자 D안 2026-09-27). Goals·Q 는 그대로
+EQ_JS = r"""
+() => {
+  const cs = [...document.querySelectorAll('.chips.sub.eq .chip')];
+  if (!cs.length) return [];
+  const m = Math.ceil(Math.max(...cs.map(c => c.getBoundingClientRect().width)));
+  cs.forEach(c => { c.style.boxSizing = 'border-box'; c.style.width = m + 'px'; });
+  return cs.map(c => Math.round(c.getBoundingClientRect().width));
+}
+"""
 GAP_JS = r"""
 (G) => {
   let aligned = 0, fitted = 0, snapped = 0;
@@ -818,7 +861,7 @@ def build():
     (SRC / "bg").mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
     for s in ("a", "b"):
-        E.shift_background(E.HAND / "backgrounds" / f"sheet-{s}-2x.png", SRC / "bg" / f"sheet-{s}-2x.jpg")
+        paper_background(E.HAND / "backgrounds" / f"sheet-{s}-2x.png", SRC / "bg" / f"sheet-{s}-2x.jpg")
     sp = specs()
     ids = [k for k, _ in sp]
     pages = "".join(page(k, fn(), i + 1) for i, (k, fn) in enumerate(sp))
@@ -882,6 +925,10 @@ def build():
         if tf[2]:
             raise SystemExit(f"기록표 더한 행 높이가 원래와 다르다 {tf[2]}")
         print(f"  괘선 채움: 칸 {filled[0]}개에 {filled[1]}줄")
+        eq = pg.evaluate(EQ_JS)
+        if eq and len(set(eq)) != 1:
+            raise SystemExit(f"목차 Year 알약 폭이 다르다 {eq}")
+        print(f"  목차 Year 알약 같은 폭: {len(eq)}개 {eq[:1]}px")
         lay = pg.evaluate(LAYOUT_JS)
         if lay:
             raise SystemExit(f"레이아웃 결함 {len(lay)}개 {lay[:6]}")
