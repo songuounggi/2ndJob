@@ -181,6 +181,17 @@ For personal use. Please do not resell or redistribute the files.
 
 ## 리스팅 이미지 — **확정 10장** `output/prod3/listing/draft-v0.31/` (2026-09-27 사용자: 구성 -- 10 Works anywhere 뺌, 스티커 7번째 / 배경 -- 01 청록 띠 V1(OKLab), 나머지 리소 원 + 스티커 소품, 페이지 책상 투명)
 
+### ⚠ 다음 할 일 2 — GoodNotes 스티커북(.collection) 추가 (2026-09-27 사용자: "스티커북으로 하지 그랬어")
+
+1위 경쟁작 Manifestable 은 PNG 200+ **와 GoodNotes 스티커북**을 준다(`product3-research.md` 6-7). 우리는 PNG 만 -- 구매자가 한 장씩 넣어야 한다.
+**`.goodnotes` / `.collection` 은 GoodNotes 앱만 만든다(비공개 형식) -> PC 스크립트로 불가, 사용자가 iPad 에서 한 번 만든다.**
+1. (사용자, iPad) 스티커 ZIP 풀기 -> GoodNotes Elements -> + -> 이름 -> Import from… -> PNG 여러 장 -> Create. 묶음별로 몇 개 컬렉션
+   (예: Experiments & Energy / Brain weather & Mini & Icons / Focus & Feelings & Body / Life admin & Time & Status & Small wins & 나머지)
+2. (사용자) 컬렉션마다 … -> Share -> `.collection` 파일을 PC 로 (Goodnotes 도움말 "Create, Use, and Share Elements": "The recipient can import the collection file")
+3. (Claude) ZIP 에 `.collection` 추가, 안내서 5쪽을 ".collection 파일을 누르면 바로 들어간다"로(도움말 확인 후), 설명 WHAT YOU GET·Stickers 줄·대조표,
+   check_listing_p3 에 .collection 개수 검사 -> **ZIP 만 새 판**(`upload/p3-v0.24/` 등)으로 Etsy 교체 + `shop.md` 이력
+4. **판매 0건일 때 바꿔야 모든 구매자가 받는다**(파일 교체는 새 구매자만 -- RELEASE.md 4절)
+
 ### ⚠ 다음 할 일 (2026-09-28 회사 PC) — 리스팅 이미지 제목이 너무 작다 (사용자, 폰 Etsy 앱에서 확인)
 
 **증상 (2026-09-27 밤, iPhone Etsy 앱):** 숍 목록 썸네일(폭 약 200pt)에서 제목 "The ADHD Year" 가 거의 안 읽히고,
