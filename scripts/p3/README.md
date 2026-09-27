@@ -104,3 +104,11 @@ python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.
 - 청록 테두리 알약은 없다. 리드 칸(청록은 리드 항목만 -- 핸드오프 README)의 청록은 **제목·괘선·"1"·옅은 배경**뿐이고 알약은 목록에 없다.
   v0.1~v0.20 에 `.lead .chip` 청록 테두리가 있었다(핸드오프에 없던 것). v0.21 에서 삭제, `check_plan_p3.py` 가 잡는다
 - 한 페이지 이야기는 그 페이지만 고친다 -- mailbox 만 "바퀴벌레 같다" 했는데 전체 `.chip.note` 를 바꿔 일간까지 청록이 됐었다(v0.15~v0.19)
+
+## 안내서·스티커 상태 (2026-09-27)
+
+- **안내서 draft-v0.4 확정** (사용자 "이상 없으면 이걸로"). 공식 도움말과 대조: Etsy 다운로드(앱 불가·Your account → Purchases → Download Files·"generally no limits"),
+  Goodnotes 가져오기(Share → Open in Goodnotes → New Document → Import to…, + New → Import), 무료 플랜 5 MB(FAQ 의 free-plan limits),
+  Read Only Mode(Nav Bar 아이콘, 길게 눌러 Open Link, Edit Mode), Elements 컬렉션(+ → Title → Import from… → Create), Notability(+ New 길게 → Import).
+  1쪽이 "스티커 ZIP" 을 전제로 한다 -> 판매 파일 5번째 = ZIP
+- 스티커 draft-v0.6: 실사용 목업 `scripts/p3/sticker_mockup_p3.py` -> `output/prod3/preview/sticker_mockup/`. 리스팅 이미지 한 장 후보(사용자)
