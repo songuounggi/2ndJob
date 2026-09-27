@@ -172,7 +172,7 @@ For personal use. Please do not resell or redistribute the files.
 | Ten tabs ... every page | 탭 이름 10개, 표지 제외 전 페이지에 레일 | ✔ |
 | Every day two taps away – Year, then the date | Year at a glance 미니 달력의 날짜가 일간으로 링크 | ✔ |
 | Only worldwide dates printed (6개, NCW 포함) | `p3_content.holidays()` + 인쇄 검사(미국 공휴일 0). NCW 날짜는 neurodiversityweek.com 공식(2026-03-16, 2027-03-15) | ✔ |
-| Works in GoodNotes, Notability, Xodo, Acrobat | 상품 1 `listing.md` 와 같은 범위 | △ 상품 3 파일은 **iPad GoodNotes 실기기 확인 전** — 사용자 확인 후 확정 |
+| Works in GoodNotes, Notability, Xodo, Acrobat | 상품 1 `listing.md` 와 같은 범위. 상품 3 v0.23 **iPad GoodNotes 사용자 확인 2026-09-27** (종이·탭·목차·모서리·알약) | ✔ GoodNotes / 나머지 앱은 상품 1 과 같은 범위 |
 | pages shaped for a tablet (3:4), not for printing | 768×1024px = 576×768pt | ✔ (인쇄를 약속하지 않는다 — 상품 1 은 US Letter 였다) |
 | not medical advice | 의학 주장 검사 `p3_content.check()` | ✔ |
 | Each file about 7.7 MB; free Goodnotes imports up to 5 MB | v0.8 파일 7.68MB / support.goodnotes.com 7353717816463 "Free users ... 5Mb per file" (원문 직접 확인) | ✔ (A안, 2026-09-26 사용자 확정) |

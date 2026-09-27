@@ -212,3 +212,11 @@ neurodiversityweek.com 공식 값으로 추가 -- 없으면 빌드가 멈춘다 
    걸린 페이지 + 종류별 표본을 렌더해 눈으로 보고, 페이지 번호·그림·iPad 확인 목록으로 보고. **디자인은 고치지 않는다.**
    기존 `line-auditor`·`design-critic` 과 합치거나 역할 정리
 5. 그때 `CLAUDE.md` "모든 상품은 공용 PDF 검사를 통과해야 올린다" 절을 커밋한다 (지금 작업 사본에만 있다)
+
+## 출시 판 v0.23 (2026-09-27)
+
+- 플래너 `output/prod3/upload/v0.23/` PDF 4개(각 598쪽 7.73MB) + `ADHD-Year-Planner-Stickers-and-Guide.zip`(스티커 draft-v0.8 253개 + 안내서 draft-v0.5, 2.09MB)
+- 검수 `output/prod3/qa/v0.23/report.md` 5-1~6 전부 통과 (5-5 렌더 평균 155ms = 확정 예외 한도 160ms 안)
+- **iPad GoodNotes 사용자 확인 2026-09-27: 문제 없음** (W1 종이, 2쪽 탭 없음, 3쪽 목차 알약, 모서리, 메모 알약). **스티커 실기기(처음 크기·돌리기)는 아직** -- 사용자 "일단 올리자"
+- 리스팅 이미지 `output/prod3/listing/draft-v0.31/` 10장, 입력 시트 `output/prod3/listing/etsy_entry_v0.23.txt`
+- 올린 뒤 고치면 기존 구매자는 옛 파일 그대로다(RELEASE.md 4절) -- 스티커 확인은 되도록 첫 판매 전에
