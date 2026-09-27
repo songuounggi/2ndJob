@@ -13,7 +13,8 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts" / "p3"))
-DRAFT = "draft-v0.4"   # v0.4 = 공식 도움말 대조 문구 3곳 (Etsy "generally no limits", Goodnotes "Edit Mode", Notability "press and hold + New") -- 사용자 2026-09-27
+DRAFT = "draft-v0.5"   # v0.5 = 5쪽 스티커 크기·돌리기 안내 한 줄 (올가미 + 손잡이, Goodnotes Lasso 도움말) -- 사용자
+# v0.4   # v0.4 = 공식 도움말 대조 문구 3곳 (Etsy "generally no limits", Goodnotes "Edit Mode", Notability "press and hold + New") -- 사용자 2026-09-27
 # v0.3   # v0.3 = 단계 문구를 원형 숫자와 세로 가운데 맞춤 (사용자). 행 높이·간격 그대로
 # v0.2   # v0.2 = 종이색 W1 #fdfcfa (플래너 v0.22 와 같게, 사용자 2026-09-27)
 OUT = ROOT / "output" / "prod3" / "guide" / DRAFT
@@ -101,6 +102,7 @@ PAGES = [
         + step(2, "Scroll to the end of the collection list and tap the <b>+</b>.")
         + step(3, f"Give the collection a name, then choose {ui('Import from…')} and select the sticker PNGs from the unzipped folder.")
         + step(4, f"Tap {ui('Create')}. Now tap a sticker, or drag it onto the page.")
+        + '<div class="tip"><b>To resize or turn a sticker,</b> select it with the <b>Lasso</b> (with Images on) and drag the handles.</div>'
         + '<div class="lab">Need help?</div>'
           '<p style="font-size:17px;line-height:1.5">Message me on Etsy. If anything is wrong with a file, I will fix it.</p>'
         + '<p style="font-size:13px;color:#605d5d;margin-top:18px;line-height:1.5">Using Notability or another app? Import the PDF the same way '

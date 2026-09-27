@@ -107,7 +107,7 @@ python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.
 
 ## 안내서·스티커 상태 (2026-09-27)
 
-- **안내서 draft-v0.4 확정** (사용자 "이상 없으면 이걸로"). 공식 도움말과 대조: Etsy 다운로드(앱 불가·Your account → Purchases → Download Files·"generally no limits"),
+- **안내서 draft-v0.5 확정** (v0.4 사용자 "이상 없으면 이걸로" + 5쪽 스티커 크기·돌리기 한 줄, 사용자). 공식 도움말과 대조: Etsy 다운로드(앱 불가·Your account → Purchases → Download Files·"generally no limits"),
   Goodnotes 가져오기(Share → Open in Goodnotes → New Document → Import to…, + New → Import), 무료 플랜 5 MB(FAQ 의 free-plan limits),
   Read Only Mode(Nav Bar 아이콘, 길게 눌러 Open Link, Edit Mode), Elements 컬렉션(+ → Title → Import from… → Create), Notability(+ New 길게 → Import).
   1쪽이 "스티커 ZIP" 을 전제로 한다 -> 판매 파일 5번째 = ZIP
