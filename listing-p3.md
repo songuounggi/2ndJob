@@ -179,7 +179,7 @@ For personal use. Please do not resell or redistribute the files.
 
 ---
 
-## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.25/` (2026-09-27 구성 확정: 10 Works anywhere 뺌, 스티커 7번째 -- 사용자)
+## 리스팅 이미지 — **확정 10장** `output/prod3/listing/draft-v0.31/` (2026-09-27 사용자: 구성 -- 10 Works anywhere 뺌, 스티커 7번째 / 배경 -- 01 청록 띠 V1(OKLab), 나머지 리소 원 + 스티커 소품, 페이지 책상 투명)
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.
 아래 표의 07~09 는 옛 번호(v0.18)다 -> 지금 08~10. 옛 10(Works anywhere) 의 "세계 공통 날짜만 인쇄·My holidays·노트 4종" 은 설명문에서 말한다.
