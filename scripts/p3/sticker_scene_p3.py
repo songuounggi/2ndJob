@@ -16,7 +16,7 @@ from playwright.sync_api import sync_playwright
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.7"   # v0.7 = 플래너 v0.23 페이지(모서리 하이라이트 고침) / v0.6 v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
+DRAFT = "draft-v0.8"   # v0.8 = full 배치 배경 투명 -- 리스팅 07 의 리소 원이 장면 네모에 잘렸다 / v0.7 v0.7 = 플래너 v0.23 페이지(모서리 하이라이트 고침) / v0.6 v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
 # v0.3   # v0.3 = 손글씨 대조: 금요일 "keep it for March" -> 분기 흐름대로 "keeper → Q1 review", Brain dump "2-min rule next wk"(7주차) -> 13주차 실제 실험 "decide once", 책상 위 NOT FOR ME -> IN MY PLAYBOOK (광고에 부정어 X)
 # v0.2   # v0.2 = 형광펜을 "due Fri!" 위로, Top 3 글자가 체크에 가리지 않게, 연필이 Brain dump 를 덜 덮게, 수요일 글 왼쪽으로
 PLANNER, STICKERS = "v0.23", "draft-v0.8"
@@ -42,7 +42,7 @@ LAYOUTS = {
                           loose=[("Experiments/in-my-playbook_deep.png", 30, 70, 100, -12), ("Energy/recharge_deep.png", 1380, 36, 96, 9),
                                  ("Experiments/sort-of_stone.png", 1720, 110, 170, 12)],
                           pencil="left:1380px;top:1900px;width:760px;height:44px;transform:rotate(-24deg)"),
-    "sticker_scene_full": dict(CW=1480, CH=1110, SW=716, BZ=20, Y0=24, shadow="0 22px 40px rgba(40,30,20,.26),0 6px 14px rgba(40,30,20,.16)", R=46, SR=26, bg="#e9e6e3",   # 리스팅 배경과 같은 색
+    "sticker_scene_full": dict(CW=1480, CH=1110, SW=716, BZ=20, Y0=24, shadow="0 22px 40px rgba(40,30,20,.26),0 6px 14px rgba(40,30,20,.16)", R=46, SR=26, bg="transparent",   # 리스팅 배경과 같은 색
                                loose=[("Experiments/in-my-playbook_deep.png", 20, 110, 62, -12), ("Energy/recharge_deep.png", 70, 470, 58, 8),
                                       ("Brain-weather/great_ink.png", 130, 760, 150, -6), ("Experiments/sort-of_stone.png", 1195, 90, 165, 12),
                                       ("Small-wins/tiny-step_blush.png", 1200, 500, 54, -8), ("Experiments/keep_mist.png", 1210, 800, 64, 6)],
@@ -130,7 +130,7 @@ body{{width:{L["CW"]}px;height:{L["CH"]}px;overflow:hidden;position:relative;bac
         f.write_text(page_html, encoding="utf-8")
         b = br.new_page(viewport={"width": L["CW"], "height": L["CH"]})
         b.goto(f.as_uri()); b.evaluate("document.fonts.ready"); b.wait_for_timeout(1200)
-        b.screenshot(path=str(OUT / f"{name}.png"))
+        b.screenshot(path=str(OUT / f"{name}.png"), omit_background=L["bg"] == "transparent")
         b.close()
         print(OUT / f"{name}.png")
     br.close()
