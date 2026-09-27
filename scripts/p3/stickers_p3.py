@@ -13,7 +13,9 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.6"   # v0.6 = ✓ ~ ✗ 아이콘 가운데 맞춤(80칸에서 왼쪽 위로 4~8 쏠림, 사용자) + 종이색 W1 #fdfcfa (플래너 v0.22 와 같게)
+DRAFT = "draft-v0.8"   # v0.8 = 깃발 스티커 외곽선이 잘리던 것(v0.7 DROP·KEEP) 고침
+# v0.7   # v0.7 = 흰(종이색) 스티커에 옅은 회색 외곽선 -- 흰 페이지에서 모양이 사라졌다 (사용자 B안)
+# v0.6   # v0.6 = ✓ ~ ✗ 아이콘 가운데 맞춤(80칸에서 왼쪽 위로 4~8 쏠림, 사용자) + 종이색 W1 #fdfcfa (플래너 v0.22 와 같게)
 # v0.5   # v0.4 전체 키트 -> v0.5 스티커 검수 반영: 작은 칸용 아이콘·색 점·Top 3, 요일·월·시간링크 중복 삭제, 문구를 플래너에 맞춤
 OUT = ROOT / "output" / "prod3" / "stickers" / DRAFT
 if OUT.exists():
@@ -21,6 +23,7 @@ if OUT.exists():
 (OUT / "sheets").mkdir(parents=True)
 
 PAPER, INK, N700, CYAN, CYAN7 = "#fdfcfa", "#201e1d", "#605d5d", "#0088b0", "#006786"
+N300 = "#d7d3d3"   # 플래너 괘선과 같은 색
 # 색 조합: 핸드오프 팔레트만. 이름 -> (바탕, 글자, 어긋난 판)
 WAYS = {
     "paper": ("#fdfcfa", "#201e1d", "rgba(214,0,108,.55)"),
@@ -202,6 +205,11 @@ h1{{font-size:56px;font-weight:600}} .sub{{font-size:28px;font-style:italic;colo
 .st.tag{{border-radius:0 12px 12px 0;box-shadow:none;clip-path:polygon(18px 0,100% 0,100% 100%,18px 100%,0 50%);padding:14px 26px 14px 38px}}
 .t{{font-size:30px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;text-shadow:2.5px 2px 0 var(--plate)}}
 .t.sm{{font-size:22px}} .t.sm2{{font-size:16px;letter-spacing:.2em;opacity:.8}}
+/* 흰(종이색) 스티커 외곽선: 흰 테두리 바깥을 N300 으로 한 번 -- 모양 그대로 따라간다(알약·원·태그 모두). 사용자 B안 2026-09-27 */
+.cell.w-paper > *{{filter:drop-shadow(1.5px 0 0 {N300}) drop-shadow(-1.5px 0 0 {N300}) drop-shadow(0 1.5px 0 {N300}) drop-shadow(0 -1.5px 0 {N300})}}
+/* 깃발(tag)은 자기 clip-path 가 외곽선을 잘라서, 한 겹 바깥(cell)에 건다 */
+.cell.w-paper > .tagw{{filter:none}} .sheet .cell.w-paper > .tagw{{filter:drop-shadow(0 10px 10px rgba(0,0,0,.14))}}
+.cell.w-paper:has(> .tagw){{filter:drop-shadow(1.5px 0 0 {N300}) drop-shadow(-1.5px 0 0 {N300}) drop-shadow(0 1.5px 0 {N300}) drop-shadow(0 -1.5px 0 {N300})}}
 .blank{{display:inline-block;width:110px;border-bottom:3px solid currentColor;height:28px;vertical-align:bottom}}
 """ + "".join(f".w-{k}{{--bg:{b};--fg:{f};--plate:{pl}}}" for k, (b, f, pl) in WAYS.items())
 
