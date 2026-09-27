@@ -267,6 +267,32 @@ $env:PLANNER_VERSION="v7-bright"; python scripts/build_planner.py
 
 ---
 
+## 상품 3 (The ADHD Year) 다시 뽑기 — 2026-09-27 집 PC 에서 출시
+
+상품 3 은 `scripts/p3/` 만 쓴다(`scripts/p3/README.md`). 결과물(output/·src/)은 git 밖이라 **다른 PC 에서는 다시 뽑는다.**
+
+**필요한 것:** `ADHD Planner 디자인 컨셉_v0.1/` 폴더(디자인 핸드오프, git 에 있다 -- `editions_build.py` 의 `HAND`),
+`pip install playwright pymupdf pypdfium2 pikepdf numpy pillow` + `playwright` 가 쓰는 설치된 Chrome(channel="chrome"),
+인터넷(Google Fonts: Source Serif 4, 손글씨 Caveat).
+
+```bash
+# 플래너 네 판 (VERSION 은 planner_build.py 안에 있다. 이미 있는 판이면 멈춘다 -- 고치면 VERSION 을 올린다)
+python scripts/p3/planner_build.py 2026 mon
+python scripts/p3/planner_build.py 2026 sun
+python scripts/p3/planner_build.py 2027 mon
+python scripts/p3/planner_build.py 2027 sun
+python scripts/p3/run_qa_p3.py <VERSION>          # 검수 5-1~6 -> output/prod3/qa/<VERSION>/report.md
+python scripts/p3/stickers_p3.py                   # 스티커 (DRAFT 폴더가 있으면 멈춘다)
+python scripts/p3/guide_p3.py                      # 설치 안내서
+python scripts/p3/sticker_scene_p3.py              # 스티커 실사용 장면 (리스팅 07)
+python scripts/p3/listing_images_p3.py             # 리스팅 이미지 10장
+python scripts/p3/check_listing_p3.py <VERSION>    # 원고 <-> 파일 대조
+```
+
+**Etsy 에 올린 판 `p3-v0.23` 원본은 집 PC 의 `output/prod3/upload/v0.23/` 에만 있다.** 다른 PC 에서 같은 코드로
+다시 뽑아도 PDF 바이트가 같다는 보장은 없다(`check_upload.py` 의 상품 3 줄이 그 PC 에서는 FAIL 할 수 있다 --
+결함이 아니라 원본이 없는 것). 파일을 고쳐 Etsy 에서 바꿀 일이 생기면 **VERSION 을 올려** 새로 뽑고 `upload/<새 버전>/` 에 넣는다.
+
 ## 회사 PC ↔ 집 노트북 오가기
 
 | PC | 작업 폴더 | 방 이름 예 |
