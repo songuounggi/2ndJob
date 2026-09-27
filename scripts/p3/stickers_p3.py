@@ -13,7 +13,7 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.4"   # 전체 키트 첫 판 (고유 약 130종)
+DRAFT = "draft-v0.5"   # v0.4 전체 키트 -> v0.5 스티커 검수 반영: 작은 칸용 아이콘·색 점·Top 3, 요일·월·시간링크 중복 삭제, 문구를 플래너에 맞춤
 OUT = ROOT / "output" / "prod3" / "stickers" / DRAFT
 if OUT.exists():
     raise SystemExit(f"{OUT} 는 이미 있다. 덮어쓰지 않는다 -- DRAFT 를 올릴 것.")
@@ -101,21 +101,19 @@ def plate_svg(inner, off=3):
 # (글자, 아이콘, 모양)  모양: pill / round / tag / blank / icon / ticket / tab / wx
 KIT = {
     "Experiments": [("Helped", "check", "round"), ("Sort of", "tilde", "round"), ("Not for me", "cross", "round"),
-                    ("Keep", None, "tag"), ("Drop", None, "tag"), ("Try again", "back", "pill"), ("Bonus week", "star", "pill"),
+                    ("Keep", None, "tag"), ("Drop", None, "tag"), ("Try again", "back", "pill"),
                     ("In my playbook", "bookmark", "pill"), ("Experiment #", None, "blank"), ("New strategy", "spark", "pill")],
     "Brain weather": [("Rough", "storm", "wx"), ("Low", "rain", "wx"), ("Okay", "cloud", "wx"), ("Good", "part", "wx"),
                       ("Great", "sun", "wx"), ("Foggy", "fog", "wx"), ("Scattered", "spark", "pill"), ("Wired", "bolt", "pill"),
                       ("Flat", None, "pill"), ("Calm", "leaf", "pill")],
     "Energy": [("", "bat1", "icon"), ("", "bat2", "icon"), ("", "bat3", "icon"), ("", "bat4", "icon"), ("", "bat5", "icon"),
                ("Low battery day", "bat1", "pill"), ("Recharge", "bolt", "pill")],
-    "Time": [("+15 buffer", "clock", "pill"), ("Leave at", None, "blank"), ("Timer on", "timer", "pill"), ("Hard stop", "pause", "pill"),
-             ("Due", None, "blank"), ("Later than you think", "clock", "pill"), ("5-minute start", "timer", "pill"),
-             ("Two-minute rule", None, "pill"), ("Alarm set", "bolt", "pill"), ("Waiting mode", "clock", "pill")],
-    "Time links": [("To future me", "envelope", "pill"), ("Arrived", None, "round"), ("From yesterday", "back", "pill"),
-                   ("Tomorrow starts with", "arrow", "pill"), ("Note to self", "envelope", "pill"), ("Year-end mailbox", "mailbox", "pill")],
+    "Time": [("+15 buffer", "clock", "pill"), ("Leave at", None, "blank"), ("Timer sprints", "timer", "pill"), ("Hard stop", "pause", "pill"),
+             ("Due", None, "blank"), ("Later than you think", "clock", "pill"), ("Five-minute start", "timer", "pill"),
+             ("Two-minute rule", None, "pill"), ("Alarm set", "bolt", "pill"), ("Waiting mode", "clock", "pill"), ("Not today", "cross", "pill")],
     "Focus": [("Body doubling", "people", "pill"), ("One thing", "target", "pill"), ("Brain dump", "brain", "pill"),
-              ("Phone away", "phone", "pill"), ("Single tab", None, "pill"), ("Deep work", "target", "pill"),
-              ("Hyperfocus zone", "bolt", "pill"), ("Break time", "pause", "pill")],
+              ("Phone in another room", "phone", "pill"), ("Single tab", None, "pill"), ("Deep work", "target", "pill"),
+              ("Hyperfocus", "bolt", "pill"), ("Break time", "pause", "pill")],
     "Small wins": [("Did the thing", "check", "pill"), ("Started counts", "arrow", "pill"), ("Tiny step", None, "pill"),
                    ("Showed up", "star", "pill"), ("Good enough", "check", "pill"), ("Done is good", None, "pill"),
                    ("Rest counts", "moon", "pill"), ("Asked for help", "chat", "pill"), ("Proud of this", "heart", "pill"), ("Win", "star", "round")],
@@ -123,7 +121,7 @@ KIT = {
                  ("Stop · Think · Act", None, "pill"), ("It's okay", None, "pill"), ("Overwhelmed", "storm", "pill"),
                  ("Needs rest", "moon", "pill"), ("Breathe", "leaf", "pill")],
     "Body": [("Meds", "pill", "pill"), ("Water", "drop", "pill"), ("Moved", "shoe", "pill"), ("Slept", "moon", "pill"),
-             ("Doctor", "steth", "pill"), ("Therapy", "chat", "pill"), ("Ate a real meal", None, "pill"), ("Outside", "sun", "pill")],
+             ("Doctor", "steth", "pill"), ("Therapy", "chat", "pill"), ("Ate a real meal", None, "pill"), ("Outside", "sun", "pill"), ("Refill", "pill", "pill")],
     "Life admin": [("ADHD tax $", "coin", "blank"), ("Bill due", "bill", "pill"), ("Renewal", "back", "pill"), ("Payday", "coin", "pill"),
                    ("Cancel it", "cross", "pill"), ("Doom pile cleared", "box", "pill"), ("Laundry", None, "pill"),
                    ("Groceries", "cart", "pill"), ("Clear one zone", "box", "pill"), ("Where I put it", "pin", "pill")],
@@ -134,8 +132,10 @@ KIT = {
     "Anywhere": [("Public holiday", None, "blank"), ("Day off", "sun", "pill"), ("School break", None, "pill"),
                  ("Birthday", "cake", "blank"), ("Appointment", "cal", "blank"), ("Trip", "plane", "pill"),
                  ("Celebrate", "gift", "pill"), ("Deadline", "flag", "pill")],
-    "Days & months": [(d, None, "tab") for d in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",
-                                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]],
+    # 작은 칸용 -- 글자 없이 (금요일 판정 줄 25px, Brain weather 칸 18x26px, 52 experiments 칸 27x24px 에도 읽힌다)
+    "Mini": [("", k, "icon") for k in ["check", "tilde", "cross", "sun", "part", "cloud", "rain", "storm"]],
+    "Year in pixels": [(str(n), None, "num") for n in range(1, 6)],     # 8쪽 범례 1-5 -- 색 점
+    "Top 3": [(str(n), None, "num") for n in range(1, 4)],
     "Icons": [("", k, "icon") for k in ["star", "flag", "pin", "bolt", "check", "arrow", "heart", "spark", "bookmark", "target"]],
 }
 
@@ -146,6 +146,10 @@ def colorways(group, i, shape):
         return [["cyan", "paper"], ["stone", "paper"], ["ink", "blush"]][i]
     if shape == "tab":
         return [WK[i % len(WK)]]
+    if group == "Year in pixels":                      # 1-5 가 한 눈에 단계로 보이게 -- 옅은 색에서 진한 색으로
+        return [["paper", "mist", "cyan", "deep", "ink"][i]]
+    if group == "Top 3":
+        return ["ink", "cyan"]
     return [WK[i % len(WK)], WK[(i + 3) % len(WK)]]
 
 
@@ -167,6 +171,8 @@ def sticker(text, icon, shape):
         return f'<div class="st ticket"><span class="t sm2">Dopamine</span><span class="t">{text}</span></div>'
     if shape == "tab":
         return f'<div class="st tab"><span class="t">{text}</span></div>'
+    if shape == "num":
+        return f'<div class="st num"><span class="t">{text}</span></div>'
     return f'<div class="st">{ic}{t}</div>'
 
 
@@ -188,6 +194,7 @@ h1{{font-size:56px;font-weight:600}} .sub{{font-size:28px;font-style:italic;colo
 .st.wx{{flex-direction:column;gap:2px;padding:16px 20px}} .st.wx svg{{width:70px;height:70px}}
 .st.ico{{padding:16px}} .st.ico svg{{width:76px;height:76px}}
 .st.tab{{border-radius:14px;padding:10px 20px}}
+.st.num{{border-radius:50%;width:74px;height:74px;justify-content:center;padding:0}} .st.num .t{{font-size:34px;letter-spacing:0}}
 .st.ticket{{flex-direction:column;gap:0;padding:14px 30px;border-radius:14px}}
 .tagw{{display:inline-block;background:#fff;padding:9px;clip-path:polygon(22px 0,100% 0,100% 100%,22px 100%,0 50%);border-radius:0 18px 18px 0}}
 .sheet .tagw{{filter:drop-shadow(0 10px 10px rgba(0,0,0,.14))}}
