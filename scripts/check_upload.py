@@ -21,6 +21,8 @@ sys.stdout.reconfigure(encoding="utf-8")   # 한국어 Windows 콘솔은 cp949
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # output 은 상품별 폴더 (2026-09-25). 상품 2 = student-*, 나머지 = 상품 1.
 def prod_dir(ver):
+    if ver.startswith("p3-"):          # 상품 3 (2026-09-27): 버전 p3-v0.23 -> output/prod3
+        return os.path.join(ROOT, "output", "prod3")
     return os.path.join(ROOT, "output", "prod2" if ver.startswith("student") else "prod1")
 
 md = open(os.path.join(ROOT, "shop.md"), encoding="utf-8").read()
@@ -30,7 +32,7 @@ rows = []
 for n, rest in re.findall(r"^\|\s*(\d+)\s*\|(.+)$", sec, re.M):
     cells = [c.strip() for c in rest.split("|")]
     ver = re.search(r"`([^`]+)`", cells[1]).group(1)
-    name = re.search(r"`([^`]+\.pdf)`", cells[2])
+    name = re.search(r"`([^`]+\.(?:pdf|zip))`", cells[2])
     uploaded = bool(re.match(r"\d{4}-\d{2}-\d{2}", cells[0]))
     rows.append((ver, name.group(1) if name else None,
                  int(cells[3].replace(",", "")), uploaded))
@@ -46,14 +48,19 @@ def size(p):
 
 for ver, name, want, uploaded in rows:
     tag = ver + ("" if uploaded else " (올리기 전)")
-    got = size(os.path.join(prod_dir(ver), f"planner_{ver}-FINAL.pdf"))
-    report(got == want, f"{tag}: 작업본 FINAL {got and f'{got:,}'} B  expect {want:,}")
+    if ver.startswith("p3-"):          # 상품 3 작업본: output/prod3/planner/<v>/<이름> (ZIP 은 작업본이 따로 없다)
+        work = os.path.join(prod_dir(ver), "planner", ver[3:], name) if name and name.endswith(".pdf") else None
+    else:
+        work = os.path.join(prod_dir(ver), f"planner_{ver}-FINAL.pdf")
+    if work:
+        got = size(work)
+        report(got == want, f"{tag}: 작업본 {os.path.basename(work)} {got and f'{got:,}'} B  expect {want:,}")
     if not uploaded:
         continue
     if not name:
         print(f"  ??    {tag}: Etsy 파일 이름 미확인 -- 폴더 대조 불가")
         continue
-    folder = ver.replace("-undated", "")   # 폴더 이름은 v8.18, v8.20 처럼 짧게
+    folder = ver.replace("-undated", "").replace("p3-", "")   # 폴더 이름은 v8.18, v8.20, v0.23 처럼 짧게
     got = size(os.path.join(prod_dir(ver), "upload", folder, name))
     report(got == want, f"{tag}: {os.path.basename(prod_dir(ver))}/upload/{folder}/ {got and f'{got:,}'} B  expect {want:,}")
 

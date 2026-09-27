@@ -20,7 +20,7 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 |---|---|
 | 숍 이름 | `SongAndParkStudio` |
 | 개설 | 2026 |
-| 리스팅 | **2개.** 상품 1 — 2026-09-21 발행 (`listing/4579443848`). **상품 2 학생 플래너 — 2026-09-24 발행 (`listing/4581765488`)**. 올린 파일은 아래 "업로드 이력" |
+| 리스팅 | **3개.** **상품 3 The ADHD Year -- 2026-09-27 발행 (listing 번호 확인 필요), $19.99, 세일 `YEAR35` 35% 09-27~10-26.** 상품 1 — 2026-09-21 발행 (`listing/4579443848`). **상품 2 학생 플래너 — 2026-09-24 발행 (`listing/4581765488`)**. 올린 파일은 아래 "업로드 이력" |
 | 판매 / Admirers | **1** / 미확인 (2026-09-24 기준. 판매 목록은 0-1절 아래) |
 | 판매자 상태 | `Private individual` (사업자 아님, 맞게 설정됨) |
 | 지역 | South Korea |
@@ -56,8 +56,13 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 | 2 | 2026-09-23 | `v8.18-undated` | `ADHD-Wellness-Planner-Undated-502-pages.pdf` | 19,599,557 | 502 | 현재 코드로 v8.18 빌드 → dedupe → `upload/v8.18/` |
 | 3 | 2026-09-24 | `v8.20-undated` | `ADHD-Wellness-Planner-Undated-502-pages.pdf` (#2 와 같은 이름) | 16,517,551 | 502 | v8.20 빌드 → dedupe → `upload/v8.20/`. GoodNotes 바둑판 렌더링 + 도트 그리드 수정 |
 | 4 | 2026-09-24 | `student-v1.1` | `ADHD-Student-Planner-Undated-437-pages.pdf` | 15,464,001 | 437 | **상품 2 (새 리스팅).** `PLANNER_VERSION=student-v1.1` 빌드 → dedupe → `upload/student-v1.1/`. 새 리스팅 `4581765488` 로 발행 |
+| 5 | 2026-09-27 | `p3-v0.23` | `ADHD-Year-Planner-2027-mon.pdf` | 7,729,233 | 598 | **상품 3 (새 리스팅, 파일 5개).** `python scripts/p3/planner_build.py 2027 mon` 등 네 판 -> `output/prod3/planner/v0.23/` -> `upload/v0.23/` |
+| 6 | 2026-09-27 | `p3-v0.23` | `ADHD-Year-Planner-2027-sun.pdf` | 7,728,495 | 598 | 상품 3 같은 빌드 |
+| 7 | 2026-09-27 | `p3-v0.23` | `ADHD-Year-Planner-2026-mon.pdf` | 7,730,289 | 598 | 상품 3 같은 빌드 |
+| 8 | 2026-09-27 | `p3-v0.23` | `ADHD-Year-Planner-2026-sun.pdf` | 7,727,726 | 598 | 상품 3 같은 빌드 |
+| 9 | 2026-09-27 | `p3-v0.23` | `ADHD-Year-Planner-Stickers-and-Guide.zip` | 2,086,618 | -- | 스티커 draft-v0.8 PNG 253개 + 안내서 draft-v0.5 를 zip (`upload/v0.23/`) |
 
-**현재 판매 중: 상품 1 = #3 (v8.20), 상품 2 = #4 (student-v1.1).** #3 은 v8.19 로 준비했다가 사용자가 iPad 에서 도트
+**현재 판매 중: 상품 1 = #3 (v8.20), 상품 2 = #4 (student-v1.1), 상품 3 = #5~#9 (p3-v0.23, 파일 5개).** #3 은 v8.19 로 준비했다가 사용자가 iPad 에서 도트
 그리드 결함을 찾아 v8.20 으로 바꿨다. 사용자가 iPad 에서 최종 확인 후 2026-09-24 에
 교체. Etsy 편집 화면 표시 `16.51 mb`.
 
@@ -90,6 +95,8 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 | 3 | 2026-09-24 | **상품 2:** `output/prod2/listing_student/1_hero.png` ~ `10_notes.png` (1→10 순서) | 10 | `python scripts/build_mockups_student.py student-v1.1` (기본 `MOCK_ALT=pastel`: 홀수 어두운·짝수 파스텔). 집 PC 에서 만듦 |
 
 **현재 게시 중: 상품 1 = #2, 상품 2 = #3.**
+
+**상품 3 세일 `YEAR35`** (2026-09-27 설정): 35% / Everywhere / 2026-09-27 ~ **10-26** / Select listings → The ADHD Year 1개. 구매자 가격 $19.99 → $12.99.
 
 **상품 2 세일 `STUDENT40`** (2026-09-24 설정): 40% / Everywhere / 2026-09-24 ~ **10-23** / Select listings → 학생 플래너 1개.
 상품 1 `LAUNCH40`(~10/20)과 **동시에 걸 수 있었다**(Etsy 가 막지 않음). 발행 확인(한국에서 본 값, VAT 10% 포함):
