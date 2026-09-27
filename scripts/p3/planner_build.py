@@ -65,7 +65,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.19 = Year review 달 버튼 같은 폭(6칸 격자, 사용자) + 일간 주 알약에 이번 주 실험, 분기 (W1) 알약+실험 2열 목록, Playbook Q1~Q4 keeps + 12줄, SOS "I fell off the planner" (사용자)
 # v0.20 = 도착한 메모 알약 검정 채움으로 되돌림 -- 일간·Year-end mailbox 모두(청록 테두리도 없음). mailbox 7칸 같은 폭 격자는 그대로.
 #         2쪽 How it works 탭 없음(표지처럼) (사용자 2026-09-27)
-VERSION = "v0.20"
+# v0.21 = 리드 칸 알약 청록 테두리 규칙 삭제 -> 542쪽 Playbook Q1~Q4 KEEPS 도 흰+회색 (사용자 2026-09-27)
+VERSION = "v0.21"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -166,7 +167,7 @@ a.ll{{color:inherit;text-decoration:none}}
 #yearreview .chips{{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:42px;gap:0 8px}}#yearreview .chips a.hit{{display:flex;align-items:center;margin:0;padding:0}}#yearreview .chips .chip{{width:100%;min-width:0;padding:0;justify-content:center;margin:0}}   /* Year review 달 버튼 같은 폭, 6칸 두 줄 (사용자 2026-09-27) */
 #mailbox .chips{{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:42px;gap:0 10px}}#mailbox .chips a.hit{{display:flex;align-items:center;margin:0;padding:0}}#mailbox .chips .chip{{width:100%;justify-content:center;margin:0}}   /* Year-end mailbox: 7칸 격자, 같은 폭 (사용자 B안). 줄 높이 42px 고정 -- 음수 여백 누르는 영역을 격자에 두면 PDF 인쇄에서만 줄이 흔들려 라벨과 겹쳤다(v0.11) */   /* 도착한 메모: 청록 테두리 알약 (검정 채움은 사용자: 바퀴벌레 같다, 2026-09-26) */
 .chip.off{{border-style:dotted;color:{N500}}}
-.lead .chip{{border-color:{CYAN}}}.lead .chip.note{{border-color:{INK}}}   /* 검은 알약은 리드 칸 안에서도 청록 테두리 없이 (mailbox, 사용자 2026-09-27) */
+/* 리드 칸 안 알약도 다른 알약과 같다 -- 알약은 흰+회색 / 검정(도착한 메모) / 점선(빈 자리) 세 종류뿐. 청록 테두리는 핸드오프에 없던 것(사용자 2026-09-27) */
 /* 링크 칩의 누르는 영역: 알약(22px) + 위아래 10px = 42px(8.8mm). 음수 여백으로 레이아웃은 그대로 */
 a.hit{{display:inline-flex;box-sizing:content-box;padding:10px 4px;margin:-10px -4px;vertical-align:middle}}
 a.hit>.chip{{margin-left:0}}

@@ -76,8 +76,8 @@ for k in ("cover", "index", "sos", "focus", "feel", "health", "life", "notes"):
 _nt = re.search(r"(?<![#\w ])\.chip\.note\{background:(#[0-9a-fA-F]{6})", html)
 _lum = sum(int(_nt.group(1)[i:i + 2], 16) for i in (1, 3, 5)) / 3 if _nt else 255
 ok(_lum < 80 and "#mailbox .chip.note" not in html, f"도착한 메모 알약 검정 채움, 페이지별 색 예외 없음 (밝기 {_lum:.0f})")
-ok(re.search(r"\.lead \.chip\.note\{border-color:#[0-9a-fA-F]{6}\}", html) is not None and html.find(".lead .chip.note{") > html.find(".lead .chip{"),
-   "검은 알약은 리드 칸(mailbox) 안에서도 청록 테두리 없음")
+# 알약은 세 종류뿐: 흰+회색 테두리 / 검정(도착한 메모) / 점선(빈 자리). 청록 테두리 알약 없음 (사용자 2026-09-27)
+ok(not re.search(r"\.chip[^{}]*\{[^}]*border-color:#0088b0", html), "청록 테두리 알약 규칙 없음 (Playbook 포함 모든 알약이 세 종류 안)")
 ok("#mailbox .chips{display:grid;grid-template-columns:repeat(7,1fr)" in html and "#mailbox .chips .chip{width:100%" in html,
    "Year-end mailbox 알약 7칸 같은 폭 격자 유지")
 

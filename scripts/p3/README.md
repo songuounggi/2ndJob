@@ -90,3 +90,17 @@ python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.
 | `archive_concepts-A-D/` | 새 콘셉트 4종(시계·퀘스트·볼드·노트북) HTML·PDF·PNG (참고용) | `concepts_p3.py` |
 | `preview/` | 검수용 렌더 PNG | |
 | `upload/<버전>/` | (앞으로) Etsy 에 올린 판. 한 번 넣으면 건드리지 않는다 | |
+
+## 알약 규칙 (사용자 확정 2026-09-27)
+
+알약은 세 종류뿐이다. 새 종류가 필요하면 먼저 사용자와 상의한다.
+
+| 알약 | 뜻 | 예 |
+|---|---|---|
+| 흰 + 회색 테두리 | 기본 이동 | JAN, WEEK 5, FROM YESTERDAY, Q1 KEEPS, THE 52 EXPERIMENTS |
+| 검정 채움 (테두리도 검정) | **30일 메모를 받는 쪽** -- "30일 전의 내가 보낸 메모가 여기 있다", 누르면 쓴 날로 돌아간다. 판매 포인트(Time links)라 눈에 띄게. "From yesterday" 는 매일 보는 인계라 흰색 | 일간 "Note from Jan 1 ←", 543쪽 Year-end mailbox |
+| 점선 | 빈 자리 | |
+
+- 청록 테두리 알약은 없다. 리드 칸(청록은 리드 항목만 -- 핸드오프 README)의 청록은 **제목·괘선·"1"·옅은 배경**뿐이고 알약은 목록에 없다.
+  v0.1~v0.20 에 `.lead .chip` 청록 테두리가 있었다(핸드오프에 없던 것). v0.21 에서 삭제, `check_plan_p3.py` 가 잡는다
+- 한 페이지 이야기는 그 페이지만 고친다 -- mailbox 만 "바퀴벌레 같다" 했는데 전체 `.chip.note` 를 바꿔 일간까지 청록이 됐었다(v0.15~v0.19)
