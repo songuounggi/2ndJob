@@ -191,7 +191,7 @@ def p_year():
 
 
 def p_kickoff():
-    return (head(str(Y), "Systems, not resolutions",
+    return (head(f"{Y} · YEAR KICKOFF", "Systems, not resolutions",      # 목차 알약 "Kickoff" 와 이름을 맞춘다 (사용자 A안)
                  "Resolutions ask for willpower. Systems make it easy. Build one you'll still use in March.")
             + '<div class="bd"><div class="rw">'
             + box("WHAT WORKED LAST YEAR", lines(4)) + box("WHAT DIDN'T", lines(4)) + '</div>'

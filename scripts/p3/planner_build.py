@@ -60,7 +60,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.14 = v0.13 순서 변경 되돌림(기획서대로) + How 탭 INDEX + 표지 탭 없음 + 라벨 링크 3종(생일·admin·ADHD tax). v0.13 은 쓰지 않는다
 # v0.15 = 목차에 세부 페이지 알약(10장 길 생김), Kickoff "Will I still use it in March?" (기획 대조, 사용자 승인)
 # v0.16 = 표지·섹션 표지 목록 줄 끝에 › (쪽 번호는 그대로, 사용자)
-VERSION = "v0.16"
+# v0.17 = Kickoff 윗글 "YEAR KICKOFF" (목차 알약과 이름 맞춤, 사용자 A안). ADHD tax 링크는 그대로(사용자)
+VERSION = "v0.17"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:

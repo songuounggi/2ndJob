@@ -86,6 +86,7 @@ if orph:
 
 # ---- 결정 대기 (FAIL 아님, 목록으로) -----------------------------------------
 ok("WILL I STILL USE IT IN MARCH" in text["kickoff"], "2-1 Kickoff: 3월에도 쓸까 칸")
+ok("YEAR KICKOFF" in text["kickoff"], "Kickoff: 목차 알약 이름(Kickoff)이 도착 페이지에 보인다 (사용자 2026-09-27)")
 # 사용자 확정(2026-09-26)으로 기획과 다르게 둔 것 -- FAIL 아님
 DECIDED = ["일간 Guess vs actual 1줄·buffer 는 안내 글자 (오른쪽 열 공간 없음)", "Doom pile 타이머는 부제로 안내",
            "Playbook 은 빈 W__ 줄 + 52 experiments 버튼 (어느 주에 ✓할지 미리 알 수 없다)"]
