@@ -16,7 +16,8 @@ from playwright.sync_api import sync_playwright
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.2"   # v0.2 = 형광펜을 "due Fri!" 위로, Top 3 글자가 체크에 가리지 않게, 연필이 Brain dump 를 덜 덮게, 수요일 글 왼쪽으로
+DRAFT = "draft-v0.3"   # v0.3 = 손글씨 대조: 금요일 "keep it for March" -> 분기 흐름대로 "keeper → Q1 review", Brain dump "2-min rule next wk"(7주차) -> 13주차 실제 실험 "decide once", 책상 위 NOT FOR ME -> IN MY PLAYBOOK (광고에 부정어 X)
+# v0.2   # v0.2 = 형광펜을 "due Fri!" 위로, Top 3 글자가 체크에 가리지 않게, 연필이 Brain dump 를 덜 덮게, 수요일 글 왼쪽으로
 PLANNER, STICKERS = "v0.22", "draft-v0.8"
 OUT = ROOT / "output/prod3/preview/sticker_scene" / DRAFT
 if OUT.exists():
@@ -69,7 +70,7 @@ on_page = "".join([
     hand(64, 466, "laundry, round 2", 11, -1),
     # FRI
     hand(64, 518, "named alarms actually worked.", 11, -1),
-    hand(64, 536, "keep it for March →", 11, -1),
+    hand(64, 536, "keeper → Q1 review", 11, -1),
     stk("Brain-weather/good_mist.png", 330, 506, 42, 6),
     # SAT
     hand(64, 585, "farmers market w/ Jo", 11, -1),
@@ -82,12 +83,12 @@ on_page = "".join([
     # BRAIN DUMP
     hand(443, 328, "gift for Jo's bday?", 10, -1),
     hand(443, 354, "renew passport (May)", 10, -1),
-    hand(443, 379, "2-min rule next wk", 10, -1),
+    hand(443, 379, "next wk: decide once", 10, -1),
     hand(443, 405, "new phone charger", 10, -1),
 ])
 
 loose = "".join(f'<img class="loose" src="{ST}/{rel}" style="left:{x}px;top:{y}px;height:{h}px;transform:rotate({r}deg)">'
-                for rel, x, y, h, r in [("Experiments/not-for-me_ink.png", 40, 40, 190, -14),
+                for rel, x, y, h, r in [("Experiments/in-my-playbook_deep.png", 30, 70, 100, -12),
                                         ("Energy/recharge_deep.png", 1380, 36, 96, 9),
                                         ("Experiments/sort-of_stone.png", 1720, 110, 170, 12)])
 
