@@ -162,7 +162,17 @@ For personal use. Please do not resell or redistribute the files.
 
 ---
 
-## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.18/` (사용자 확정 전)
+## 리스팅 이미지 — **시안 10장** `output/prod3/listing/draft-v0.25/` (2026-09-27 구성 확정: 10 Works anywhere 뺌, 스티커 7번째 -- 사용자)
+
+**올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.
+아래 표의 07~09 는 옛 번호(v0.18)다 -> 지금 08~10. 옛 10(Works anywhere) 의 "세계 공통 날짜만 인쇄·My holidays·노트 4종" 은 설명문에서 말한다.
+
+| 새 이미지 | 문구 | 근거 | 결과 |
+|---|---|---|---|
+| 06 추가 | + Sticker kit (253 stickers) and a setup guide | `stickers_p3.py` draft-v0.8: 129종 253개, 안내서 draft-v0.5 (5번째 파일 ZIP) | ✔ |
+| 07 stickers | Sticker kit · 253 stickers / Stickers made for these pages / Mark Friday's verdict, a low-battery day, a good-brain day | 스티커 키트(Experiments·Energy·Brain weather 묶음), 장면 `sticker_scene_p3.py` draft-v0.6 (손글씨 내용은 458쪽 Week 12 와 대조) | ✔ |
+| 10 two taps | 탭 표시 ① YEAR 탭 ② 3월 15일 → 106쪽 Mar 15 | Year at a glance 날짜 링크, 3월 15일 = d3-15 | ✔ |
+
 
 **안전 영역:** 글자·배지는 가로 260–1740, 세로 250–1750 안(Etsy 검색이 양옆 ~140px 을 자르고 4:3 자리는 가운데만 쓴다 --
 `product2-student.md` 목업 안전 영역, 상품 1 대표 이미지가 "DHD & Wellness" 로 잘린 적). `listing_images_p3.py` 가 찍기 전에 재고

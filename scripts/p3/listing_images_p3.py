@@ -16,7 +16,7 @@ import pypdfium2 as pdfium
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 VER = "v0.22"
-DRAFT = "draft-v0.24"   # v0.24: 09 페이지 크게(아래가 비었다), 15 고리 가운데로 / v0.23: v0.23: 09 선을 그림이 다 들어온 뒤에 잰다(v0.22 는 엉뚱한 곳), 점선 정리 / v0.22: v0.22: 09 허공 화살표(사용자: 아마추어 같다) -> 누르는 자리에 번호 표시(탭 물결), 3월 달력 확대 카드, 그날 페이지 제목으로 곡선 연결 / v0.21: v0.21: 11 장면 그림자 잘림 경계선 없앰(장면 v0.6) / v0.20: v0.20: 11 스티커 장면을 iPad 세로 통째로(잘라 넣어 가로 모드처럼 보였다 -- 사용자), 배경색 같게 / v0.19: v0.19: v0.22 페이지(종이 W1)로 다시 찍음, 06 에 스티커 키트 한 줄(판매 파일 5번째 ZIP), 11 스티커 실사용 장면 후보(10장 중 하나와 바꿀 것, 사용자 선택) / v0.18: v0.17: 영문 교정된 v0.8 페이지로 다시 찍음 / v0.16: 09 화살표·TAP 에 그림자(사용자: 썰렁하다) / v0.15: 배지를 페이지 밖으로 올린 것보다 v0.14(페이지 윗가장자리에 걸침, 본문은 안 가림)가 낫다(사용자) -> v0.14 위치로 / v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
+DRAFT = "draft-v0.25"   # v0.25: 10 Works anywhere 뺌, 스티커를 7번째로(사용자), 파일 번호 = 올릴 순서. 09 의 15일 고리 작게·정확히(3월 달력 잘라낸 그림 속 15 글자 가운데) / v0.24: v0.24: 09 페이지 크게(아래가 비었다), 15 고리 가운데로 / v0.23: v0.23: 09 선을 그림이 다 들어온 뒤에 잰다(v0.22 는 엉뚱한 곳), 점선 정리 / v0.22: v0.22: 09 허공 화살표(사용자: 아마추어 같다) -> 누르는 자리에 번호 표시(탭 물결), 3월 달력 확대 카드, 그날 페이지 제목으로 곡선 연결 / v0.21: v0.21: 11 장면 그림자 잘림 경계선 없앰(장면 v0.6) / v0.20: v0.20: 11 스티커 장면을 iPad 세로 통째로(잘라 넣어 가로 모드처럼 보였다 -- 사용자), 배경색 같게 / v0.19: v0.19: v0.22 페이지(종이 W1)로 다시 찍음, 06 에 스티커 키트 한 줄(판매 파일 5번째 ZIP), 11 스티커 실사용 장면 후보(10장 중 하나와 바꿀 것, 사용자 선택) / v0.18: v0.17: 영문 교정된 v0.8 페이지로 다시 찍음 / v0.16: 09 화살표·TAP 에 그림자(사용자: 썰렁하다) / v0.15: 배지를 페이지 밖으로 올린 것보다 v0.14(페이지 윗가장자리에 걸침, 본문은 안 가림)가 낫다(사용자) -> v0.14 위치로 / v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
 PDF = ROOT / "output" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.pdf"
 HTML = ROOT / "src" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.html"
 OUT = ROOT / "output" / "prod3" / "listing" / DRAFT
@@ -95,7 +95,7 @@ p.s{{font-size:42px;font-style:italic;color:{N700};line-height:1.3}}
 .tap::after{{inset:-32px;opacity:.15}}
 .mag{{position:absolute;width:330px;border-radius:26px;background:#fff;padding:14px;box-shadow:0 26px 50px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.1);z-index:4}}
 .mag img{{width:100%;display:block;border-radius:12px}}
-.mag .ring{{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:5px solid {CYAN}}}
+.mag .ring{{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:4px solid {CYAN}}}
 .land{{position:absolute;width:0;height:0}}
 svg.link{{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:5;filter:drop-shadow(0 3px 4px rgba(0,0,0,.18))}}
 .notes{{display:grid;grid-template-columns:1fr 1fr;gap:26px}}
@@ -150,22 +150,26 @@ SHOTS = {
           f'<div class="cv">{img(f"cover-{y}-{w}", "")}<div class="bdg {w}"><b>{y}</b><span>{"Monday" if w == "mon" else "Sunday"} start</span></div></div>'
           for y in ("2026", "2027") for w in ("mon", "sun"))}</div>
       <div class="foot">Digital download – nothing is shipped.</div>""",
-    "07_month": f"""<div class="k">Every month · four pages that work together</div>
+    "07_stickers": f"""<div class="k">Sticker kit · 253 stickers</div>
+      <h1>Stickers made<br>for these pages.</h1>
+      <p class="s">Mark Friday's verdict, a low-battery day, a good-brain day.</p>
+      <div class="scene"></div>""",
+    "08_month": f"""<div class="k">Every month · four pages that work together</div>
       <h1>Plan it. Track it.<br>Look back.</h1>
       <p class="s">A calendar, a plan, a brain weather tracker and a review – linked to each other.</p>
       {fan([("m3", "Calendar"), ("mp3", "Plan"), ("bw3", "Brain weather"), ("mr3", "Review")], 900, 268, 18, "solid", top=True)}""",
-    "08_december": f"""<div class="k">By December</div>
+    "09_december": f"""<div class="k">By December</div>
       <h1>A user manual for<br>your own brain.</h1>
       <p class="s">Keep the experiments that worked. Notes you wrote to future you wait in a year-end mailbox.</p>
       {fan([("playbook", "My ADHD playbook"), ("yearreview", "Year review"), ("mailbox", "Year-end mailbox")], 880, 372, 22)}""",
-    "09_two_taps": f"""<div class="k">Hyperlinked · ten tabs on every page</div>
+    "10_two_taps": f"""<div class="k">Hyperlinked · ten tabs on every page</div>
       <h1>Any day of the year,<br>two taps away.</h1>
       <div class="steps"><div class="step"><i>1</i>Tap YEAR</div><div class="step"><i>2</i>Tap the date</div></div>
       <div class="tt" id="tt">
         <div class="fig"><div class="pw">{img("year", "")}<span class="tap" id="t1" style="left:95.1%;top:28.2%">1</span>
           <span class="tap" id="t2" style="left:51%;top:26.7%">2</span></div><div class="cap">Year at a glance</div></div>
         <div class="fig"><div class="pw">{img("d3-15", "")}<span class="land" id="land" style="left:9%;top:11.9%"></span></div><div class="cap">That day's page</div></div>
-        <div class="mag" id="mag" style="left:440px;top:370px;transform:rotate(-3deg)"><img src="_pages/mag_march.png"><span class="ring" style="left:calc(14px + 302px * .118);top:calc(14px + 243px * .64)"></span></div>
+        <div class="mag" id="mag" style="left:440px;top:370px;transform:rotate(-3deg)"><img src="_pages/mag_march.png"><span class="ring" style="left:calc(14px + 302px * {(290.1 + 297.3) / 2 - 282} / 112);top:calc(14px + 302px * 88 / 112 * {(200.8 + 210.0) / 2 - 150} / 88)"></span></div>
         <svg class="link" id="link"></svg>
       </div>
       <script>
@@ -184,16 +188,6 @@ SHOTS = {
           `<path d="M${{ex - 22}} ${{ey - 15}} L ${{ex}} ${{ey}} L ${{ex - 22}} ${{ey + 15}}" fill="none" stroke="${{col}}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`;
       }});
       </script>""",
-    "10_anywhere": f"""<div class="k">Works anywhere</div>
-      <h1>No other country's<br>holidays in your way.</h1>
-      <p class="s">Only dates shared worldwide are printed. Add your own on the My holidays page.</p>
-      <div class="trio"><div class="fig">{img("myhol", "")}<div class="cap">My holidays</div></div>
-        <div class="fig"><div class="notes">{"".join(img(k, "") for k in ["note1", "note2", "note3", "note4"])}</div>
-        <div class="cap">Dot grid · Ruled · Plain · Grid</div></div></div>""",
-    "11_stickers": f"""<div class="k">Sticker kit · 253 stickers</div>
-      <h1>Stickers made<br>for these pages.</h1>
-      <p class="s">Mark Friday's verdict, a low-battery day, a good-brain day.</p>
-      <div class="scene"></div>""",
 }
 
 from playwright.sync_api import sync_playwright  # noqa: E402
