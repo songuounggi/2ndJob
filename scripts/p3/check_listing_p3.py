@@ -42,6 +42,7 @@ ok(len(title) <= 140 and len(caps) <= 3, f"title {len(title)} chars, all-caps wo
 _w = [x.lower() for x in re.findall(r"[A-Za-z0-9]+", title) if x.lower() not in ("and", "for", "with", "a", "the", "of")]
 _rep = sorted({x for x in _w if _w.count(x) > 1})
 ok(not _rep, f"title repeats no word {_rep}")
+ok(len(re.findall(r"[A-Za-z0-9]+", title)) <= 15, f"title 15 words or fewer ({len(re.findall(r'[A-Za-z0-9]+', title))}) -- Etsy 권고")
 tags = [t for t in block("태그").splitlines() if t.strip()]
 ok(len(tags) == 13 and all(len(t) <= 20 for t in tags), f"tags {len(tags)}, longest {max(map(len, tags))}")
 desc = block(r"설명 \(Description\)")

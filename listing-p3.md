@@ -19,8 +19,10 @@
 ## 제목 (140자 이내, 대문자 단어 3개 이내)
 
 ```
-2027 ADHD Digital Planner for iPad and GoodNotes, Dated and Hyperlinked, 2026 Included, with Sticker Kit
+2027 ADHD Digital Planner for iPad and GoodNotes, Dated and Hyperlinked, with Stickers
 ```
+
+**확정 (2026-09-27 사용자): 86자 · 13단어.** Etsy 는 제목 15단어 이하를 권한다(104자 안은 16단어라 뺐다 -- "2026 Included" 는 태그·설명·06 이미지가 말한다).
 
 **2026-09-27 다시 씀 (Etsy 2025 가을 제목 지침: 짧고 읽히게, 무엇인지 먼저, 같은 말 반복·키워드 나열 금지 -- `shop.md` 5-1).**
 104자, 같은 단어 반복 0, 대문자 단어 1(ADHD). 옛 제목(키워드 5덩어리, Planner·ADHD·2027 반복)은 아래 기록.
