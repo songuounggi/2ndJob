@@ -754,6 +754,14 @@ Etsy 제안: `ADHD Wellness Digital Planner, Undated GoodNotes Journal (PDF)`
 
 나머지 항목(`Your shop`, `Service standards`)은 초록불이다.
 
+> **2026-09-27 다시 봄 -- 제목 유지 결정을 뒤집는 쪽으로 기울었다 (상품 3 올릴 때 같이 진행, 사용자).**
+> 앱 `Etsy search visibility` 가 "2 listings have new title recommendations" 로 계속 권고. 사용자: 어제·오늘 view·visit 0.
+> Etsy 는 2025 가을부터 **짧고 읽히는 제목, keyword stuffing 금지**를 공식 권고하고 AI 제목 도구를 냈다
+> (Seller Handbook "What's New on Etsy: Fall 2025", Help "How to Use the Etsy Search Visibility Page").
+> 우리 제목(키워드 5덩어리를 쉼표로 이음)이 딱 그 모양이다. 조회 0 은 숍 권위 탓이 더 크지만, 제목은 공짜이고 되돌릴 수 있다.
+> **할 일:** ① `Update titles` 를 눌러 제안만 캡처(승인 X) ② Etsy 스타일 + `iPad`·`GoodNotes`·`Undated` 를 살린 짧은 제목,
+> 빠지는 단어는 태그로 ③ **상품 1 만 먼저** 바꾸고 상품 2 는 그대로 2주 비교 ④ 상품 3 제목(`listing-p3.md`)도 같은 기준으로.
+
 ---
 
 ## 6. 발행 순서
