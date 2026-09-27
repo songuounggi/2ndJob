@@ -1,10 +1,10 @@
 # 상품 3 리스팅 원고 — ADHD Year Planner 2026-2027 (초안, 2026-09-25)
 
-**초안이다.** 확정: 가격(B안 $19.99 − 35% = $12.99), 파일 4개. 미확정: 제목·원고 문구·이미지. 세일 기간 한 달 확정.
-숫자는 전부 `output/prod3/planner/v0.8/` 네 파일에서 스크립트로 잰 값(`scripts/p3/check_listing_p3.py`).
+**확정:** 가격(B안 $19.99 − 35% = $12.99, 세일 한 달), 파일 5개(PDF 4 + 스티커·안내서 ZIP), 이미지 10장(draft-v0.25). **확정 대기:** 제목·태그·설명(2026-09-27 새 안).
+숫자는 전부 `output/prod3/planner/v0.22/` 네 파일 + 스티커 draft-v0.8 + 안내서 draft-v0.5 에서 스크립트로 잰 값(`scripts/p3/check_listing_p3.py v0.22`).
 구매자 글 규칙(`shop.md` 0-1절): 문장마다 파일과 대조한다 → 맨 아래 **대조표**.
 
-판매 형태: **한 리스팅에 PDF 4개** (Etsy 디지털 파일은 리스팅당 5개, 파일당 20MB까지).
+판매 형태: **한 리스팅에 파일 5개 -- PDF 4개 + ZIP 1개** (Etsy 디지털 파일은 리스팅당 5개, 파일당 20MB까지).
 
 | 파일 (Etsy 에 올릴 이름) | 쪽 | 크기 |
 |---|---|---|
@@ -12,18 +12,26 @@
 | `ADHD-Year-Planner-2026-sun.pdf` | 598 | 7.7MB |
 | `ADHD-Year-Planner-2027-mon.pdf` | 598 | 7.7MB |
 | `ADHD-Year-Planner-2027-sun.pdf` | 598 | 7.7MB |
+| `ADHD-Year-Planner-Stickers-and-Guide.zip` (스티커 253개 PNG + 안내서 5쪽) | -- | 약 2.1MB |
 
 ---
 
 ## 제목 (140자 이내, 대문자 단어 3개 이내)
 
 ```
-ADHD Planner 2027 Digital Planner, 2026 2027 Dated Goodnotes iPad Planner, Hyperlinked PDF, 52 Weekly Experiments, Adult ADHD
+2027 ADHD Digital Planner for iPad and GoodNotes, Dated and Hyperlinked, 2026 Included, with Sticker Kit
 ```
 
-- 앞 40자에 `ADHD Planner 2027 Digital Planner` — 검색 앞머리
-- `2026 2027` + `Dated` — 날짜형을 찾는 사람(상품 1 은 undated 라 겹치지 않는다)
-- `52 Weekly Experiments` — 경쟁작에 없는 말. 차별점을 제목에서 보이게
+**2026-09-27 다시 씀 (Etsy 2025 가을 제목 지침: 짧고 읽히게, 무엇인지 먼저, 같은 말 반복·키워드 나열 금지 -- `shop.md` 5-1).**
+104자, 같은 단어 반복 0, 대문자 단어 1(ADHD). 옛 제목(키워드 5덩어리, Planner·ADHD·2027 반복)은 아래 기록.
+- 앞머리 `2027 ADHD Digital Planner` -- 무엇인지 + 해 + 검색 세 말(2027 planner / adhd planner / digital planner)
+- `for iPad and GoodNotes` -- 구매자가 가장 많이 치는 기기·앱
+- `Dated and Hyperlinked` -- 날짜형(상품 1 undated 와 안 겹침) + 링크
+- `2026 Included` -- 두 해가 들어 있다, `with Sticker Kit` -- 5번째 파일
+- 뺀 말: `52 Weekly Experiments`(검색량 없음 -- 설명·이미지 02 가 말한다), `Adult ADHD`(태그에 있다)
+- 짧은 안(72자): `2027 ADHD Digital Planner for iPad, Dated and Hyperlinked, with Stickers`
+
+옛 제목(2026-09-25): `ADHD Planner 2027 Digital Planner, 2026 2027 Dated Goodnotes iPad Planner, Hyperlinked PDF, 52 Weekly Experiments, Adult ADHD`
 
 ## 태그 (13개, 각 20자 이내)
 
@@ -36,7 +44,7 @@ goodnotes planner
 ipad planner
 dated planner
 hyperlinked planner
-adhd journal
+2027 digital planner
 adult adhd
 executive function
 neurodivergent
@@ -52,8 +60,9 @@ This is a dated ADHD planner for 2026 and 2027. Instead of asking you to "be mor
 
 WHAT YOU GET
 
-4 PDFs — 2026 and 2027, each in a Monday-start and a Sunday-start version. Use the one that matches how your week feels.
-Each year is 598 pages, January to December.
+5 files:
+• 4 planner PDFs — 2026 and 2027, each in a Monday-start and a Sunday-start version. Use the one that matches how your week feels. Each year is 598 pages, January to December.
+• 1 ZIP — a sticker kit of 253 transparent PNG stickers (129 designs) made for the planner's own pages, plus a 5-page setup guide for Goodnotes.
 
 THREE THINGS YOU WILL NOT FIND IN A NORMAL PLANNER
 
@@ -64,7 +73,7 @@ THREE THINGS YOU WILL NOT FIND IN A NORMAL PLANNER
 WHAT'S INSIDE
 
 Start — how it works, an index, and an SOS page: pick what is happening ("I can't start", "I'm overwhelmed", "Someone's words stung") and tap straight to the tool for it
-Year — year at a glance, a "systems, not resolutions" page, the 52 experiments, year in pixels, a life admin radar, my holidays, birthdays and gift radar, where I put it, goals, project planner, vision, playbook, year review
+Year — year at a glance, a "systems, not resolutions" page, the 52 experiments, year in pixels, a life admin radar, my holidays, birthdays and gift radar, where I put it, goals, project planner, vision, and in December your playbook, a year-end mailbox, and a year review
 Quarters — 4 pages to keep or drop the last quarter's experiments
 Months — for each month: a calendar, a plan, a brain weather tracker, and a review
 Weeks — a weekly page and a Sunday reset for every week
@@ -74,6 +83,7 @@ Feelings — Stop/Think/Act, the worry cycle, rejection sensitivity, talking to 
 Body — habits, morning and evening, medication, sleep, symptoms, doctor visits, therapy notes, water and food, movement, cycle tracker
 Life — meals and groceries, wheel of life, cleaning, budget, before you buy it, reading log, dates to remember, subscriptions, trips, who does what, plus dopamine menu, doom pile triage, hobby graveyard, and a waiting-mode kit
 Notes — dot grid, ruled, plain and grid pages
+Stickers — experiment verdicts (helped, sort of, not for me, keep, drop), energy and brain weather, small wins, focus, feelings, body, life admin, time, and tiny icons for the smallest boxes
 
 FINDING THINGS
 
@@ -85,9 +95,10 @@ Only dates shared around the world are printed — New Year's Day, Neurodiversit
 
 HOW IT WORKS
 
-1. Buy and download — four PDFs, instantly, nothing is shipped to you
-2. Open the one you want in your note app — Goodnotes, Notability, Xodo
+1. Buy and download — four PDFs and a sticker ZIP, instantly, nothing is shipped to you
+2. Open the planner you want in your note app — Goodnotes, Notability, Xodo
 3. Write on it with a stylus
+4. Add the stickers to Goodnotes — the setup guide shows how, step by step
 
 WHAT YOU NEED
 
@@ -125,7 +136,7 @@ For personal use. Please do not resell or redistribute the files.
 
 버린 안: A $12.99 세일 없음 (실결제 같지만 할인 표시 없음) / C $16.99 − 40% = $10.19 (상품 1 과 같은 틀).
 
-## 파일 수 — **확정: 4개** (2026-09-25 사용자)
+## 파일 수 — **확정: 5개 = PDF 4 + ZIP 1** (PDF 4개 2026-09-25 사용자, ZIP 2026-09-27 -- 안내서 1쪽이 스티커 ZIP 을 전제)
 
 2026·2027 × 월요일 시작·일요일 시작. 2027 기준 598쪽 중 122쪽이 다르다 --
 월 달력 12(요일 순서·주 줄 수), 주간 53(날짜 범위), 일간 52(일요일이 속한 주), 연간 미니 달력·53주 목차·52 실험 목록·표지.
@@ -139,7 +150,11 @@ For personal use. Please do not resell or redistribute the files.
 
 | 문장 | 확인한 곳 | 결과 |
 |---|---|---|
-| 4 PDFs, Monday-start and Sunday-start | `output/prod3/planner/v0.8/` 파일 4개 | ✔ |
+| 4 PDFs, Monday-start and Sunday-start | `output/prod3/planner/v0.22/` 파일 4개 | ✔ |
+| 1 ZIP — 253 transparent PNG stickers (129 designs), 5-page setup guide | 스티커 draft-v0.8 PNG 253개 모두 투명, 안내서 draft-v0.5 5쪽 (check_listing_p3 가 잰다) | ✔ |
+| Stickers — verdicts, energy, brain weather, small wins, focus, feelings, body, life admin, time, tiny icons | `stickers_p3.py` 묶음 이름과 대조 | ✔ |
+| in December your playbook, a year-end mailbox, and a year review | `playbook` `mailbox` `yearreview` (Year 탭, 12월 뒤) | ✔ |
+| title repeats no word | check_listing_p3 (Etsy 제목 지침) | ✔ |
 | Each year is 598 pages, January to December | 각 PDF 쪽 수, 일간 첫 장 1/1 · 마지막 12/31 | ✔ |
 | one strategy per week, printed on that week's page | 주간 페이지마다 `THIS WEEK'S EXPERIMENT` | ✔ |
 | quarterly keep-or-drop check | 분기 4장 `KEEP 3 · DROP 3` | ✔ |

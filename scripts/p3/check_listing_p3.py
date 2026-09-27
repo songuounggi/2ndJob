@@ -38,6 +38,10 @@ def block(name):
 title = block("제목").strip()
 caps = [w for w in re.findall(r"[A-Za-z][A-Za-z&']*", title) if len(w) > 1 and w.isupper()]
 ok(len(title) <= 140 and len(caps) <= 3, f"title {len(title)} chars, all-caps words {caps}")
+# Etsy 2025 가을 제목 지침: 같은 말 반복·키워드 나열 금지 (옛 제목은 Planner x3, ADHD x2, 2027 x2 -- 2026-09-27 다시 씀)
+_w = [x.lower() for x in re.findall(r"[A-Za-z0-9]+", title) if x.lower() not in ("and", "for", "with", "a", "the", "of")]
+_rep = sorted({x for x in _w if _w.count(x) > 1})
+ok(not _rep, f"title repeats no word {_rep}")
 tags = [t for t in block("태그").splitlines() if t.strip()]
 ok(len(tags) == 13 and all(len(t) <= 20 for t in tags), f"tags {len(tags)}, longest {max(map(len, tags))}")
 desc = block(r"설명 \(Description\)")
@@ -91,5 +95,15 @@ for y in (2026, 2027):
         ok(set(hol) == named and all(n in desc for n in named), "printed dates == listed dates")
         ok(all(n.replace("'", "&#x27;") in html or n in html for n in named), "every listed date is printed in the file")
 
+# ---- 5번째 파일: 스티커 ZIP + 안내서 (원고의 숫자와 실제)
+from PIL import Image  # noqa: E402
+STK = ROOT / "output" / "prod3" / "stickers" / "draft-v0.8" / "png"
+GUIDE = ROOT / "output" / "prod3" / "guide" / "draft-v0.5" / "ADHD-Year-Planner-Setup-Guide.pdf"
+pngs = sorted(STK.glob("*/*.png"))
+print("== sticker kit + guide")
+ok(len(pngs) == 253 and "253 transparent PNG stickers" in desc, f"253 stickers ({len(pngs)})")
+ok(all(Image.open(p).mode == "RGBA" and Image.open(p).getpixel((0, 0))[3] == 0 for p in pngs), "stickers are transparent PNG")
+ok(len(pikepdf.open(GUIDE).pages) == 5 and "5-page setup guide" in desc, "5-page setup guide")
+ok("129 designs" in desc, "129 designs (stickers_p3.py: unique designs 129)")
 print(f"\n{'ALL OK' if not fails else f'FAILURES: {len(fails)}'}")
 sys.exit(1 if fails else 0)
