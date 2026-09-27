@@ -18,7 +18,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # scripts/p3/ -> 저장소
 # 문구·와이어프레임 버전. 바꾸면 올린다 -- 출력은 output/prod3/wireframe/<VERSION>/, 덮어쓰지 않는다.
-VERSION = "v0.4"   # v0.3 = Life admin radar 문구 한 줄로(잘림), Neurodiversity Celebration Week
+VERSION = "v0.5"   # v0.5 = 의도 검수: 한 칸 두 질문 정리, How 문구(흐름·time blindness·2탭)   # v0.3 = Life admin radar 문구 한 줄로(잘림), Neurodiversity Celebration Week
 
 # ------------------------------------------------------------ 4-1 intro --
 HOW_IT_WORKS = {
@@ -26,19 +26,21 @@ HOW_IT_WORKS = {
     "sub": "Three ideas. Everything else is optional.",
     "ideas": [
         ("52 experiments",
-         "Each week has one small strategy to try. On Friday, mark it: "
-         "helped, sort of, or not for me. By December you have a playbook "
-         "that was tested on your own brain."),
+         "Each week has one small strategy to try. On Friday, mark it on the weekly page: "
+         "helped, sort of, or not for me. Copy the mark to The 52 experiments, keep or drop "
+         "them each quarter, and by December your playbook is tested on your own brain."),
         ("Time links",
-         "Tonight's \"Tomorrow starts with\" waits for you on tomorrow's page. "
-         "A \"Note to future me\" arrives 30 days later. Tap the chips to travel."),
+         "Each day links to tomorrow, and tomorrow links back. A \"Note to future me\" "
+         "links to the day it arrives, 30 days later. December notes wait in the "
+         "Year-end mailbox. Tap the chips to travel."),
         ("Time you can see",
-         "Every day shows how far into the year and the month you are, and "
-         "asks you to guess how long things take. Guesses get better."),
+         "Time blindness means time slips by without you feeling it. Every day shows "
+         "how far into the year and the month you are, and asks you to guess how long "
+         "things take. Guesses get better."),
     ],
     "rules": [
         "Tap the side tabs to jump anywhere. SOS is for when you are stuck.",
-        "Month, then date, takes you to that day. The chips at the top bring you back.",
+        "Year, then the date: any day in two taps. The chips at the top bring you back.",
         "Skip days. Skip weeks. Nothing here counts streaks.",
         "A blank box is not a failure. It is a box.",
     ],
@@ -155,7 +157,7 @@ DAILY = {
         "Pick one thing to finish instead of three to start.",
         "Energy forecast for the week: low, medium, or high?",
         "Leave one block this week completely open.",
-        "What did you avoid last week? What's step one?",
+        "What's one first step on something you avoided last week?",
         "Plan one break you will actually take.",
         "Which space needs five minutes of attention?",
         "What's the plan if the plan falls apart?",
@@ -171,15 +173,15 @@ DAILY = {
         "Which gift, card, or plan needs a first step?",
         "What can you simplify for the busy weeks ahead?",
         "Which loose ends do you want to close before the year ends?",
-        "What will you carry into next year, and what will you leave?",
+        "What will you carry into next year?",
     ]),
     1: ("Focus", [  # Tuesday
         "Which task deserves your best hour today?",
         "Set a 10-minute timer and start. Start what?",
-        "Where do you focus best? Can you work there today?",
+        "Where could you work today to focus best?",
         "What pulls your attention most? Hide it for an hour.",
         "Break your task into steps so small they feel silly.",
-        "What's the very first physical action? Open, find, write?",
+        "What's the very first physical action: open, find, or write?",
         "Try body doubling: work beside someone, even on video.",
         "If you only had 20 minutes, what would you do first?",
         "Which tab, app, or alert can you close right now?",
@@ -223,15 +225,15 @@ DAILY = {
         "Pick a start time and treat it like an appointment.",
         "What's almost done? Finish it today.",
         "What's the 80% version of today's task?",
-        "Where did your focus go yesterday? What would help today?",
+        "What would help your focus today?",
         "One task for your best energy, one for your worst.",
         "What would make today's work a little bit fun?",
         "Close one open loop before the year closes.",
     ]),
     2: ("Body", [  # Wednesday
         "Have you had water yet today?",
-        "What did you eat before noon? Anything with protein?",
-        "How did you sleep, and what would help tonight?",
+        "Can you eat something with protein before noon?",
+        "What would help you sleep well tonight?",
         "Take a 5-minute walk. Where to?",
         "Did you take what you need to take today? Check the box.",
         "Stretch for the length of one song. Which song?",
@@ -249,8 +251,8 @@ DAILY = {
         "Unclench your jaw. Drop your shoulders. Breathe out slowly.",
         "How much screen time before bed last night?",
         "Dance to one song. Seriously.",
-        "Did you eat a real lunch yesterday? What about today?",
-        "What helps you fall asleep? Did you do it last night?",
+        "When will you eat a real lunch today?",
+        "What helps you fall asleep?",
         "Go outside, even if it's just to the mailbox.",
         "Note any symptom or side effect to mention at your next visit.",
         "What gives you energy without caffeine?",
@@ -288,15 +290,15 @@ DAILY = {
         "What's weighing on you? Write it down to set it aside.",
         "What would you say to a friend who felt like you do?",
         "What went better than you expected this week?",
-        "Which thought keeps looping? Fact or fear?",
+        "Which thought keeps looping: fact or fear?",
         "Who makes you feel understood?",
         "What small thing can you forgive yourself for today?",
         "Where do you feel stress in your body right now?",
         "What are you proud of that nobody saw?",
         "What boundary would protect your energy?",
-        "Did something sting this week? What else could it mean?",
+        "If something stung this week, what else could it mean?",
         "Write one kind sentence to yourself.",
-        "What's making you anxious, and what's in your control?",
+        "What part of what worries you is in your control?",
         "When did you last laugh really hard?",
         "What's your first sign of overwhelm? Spot it early.",
         "What calms you down fastest? List three.",
@@ -313,14 +315,14 @@ DAILY = {
         "What made you feel capable recently?",
         "Write one worry down and close it for today.",
         "What would you like more of right now?",
-        "Which comment are you replaying? Does it deserve the space?",
+        "Which comment are you replaying more than it deserves?",
         "What does rest look like for your mind?",
         "What are you looking forward to?",
         "What would \"gentle\" look like today?",
         "How did you handle something hard this week?",
         "Which mistake taught you something useful?",
         "Who do you feel safe being yourself around?",
-        "Are you carrying a feeling from yesterday? Can you set it down?",
+        "Which feeling from yesterday can you set down?",
         "What made you smile today?",
         "What do you need to hear right now?",
         "How do you know you're getting close to burnout?",
@@ -331,7 +333,7 @@ DAILY = {
         "What can you let be imperfect?",
         "Write three things that are going okay.",
         "What are you thankful for this season?",
-        "What drained you this week, and what refilled you?",
+        "What refilled you this week?",
         "Which feeling would you like to feel more often?",
         "Who do you want to thank before the year ends?",
         "How will you protect your peace during the holidays?",
@@ -395,7 +397,7 @@ DAILY = {
     ]),
     5: ("Play", [  # Saturday
         "What would be fun today? No productivity allowed.",
-        "Which hobby do you miss? Could you give it 15 minutes?",
+        "Which hobby could you give 15 minutes today?",
         "Try something new today, however small.",
         "What's your favorite way to do nothing?",
         "Plan one thing just for joy this weekend.",

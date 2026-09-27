@@ -208,7 +208,7 @@ def p_experiments():
         rows += (f'<a class="xr" href="#w{n}"><span class="wn">W{n}</span><span class="xn">{e(name)}</span>'
                  f'<span class="xd">{md(first)}</span><span class="rate">✓ ~ ✗</span></a>')
     return (head(str(Y), "The 52 experiments",
-                 "One small strategy a week. Mark it on Friday: helped, sort of, not for me.")
+                 "One small strategy a week. Copy your Friday mark here: helped, sort of, not for me.")
             + f'<div class="bd">{box("TAP A WEEK", f"<div class=xl>{rows}</div>")}</div>')
 
 
@@ -366,7 +366,7 @@ def p_wreset(n, first):
     items = "".join(f'<div class="ck"><i></i><span>{e(t)}</span></div>' for t in C.WEEKLY_RESET)
     return (head(f"{Y} · WEEK {n}", "Weekly reset", "Sunday setup, then one look back.", chip(f"w{n}", f"Week {n}"))
             + '<div class="bd">' + box("SUNDAY SETUP", items, "none")
-            + box("NEXT WEEK'S HEAVIEST DAY — AND ONE THING TO MAKE IT LIGHTER", lines(2), "none")
+            + box("NEXT WEEK'S HEAVIEST DAY", lines(2), "none", hint="one thing to make it lighter")
             + box("DONE LIST — COUNT THE SMALL ONES", lines(6))
             + box(f"EXPERIMENT: {C.experiment(n)[0].upper()} — ONE LINE", lines(2), "none") + '</div>')
 
@@ -408,7 +408,7 @@ def p_day(d):
 def p_playbook():
     rows = "".join(f'<div class="tr3"><b>W__</b><div class="ln fl"></div><span class="hint">why it worked</span><div class="ln fl"></div></div>' for _ in range(10))
     return (head(f"{Y} · DECEMBER", "My ADHD playbook",
-                 "Copy every ✓ from the 52 experiments. This is your brain's user manual, tested on you.",
+                 "Copy every ✓ from The 52 experiments and your quarterly KEEPs. Your brain's user manual, tested on you.",
                  chip("experiments", "The 52 experiments"))
             + f'<div class="bd">{box("WHAT WORKED", rows)}<div class="rw">{box("MY TOP 5 MOVES", lines(5))}'
             f'{box("NOT FOR ME (AND THAT IS FINE)", lines(5))}</div></div>')
@@ -418,7 +418,7 @@ def p_mailbox():
     src = NOTES_IN.get("mailbox", [])
     ch = "".join(chip(dk(s), f"{md(s)} ←", "note") for s in src)
     return (head(f"{Y} · YEAR-END", "Year-end mailbox",
-                 "Notes to future you written in December land here. Open on New Year's Day.")
+                 "Notes to future you written in December land here. Read them on Dec 31, or save them for the new year.")
             + f'<div class="bd">{box("NOTES WAITING FOR YOU", f"<div class=chips>{ch}</div>", "none")}{box("A NOTE FROM ME TO NEXT YEAR", lines(10))}</div>')
 
 
@@ -426,7 +426,7 @@ def p_yreview():
     return (head(f"{Y}", "Year review", "Read your done lists and your playbook first.")
             + '<div class="bd">' + box("TEN WINS FROM THIS YEAR", lines(10), "none")
             + '<div class="rw">' + box("ADHD TAX — YEAR TOTAL", "".join(chip(f"mr{m}", MA[m]) for m in range(1, 13)) + lines(1) + '<div class="txt"><b>$ ______</b></div>')
-            + box("BEST MONTH, AND WHY", lines(3)) + '</div>'
+            + box("BEST MONTH", lines(3), hint="what made it work") + '</div>'
             + box("THREE THINGS TO CARRY INTO NEXT YEAR", lines(3), "1") + '</div>')
 
 

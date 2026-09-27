@@ -61,7 +61,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.15 = 목차에 세부 페이지 알약(10장 길 생김), Kickoff "Will I still use it in March?" (기획 대조, 사용자 승인)
 # v0.16 = 표지·섹션 표지 목록 줄 끝에 › (쪽 번호는 그대로, 사용자)
 # v0.17 = Kickoff 윗글 "YEAR KICKOFF" (목차 알약과 이름 맞춤, 사용자 A안). ADHD tax 링크는 그대로(사용자)
-VERSION = "v0.17"
+# v0.18 = 의도 검수 문구·링크: How(흐름·time blindness·2탭), 표지 Drop, 한 칸 두 질문 정리, 원본 표시 안내, mailbox, 링크 2(dopamine·playbook)
+VERSION = "v0.18"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -319,7 +320,7 @@ def p_cover():
     <div style="flex:1;display:flex;align-items:center;gap:36px;min-height:0">
       <div class="cmyk">52<span class="c">52</span><span class="m">52</span><span class="y">52</span></div>
       <div style="font-style:italic;font-size:19px;line-height:1.4;max-width:250px;color:{N800}">
-        Fifty-two things to try. Keep the ones that work. Skip the weeks that don't.</div></div>
+        Fifty-two things to try. Keep the ones that work. Drop the ones that don't.</div></div>
     <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:{CYAN700};margin-bottom:8px">In this planner</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">{rows}</div>
     <div style="margin-top:28px;display:flex;align-items:flex-end;gap:8px;font-size:13px">
@@ -500,6 +501,10 @@ def page(key, body, n):
         bd = "bday1" if int(key[2:]) <= 6 else "bday2"
         body = re.sub(r'<div class="lab">(BIRTHDAYS.*?)</div>', lambda m: f'<div class="lab"><a class="ll" href="#{bd}">{m.group(1)}</a></div>', body, count=1)
         body = re.sub(r'<div class="lab">(ADMIN RADAR)</div>', lambda m: f'<div class="lab"><a class="ll" href="#admin">{m.group(1)}</a></div>', body, count=1)
+    if re.fullmatch(r"mp\d+", key):   # 글자만 있던 참조를 링크로 (의도 검수 2026-09-27, 모양 그대로)
+        body = body.replace("see dopamine menu", '<a class="ll" href="#dopamine">see dopamine menu</a>', 1)
+    if key == "yearreview":
+        body = body.replace("your playbook first", '<a class="ll" href="#playbook">your playbook</a> first', 1)
     if re.fullmatch(r"mr\d+", key):
         body = re.sub(r'<div class="lab">(ADHD TAX THIS MONTH)</div>', lambda m: f'<div class="lab"><a class="ll" href="#yearreview">{m.group(1)}</a></div>', body, count=1)
     if key == "yearreview":
