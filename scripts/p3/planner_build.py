@@ -67,7 +67,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 #         2쪽 How it works 탭 없음(표지처럼) (사용자 2026-09-27)
 # v0.21 = 리드 칸 알약 청록 테두리 규칙 삭제 -> 542쪽 Playbook Q1~Q4 KEEPS 도 흰+회색 (사용자 2026-09-27)
 # v0.22 = 종이 W1 "Soft white" #fdfcfa (배경 전체 +5,+8,+6, 시안 섞은 색 다시 계산) + 목차 Year 알약 같은 폭 왼쪽 정렬 D안 (사용자 2026-09-27)
-VERSION = "v0.22"
+# v0.23 = 종이 모서리 하이라이트가 255 에서 잘려 1/4 원판(v0.22) -> 눌러 담기, 세기 절반 (사용자 "A~B 중간") + 잘린 점 0 검사
+VERSION = "v0.23"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -473,6 +474,9 @@ def grid_svg(w, h, step=17):
 
 
 # -------------------------------------------------------------------- chrome --
+HIGHLIGHT = 0.5
+
+
 def paper_background(src_png, dst_jpg):
     """E.shift_background 와 같은 이동(탭 자리) + 종이색 W1. PNG 마스터에서 한 번만 JPEG 으로 (두 번 압축하지 않는다).
     색은 전체를 같은 만큼 옮긴다(+5,+8,+6): 종이 -> W1, 책상·그림자도 같은 만큼 -> 그림자 깊이 그대로.
@@ -485,10 +489,21 @@ def paper_background(src_png, dst_jpg):
     out = Image.new("RGB", (w, h))
     out.paste(im.crop((d, 0, w, h)), (0, 0))
     out.paste(im.crop((w - 1, 0, w, h)).resize((d, h)), (w - d, 0))
-    a = np.asarray(out).astype(np.int16) + np.array([p - q for p, q in zip(_P, PAPER_HAND)], dtype=np.int16)
-    out = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
+    # 종이보다 어두운 곳(책상·그림자)은 같은 만큼 옮기고, 종이보다 밝은 곳(모서리 하이라이트)은 255 아래로 눌러 담는다.
+    # v0.22 는 더하기만 해서 하이라이트가 255 에서 잘려 평평한 1/4 원판이 됐다(사용자 한PDF 에서 발견, 2026-09-27).
+    # HIGHLIGHT: 0 = 하이라이트 없음(종이 한 색), 1 = 남은 여유를 다 씀. 사용자: "아주 조금이라도 입체감" -> 중간
+    a = np.asarray(out).astype(np.float32)
+    P, T = np.array(PAPER_HAND, np.float32), np.array(_P, np.float32)
+    hi = T + (a - P) * (255 - T) / (255 - P) * HIGHLIGHT
+    # 하이라이트 쪽에만 +-0.5 미만의 점 잡음(디더) -- 1단계 차이가 등고선(동그란 줄)으로 보이지 않게. 시드 고정(판마다 같은 배경)
+    hi = hi + (np.random.default_rng(3).random(a.shape, dtype=np.float32) - .5) * .9
+    a = np.where(a <= P, a + (T - P), hi)
+    out = Image.fromarray(np.clip(np.rint(a), 0, 255).astype(np.uint8))
     out.save(dst_jpg, quality=90, optimize=True)
     # 검사: 종이 한가운데가 W1, 책상에 분홍기 없음 (JPEG 오차 1~2)
+    clipped = int((np.asarray(out)[160:h - 160, 160:w - 200] >= 255).any(axis=2).sum())
+    if clipped:
+        raise SystemExit(f"배경 종이 안에 255 에서 잘린 점 {clipped}개 -- 평평한 원판이 생긴다")
     c = out.getpixel((w // 2, h // 2)); desk = out.getpixel((10, h // 2))
     if max(abs(x - y) for x, y in zip(c, _P)) > 2 or desk[0] - desk[1] > 1:
         raise SystemExit(f"배경 종이색 {c} (기대 {_P}), 책상 {desk}")
