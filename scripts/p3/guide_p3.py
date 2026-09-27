@@ -13,7 +13,8 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts" / "p3"))
-DRAFT = "draft-v0.3"   # v0.3 = 단계 문구를 원형 숫자와 세로 가운데 맞춤 (사용자). 행 높이·간격 그대로
+DRAFT = "draft-v0.4"   # v0.4 = 공식 도움말 대조 문구 3곳 (Etsy "generally no limits", Goodnotes "Edit Mode", Notability "press and hold + New") -- 사용자 2026-09-27
+# v0.3   # v0.3 = 단계 문구를 원형 숫자와 세로 가운데 맞춤 (사용자). 행 높이·간격 그대로
 # v0.2   # v0.2 = 종이색 W1 #fdfcfa (플래너 v0.22 와 같게, 사용자 2026-09-27)
 OUT = ROOT / "output" / "prod3" / "guide" / DRAFT
 if OUT.exists():
@@ -78,7 +79,7 @@ PAGES = [
         + step(2, f"Go to {ui('Your account')} → {ui('Purchases')}, then tap {ui('Download Files')} next to this order.")
         + step(3, "Save the files. The sticker kit arrives as a <b>ZIP</b>.")
         + step(4, f"To open the ZIP, go to the <b>Files</b> app and tap the ZIP. A folder with the stickers appears next to it.")
-        + '<div class="tip">No limit on downloads — you can come back to Purchases and download again any time.</div>',
+        + '<div class="tip">There’s generally no download limit — come back to Purchases and download again whenever you need.</div>',
         "2 / 5", "Your files are on the order's download page."),
     sec("Step 2", "Open it in Goodnotes", '<div class="lab">From the Files app</div>'
         + step(1, f"Find the planner PDF, tap {ui('Share')} and choose {ui('Open in Goodnotes')}.")
@@ -94,7 +95,7 @@ PAGES = [
         + step(3, f"On a daily page, {ui('Tomorrow →')} and {ui('From yesterday ←')} walk you through the days. A note to future you links to the day it arrives.")
         + step(4, f"Stuck? Tap {ui('SOS')} and pick what is happening.")
         + '<div class="tip"><b>If a tap draws a line instead of opening the link,</b> switch to <b>Read Only Mode</b> '
-          '(the icon in the Nav Bar), or touch and hold the link and choose <b>Open Link</b>. Switch back to write.</div>',
+          '(the icon in the Nav Bar), or touch and hold the link and choose <b>Open Link</b>. Switch back to Edit Mode to write.</div>',
         "4 / 5", "Every link is a real PDF link."),
     sec("Step 4", "Add the stickers", step(1, f"In a notebook, choose {ui('Elements')} from the toolbar.")
         + step(2, "Scroll to the end of the collection list and tap the <b>+</b>.")
@@ -103,7 +104,7 @@ PAGES = [
         + '<div class="lab">Need help?</div>'
           '<p style="font-size:17px;line-height:1.5">Message me on Etsy. If anything is wrong with a file, I will fix it.</p>'
         + '<p style="font-size:13px;color:#605d5d;margin-top:18px;line-height:1.5">Using Notability or another app? Import the PDF the same way '
-          '(in Notability: +New → Import). This planner is a set of writing prompts, not medical advice.</p>',
+          '(in Notability: touch and hold + New, then Import). This planner is a set of writing prompts, not medical advice.</p>',
         "5 / 5", "Your stickers, in your own collection."),
 ]
 
