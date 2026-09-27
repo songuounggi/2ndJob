@@ -80,6 +80,9 @@ python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.
 | `planner/v0.13/` | 기획서를 안 보고 순서를 바꾼 판 -- **쓰지 않는다** | |
 | `planner/v0.14/` | 순서 기획서대로, 표지 탭 없음, How = INDEX, 라벨 링크 3종 | |
 | **`planner/v0.15/`** | 목차 세부 페이지 알약 + Kickoff 3월 칸. **검수 보고서 `qa/v0.15/report.md`** (PROCESS.md 5~6단계 통과) | |
+| `planner/v0.16/`~`v0.18/` | 목록 › · Kickoff 이름 · 의도 검수 문구·링크 | |
+| **`planner/v0.19/`** | 일간 실험 알약, 분기 실험 목록, Playbook 분기 KEEP, SOS 다시 시작, Year review 달 버튼 같은 폭. `qa/v0.19/report.md` 통과 | |
+| `stickers/draft-v0.5/` | 스티커 검수 반영 (129종 253개) | `d935aea` |
 | `qa/<버전>/` | 검수 보고서와 검사 로그 (`run_qa_p3.py` + `dogfood_p3.py`) | |
 | `planner/v*/sample-NN/TEST-sample-*.pdf` | 작업 중 몇 장씩 뽑은 **시험본**. 검수용 아님 | |
 | `archive_dated-v0.1/` | 상품 1 모양 날짜형 첫 시도 8판 (반려) | `eb3f67e` |
