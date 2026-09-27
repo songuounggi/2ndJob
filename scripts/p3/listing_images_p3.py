@@ -16,7 +16,7 @@ import pypdfium2 as pdfium
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 VER = "v0.22"
-DRAFT = "draft-v0.19"   # v0.19: v0.22 페이지(종이 W1)로 다시 찍음, 06 에 스티커 키트 한 줄(판매 파일 5번째 ZIP), 11 스티커 실사용 장면 후보(10장 중 하나와 바꿀 것, 사용자 선택) / v0.18: v0.17: 영문 교정된 v0.8 페이지로 다시 찍음 / v0.16: 09 화살표·TAP 에 그림자(사용자: 썰렁하다) / v0.15: 배지를 페이지 밖으로 올린 것보다 v0.14(페이지 윗가장자리에 걸침, 본문은 안 가림)가 낫다(사용자) -> v0.14 위치로 / v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
+DRAFT = "draft-v0.24"   # v0.24: 09 페이지 크게(아래가 비었다), 15 고리 가운데로 / v0.23: v0.23: 09 선을 그림이 다 들어온 뒤에 잰다(v0.22 는 엉뚱한 곳), 점선 정리 / v0.22: v0.22: 09 허공 화살표(사용자: 아마추어 같다) -> 누르는 자리에 번호 표시(탭 물결), 3월 달력 확대 카드, 그날 페이지 제목으로 곡선 연결 / v0.21: v0.21: 11 장면 그림자 잘림 경계선 없앰(장면 v0.6) / v0.20: v0.20: 11 스티커 장면을 iPad 세로 통째로(잘라 넣어 가로 모드처럼 보였다 -- 사용자), 배경색 같게 / v0.19: v0.19: v0.22 페이지(종이 W1)로 다시 찍음, 06 에 스티커 키트 한 줄(판매 파일 5번째 ZIP), 11 스티커 실사용 장면 후보(10장 중 하나와 바꿀 것, 사용자 선택) / v0.18: v0.17: 영문 교정된 v0.8 페이지로 다시 찍음 / v0.16: 09 화살표·TAP 에 그림자(사용자: 썰렁하다) / v0.15: 배지를 페이지 밖으로 올린 것보다 v0.14(페이지 윗가장자리에 걸침, 본문은 안 가림)가 낫다(사용자) -> v0.14 위치로 / v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
 PDF = ROOT / "output" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.pdf"
 HTML = ROOT / "src" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.html"
 OUT = ROOT / "output" / "prod3" / "listing" / DRAFT
@@ -25,7 +25,7 @@ if OUT.exists():
 OUT.mkdir(parents=True)
 PAGES = OUT / "_pages"
 PAGES.mkdir()
-SCENE = ROOT / "output" / "prod3" / "preview" / "sticker_scene" / "draft-v0.3" / "sticker_scene.png"   # scripts/p3/sticker_scene_p3.py
+SCENE = ROOT / "output" / "prod3" / "preview" / "sticker_scene" / "draft-v0.6" / "sticker_scene_full.png"   # scripts/p3/sticker_scene_p3.py
 (OUT / "scene.png").write_bytes(SCENE.read_bytes())
 
 ids = re.findall(r'<section class="pg" id="([^"]+)"', HTML.read_text(encoding="utf-8"))
@@ -36,6 +36,12 @@ with open(PDF, "rb") as fh:
     doc = pdfium.PdfDocument(fh.read())
 for k in WANT:
     doc[ids.index(k)].render(scale=2.2).to_pil().save(PAGES / f"{k}.png")
+# 09 확대 카드: Year at a glance 의 3월 달력 (15일에 고리) -- 좌표는 PDF pt
+_yp = doc[ids.index("year")]
+import pymupdf as _mu  # noqa: E402  (잘라 찍기는 pymupdf 가 간단하다)
+_md = _mu.open(PDF)
+_md[ids.index("year")].get_pixmap(matrix=_mu.Matrix(6, 6), clip=_mu.Rect(282, 150, 394, 238)).save(str(PAGES / "mag_march.png"))
+_md.close()
 doc.close()
 # 06 에 네 판 표지 -- 월/일 시작, 연도가 표지에 찍혀 있다
 for y in ("2026", "2027"):
@@ -81,8 +87,19 @@ p.s{{font-size:42px;font-style:italic;color:{N700};line-height:1.3}}
 .fan .fp img{{display:block;height:100%}}
 .fan .tag{{position:absolute;background:{PAPER};border:2px solid {N700};border-radius:999px;padding:5px 16px;font-size:22px;letter-spacing:.08em;text-transform:uppercase;color:{INK};white-space:nowrap}}
 .fan .tag.solid{{background:{CYAN};border:0;border-radius:16px;padding:7px 16px;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.22)}}
+.tt{{position:relative;flex:1;min-height:0;display:flex;gap:200px;justify-content:center;align-items:flex-start;margin-top:50px}}
+.tt .fig{{flex:none;width:610px}} .pw{{position:relative;width:100%}} .pw img{{width:100%;display:block;box-shadow:0 14px 30px rgba(0,0,0,.15)}}
+.tap{{position:absolute;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;background:{CYAN};color:#fff;font-size:32px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;border:4px solid #fff;box-shadow:0 8px 18px rgba(0,0,0,.28);z-index:3}}
+.tap::before,.tap::after{{content:"";position:absolute;border-radius:50%;border:3px solid {CYAN};inset:-16px;opacity:.35}}
+.tap::after{{inset:-32px;opacity:.15}}
+.mag{{position:absolute;width:330px;border-radius:26px;background:#fff;padding:14px;box-shadow:0 26px 50px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.1);z-index:4}}
+.mag img{{width:100%;display:block;border-radius:12px}}
+.mag .ring{{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:5px solid {CYAN}}}
+.land{{position:absolute;width:0;height:0}}
+svg.link{{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:5;filter:drop-shadow(0 3px 4px rgba(0,0,0,.18))}}
 .notes{{display:grid;grid-template-columns:1fr 1fr;gap:26px}}
-.scene{{flex:1;min-height:0;margin-top:46px;border-radius:26px;background:url('scene.png') 50% 12%/118% auto no-repeat;box-shadow:0 30px 60px rgba(0,0,0,.18)}}
+.scene{{flex:1;min-height:0;margin-top:30px;background:url('scene.png') 50% 100%/contain no-repeat}}   /* 자르지 않는다 -- iPad 세로 전체가 보여야 한다 */
 .foot{{font-size:34px;color:{N700};margin-top:40px;letter-spacing:.04em}}
 """
 
@@ -144,9 +161,29 @@ SHOTS = {
     "09_two_taps": f"""<div class="k">Hyperlinked · ten tabs on every page</div>
       <h1>Any day of the year,<br>two taps away.</h1>
       <div class="steps"><div class="step"><i>1</i>Tap YEAR</div><div class="step"><i>2</i>Tap the date</div></div>
-      <div class="trio"><div class="fig">{img("year", "")}<div class="cap">Year at a glance</div></div>
-        <div class="arrow"><svg width="150" height="60" viewBox="0 0 150 60"><path d="M4 30H136M112 8l26 22-26 22" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>tap</span></div>
-        <div class="fig">{img("d3-15", "")}<div class="cap">That day's page</div></div></div>""",
+      <div class="tt" id="tt">
+        <div class="fig"><div class="pw">{img("year", "")}<span class="tap" id="t1" style="left:95.1%;top:28.2%">1</span>
+          <span class="tap" id="t2" style="left:51%;top:26.7%">2</span></div><div class="cap">Year at a glance</div></div>
+        <div class="fig"><div class="pw">{img("d3-15", "")}<span class="land" id="land" style="left:9%;top:11.9%"></span></div><div class="cap">That day's page</div></div>
+        <div class="mag" id="mag" style="left:440px;top:370px;transform:rotate(-3deg)"><img src="_pages/mag_march.png"><span class="ring" style="left:calc(14px + 302px * .118);top:calc(14px + 243px * .64)"></span></div>
+        <svg class="link" id="link"></svg>
+      </div>
+      <script>
+      window.addEventListener('load', () => {{      // 그림이 다 들어온 뒤에 잰다 (v0.22 는 먼저 재서 선이 엉뚱한 곳에 그려졌다)
+        const R = e => (typeof e === 'string' ? document.getElementById(e) : e).getBoundingClientRect();
+        const T = R('tt'), m = R('mag'), rg = R(document.querySelector('#mag .ring')), ld = R('land'), t2 = R('t2');
+        const X = v => v - T.left, Y = v => v - T.top;
+        const rx = X((rg.left + rg.right) / 2), ry = Y((rg.top + rg.bottom) / 2);
+        const qx = X((t2.left + t2.right) / 2), qy = Y(t2.bottom) + 18;           // 2 표시 바로 아래
+        const sx = X(m.right) - 8, sy = ry;                                        // 확대 카드 오른쪽, 15 높이
+        const ex = X(ld.left) - 16, ey = Y(ld.top);                                // 그날 페이지 제목 왼쪽
+        const col = '{CYAN}';
+        document.getElementById('link').innerHTML =
+          `<path d="M${{qx}} ${{qy}} Q ${{qx - 10}} ${{(qy + Y(m.top)) / 2}} ${{rx}} ${{Y(m.top) + 6}}" fill="none" stroke="${{col}}" stroke-width="4" stroke-dasharray="1 11" stroke-linecap="round"/>` +
+          `<path d="M${{sx}} ${{sy}} C ${{sx + 170}} ${{sy}}, ${{ex - 190}} ${{ey}}, ${{ex}} ${{ey}}" fill="none" stroke="${{col}}" stroke-width="6" stroke-linecap="round"/>` +
+          `<path d="M${{ex - 22}} ${{ey - 15}} L ${{ex}} ${{ey}} L ${{ex - 22}} ${{ey + 15}}" fill="none" stroke="${{col}}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`;
+      }});
+      </script>""",
     "10_anywhere": f"""<div class="k">Works anywhere</div>
       <h1>No other country's<br>holidays in your way.</h1>
       <p class="s">Only dates shared worldwide are printed. Add your own on the My holidays page.</p>

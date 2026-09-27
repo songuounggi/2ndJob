@@ -16,7 +16,8 @@ from playwright.sync_api import sync_playwright
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.3"   # v0.3 = 손글씨 대조: 금요일 "keep it for March" -> 분기 흐름대로 "keeper → Q1 review", Brain dump "2-min rule next wk"(7주차) -> 13주차 실제 실험 "decide once", 책상 위 NOT FOR ME -> IN MY PLAYBOOK (광고에 부정어 X)
+DRAFT = "draft-v0.6"   # v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
+# v0.3   # v0.3 = 손글씨 대조: 금요일 "keep it for March" -> 분기 흐름대로 "keeper → Q1 review", Brain dump "2-min rule next wk"(7주차) -> 13주차 실제 실험 "decide once", 책상 위 NOT FOR ME -> IN MY PLAYBOOK (광고에 부정어 X)
 # v0.2   # v0.2 = 형광펜을 "due Fri!" 위로, Top 3 글자가 체크에 가리지 않게, 연필이 Brain dump 를 덜 덮게, 수요일 글 왼쪽으로
 PLANNER, STICKERS = "v0.22", "draft-v0.8"
 OUT = ROOT / "output/prod3/preview/sticker_scene" / DRAFT
@@ -28,100 +29,108 @@ ST = (ROOT / f"output/prod3/stickers/{STICKERS}/png").as_uri()
 html = (ROOT / f"src/prod3/planner/{PLANNER}/ADHD-Year-Planner-2027-mon.html").read_text(encoding="utf-8")
 ids = re.findall(r'<section class="pg" id="([^"]+)"', html)
 pg = pymupdf.open(ROOT / f"output/prod3/planner/{PLANNER}/ADHD-Year-Planner-2027-mon.pdf")[ids.index("w12")]
-SW = 1700                                   # 화면 속 페이지 폭(px)
-K = SW / pg.rect.width                      # pt -> px
-pm = pg.get_pixmap(matrix=pymupdf.Matrix(K, K))
-pm.save(str(OUT / "_page.png"))
-SH = pm.height
-BZ, X0, Y0 = 34, (2000 - SW) // 2 - 34, 170      # 기기 틀 두께, 위치
+
 INK = "#1d2740"
+PENCIL = ('<svg class="pencil" viewBox="0 0 760 44"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'
+          '<stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#f2f2f0"/><stop offset="1" stop-color="#d9d8d4"/></linearGradient></defs>'
+          '<path d="M60 4H740a18 18 0 0 1 0 36H60L4 22z" fill="url(#g)"/><path d="M4 22L60 4v36z" fill="#e9e8e4"/><path d="M4 22l18-6v12z" fill="#2b2b2d"/>'
+          '<rect x="700" y="4" width="3" height="36" fill="#cfcfcb"/></svg>')
+# 두 가지 배치. full = 리스팅 11번 자리(가로 1480 x 세로 1110) -- iPad 가 세로로 통째로 보인다 (사용자: 잘라 넣으니 가로 모드로 착각할 수 있다)
+LAYOUTS = {
+    "sticker_scene": dict(CW=2000, CH=2000, SW=1700, BZ=34, Y0=170, R=78, SR=46,
+                          bg="radial-gradient(ellipse 90% 70% at 50% 35%,#f1eee8 0%,#e6e2da 70%,#ddd8cf 100%)",
+                          loose=[("Experiments/in-my-playbook_deep.png", 30, 70, 100, -12), ("Energy/recharge_deep.png", 1380, 36, 96, 9),
+                                 ("Experiments/sort-of_stone.png", 1720, 110, 170, 12)],
+                          pencil="left:1380px;top:1900px;width:760px;height:44px;transform:rotate(-24deg)"),
+    "sticker_scene_full": dict(CW=1480, CH=1110, SW=716, BZ=20, Y0=24, shadow="0 22px 40px rgba(40,30,20,.26),0 6px 14px rgba(40,30,20,.16)", R=46, SR=26, bg="#e9e6e3",   # 리스팅 배경과 같은 색
+                               loose=[("Experiments/in-my-playbook_deep.png", 20, 110, 62, -12), ("Energy/recharge_deep.png", 70, 470, 58, 8),
+                                      ("Brain-weather/great_ink.png", 130, 760, 150, -6), ("Experiments/sort-of_stone.png", 1195, 90, 165, 12),
+                                      ("Small-wins/tiny-step_blush.png", 1200, 500, 54, -8), ("Experiments/keep_mist.png", 1210, 800, 64, 6)],
+                               pencil="left:985px;top:1030px;width:500px;height:30px;transform:rotate(-38deg)"),
+}
+with sync_playwright() as p:
+    br = p.chromium.launch(channel="chrome")
+    for name, L in LAYOUTS.items():
+        SW, BZ = L["SW"], L["BZ"]
+        K = SW / pg.rect.width                                       # pt -> px (손글씨·스티커 좌표가 이걸 따른다)
+        pm = pg.get_pixmap(matrix=pymupdf.Matrix(K, K))
+        pm.save(str(OUT / f"_page_{name}.png"))
+        SH = pm.height
+        X0 = (L["CW"] - SW - 2 * BZ) // 2
 
 
-def at(x, y):
-    return f"left:{x * K:.0f}px;top:{y * K:.0f}px"
+        def at(x, y):
+            return f"left:{x * K:.0f}px;top:{y * K:.0f}px"
 
+        def hand(x, y, text, size=11, rot=0, extra=""):
+            return f'<div class="h" style="{at(x, y)};font-size:{size * K:.0f}px;transform:rotate({rot}deg);{extra}">{text}</div>'
 
-def hand(x, y, text, size=11, rot=0, extra=""):
-    return f'<div class="h" style="{at(x, y)};font-size:{size * K:.0f}px;transform:rotate({rot}deg);{extra}">{text}</div>'
+        def stk(rel, x, y, h, rot=0):
+            return f'<img class="s" src="{ST}/{rel}" style="{at(x, y)};height:{h * K:.0f}px;transform:rotate({rot}deg)">'
 
-
-def stk(rel, x, y, h, rot=0):
-    return f'<img class="s" src="{ST}/{rel}" style="{at(x, y)};height:{h * K:.0f}px;transform:rotate({rot}deg)">'
-
-
-on_page = "".join([
-    # 금요일 판정: "helped" 에 펜으로 동그라미 + HELPED 스티커
-    f'<svg class="pen" style="left:{156 * K:.0f}px;top:{178 * K:.0f}px;width:{48 * K:.0f}px;height:{26 * K:.0f}px" viewBox="0 0 48 26">'
-    f'<path d="M30 4C18 1 5 4 3 12s10 12 24 11 19-6 17-12S33 2 22 4" fill="none" stroke="{INK}" stroke-width="1.3" stroke-linecap="round"/></svg>',
-    stk("Experiments/helped_cyan.png", 322, 156, 54, -8),
-    # MON
-    hand(64, 248, "✓ labeled the 7:40 alarm “Leave now”", 11, -1),
-    hand(64, 266, "✓ dentist call (finally!)", 11, -0.5),
-    stk("Small-wins/did-the-thing_paper.png", 290, 262, 22, 5),
-    # TUE
-    hand(64, 316, "groceries + pharmacy pickup", 11, -1),
-    hand(64, 334, '<span style="text-decoration:line-through;text-decoration-thickness:2px">reply to Sam</span>  ✓', 11, 0),
-    # WED
-    stk("Energy/low-battery-day_blush.png", 64, 380, 21, -3),
-    hand(190, 384, "basics only. nap at 3 :)", 11, -1),
-    # THU
-    '<div class="hl" style="' + at(123, 449) + f';width:{35 * K:.0f}px;height:{10 * K:.0f}px"></div>',
-    hand(64, 448, "pay phone bill — due Fri!", 11, -0.5),
-    hand(64, 466, "laundry, round 2", 11, -1),
-    # FRI
-    hand(64, 518, "named alarms actually worked.", 11, -1),
-    hand(64, 536, "keeper → Q1 review", 11, -1),
-    stk("Brain-weather/good_mist.png", 330, 506, 42, 6),
-    # SAT
-    hand(64, 585, "farmers market w/ Jo", 11, -1),
-    # TOP 3
-    hand(443, 229, "Q1 report", 10, -1),
-    hand(443, 255, "book flights", 10, -1),
-    hand(443, 280, "call Grandma", 10, -1),
-    stk("Mini/check_mist.png", 486, 227, 15, 4),
-    stk("Mini/check_mist.png", 486, 253, 15, -3),
-    # BRAIN DUMP
-    hand(443, 328, "gift for Jo's bday?", 10, -1),
-    hand(443, 354, "renew passport (May)", 10, -1),
-    hand(443, 379, "next wk: decide once", 10, -1),
-    hand(443, 405, "new phone charger", 10, -1),
-])
-
-loose = "".join(f'<img class="loose" src="{ST}/{rel}" style="left:{x}px;top:{y}px;height:{h}px;transform:rotate({r}deg)">'
-                for rel, x, y, h, r in [("Experiments/in-my-playbook_deep.png", 30, 70, 100, -12),
-                                        ("Energy/recharge_deep.png", 1380, 36, 96, 9),
-                                        ("Experiments/sort-of_stone.png", 1720, 110, 170, 12)])
-
-page_html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+        on_page = "".join([
+            # 금요일 판정: "helped" 에 펜으로 동그라미 + HELPED 스티커
+            f'<svg class="pen" style="left:{156 * K:.0f}px;top:{178 * K:.0f}px;width:{48 * K:.0f}px;height:{26 * K:.0f}px" viewBox="0 0 48 26">'
+            f'<path d="M30 4C18 1 5 4 3 12s10 12 24 11 19-6 17-12S33 2 22 4" fill="none" stroke="{INK}" stroke-width="1.3" stroke-linecap="round"/></svg>',
+            stk("Experiments/helped_cyan.png", 322, 156, 54, -8),
+            # MON
+            hand(64, 248, "✓ labeled the 7:40 alarm “Leave now”", 11, -1),
+            hand(64, 266, "✓ dentist call (finally!)", 11, -0.5),
+            stk("Small-wins/did-the-thing_paper.png", 290, 262, 22, 5),
+            # TUE
+            hand(64, 316, "groceries + pharmacy pickup", 11, -1),
+            hand(64, 334, '<span style="text-decoration:line-through;text-decoration-thickness:2px">reply to Sam</span>  ✓', 11, 0),
+            # WED
+            stk("Energy/low-battery-day_blush.png", 64, 380, 21, -3),
+            hand(190, 384, "basics only. nap at 3 :)", 11, -1),
+            # THU
+            '<div class="hl" style="' + at(123, 449) + f';width:{35 * K:.0f}px;height:{10 * K:.0f}px"></div>',
+            hand(64, 448, "pay phone bill — due Fri!", 11, -0.5),
+            hand(64, 466, "laundry, round 2", 11, -1),
+            # FRI
+            hand(64, 518, "named alarms actually worked.", 11, -1),
+            hand(64, 536, "keeper → Q1 review", 11, -1),
+            stk("Brain-weather/good_mist.png", 330, 506, 42, 6),
+            # SAT
+            hand(64, 585, "farmers market w/ Jo", 11, -1),
+            # TOP 3
+            hand(443, 229, "Q1 report", 10, -1),
+            hand(443, 255, "book flights", 10, -1),
+            hand(443, 280, "call Grandma", 10, -1),
+            stk("Mini/check_mist.png", 486, 227, 15, 4),
+            stk("Mini/check_mist.png", 486, 253, 15, -3),
+            # BRAIN DUMP
+            hand(443, 328, "gift for Jo's bday?", 10, -1),
+            hand(443, 354, "renew passport (May)", 10, -1),
+            hand(443, 379, "next wk: decide once", 10, -1),
+            hand(443, 405, "new phone charger", 10, -1),
+        ])
+        loose = "".join(f'<img class="loose" src="{ST}/{rel}" style="left:{x}px;top:{y}px;height:{h}px;transform:rotate({r}deg)">'
+                        for rel, x, y, h, r in L["loose"])
+        page_html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=block" rel="stylesheet">
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
-body{{width:2000px;height:2000px;overflow:hidden;position:relative;
-  background:radial-gradient(ellipse 90% 70% at 50% 35%,#f1eee8 0%,#e6e2da 70%,#ddd8cf 100%)}}
-.ipad{{position:absolute;left:{X0}px;top:{Y0}px;width:{SW + 2 * BZ}px;height:{SH + 2 * BZ}px;border-radius:78px;
-  background:#1c1c1e;padding:{BZ}px;box-shadow:0 40px 80px rgba(40,30,20,.28),0 10px 24px rgba(40,30,20,.18),inset 0 0 0 3px #3a3a3c}}
-.screen{{position:relative;width:{SW}px;height:{SH}px;border-radius:46px;overflow:hidden;background:url('_page.png')}}
+body{{width:{L["CW"]}px;height:{L["CH"]}px;overflow:hidden;position:relative;background:{L["bg"]}}}
+.ipad{{position:absolute;left:{X0}px;top:{L["Y0"]}px;width:{SW + 2 * BZ}px;height:{SH + 2 * BZ}px;border-radius:{L["R"]}px;
+  background:#1c1c1e;padding:{BZ}px;box-shadow:{L.get('shadow', '0 40px 80px rgba(40,30,20,.28),0 10px 24px rgba(40,30,20,.18)')},inset 0 0 0 3px #3a3a3c}}
+.screen{{position:relative;width:{SW}px;height:{SH}px;border-radius:{L["SR"]}px;overflow:hidden;background:url('_page_{name}.png')}}
 .h{{position:absolute;font-family:'Caveat',cursive;font-weight:500;color:{INK};white-space:nowrap;transform-origin:left center;line-height:1}}
 .s{{position:absolute;transform-origin:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.12))}}
 .pen{{position:absolute}}
 .hl{{position:absolute;background:rgba(237,187,0,.38);border-radius:3px;transform:rotate(-1deg)}}
 .loose{{position:absolute;filter:drop-shadow(0 14px 18px rgba(40,30,20,.25))}}
-.pencil{{position:absolute;left:1380px;top:1900px;width:760px;height:44px;transform:rotate(-24deg);transform-origin:left center;
-  filter:drop-shadow(0 18px 16px rgba(40,30,20,.3))}}
+.pencil{{position:absolute;{L["pencil"]};transform-origin:left center;filter:drop-shadow(0 18px 16px rgba(40,30,20,.3))}}
 </style></head><body>
 <div class="ipad"><div class="screen">{on_page}</div></div>
 {loose}
-<svg class="pencil" viewBox="0 0 760 44"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#f2f2f0"/><stop offset="1" stop-color="#d9d8d4"/></linearGradient></defs>
-<path d="M60 4H740a18 18 0 0 1 0 36H60L4 22z" fill="url(#g)"/><path d="M4 22L60 4v36z" fill="#e9e8e4"/><path d="M4 22l18-6v12z" fill="#2b2b2d"/>
-<rect x="700" y="4" width="3" height="36" fill="#cfcfcb"/></svg>
+{PENCIL}
 </body></html>"""
-f = OUT / "scene.html"
-f.write_text(page_html, encoding="utf-8")
-with sync_playwright() as p:
-    br = p.chromium.launch(channel="chrome")
-    b = br.new_page(viewport={"width": 2000, "height": 2000})
-    b.goto(f.as_uri()); b.evaluate("document.fonts.ready"); b.wait_for_timeout(1200)
-    b.screenshot(path=str(OUT / "sticker_scene.png"))
+        f = OUT / f"{name}.html"
+        f.write_text(page_html, encoding="utf-8")
+        b = br.new_page(viewport={"width": L["CW"], "height": L["CH"]})
+        b.goto(f.as_uri()); b.evaluate("document.fonts.ready"); b.wait_for_timeout(1200)
+        b.screenshot(path=str(OUT / f"{name}.png"))
+        b.close()
+        print(OUT / f"{name}.png")
     br.close()
-print(OUT / "sticker_scene.png")
