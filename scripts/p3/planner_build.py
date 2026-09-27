@@ -63,7 +63,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.17 = Kickoff 윗글 "YEAR KICKOFF" (목차 알약과 이름 맞춤, 사용자 A안). ADHD tax 링크는 그대로(사용자)
 # v0.18 = 의도 검수 문구·링크: How(흐름·time blindness·2탭), 표지 Drop, 한 칸 두 질문 정리, 원본 표시 안내, mailbox, 링크 2(dopamine·playbook)
 # v0.19 = Year review 달 버튼 같은 폭(6칸 격자, 사용자) + 일간 주 알약에 이번 주 실험, 분기 (W1) 알약+실험 2열 목록, Playbook Q1~Q4 keeps + 12줄, SOS "I fell off the planner" (사용자)
-# v0.20 = 도착한 메모 알약 검정 채움으로 되돌림 -- 일간·Year-end mailbox 모두. mailbox 7칸 같은 폭 격자는 그대로 (사용자 2026-09-27)
+# v0.20 = 도착한 메모 알약 검정 채움으로 되돌림 -- 일간·Year-end mailbox 모두(청록 테두리도 없음). mailbox 7칸 같은 폭 격자는 그대로.
+#         2쪽 How it works 탭 없음(표지처럼) (사용자 2026-09-27)
 VERSION = "v0.20"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
@@ -845,6 +846,8 @@ def build():
     pid = [p for p, _ in act]
     if act[0][0] == "cover" and act[0][1] is not None:
         raise SystemExit(f"표지에 켜진 탭이 있다: {act[0][1]}")
+    if any(p_ == "how" and t is not None for p_, t in act):
+        raise SystemExit(f"How it works 에 켜진 탭이 있다 (설명서는 탭 없음, 사용자 2026-09-27)")
     # 이미 이스케이프된 글을 또 이스케이프하면 화면에 "&amp;" 가 글자로 찍힌다(v0.2 발문 3장)
     dbl = re.findall(r"&amp;(?:amp|lt|gt|quot|#\d+);", html)
     if dbl:

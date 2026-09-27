@@ -66,8 +66,8 @@ P = lambda k: ids.index(k)
 print("1. 처음 연 사람: 표지 -> 넘기기 -> 사용법 -> 목차 -> 도구")
 for i in range(0, 5):
     print(f"  p{i + 1} {ids[i]:<8} 켜진 탭: {on[i]}")
-if on[0] is not None or on[1] != "index" or on[2] != "index" or on[3] != "sos" or on[4] != "year":
-    fails.append("1: 앞 5쪽 탭 표시가 표지(없음)/INDEX/INDEX/SOS/YEAR 가 아니다")
+if on[0] is not None or on[1] is not None or on[2] != "index" or on[3] != "sos" or on[4] != "year":
+    fails.append("1: 앞 5쪽 탭 표시가 표지(없음)/How(없음)/INDEX/SOS/YEAR 가 아니다")
 p = step("1", P("index"), "Focus tools", r"focus")
 p = step("1", p, "Brain dump", r"braindump")
 for lab, exp in (("Kickoff", "kickoff"), ("Year in pixels", "pixels"), ("Q3", "q3"), ("Vision", "vision")):

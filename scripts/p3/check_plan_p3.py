@@ -47,7 +47,7 @@ ok(pno("focus") < pno("feel") < pno("health") < pno("life") < pno("notes"), "2-7
 # ---- 탭 표시 --------------------------------------------------------------
 on = {k: (re.findall(r'<a href="#([^"]+)" class="on"', re.search(r"<nav.*?</nav>", v, re.S).group(0)) or [None])[0] for k, v in secs.items()}
 ok(on["cover"] is None, "표지는 탭을 켜지 않는다 (사용자 2026-09-26)")
-ok(on["how"] == "index" and on["index"] == "index" and on["sos"] == "sos", "How·목차 = INDEX, SOS = SOS")
+ok(on["how"] is None and on["index"] == "index" and on["sos"] == "sos", "How it works 탭 없음(사용자 2026-09-27), 목차 = INDEX, SOS = SOS")
 
 # ---- 2절 내용·링크 --------------------------------------------------------
 ok(len([l for l in links["sos"] if l in secs]) >= 14, f"SOS 상황 14개가 도구로 연결 ({len(links['sos'])})")

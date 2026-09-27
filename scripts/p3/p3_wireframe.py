@@ -110,8 +110,8 @@ def rail_of(key):
         return "month"
     if re.fullmatch(r"(w|wr)\d+", key) or key == "week":
         return "week"
-    if key == "how":           # 안내 페이지 -- 목차(INDEX) 앞에 있다. YEAR 가 켜져 있어 사용자가 헷갈렸다(2026-09-26)
-        return "index"
+    # How it works 는 탭 구역이 아니라 한 번 읽는 설명서 -- 표지처럼 탭을 켜지 않는다(아래 return key 로 빠진다).
+    # YEAR(~v0.13) -> INDEX(v0.14~v0.19): INDEX 를 누르면 3쪽 목차로 가서 켜진 탭과 도착지가 어긋났다 (사용자 2026-09-27)
     if key in ("year", "kickoff", "goals", "project", "vision", "myhol", "experiments", "pixels", "admin", "bday1", "bday2", "where",
                "playbook", "mailbox", "yearreview"):
         return "year"

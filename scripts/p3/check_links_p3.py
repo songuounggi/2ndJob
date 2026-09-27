@@ -51,7 +51,7 @@ for y in ("2026", "2027"):
         wrong = [(d, p) for d, p in {x for tg in per_page_targets for x in tg} if p is not None and ids[p] != d]
         # 활성 탭 1개
         on_bad = [m.group(1) for m in re.finditer(r'<section class="pg" id="([^"]+)".*?</nav>', html, re.S)
-                  if len(re.findall(r'class="on"', m.group(0))) != (0 if m.group(1) == "cover" else 1)]   # 표지는 탭 없음(사용자 2026-09-26)
+                  if len(re.findall(r'class="on"', m.group(0))) != (0 if m.group(1) in ("cover", "how") else 1)]   # 표지·How it works 는 탭 없음(사용자 2026-09-26, 09-27)
         # 일간: 어제·내일 링크 짝
         dpages = [i for i, k in enumerate(ids) if re.fullmatch(r"d\d+-\d+", k)]
         tom_bad = 0
