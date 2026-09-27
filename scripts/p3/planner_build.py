@@ -165,7 +165,7 @@ a.ll{{color:inherit;text-decoration:none}}
 #yearreview .chips{{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:42px;gap:0 8px}}#yearreview .chips a.hit{{display:flex;align-items:center;margin:0;padding:0}}#yearreview .chips .chip{{width:100%;min-width:0;padding:0;justify-content:center;margin:0}}   /* Year review 달 버튼 같은 폭, 6칸 두 줄 (사용자 2026-09-27) */
 #mailbox .chips{{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:42px;gap:0 10px}}#mailbox .chips a.hit{{display:flex;align-items:center;margin:0;padding:0}}#mailbox .chips .chip{{width:100%;justify-content:center;margin:0}}   /* Year-end mailbox: 7칸 격자, 같은 폭 (사용자 B안). 줄 높이 42px 고정 -- 음수 여백 누르는 영역을 격자에 두면 PDF 인쇄에서만 줄이 흔들려 라벨과 겹쳤다(v0.11) */   /* 도착한 메모: 청록 테두리 알약 (검정 채움은 사용자: 바퀴벌레 같다, 2026-09-26) */
 .chip.off{{border-style:dotted;color:{N500}}}
-.lead .chip{{border-color:{CYAN}}}
+.lead .chip{{border-color:{CYAN}}}.lead .chip.note{{border-color:{INK}}}   /* 검은 알약은 리드 칸 안에서도 청록 테두리 없이 (mailbox, 사용자 2026-09-27) */
 /* 링크 칩의 누르는 영역: 알약(22px) + 위아래 10px = 42px(8.8mm). 음수 여백으로 레이아웃은 그대로 */
 a.hit{{display:inline-flex;box-sizing:content-box;padding:10px 4px;margin:-10px -4px;vertical-align:middle}}
 a.hit>.chip{{margin-left:0}}
