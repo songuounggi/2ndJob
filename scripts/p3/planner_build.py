@@ -62,7 +62,8 @@ Y, WS, TAG = W.Y, W.WS, W.TAG
 # v0.16 = 표지·섹션 표지 목록 줄 끝에 › (쪽 번호는 그대로, 사용자)
 # v0.17 = Kickoff 윗글 "YEAR KICKOFF" (목차 알약과 이름 맞춤, 사용자 A안). ADHD tax 링크는 그대로(사용자)
 # v0.18 = 의도 검수 문구·링크: How(흐름·time blindness·2탭), 표지 Drop, 한 칸 두 질문 정리, 원본 표시 안내, mailbox, 링크 2(dopamine·playbook)
-VERSION = "v0.18"
+# v0.19 = Year review 달 버튼 같은 폭(6칸 격자, 사용자)
+VERSION = "v0.19"
 OUT = ROOT / "output" / "prod3" / "planner" / VERSION
 SRC = ROOT / "src" / "prod3" / "planner" / VERSION
 if SAMPLE:
@@ -158,6 +159,7 @@ a.ll{{color:inherit;text-decoration:none}}
 .chips.sub{{padding:6px 0 12px 18px;flex:none}}.chips.sub .chip{{font-style:normal}}   /* 목차 세부 페이지 알약 -- 다른 알약처럼 똑바로 */
 .p1 .card:has(> table.trk){{padding-left:0!important;padding-right:0!important}}   /* 표 너비 = 아래 줄 너비 (상품 1 카드 안쪽 여백 18pt 가 남아 표만 좁았다, 사용자) */
 .p1 table.trk:not(:has(td:nth-child(29))) tr + tr td{{height:34px!important;box-sizing:border-box}}   /* 쓰기 표 행 = 괘선 34px (사용자: Screen time·Guess vs actual 위아래 간격이 다르다). 체크 격자(1~31일)는 그대로. 남는 공간은 행·아래 줄을 늘려 채운다 */   /* 라벨 바로 아래 알약: 12px 띄운다(사용자) */
+#yearreview .chips{{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:42px;gap:0 8px}}#yearreview .chips a.hit{{display:flex;align-items:center;margin:0;padding:0}}#yearreview .chips .chip{{width:100%;min-width:0;padding:0;justify-content:center;margin:0}}   /* Year review 달 버튼 같은 폭, 6칸 두 줄 (사용자 2026-09-27) */
 #mailbox .chips{{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:42px;gap:0 10px}}#mailbox .chips a.hit{{display:flex;align-items:center;margin:0;padding:0}}#mailbox .chips .chip{{width:100%;justify-content:center;margin:0}}   /* Year-end mailbox: 7칸 격자, 같은 폭 (사용자 B안). 줄 높이 42px 고정 -- 음수 여백 누르는 영역을 격자에 두면 PDF 인쇄에서만 줄이 흔들려 라벨과 겹쳤다(v0.11) */   /* 도착한 메모: 청록 테두리 알약 (검정 채움은 사용자: 바퀴벌레 같다, 2026-09-26) */
 .chip.off{{border-style:dotted;color:{N500}}}
 .lead .chip{{border-color:{CYAN}}}
