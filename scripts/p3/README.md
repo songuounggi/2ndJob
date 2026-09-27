@@ -111,4 +111,4 @@ python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.
   Goodnotes 가져오기(Share → Open in Goodnotes → New Document → Import to…, + New → Import), 무료 플랜 5 MB(FAQ 의 free-plan limits),
   Read Only Mode(Nav Bar 아이콘, 길게 눌러 Open Link, Edit Mode), Elements 컬렉션(+ → Title → Import from… → Create), Notability(+ New 길게 → Import).
   1쪽이 "스티커 ZIP" 을 전제로 한다 -> 판매 파일 5번째 = ZIP
-- 스티커 draft-v0.6: 실사용 목업 `scripts/p3/sticker_mockup_p3.py` -> `output/prod3/preview/sticker_mockup/`. 리스팅 이미지 한 장 후보(사용자)
+- **스티커 draft-v0.8 확정** (사용자 2026-09-27: ✓~✗ 가운데, 종이 W1, 흰 스티커 회색 외곽선). 실사용 목업 `scripts/p3/sticker_mockup_p3.py` -> `output/prod3/preview/sticker_mockup/`. 리스팅 이미지 한 장 후보(사용자)

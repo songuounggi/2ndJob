@@ -15,8 +15,8 @@ import pypdfium2 as pdfium
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-VER = "v0.8"
-DRAFT = "draft-v0.18"   # v0.17: 영문 교정된 v0.8 페이지로 다시 찍음 / v0.16: 09 화살표·TAP 에 그림자(사용자: 썰렁하다) / v0.15: 배지를 페이지 밖으로 올린 것보다 v0.14(페이지 윗가장자리에 걸침, 본문은 안 가림)가 낫다(사용자) -> v0.14 위치로 / v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
+VER = "v0.22"
+DRAFT = "draft-v0.19"   # v0.19: v0.22 페이지(종이 W1)로 다시 찍음, 06 에 스티커 키트 한 줄(판매 파일 5번째 ZIP), 11 스티커 실사용 장면 후보(10장 중 하나와 바꿀 것, 사용자 선택) / v0.18: v0.17: 영문 교정된 v0.8 페이지로 다시 찍음 / v0.16: 09 화살표·TAP 에 그림자(사용자: 썰렁하다) / v0.15: 배지를 페이지 밖으로 올린 것보다 v0.14(페이지 윗가장자리에 걸침, 본문은 안 가림)가 낫다(사용자) -> v0.14 위치로 / v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
 PDF = ROOT / "output" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.pdf"
 HTML = ROOT / "src" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.html"
 OUT = ROOT / "output" / "prod3" / "listing" / DRAFT
@@ -25,6 +25,8 @@ if OUT.exists():
 OUT.mkdir(parents=True)
 PAGES = OUT / "_pages"
 PAGES.mkdir()
+SCENE = ROOT / "output" / "prod3" / "preview" / "sticker_scene" / "draft-v0.3" / "sticker_scene.png"   # scripts/p3/sticker_scene_p3.py
+(OUT / "scene.png").write_bytes(SCENE.read_bytes())
 
 ids = re.findall(r'<section class="pg" id="([^"]+)"', HTML.read_text(encoding="utf-8"))
 WANT = ["cover", "sos", "year", "experiments", "m3", "d3-15", "d3-16", "w12", "q1", "bw3", "admin",
@@ -43,7 +45,7 @@ for y in ("2026", "2027"):
         d[0].render(scale=1.4).to_pil().save(PAGES / f"cover-{y}-{w}.png")
         d.close()
 
-PAPER, INK, N700, CYAN = "#f8f4f4", "#201e1d", "#605d5d", "#006786"
+PAPER, INK, N700, CYAN = "#fdfcfa", "#201e1d", "#605d5d", "#006786"   # 종이 W1 (플래너 v0.22)
 CSS = f"""
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=block');
 *{{box-sizing:border-box;margin:0;padding:0}}
@@ -80,6 +82,7 @@ p.s{{font-size:42px;font-style:italic;color:{N700};line-height:1.3}}
 .fan .tag{{position:absolute;background:{PAPER};border:2px solid {N700};border-radius:999px;padding:5px 16px;font-size:22px;letter-spacing:.08em;text-transform:uppercase;color:{INK};white-space:nowrap}}
 .fan .tag.solid{{background:{CYAN};border:0;border-radius:16px;padding:7px 16px;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.22)}}
 .notes{{display:grid;grid-template-columns:1fr 1fr;gap:26px}}
+.scene{{flex:1;min-height:0;margin-top:46px;border-radius:26px;background:url('scene.png') 50% 12%/118% auto no-repeat;box-shadow:0 30px 60px rgba(0,0,0,.18)}}
 .foot{{font-size:34px;color:{N700};margin-top:40px;letter-spacing:.04em}}
 """
 
@@ -124,7 +127,8 @@ SHOTS = {
       <div class="list"><span class="pill">2026 · Monday start</span><span class="pill">2026 · Sunday start</span><br>
         <span class="pill">2027 · Monday start</span><span class="pill">2027 · Sunday start</span></div>
       <div class="list"><b>Ten tabs</b> on every page · every day <b>two taps</b> away<br>
-        For GoodNotes, Notability and other PDF note apps · shaped for a tablet (3:4)</div>
+        For GoodNotes, Notability and other PDF note apps · shaped for a tablet (3:4)<br>
+        <b>+ Sticker kit</b> (253 stickers) and a setup guide</div>
       <div class="grid" style="margin-top:70px;gap:56px">{"".join(
           f'<div class="cv">{img(f"cover-{y}-{w}", "")}<div class="bdg {w}"><b>{y}</b><span>{"Monday" if w == "mon" else "Sunday"} start</span></div></div>'
           for y in ("2026", "2027") for w in ("mon", "sun"))}</div>
@@ -149,6 +153,10 @@ SHOTS = {
       <div class="trio"><div class="fig">{img("myhol", "")}<div class="cap">My holidays</div></div>
         <div class="fig"><div class="notes">{"".join(img(k, "") for k in ["note1", "note2", "note3", "note4"])}</div>
         <div class="cap">Dot grid · Ruled · Plain · Grid</div></div></div>""",
+    "11_stickers": f"""<div class="k">Sticker kit · 253 stickers</div>
+      <h1>Stickers made<br>for these pages.</h1>
+      <p class="s">Mark Friday's verdict, a low-battery day, a good-brain day.</p>
+      <div class="scene"></div>""",
 }
 
 from playwright.sync_api import sync_playwright  # noqa: E402
