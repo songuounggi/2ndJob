@@ -209,7 +209,7 @@ For personal use. Please do not resell or redistribute the files.
 5. `DRAFT` 를 올려(draft-v0.32~) 새로 뽑고, **폰 크기(폭 390px)로 줄인 미리보기**를 함께 만들어 확인한 뒤 사용자 확정
 6. Etsy 에서 사진 10장 교체 -- 사진은 파일과 달리 언제 바꿔도 기존 구매자에게 영향이 없다. 교체 후 `shop.md` 0-1절 리스팅 이미지 표에 한 줄
 
-**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.55/` (**올릴 사본 `output/prod3/upload/listing-images-v0.55/`**), 사용자 확인 대기**
+**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.56/` (**올릴 사본 `output/prod3/upload/listing-images-v0.56/`**), 사용자 확인 대기**
 - 시안 비교 `output/prod3/preview/title-size-v1/compare_phone.png` (지금 / A 150 / B 172 / C 196). B·C 는 02 페이지가 865·610px 로 줄고 09 가 안전 영역 밖.
   추천(01 만 C)은 **반려 -- "상품 1·2 와 일관성", 전부 A** (사용자)
 - **A 안 확정:** `.k` 40 / `h1` 150 (01 hero 176) / `p.s` 48, 제목·부제 `text-wrap:balance`(끝에 한 단어만 떨어지던 것 -- 01 "brain.", 03 "tomorrow."). 문구는 그대로
@@ -281,7 +281,11 @@ For personal use. Please do not resell or redistribute the files.
   전환 663~740. 알약은 베이지 위 청록 테두리·글씨(대비 ~5.6:1), 알약 여백 34 -> 96, 알약-iPad 125 -> 62 (iPad 자리 그대로). 청록 차지 ~40% -> ~35%.
   띠 검사 기준 = 부제 아래 ~ 알약 위 (v0.53 FAIL 778~856, v0.54 PASS). 시안 비교 `output/prod3/preview/band-up-v1/set_A_v053.png`·`set_B_up.png`
 - **v0.55:** 01 띠 번짐을 원과 숫자로 맞춤 -- 하늘색 어긋남 32 -> 20px(원 B2 와 같게), 흐림 26 -> 25px. 전환 폭(10~90%) 01 70px = 원 70px (v0.54 77px). 청록 rgb(0,103,134) 그대로. (사용자: 원 쪽이 더 짧다. "같다" 고 한 건 재지 않은 말이었다)
-- 남은 것: 사용자 확정 -> Etsy 사진 10장 교체 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
+- **2026-09-28 v0.55 를 Etsy 에 올림 (사용자)** -> 폰 리스팅에서 알약이 안 읽혔다(34px 얇은 글씨, 55% 테두리 = 폰에서 ~7pt).
+- **v0.56 알약 P3 (시안 P1 채움 / P2 진한 테두리 / P3 옅은 바탕 중 사용자 P3):** 바탕 #d4e7ee, 글씨 #005a75 굵기 600, 40px, 테두리 없음. 대비 6.05:1.
+  검사: 알약 글자 하한 40px (MIN_PX) -- v0.55 FAIL 34px. 폰 크기 확인 `output/prod3/preview/pills-v1/v056_phone.png`
+  **교훈: 리스팅 이미지 글자는 폰 크기(375px 폭 = 약 1/5)로 줄여 읽히는지 본 뒤 보낸다**
+- 남은 것: v0.56 을 Etsy 에 다시 올림 -> `shop.md` 기록 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.
 아래 표의 07~09 는 옛 번호(v0.18)다 -> 지금 08~10. 옛 10(Works anywhere) 의 "세계 공통 날짜만 인쇄·My holidays·노트 4종" 은 설명문에서 말한다.
