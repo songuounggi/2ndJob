@@ -209,7 +209,7 @@ For personal use. Please do not resell or redistribute the files.
 5. `DRAFT` 를 올려(draft-v0.32~) 새로 뽑고, **폰 크기(폭 390px)로 줄인 미리보기**를 함께 만들어 확인한 뒤 사용자 확정
 6. Etsy 에서 사진 10장 교체 -- 사진은 파일과 달리 언제 바꿔도 기존 구매자에게 영향이 없다. 교체 후 `shop.md` 0-1절 리스팅 이미지 표에 한 줄
 
-**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.48/`, 사용자 확인 대기**
+**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.49/`, 사용자 확인 대기**
 - 시안 비교 `output/prod3/preview/title-size-v1/compare_phone.png` (지금 / A 150 / B 172 / C 196). B·C 는 02 페이지가 865·610px 로 줄고 09 가 안전 영역 밖.
   추천(01 만 C)은 **반려 -- "상품 1·2 와 일관성", 전부 A** (사용자)
 - **A 안 확정:** `.k` 40 / `h1` 150 (01 hero 176) / `p.s` 48, 제목·부제 `text-wrap:balance`(끝에 한 단어만 떨어지던 것 -- 01 "brain.", 03 "tomorrow."). 문구는 그대로
@@ -255,6 +255,11 @@ For personal use. Please do not resell or redistribute the files.
   07 장면(화면 716px)은 598px (v0.46 은 417 로 30% 짧았다). (사용자: 굵기는 그대로고 짧아지기만 했다)
 - **v0.48:** 펜슬 실루엣 = 무료 사진 펜슬(Unsplash B)에서 잰 윤곽(`photo_devices_p3.pencil_silhouette`: 축을 따라 굵기 / 몸통 굵기, 계단은 가우시안으로 이음) --
   펜촉 앞 1.3%·뾰족, 원뿔 ~8.5% 까지, 뒤끝 둥글게. 3D 음영·밝기는 그대로. 07 장면 v0.15 (사용자: 촉이 더 뾰족해야, 실루엣은 사진 펜슬 따라)
+- **v0.49 (사용자: 촉이 우글거린다 -- 제대로 보고 해라, 유광이라 촌스럽다 -> 무광):**
+  윤곽 = 사진에서 잰 값(펜촉 끝 u 0.0126, 이음매 굵기 0.31, 원뿔 끝 u 0.071, 뒤끝 시작 u 0.976)에 **매끈한 곡선을 맞춤**(잰 굵기 그대로는 1px 잡음 -> 줄무늬),
+  원뿔-몸통 이음새만 살짝 굴림. **무광**: 반짝이는 줄 없음, 빛을 넓게 감싸 명암 폭 줄임. 줄이기 BOX·돌리기 BILINEAR(LANCZOS 링잉이 윤곽 점선).
+  검사 `scripts/p3/check_pencil_p3.py` -- 원뿔 윤곽 굽기 바뀜 6회 OK(옛 방식 45회 FAIL). 윤곽 점선은 자동 검사 불가 -> 펜촉을 4배 확대(NEAREST)해 눈으로.
+  **교훈: 펜슬·기기를 바꾸면 펜촉·뒤끝을 원본 해상도에서 확대해 보고 보낸다** (v0.48 은 작게만 보고 보냈다)
 - 남은 것: 사용자 확정 -> Etsy 사진 10장 교체 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.

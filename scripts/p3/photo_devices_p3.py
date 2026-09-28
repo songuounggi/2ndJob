@@ -247,15 +247,30 @@ def pencil_silhouette():
     L = len(wid)
     u = np.arange(L) / (L - 1)
     body = np.median(wid[int(L * .2):int(L * .9)])
-    r = np.clip(wid / body, 0, 1)
-    head, tail = u < 0.12, u > 0.9
-    r[head] = np.maximum.accumulate(r[head])                   # 펜촉 쪽은 굵어지기만, 뒤끝 쪽은 가늘어지기만 (재는 잡음 제거)
-    r[tail] = np.maximum.accumulate(r[tail][::-1])[::-1]
-    r[(u >= 0.12) & (u <= 0.9)] = 1.0
-    # 1px 단위로 잰 굵기라 계단이 진다(3D 로 그리면 고리처럼 보였다) -> 가우시안으로 부드럽게 이음
-    g = np.exp(-0.5 * (np.arange(-12, 13) / 4.0) ** 2); g /= g.sum()
-    r = np.convolve(np.pad(r, 12, mode="edge"), g, mode="valid")
-    r[(u >= 0.15) & (u <= 0.88)] = 1.0
-    r[0] = r[-1] = 0.0                                          # 양 끝을 닫는다 (뒤끝이 납작하게 잘려 보였다)
+    raw = np.clip(wid / body, 0, 1)
     nib_u = float(u[int(np.argmax(np.array(val[2:]) > 170)) + 2])   # 펜촉(회색) -> 원뿔(흰색) 밝기가 뛰는 곳
+    # 잰 굵기를 그대로 쓰면 1px 잡음이 3D 음영에서 우글거리는 줄무늬가 된다(v0.48 사용자) -> 사진에서 잰 값에 매끈한 곡선을 맞춘다
+    r_n = float(np.median(raw[(u > nib_u) & (u < nib_u + 0.006)]))       # 펜촉-원뿔 이음매 굵기
+    u_b = float(u[int(np.argmax((u > nib_u) & (raw > 0.97)))])           # 원뿔이 몸통이 되는 곳
+    sel = (u > nib_u) & (u < u_b)
+    t = (u[sel] - nib_u) / (u_b - nib_u)
+    ps = np.linspace(1.0, 3.0, 81)                                       # 원뿔 = r_n + (1 - r_n)(1 - (1 - t)^p), 몸통에 접선으로
+    p = ps[int(np.argmin([np.mean((r_n + (1 - r_n) * (1 - (1 - t) ** q) - raw[sel]) ** 2) for q in ps]))]
+    u_c = float(u[len(u) - 1 - int(np.argmax(raw[::-1] > 0.97))])       # 뒤끝 둥글기가 시작되는 곳
+    r = np.ones_like(u)
+    nib = u <= nib_u
+    r[nib] = r_n * (0.35 + 0.65 * u[nib] / nib_u)                     # 펜촉 = 짧은 원뿔
+    tipcap = u < nib_u * 0.35                                            # 펜촉 끝은 작게 둥글게
+    r[tipcap] = r_n * 0.35 * np.sqrt(np.clip(1 - ((nib_u * 0.35 - u[tipcap]) / (nib_u * 0.35)) ** 2, 0, 1)) + r_n * 0.65 * u[tipcap] / nib_u
+    tt = np.clip((u - nib_u) / (u_b - nib_u), 0, 1)
+    cone = (u > nib_u) & (u < u_b)
+    r[cone] = r_n + (1 - r_n) * (1 - (1 - tt[cone]) ** p)
+    # 원뿔-몸통 이음새가 각지면 음영에 꺾인 선이 선다 -> 그 둘레만 살짝 굴린다 (가우시안, 이음새 ±0.012)
+    near = np.abs(u - u_b) < 0.012
+    g = np.exp(-0.5 * (np.arange(-15, 16) / 5.0) ** 2); g /= g.sum()
+    sm = np.convolve(np.pad(r, 15, mode="edge"), g, mode="valid")
+    r[near] = np.minimum(sm[near], 1.0)
+    cap = u > u_c
+    r[cap] = np.sqrt(np.clip(1 - ((u[cap] - u_c) / (1 - u_c)) ** 2, 0, 1))   # 뒤끝 = 타원 반쪽
+    pencil_silhouette.fit = dict(nib_u=nib_u, r_n=r_n, u_b=u_b, p=float(p), u_c=u_c)   # 보고용
     return u, r, nib_u

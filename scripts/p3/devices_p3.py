@@ -47,7 +47,7 @@ def _photo_profile(x, R, L):
     return r, nib_u * L, None
 
 
-def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2.0, 0.10), (4, 7, 9, 0.02)), tone=0.75, radius=None, silhouette="photo"):   # v0.45: 그림자 크게 줄임, 아래 그늘 밝게 (사용자: 사진 펜슬이 시커멓다, 그림자 많이 제거)
+def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2.0, 0.10), (4, 7, 9, 0.02)), tone=0.75, radius=None, silhouette="photo", matte=True):   # v0.45: 그림자 크게 줄임, 아래 그늘 밝게 (사용자: 사진 펜슬이 시커멓다, 그림자 많이 제거)
     """length = 캔버스에서의 펜슬 길이(px), angle = 화면에서 반시계 회전(도), shadow = (닿는 그림자, 넓은 그림자) 각 (dx, dy, 흐림, 농도).
     tone = 음영 세기(1 = 계산 그대로, 0.75 = 그늘을 25% 밝게). radius = 몸통 반지름 px (없으면 실제 비율 length/37.3).
     반환: (RGBA 그림자 포함, 펜촉 끝 (x, y))"""
@@ -73,13 +73,19 @@ def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2
     nz = n[..., 2]
     tip = (x < nib_end) * np.ones_like(y)
     # 무광 흰 플라스틱: 감싸는 확산광 + 하늘 앰비언트 + 넓은 약한 반사. 펜촉은 살짝 회색·더 반질
-    wrap = np.clip((ndl + 0.45) / 1.45, 0, 1)
-    amb = 0.34 * (0.55 + 0.45 * nz)
-    spec_p = np.where(tip > 0, 60.0, 14.0)
-    spec_k = np.where(tip > 0, 0.30, 0.10)
+    if matte:   # v0.49 무광 (사용자: 유광이라 촌스럽다) -- 반짝이는 줄 없음, 빛을 넓게 감싸 명암 폭을 줄인다. 펜촉만 아주 약한 광
+        wrap = np.clip((ndl + 0.9) / 1.9, 0, 1)
+        amb = 0.40 * (0.70 + 0.30 * nz)
+        spec_p = np.where(tip > 0, 30.0, 4.0)
+        spec_k = np.where(tip > 0, 0.08, 0.0)
+    else:
+        wrap = np.clip((ndl + 0.45) / 1.45, 0, 1)
+        amb = 0.34 * (0.55 + 0.45 * nz)
+        spec_p = np.where(tip > 0, 60.0, 14.0)
+        spec_k = np.where(tip > 0, 0.30, 0.10)
     spec = spec_k * np.clip(n @ Hh, 0, 1) ** spec_p
-    rim = 0.06 * (1 - nz) ** 3                                           # 가장자리 반사광(바닥 빛)
-    I = amb + 0.70 * wrap + spec + rim
+    rim = 0.0 if matte else 0.06 * (1 - nz) ** 3                          # 가장자리 반사광(바닥 빛) -- 무광은 없음
+    I = amb + (0.62 if matte else 0.70) * wrap + spec + rim
     albedo = np.where(tip[..., None] > 0, [0.80, 0.805, 0.815], [0.965, 0.965, 0.958])
     col = albedo * I[..., None]
     col = col * [0.985, 0.99, 1.0] + (1 - I[..., None]) * 0.0          # 그늘이 아주 약간 차갑게
@@ -89,14 +95,16 @@ def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2
     col = 1 - (1 - np.clip(col, 0, 1)) * tone
     col = np.clip(col, 0, 1) ** (1 / 1.08)
     rgba = np.dstack([col * 255, inside * 255.0]).astype(np.uint8)
-    im = Image.fromarray(rgba, "RGBA").resize((W // ss, H // ss), Image.LANCZOS)
+    # 줄이기·돌리기는 premultiplied(RGBa)로 -- 곧은 알파로 하면 투명한 가장자리 색이 섞여 윤곽에 흰 점선이 생겼다(v0.49 확대 검수)
+    # LANCZOS 는 날카로운 윤곽에 밝은 테두리(링잉)를 만들고 돌리면 점선이 됐다 -> 면적 평균(BOX)
+    im = Image.fromarray(rgba, "RGBA").convert("RGBa").resize((W // ss, H // ss), Image.BOX)
     tip_xy = np.array([2.0, im.height / 2])                                # 돌리기 전 펜촉 끝
     # 돌리고 그림자 -- 빛이 왼쪽 위라 그림자는 오른쪽 아래
     pad = 90
-    big = Image.new("RGBA", (im.width + 2 * pad, im.height + 2 * pad), (0, 0, 0, 0))
+    big = Image.new("RGBa", (im.width + 2 * pad, im.height + 2 * pad), (0, 0, 0, 0))
     big.paste(im, (pad, pad))
     c = np.array(big.size) / 2
-    rot = big.rotate(angle, resample=Image.BICUBIC, expand=True)
+    rot = big.rotate(angle, resample=Image.BILINEAR, expand=True).convert("RGBA")
     a_ = -math.radians(angle)
     v = tip_xy + pad - c
     tip_rot = np.array([v[0] * math.cos(a_) - v[1] * math.sin(a_), v[0] * math.sin(a_) + v[1] * math.cos(a_)]) + np.array(rot.size) / 2
