@@ -14,14 +14,14 @@ import sys
 import pymupdf
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from devices_p3 import ALU, CAM, GLASS, IPAD_SHADOW, SHEEN, pencil_png  # noqa: E402
+from devices_p3 import ALU, CAM, GLASS, GLASS_EDGE, IPAD_SHADOW, SHEEN, pencil_png  # noqa: E402
 from playwright.sync_api import sync_playwright
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))   # scripts/ -- chrome_auto
 from chrome_auto import launch  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.11"   # v0.11 = iPad·펜슬 그림자·반사 옅게, devices_p3 의 값을 그대로 씀(사용자: 과해서 그림판 같다) / v0.10 = full 배치 KEEP 스티커를 펜슬 길 위로(800 -> 690) -- 펜슬이 반쯤 덮어 "…P" 만 보였다 / v0.9 = 펜슬·iPad 를 devices_p3.py 로(3D 음영 펜슬, 알루미늄 테두리 + 유리 베젤) -- 리스팅 01 과 같은 소품 (사용자: SVG 펜슬이 구리다) / v0.8 = full 배치 배경 투명 -- 리스팅 07 의 리소 원이 장면 네모에 잘렸다 / v0.7 v0.7 = 플래너 v0.23 페이지(모서리 하이라이트 고침) / v0.6 v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
+DRAFT = "draft-v0.12"   # v0.12 = 펜슬 모양 사진처럼·그림자 크게 줄임, iPad 는 처음(v0.9) 값 -- devices_p3 v0.45 (사용자) / v0.11 = iPad·펜슬 그림자·반사 옅게, devices_p3 의 값을 그대로 씀(사용자: 과해서 그림판 같다) / v0.10 = full 배치 KEEP 스티커를 펜슬 길 위로(800 -> 690) -- 펜슬이 반쯤 덮어 "…P" 만 보였다 / v0.9 = 펜슬·iPad 를 devices_p3.py 로(3D 음영 펜슬, 알루미늄 테두리 + 유리 베젤) -- 리스팅 01 과 같은 소품 (사용자: SVG 펜슬이 구리다) / v0.8 = full 배치 배경 투명 -- 리스팅 07 의 리소 원이 장면 네모에 잘렸다 / v0.7 v0.7 = 플래너 v0.23 페이지(모서리 하이라이트 고침) / v0.6 v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
 # v0.3   # v0.3 = 손글씨 대조: 금요일 "keep it for March" -> 분기 흐름대로 "keeper → Q1 review", Brain dump "2-min rule next wk"(7주차) -> 13주차 실제 실험 "decide once", 책상 위 NOT FOR ME -> IN MY PLAYBOOK (광고에 부정어 X)
 # v0.2   # v0.2 = 형광펜을 "due Fri!" 위로, Top 3 글자가 체크에 가리지 않게, 연필이 Brain dump 를 덜 덮게, 수요일 글 왼쪽으로
 PLANNER, STICKERS = "v0.23", "draft-v0.8"
@@ -118,7 +118,7 @@ with sync_playwright() as p:
 body{{width:{L["CW"]}px;height:{L["CH"]}px;overflow:hidden;position:relative;background:{L["bg"]}}}
 .ipad{{position:absolute;left:{X0}px;top:{L["Y0"]}px;width:{SW + 2 * BZ}px;height:{SH + 2 * BZ}px;border-radius:{L["R"]}px;padding:{BZ}px;
   background:{ALU};box-shadow:{IPAD_SHADOW}}}
-.glass{{position:absolute;inset:{max(4, round(SW * .011))}px;border-radius:{L["R"] - max(4, round(SW * .011))}px;background:{GLASS};box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}}
+.glass{{position:absolute;inset:{max(4, round(SW * .011))}px;border-radius:{L["R"] - max(4, round(SW * .011))}px;background:{GLASS};box-shadow:{GLASS_EDGE}}}
 .cam{{position:absolute;left:{(SW + 2 * BZ) / 2 - 5:.0f}px;top:{BZ / 2 - 3:.0f}px;width:10px;height:10px;border-radius:50%;background:{CAM}}}
 .screen::after{{content:"";position:absolute;inset:0;pointer-events:none;background:{SHEEN}}}
 .screen{{position:relative;width:{SW}px;height:{SH}px;border-radius:{L["SR"]}px;overflow:hidden;background:url('_page_{name}.png')}}

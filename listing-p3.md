@@ -209,7 +209,7 @@ For personal use. Please do not resell or redistribute the files.
 5. `DRAFT` 를 올려(draft-v0.32~) 새로 뽑고, **폰 크기(폭 390px)로 줄인 미리보기**를 함께 만들어 확인한 뒤 사용자 확정
 6. Etsy 에서 사진 10장 교체 -- 사진은 파일과 달리 언제 바꿔도 기존 구매자에게 영향이 없다. 교체 후 `shop.md` 0-1절 리스팅 이미지 표에 한 줄
 
-**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.44/`, 사용자 확인 대기**
+**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.45/`, 사용자 확인 대기**
 - 시안 비교 `output/prod3/preview/title-size-v1/compare_phone.png` (지금 / A 150 / B 172 / C 196). B·C 는 02 페이지가 865·610px 로 줄고 09 가 안전 영역 밖.
   추천(01 만 C)은 **반려 -- "상품 1·2 와 일관성", 전부 A** (사용자)
 - **A 안 확정:** `.k` 40 / `h1` 150 (01 hero 176) / `p.s` 48, 제목·부제 `text-wrap:balance`(끝에 한 단어만 떨어지던 것 -- 01 "brain.", 03 "tomorrow."). 문구는 그대로
@@ -246,6 +246,10 @@ For personal use. Please do not resell or redistribute the files.
   오려내기는 GrabCut 이 쿠션 결 때문에 베젤을 배경으로 봐서 실패 -> **모양을 잰다**(화면 사각형에서 베젤 두께·모서리 반지름, 펜슬은 축을 따라 굵기).
   펜슬 자리·그림자는 v0.43 대각선 그대로(사용자: 옆에 두는 것보다 낫다), 그림자는 얇게. Apple 공식 사진은 저작권·상표 때문에 쓰지 않는다.
   07 스티커 장면은 아직 코드 iPad·펜슬(devices_p3) -- 01 확정되면 같은 사진으로
+- **v0.45 (사용자: 사진 펜슬이 시커멓다 -> 그린 펜슬을 사진 펜슬 모양으로, 그림자 많이 제거, iPad 는 처음 그린 것으로):**
+  펜슬 = devices_p3 3D 펜슬, 모양만 사진 펜슬처럼(원뿔 4.0R -> 3.3R, 뒤끝 둥글게 0.3R -> 0.6R, 펜촉 조금 크게), 그림자 닿는 곳 .20 -> .10 · 넓은 곳 .10 -> .02,
+  그늘 25% 밝게(tone .75). iPad = v0.41 값(알루미늄·유리 반사·그림자 네 겹)으로 되돌림. 07 장면 v0.12 도 같은 값.
+  사진 합성(photo_devices_p3.py·assets/p3/unsplash/)은 기록으로 남기고 쓰지 않는다
 - 남은 것: 사용자 확정 -> Etsy 사진 10장 교체 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.
