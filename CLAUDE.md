@@ -54,7 +54,7 @@ Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
 | PC | Python | 고정 방법 |
 |---|---|---|
 | 집 `DESKTOP-0UH3004` | **3.10.11** (`...\Programs\Python\Python310`) | `~/.bashrc` 가 PC 이름을 보고 PATH 맨 앞에 넣는다. PowerShell 은 실행 정책상 프로필이 안 돌므로 `py -3.10` |
-| 회사 | **미기록** -- 복귀하면 `python --version` 을 여기 적는다 | |
+| 회사 `DESKTOP-SLJ1OQ3` | **3.10.0** (`...\Programs\Python\Python310`, 2026-09-28 확인) | 하나뿐 |
 
 버전 차이는 산출물에 영향이 없다. PDF 는 Chrome 이 만든다. 같은 코드를
 3.10/3.11 로 빌드해 1바이트 차이(생성 ID). 문제는 **패키지가 없는 쪽이
