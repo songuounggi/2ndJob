@@ -134,6 +134,12 @@ Shop Manager → Orders → `Completed` 탭(디지털 주문은 `New` 가 아니
 |---|---|---|---|---|---|---|
 | 1 | 2026-09-23 22:39 | 브라질 | USD 10.19 (정가 16.99) | `LAUNCH40` | **v8.18** (주문에 묶인 파일, 18.69 MB, 링크 정상). 9/24 v8.20 을 메시지로 첨부했으나 Etsy 가 링크를 지워 **주문 때 받은 파일을 계속 쓰라고 정정 메시지 발송(9/24)**. 이걸로 종결 | 9/23 받음 |
 
+**#1 은 어떤 경로로 왔나 (2026-09-29 조사, 미확정).** Stats 9/21~23 "How buyers found you": Etsy app & other
+pages 4 / Direct 3 / Etsy Search 1 / Marketing & SEO 0 / Social 0. **광고(Offsite Ads)·SNS 아님** (둘 다 0).
+Etsy Search 1회의 검색어는 `undated adhd digital planner` -- 사용자가 직접 친 검색어로 기억한다. 그렇다면 구매자는
+**Etsy 앱·추천 칸(비슷한 상품, 카테고리 페이지 등)** 으로 들어왔을 가능성이 크다. Direct 3 은 대부분 본인.
+주문 단위 경로는 Etsy 가 보여 주지 않는다. 확인하려면 `Etsy app & other pages ›` 상세.
+
 ---
 
 ## 1. 계정 필수 — 이게 없으면 발행 버튼이 안 눌린다
