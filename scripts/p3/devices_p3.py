@@ -38,8 +38,9 @@ def _profile(x, R, L):
     return r, nib, nib + cone
 
 
-def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4):
-    """length = 캔버스에서의 펜슬 길이(px), angle = 화면에서 반시계 회전(도). 반환: (RGBA 그림자 포함, 펜촉 끝 (x, y))"""
+def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((2, 3, 2.5, 0.20), (8, 14, 12, 0.10))):   # v0.42: 절반으로 (사용자: 그림자가 과해 그림판 같다)
+    """length = 캔버스에서의 펜슬 길이(px), angle = 화면에서 반시계 회전(도), shadow = (닿는 그림자, 넓은 그림자) 각 (dx, dy, 흐림, 농도).
+    반환: (RGBA 그림자 포함, 펜촉 끝 (x, y))"""
     R = length / 37.3 * ss
     L = length * ss
     W, H = int(L + 4 * ss), int(2 * R + 6 * ss)
@@ -90,13 +91,14 @@ def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4):
     tip_rot = np.array([v[0] * math.cos(a_) - v[1] * math.sin(a_), v[0] * math.sin(a_) + v[1] * math.cos(a_)]) + np.array(rot.size) / 2
     A = rot.split()[3]
 
-    def shadow(dx, dy, blur, op):
+    def drop(dx, dy, blur, op):
         s = Image.new("L", rot.size, 0)
         s.paste(A, (dx, dy))
         s = s.filter(ImageFilter.GaussianBlur(blur))
         return np.asarray(s, np.float64) / 255 * op
 
-    sh = 1 - (1 - shadow(3, 5, 2.2, 0.42)) * (1 - shadow(14, 24, 13, 0.24))   # 닿는 그림자 + 넓은 그림자
+    (c_dx, c_dy, c_b, c_o), (w_dx, w_dy, w_b, w_o) = shadow
+    sh = 1 - (1 - drop(c_dx, c_dy, c_b, c_o)) * (1 - drop(w_dx, w_dy, w_b, w_o))   # 닿는 그림자 + 넓은 그림자
     out = np.zeros((rot.size[1], rot.size[0], 4))
     out[..., :3] = [38, 32, 26]
     out[..., 3] = sh
@@ -110,19 +112,20 @@ def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4):
 
 
 # ---------------------------------------------------------------- iPad (CSS)
-# 알루미늄 테두리(스페이스 그레이, 왼쪽 위 빛) -> 검은 유리 베젤 -> 화면. 화면 위 유리 반사, 그림자 세 겹(닿는 곳 진하게 · 가운데 · 넓게)
-IPAD_CSS = """
-.ipad{position:absolute;box-sizing:border-box;
-  background:linear-gradient(145deg,#8d8f93 0%,#55575b 9%,#35363a 30%,#2a2b2e 62%,#46484c 88%,#6c6e72 100%);
-  box-shadow:0 1px 1px rgba(0,0,0,.45),0 3px 5px rgba(20,22,26,.30),0 16px 30px rgba(20,25,30,.24),0 44px 80px rgba(20,25,30,.22)}
-.ipad .glass{position:absolute;background:#0c0c0e;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.10)}
-.ipad .cam{position:absolute;border-radius:50%;background:radial-gradient(circle at 38% 35%,#3b4a5c 0%,#161a22 45%,#060607 70%)}
-.ipad .scr{position:absolute;overflow:hidden;background-size:cover;background-position:center}
-.ipad .scr::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(118deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.035) 38%,rgba(255,255,255,0) 38.2%,rgba(255,255,255,0) 100%)}
+# 알루미늄 테두리(스페이스 그레이) -> 검은 유리 베젤 -> 화면. 2026-09-28 사용자: "그림자 등이 과해서 그림판 같다" -> 전부 옅게.
+# 칼같이 끊기는 사선 유리 반사(38%)가 제일 그림 같았다 -> 부드럽게 사라지는 5% 로. 테두리 명암 대비도 줄임. 스티커 그림자는 그대로(사용자).
+ALU = "linear-gradient(145deg,#6a6c70 0%,#4a4b4f 25%,#3f4043 60%,#4c4e52 100%)"
+IPAD_SHADOW = "0 1px 2px rgba(0,0,0,.16),0 6px 14px rgba(20,25,30,.09),0 22px 44px rgba(20,25,30,.09)"
+SHEEN = "linear-gradient(135deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,0) 55%)"
+GLASS = "#0c0c0e"
+CAM = "radial-gradient(circle at 38% 35%,#3b4a5c 0%,#161a22 45%,#060607 70%)"
+IPAD_CSS = f"""
+.ipad{{position:absolute;box-sizing:border-box;background:{ALU};box-shadow:{IPAD_SHADOW}}}
+.ipad .glass{{position:absolute;background:{GLASS};box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}}
+.ipad .cam{{position:absolute;border-radius:50%;background:{CAM}}}
+.ipad .scr{{position:absolute;overflow:hidden;background-size:cover;background-position:center}}
+.ipad .scr::after{{content:"";position:absolute;inset:0;background:{SHEEN}}}
 """
-
 
 def ipad(src, w, left, top, rot=0, z=1):
     """w = 화면 폭(px), 화면 3:4. 테두리 = 알루미늄 띠(폭의 1.1%) + 유리 베젤(폭의 4%)"""

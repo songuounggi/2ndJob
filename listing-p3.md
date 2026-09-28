@@ -209,7 +209,7 @@ For personal use. Please do not resell or redistribute the files.
 5. `DRAFT` 를 올려(draft-v0.32~) 새로 뽑고, **폰 크기(폭 390px)로 줄인 미리보기**를 함께 만들어 확인한 뒤 사용자 확정
 6. Etsy 에서 사진 10장 교체 -- 사진은 파일과 달리 언제 바꿔도 기존 구매자에게 영향이 없다. 교체 후 `shop.md` 0-1절 리스팅 이미지 표에 한 줄
 
-**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.41/`, 사용자 확인 대기**
+**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.43/`, 사용자 확인 대기**
 - 시안 비교 `output/prod3/preview/title-size-v1/compare_phone.png` (지금 / A 150 / B 172 / C 196). B·C 는 02 페이지가 865·610px 로 줄고 09 가 안전 영역 밖.
   추천(01 만 C)은 **반려 -- "상품 1·2 와 일관성", 전부 A** (사용자)
 - **A 안 확정:** `.k` 40 / `h1` 150 (01 hero 176) / `p.s` 48, 제목·부제 `text-wrap:balance`(끝에 한 단어만 떨어지던 것 -- 01 "brain.", 03 "tomorrow."). 문구는 그대로
@@ -234,6 +234,12 @@ For personal use. Please do not resell or redistribute the files.
     글자는 원래 안전 영역(260-1740 × 250-1750), **iPad 는 4:5·4:3 둘 다 안**(시안 2 는 iPad 아래 1832px 이라 줄임), 스티커·배경 원은 잘려도 된다(사용자).
     확인 그림 `output/prod3/preview/hero-variants-v1/v041_crops.png`
   - 새 검사: iPad·펜슬 자르기(시안 2 FAIL 확인), 배지 알약도 안전 영역·스티커 간격 대상. v0.38 은 펜슬 회전 부호가 반대(PIL 은 반시계 +)라 버림
+- **v0.43 (사용자: "그림자 등이 과해 그림판 같다", 스티커 그림자는 깊어서 좋다):** iPad·펜슬만 옅게 -- 그림자 약 절반, 칼같이 끊기던 사선 유리 반사를
+  부드러운 5% 로, 알루미늄 명암 대비 줄임. 값은 `devices_p3.py` 한 곳(ALU·IPAD_SHADOW·SHEEN)에서 01 과 07 장면(v0.11)이 같이 쓴다.
+  비교 `output/prod3/preview/hero-soft-v1/v041_v043.png`. v0.42 는 CSS 중괄호 실수로 01 에서 멈춘 불완전판
+- **한계와 다음 안 (사용자와 이야기함):** 기기는 코드로 그린 그림이라 옅게 해도 "사진" 은 안 된다. 경쟁작 목업은 실제 사진에 화면만 합성한 것.
+  사진처럼 하려면 (1) 사용자가 iPad + 펜슬을 밝은 책상에서 위에서 찍은 사진에 Claude 가 페이지를 원근 합성(추천, 저작권 없음)
+  (2) 상업 이용 가능한 목업 사진(라이선스 사용자 확인) (3) 평면 그래픽(v0.37 식 + 배지) 중 하나
 - 남은 것: 사용자 확정 -> Etsy 사진 10장 교체 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.
