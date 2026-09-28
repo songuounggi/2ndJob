@@ -646,13 +646,13 @@ Etsy 에서 팔리는 파일은 이제 **v8.18-undated (502p)** 다. 다섯 단�
 2. 이미지 10장 교체
 3. Etsy 본문 숫자 수정
 4. `listing.md` · `pinterest.md` · `CLAUDE.md` · `.claude/agents/etsy-research.md` 수정
-5. 게시된 핀 3개 설명 수정
+5. 게시된 핀 설명 수정 (핀은 **1개**, 2026-09-29 사용자 확인)
 
 **4번을 먼저 하면 문서와 실제 판매 파일이 어긋난다.**
 
 ### 남은 것
 
-- 게시된 핀 3개 설명이 아직 494/58 이다
+- 게시된 핀(**1개** -- 전에 3개로 적은 건 틀렸다, 사용자 확인 09-29) 설명이 아직 494/58 이다
 ### Highlights 의 "Party decor" 는 건드리지 않는다
 
 리스팅 상단 Highlights 에 **"Party decor for gatherings and celebrations"**
