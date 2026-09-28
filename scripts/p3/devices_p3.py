@@ -38,6 +38,27 @@ def _profile(x, R, L):
     return r, nib, nib + cone
 
 
+def _real_profile(x, R, L):
+    """실제 Apple Pencil 윤곽 (v0.50) -- 무료 사진 펜슬(Unsplash B)을 원본 픽셀 눈금으로 직접 읽은 값.
+    사진: 펜촉 끝 (413,1130), 뒤끝 (270,1902) -> 길이 785px, 지름 42px (길이/지름 18.7 = 실제 규격 166/8.9).
+    펜촉: 끝에서 이음선까지 4.8%, 이음선 굵기 = 몸통의 0.57, 끝은 둥글게 부풀며 굵어짐(지수 0.55).
+    원뿔: 4.8% -> 20% 에서 0.57 -> 1.0, 몸통 쪽에서 접선(지수 1.95 -- 9% 에서 0.77, 15.5% 에서 0.96 에 맞춤). 뒤끝 반구.
+    (v0.47~v0.49 는 자동 측정이 그늘·그림자·나무결에 오염돼 펜촉 1.5%·원뿔 7~10% 로 짧았다 -- 사용자)"""
+    u = x / L
+    nib_u, cone_u, nib_r = 0.048, 0.200, 0.57
+    r = np.full_like(x, R)
+    m = u < nib_u
+    r[m] = R * nib_r * np.clip(u[m] / nib_u, 0, 1) ** 0.55
+    m = (u >= nib_u) & (u < cone_u)
+    t = (u[m] - nib_u) / (cone_u - nib_u)
+    r[m] = R * (nib_r + (1 - nib_r) * (1 - (1 - t) ** 1.95))
+    xe = L - R
+    m = x > xe
+    r[m] = np.sqrt(np.clip(R ** 2 - (x[m] - xe) ** 2, 0, None))
+    r[(x < 0) | (x > L)] = 0
+    return r, nib_u * L, None
+
+
 def _photo_profile(x, R, L):
     """무료 사진 펜슬(Unsplash B)의 실루엣을 길이 L 에 맞춘다 -- photo_devices_p3.pencil_silhouette"""
     import photo_devices_p3 as ph  # noqa: E402  (OpenCV -- 여기서만)
@@ -47,7 +68,7 @@ def _photo_profile(x, R, L):
     return r, nib_u * L, None
 
 
-def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2.0, 0.10), (4, 7, 9, 0.02)), tone=0.75, radius=None, silhouette="photo", matte=True):   # v0.45: 그림자 크게 줄임, 아래 그늘 밝게 (사용자: 사진 펜슬이 시커멓다, 그림자 많이 제거)
+def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2.0, 0.10), (4, 7, 9, 0.02)), tone=0.75, radius=None, silhouette="real", matte=True):   # v0.45: 그림자 크게 줄임, 아래 그늘 밝게 (사용자: 사진 펜슬이 시커멓다, 그림자 많이 제거)
     """length = 캔버스에서의 펜슬 길이(px), angle = 화면에서 반시계 회전(도), shadow = (닿는 그림자, 넓은 그림자) 각 (dx, dy, 흐림, 농도).
     tone = 음영 세기(1 = 계산 그대로, 0.75 = 그늘을 25% 밝게). radius = 몸통 반지름 px (없으면 실제 비율 length/37.3).
     반환: (RGBA 그림자 포함, 펜촉 끝 (x, y))"""
@@ -56,7 +77,7 @@ def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2
     W, H = int(L + 4 * ss), int(2 * R + 6 * ss)
     x = np.arange(W, dtype=np.float64)[None, :] - 2 * ss + 0.5
     y = np.arange(H, dtype=np.float64)[:, None] - H / 2 + 0.5
-    r, nib_end, _ = (_photo_profile if silhouette == "photo" else _profile)(x[0].copy(), R, L)   # v0.48: 윤곽 = 사진 펜슬
+    r, nib_end, _ = {"real": _real_profile, "photo": _photo_profile}.get(silhouette, _profile)(x[0].copy(), R, L)   # v0.50: 실제 비율
     dr = np.gradient(r)
     r, dr = r[None, :], dr[None, :]
     inside = (y ** 2 <= r ** 2) & (r > 0)
@@ -131,14 +152,15 @@ def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2
 
 
 # ---------------------------------------------------------------- iPad (CSS)
-# 알루미늄 테두리(스페이스 그레이, 왼쪽 위 빛) -> 검은 유리 베젤 -> 화면. 화면 위 유리 반사, 그림자 네 겹.
-# v0.45: 처음 그린 v0.41 값으로 되돌림 (사용자: "패드는 원래 처음 그렸던 걸로"). v0.43 의 옅은 값은 git 커밋 4224195.
-ALU = "linear-gradient(145deg,#8d8f93 0%,#55575b 9%,#35363a 30%,#2a2b2e 62%,#46484c 88%,#6c6e72 100%)"
-IPAD_SHADOW = "0 1px 1px rgba(0,0,0,.45),0 3px 5px rgba(20,22,26,.30),0 16px 30px rgba(20,25,30,.24),0 44px 80px rgba(20,25,30,.22)"
-SHEEN = "linear-gradient(118deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.035) 38%,rgba(255,255,255,0) 38.2%,rgba(255,255,255,0) 100%)"
-GLASS = "#0c0c0e"
-GLASS_EDGE = "inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.10)"
-CAM = "radial-gradient(circle at 38% 35%,#3b4a5c 0%,#161a22 45%,#060607 70%)"
+# v0.50: 상품 1 리스팅 패드와 같게 (scripts/build_mockups.py .tab) -- 단색 짙은 베젤 #2B2A33, 둥근 모서리, 부드러운 그림자 한 겹.
+# 알루미늄 띠(회색 선)·카메라·유리 반사 없음 (사용자: 원복하랬더니 테두리에 회색 선, 상품 1 패드 모양으로).
+# 상품 1: 베젤 26px / 화면 폭 885px(2.9%), 바깥 모서리 56px(6.3%), 화면 모서리 30px(3.4%), 그림자 0 40px 90px .18 (화면 높이 1180 기준)
+ALU = "#2B2A33"
+IPAD_SHADOW = "0 27px 60px rgba(0,0,0,.18)"
+SHEEN = "none"
+GLASS = "#2B2A33"
+GLASS_EDGE = "none"
+CAM = "transparent"
 IPAD_CSS = f"""
 .ipad{{position:absolute;box-sizing:border-box;background:{ALU};box-shadow:{IPAD_SHADOW}}}
 .ipad .glass{{position:absolute;background:{GLASS};box-shadow:{GLASS_EDGE}}}
@@ -148,13 +170,13 @@ IPAD_CSS = f"""
 """
 
 def ipad(src, w, left, top, rot=0, z=1):
-    """w = 화면 폭(px), 화면 3:4. 테두리 = 알루미늄 띠(폭의 1.1%) + 유리 베젤(폭의 4%)"""
+    """w = 화면 폭(px), 화면 3:4. 상품 1 패드 비율 -- 베젤 = 화면 폭의 2.9%, 바깥 모서리 6.3%, 화면 모서리 3.4%"""
     h = round(w * 4 / 3)
-    rim, bz = max(4, round(w * .011)), round(w * .040)
+    rim, bz = 0, round(w * .029)                                  # 상품 1 비율: 베젤 = 화면 폭의 2.9%
     W, Hh = w + 2 * (rim + bz), h + 2 * (rim + bz)
-    R = round(w * .085)
+    R = round(w * .063)
     cam = max(6, round(w * .012))
     return (f'<div class="ipad" style="left:{left}px;top:{top}px;width:{W}px;height:{Hh}px;border-radius:{R}px;transform:rotate({rot}deg);z-index:{z}">'
             f'<div class="glass" style="inset:{rim}px;border-radius:{R - rim}px"></div>'
             f'<div class="cam" style="left:{W / 2 - cam / 2:.1f}px;top:{rim + bz / 2 - cam / 2:.1f}px;width:{cam}px;height:{cam}px"></div>'
-            f'<div class="scr" style="left:{rim + bz}px;top:{rim + bz}px;width:{w}px;height:{h}px;border-radius:{round(w * .045)}px;background-image:url({src})"></div></div>')
+            f'<div class="scr" style="left:{rim + bz}px;top:{rim + bz}px;width:{w}px;height:{h}px;border-radius:{round(w * .034)}px;background-image:url({src})"></div></div>')
