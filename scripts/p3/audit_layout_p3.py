@@ -25,6 +25,8 @@ EDS = [(sys.argv[2], sys.argv[3])] if len(sys.argv) > 3 else [(y, w) for y in ("
 sys.argv = [sys.argv[0], "2027", "mon"]
 import editions_build as E                      # noqa: E402
 from playwright.sync_api import sync_playwright  # noqa: E402
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))   # scripts/ -- chrome_auto
+from chrome_auto import launch  # noqa: E402
 
 CODE = (ROOT / "scripts" / "p3" / "planner_build.py").read_text(encoding="utf-8")
 ROWS_JS = re.search(r'ROWS_JS = r"""(.*?)"""', CODE, re.S).group(1)
@@ -93,7 +95,7 @@ AUDIT_JS = r"""
 
 total = 0
 with sync_playwright() as p:
-    br = p.chromium.launch(channel="chrome")
+    br = launch(p)   # chrome_auto: 새 Chrome 마다 Windows 로그온 실패가 쌓여 계정이 잠겼다(2026-09-28)
     for y, w in EDS:
         src = ROOT / "src" / "prod3" / "planner" / VER / f"ADHD-Year-Planner-{y}-{w}.html"
         pg = br.new_context(user_agent=E.STATIC_FONT_UA, viewport={"width": 768, "height": 1024}).new_page()

@@ -11,6 +11,8 @@ import re
 import sys
 
 from playwright.sync_api import sync_playwright
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))   # scripts/ -- chrome_auto
+from chrome_auto import launch  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -24,7 +26,7 @@ paper = re.search(r'^PAPER, INK[^=]*= "(#[0-9a-fA-F]{6})"', text, re.M)
 planner = re.search(r'^PAPER, INK = "(#[0-9a-fA-F]{6})"', (ROOT / "scripts/p3/planner_build.py").read_text(encoding="utf-8"), re.M)
 fails = []
 with sync_playwright() as p:
-    br = p.chromium.launch(channel="chrome")
+    br = launch(p)   # chrome_auto: 새 Chrome 마다 Windows 로그온 실패가 쌓여 계정이 잠겼다(2026-09-28)
     pg = br.new_page()
     for k in MUST:
         if k not in icons:

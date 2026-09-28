@@ -24,6 +24,8 @@ import subprocess
 import sys
 
 from playwright.sync_api import sync_playwright
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))   # scripts/ -- chrome_auto
+from chrome_auto import launch  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]      # scripts/p3/ -> 저장소
 HAND = ROOT / "ADHD Planner 디자인 컨셉_v0.1" / "design_handoff_adhd_planner_pdf"
@@ -318,7 +320,7 @@ def build():
     shutil.copy(CSS, SRC / "styles.css")
     report = {}
     with sync_playwright() as p:
-        br = p.chromium.launch(channel="chrome")
+        br = launch(p)   # chrome_auto: 새 Chrome 마다 Windows 로그온 실패가 쌓여 계정이 잠겼다(2026-09-28)
         bake_tab_shadows(br)
         ref = br.new_page(viewport={"width": 1600, "height": 1200})
         ref.goto(REF.as_uri())

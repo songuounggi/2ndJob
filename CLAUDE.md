@@ -356,6 +356,26 @@ iPad 확인 대기 (2026-09-24).** 테마 플래그 `fast_paint`. v8.19: 502p, 1
 GoodNotes 와 다를 수 있다) ② Prod 2 가 `build_planner.py` 작업을 끝낸 뒤
 `v8.19-undated` 로 반영. 상품 2 도 같은 그림자·bloom 을 쓴다.
 
+## 빌드가 Windows 계정을 잠근다 -- Chrome 은 반드시 `scripts/chrome_auto.py` 로 켠다 (2026-09-28)
+
+회사 PC 에서 9/23 부터 "참조된 계정이 잠겨 있으므로 로그온할 수 없습니다" 로 로그인이 막혔다(재부팅하면 풀림).
+Security 로그 4625 **30건 전부 `chrome.exe`**, 시각이 빌드와 겹쳤다. Chrome 은 켤 때 "OS 비밀번호가 비었나" 를
+**빈 비밀번호 로그온으로 확인**하고 결과를 프로필 `Local State` 에 둔다. 빌드는 켤 때마다 새 빈 프로필이라
+**Chrome 을 켤 때마다 로그온 실패 1회** -- 10분에 10회(이 PC 정책)면 잠긴다. 빌드·시안을 몰아 돌리면 금방이다.
+실측: 새 프로필 +1/회(headless 인쇄·Playwright 둘 다), 확인 결과가 든 `Local State` 를 넣은 새 프로필 **+0**.
+
+```python
+from chrome_auto import launch, chrome_args          # scripts/ 에 있다
+br = launch(p)                                        # p.chromium.launch(channel="chrome") 대신. 나머지 그대로
+subprocess.run([CHROME, "--headless", *chrome_args(), ...])   # chrome.exe 직접 부를 때
+```
+
+검사: `python scripts/check_chrome_lockout.py` (+0 이면 PASS, `--reverse` 는 옛 방식이 +1 인지).
+**주범은 Playwright `p.chromium.launch()`** -- 켤 때마다 새 임시 프로필이다. 상품 3(`scripts/p3/` 9곳)이 이것이라
+2026-09-28 에 `launch(p)` 로 바꿨다. 상품 1·2 의 chrome.exe 호출(`build_planner.py` `check_lines.py` 등)은
+**고정 프로필 폴더를 다시 써서**(`%TEMP%\planner-chrome-profile` 등) 처음 한 번만 +1 -- 그대로 둬도 된다.
+**새 스크립트는 `chrome_auto` 로 켠다.** 잠기면 10분 기다리거나 재부팅.
+
 ## 빌드가 조용히 실패하는 두 가지 (둘 다 겪음)
 
 **1. 출력 PDF가 잠겨 있으면 Chrome은 종료 코드 0으로 아무것도 쓰지 않는다.**

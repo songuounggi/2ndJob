@@ -16,6 +16,8 @@ import pymupdf
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from devices_p3 import ALU, CAM, GLASS, IPAD_SHADOW, SHEEN, pencil_png  # noqa: E402
 from playwright.sync_api import sync_playwright
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))   # scripts/ -- chrome_auto
+from chrome_auto import launch  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -48,7 +50,7 @@ LAYOUTS = {
                                pencil=(985, 1045, 500, 38)),
 }
 with sync_playwright() as p:
-    br = p.chromium.launch(channel="chrome")
+    br = launch(p)   # chrome_auto: 새 Chrome 마다 Windows 로그온 실패가 쌓여 계정이 잠겼다(2026-09-28)
     for name, L in LAYOUTS.items():
         SW, BZ = L["SW"], L["BZ"]
         K = SW / pg.rect.width                                       # pt -> px (손글씨·스티커 좌표가 이걸 따른다)

@@ -869,6 +869,8 @@ def touch_report(pdf_path, ids):
 
 def build():
     from playwright.sync_api import sync_playwright
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))   # scripts/ -- chrome_auto
+    from chrome_auto import launch  # noqa: E402
     import pikepdf
     # 한 버전 폴더에 판 4개(2026/2027 x 월/일)가 들어간다 -> 폴더가 아니라 그 판 파일이 있으면 멈춘다
     if (OUT / f"{FNAME}.pdf").exists():
@@ -915,7 +917,7 @@ def build():
     src.write_text(html, encoding="utf-8")
     raw = OUT / f"{FNAME}.raw.pdf"
     with sync_playwright() as p:
-        br = p.chromium.launch(channel="chrome")
+        br = launch(p)   # chrome_auto: 새 Chrome 마다 Windows 로그온 실패가 쌓여 계정이 잠겼다(2026-09-28)
         ctx = br.new_context(device_scale_factor=2)
         pg = ctx.new_page()
         for w in (22, 26):

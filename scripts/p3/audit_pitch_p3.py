@@ -24,6 +24,8 @@ VER, Y, WS = (sys.argv[1:4] + ["v0.10", "2026", "mon"][len(sys.argv[1:4]):])
 sys.argv = [sys.argv[0], "2027", "mon"]
 import editions_build as E                        # noqa: E402
 from playwright.sync_api import sync_playwright   # noqa: E402
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))   # scripts/ -- chrome_auto
+from chrome_auto import launch  # noqa: E402
 
 CODE = (ROOT / "scripts" / "p3" / "planner_build.py").read_text(encoding="utf-8")
 J = {k: re.search(k + r' = r"""(.*?)"""', CODE, re.S).group(1) for k in ("ROWS_JS", "GAP_JS", "TRK_FILL_JS", "FILL_JS")}
@@ -48,7 +50,7 @@ PITCH_JS = r"""
 """
 src = ROOT / "src" / "prod3" / "planner" / VER / f"ADHD-Year-Planner-{Y}-{WS}.html"
 with sync_playwright() as p:
-    br = p.chromium.launch(channel="chrome")
+    br = launch(p)   # chrome_auto: 새 Chrome 마다 Windows 로그온 실패가 쌓여 계정이 잠겼다(2026-09-28)
     pg = br.new_context(user_agent=E.STATIC_FONT_UA, viewport={"width": 768, "height": 1024}).new_page()
     pg.emulate_media(media="print")
     pg.goto(src.as_uri(), timeout=300000)

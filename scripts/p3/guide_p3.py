@@ -117,11 +117,13 @@ html.write_text('<!DOCTYPE html><html><head><meta charset="utf-8">'
 
 import editions_build as E  # noqa: E402  (정적 폰트 UA -- 가변 폰트가 Type3 로 들어가지 않게)
 from playwright.sync_api import sync_playwright  # noqa: E402
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))   # scripts/ -- chrome_auto
+from chrome_auto import launch  # noqa: E402
 import pypdfium2 as pdfium  # noqa: E402
 
 pdf = OUT / "ADHD-Year-Planner-Setup-Guide.pdf"
 with sync_playwright() as p:
-    br = p.chromium.launch(channel="chrome")
+    br = launch(p)   # chrome_auto: 새 Chrome 마다 Windows 로그온 실패가 쌓여 계정이 잠겼다(2026-09-28)
     pg = br.new_context(user_agent=E.STATIC_FONT_UA).new_page()
     pg.goto(html.as_uri()); pg.evaluate("document.fonts.ready"); pg.wait_for_timeout(800)
     # 검사: 단계 문구 가운데 = 원형 숫자 가운데 (±1px). 글줄 상자로 잰다(p 상자는 행 높이만큼 늘어날 수 있다)

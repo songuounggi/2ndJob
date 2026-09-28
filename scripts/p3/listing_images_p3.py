@@ -362,9 +362,11 @@ PROP_GAP_JS = """() => {
 }"""
 
 from playwright.sync_api import sync_playwright  # noqa: E402
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))   # scripts/ -- chrome_auto
+from chrome_auto import launch  # noqa: E402
 
 with sync_playwright() as p:
-    br = p.chromium.launch(channel="chrome")
+    br = launch(p)   # chrome_auto: 새 Chrome 마다 Windows 로그온 실패가 쌓여 계정이 잠겼다(2026-09-28)
     pg = br.new_page(viewport={"width": 2000, "height": 2000})
     for name, body in SHOTS.items():
         f = OUT / f"{name}.html"
