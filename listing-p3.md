@@ -209,7 +209,7 @@ For personal use. Please do not resell or redistribute the files.
 5. `DRAFT` 를 올려(draft-v0.32~) 새로 뽑고, **폰 크기(폭 390px)로 줄인 미리보기**를 함께 만들어 확인한 뒤 사용자 확정
 6. Etsy 에서 사진 10장 교체 -- 사진은 파일과 달리 언제 바꿔도 기존 구매자에게 영향이 없다. 교체 후 `shop.md` 0-1절 리스팅 이미지 표에 한 줄
 
-**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.54/` (**올릴 사본 `output/prod3/upload/listing-images-v0.54/`**), 사용자 확인 대기**
+**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.55/` (**올릴 사본 `output/prod3/upload/listing-images-v0.55/`**), 사용자 확인 대기**
 - 시안 비교 `output/prod3/preview/title-size-v1/compare_phone.png` (지금 / A 150 / B 172 / C 196). B·C 는 02 페이지가 865·610px 로 줄고 09 가 안전 영역 밖.
   추천(01 만 C)은 **반려 -- "상품 1·2 와 일관성", 전부 A** (사용자)
 - **A 안 확정:** `.k` 40 / `h1` 150 (01 hero 176) / `p.s` 48, 제목·부제 `text-wrap:balance`(끝에 한 단어만 떨어지던 것 -- 01 "brain.", 03 "tomorrow."). 문구는 그대로
@@ -280,6 +280,7 @@ For personal use. Please do not resell or redistribute the files.
 - **v0.54 B안 (사용자: 01 청록이 너무 많은 영역 -> 알약 위로. A/B 세트 비교 후 B 확정):** 띠 가운데 697px(부제 글자 아래 646 · 알약 위 749 의 가운데),
   전환 663~740. 알약은 베이지 위 청록 테두리·글씨(대비 ~5.6:1), 알약 여백 34 -> 96, 알약-iPad 125 -> 62 (iPad 자리 그대로). 청록 차지 ~40% -> ~35%.
   띠 검사 기준 = 부제 아래 ~ 알약 위 (v0.53 FAIL 778~856, v0.54 PASS). 시안 비교 `output/prod3/preview/band-up-v1/set_A_v053.png`·`set_B_up.png`
+- **v0.55:** 01 띠 번짐을 원과 숫자로 맞춤 -- 하늘색 어긋남 32 -> 20px(원 B2 와 같게), 흐림 26 -> 25px. 전환 폭(10~90%) 01 70px = 원 70px (v0.54 77px). 청록 rgb(0,103,134) 그대로. (사용자: 원 쪽이 더 짧다. "같다" 고 한 건 재지 않은 말이었다)
 - 남은 것: 사용자 확정 -> Etsy 사진 10장 교체 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.
