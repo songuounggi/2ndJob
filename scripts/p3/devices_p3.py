@@ -38,7 +38,16 @@ def _profile(x, R, L):
     return r, nib, nib + cone
 
 
-def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2.0, 0.10), (4, 7, 9, 0.02)), tone=0.75, radius=None):   # v0.45: 그림자 크게 줄임, 아래 그늘 밝게 (사용자: 사진 펜슬이 시커멓다, 그림자 많이 제거)
+def _photo_profile(x, R, L):
+    """무료 사진 펜슬(Unsplash B)의 실루엣을 길이 L 에 맞춘다 -- photo_devices_p3.pencil_silhouette"""
+    import photo_devices_p3 as ph  # noqa: E402  (OpenCV -- 여기서만)
+    u, rr, nib_u = ph.pencil_silhouette()
+    r = R * np.interp(x / L, u, rr, left=0, right=0)
+    r[(x < 0) | (x > L)] = 0
+    return r, nib_u * L, None
+
+
+def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2.0, 0.10), (4, 7, 9, 0.02)), tone=0.75, radius=None, silhouette="photo"):   # v0.45: 그림자 크게 줄임, 아래 그늘 밝게 (사용자: 사진 펜슬이 시커멓다, 그림자 많이 제거)
     """length = 캔버스에서의 펜슬 길이(px), angle = 화면에서 반시계 회전(도), shadow = (닿는 그림자, 넓은 그림자) 각 (dx, dy, 흐림, 농도).
     tone = 음영 세기(1 = 계산 그대로, 0.75 = 그늘을 25% 밝게). radius = 몸통 반지름 px (없으면 실제 비율 length/37.3).
     반환: (RGBA 그림자 포함, 펜촉 끝 (x, y))"""
@@ -47,7 +56,7 @@ def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2
     W, H = int(L + 4 * ss), int(2 * R + 6 * ss)
     x = np.arange(W, dtype=np.float64)[None, :] - 2 * ss + 0.5
     y = np.arange(H, dtype=np.float64)[:, None] - H / 2 + 0.5
-    r, nib_end, _ = _profile(x[0].copy(), R, L)
+    r, nib_end, _ = (_photo_profile if silhouette == "photo" else _profile)(x[0].copy(), R, L)   # v0.48: 윤곽 = 사진 펜슬
     dr = np.gradient(r)
     r, dr = r[None, :], dr[None, :]
     inside = (y ** 2 <= r ** 2) & (r > 0)

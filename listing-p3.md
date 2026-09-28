@@ -209,7 +209,7 @@ For personal use. Please do not resell or redistribute the files.
 5. `DRAFT` 를 올려(draft-v0.32~) 새로 뽑고, **폰 크기(폭 390px)로 줄인 미리보기**를 함께 만들어 확인한 뒤 사용자 확정
 6. Etsy 에서 사진 10장 교체 -- 사진은 파일과 달리 언제 바꿔도 기존 구매자에게 영향이 없다. 교체 후 `shop.md` 0-1절 리스팅 이미지 표에 한 줄
 
-**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.46/`, 사용자 확인 대기**
+**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.48/`, 사용자 확인 대기**
 - 시안 비교 `output/prod3/preview/title-size-v1/compare_phone.png` (지금 / A 150 / B 172 / C 196). B·C 는 02 페이지가 865·610px 로 줄고 09 가 안전 영역 밖.
   추천(01 만 C)은 **반려 -- "상품 1·2 와 일관성", 전부 A** (사용자)
 - **A 안 확정:** `.k` 40 / `h1` 150 (01 hero 176) / `p.s` 48, 제목·부제 `text-wrap:balance`(끝에 한 단어만 떨어지던 것 -- 01 "brain.", 03 "tomorrow."). 문구는 그대로
@@ -251,6 +251,10 @@ For personal use. Please do not resell or redistribute the files.
   그늘 25% 밝게(tone .75). iPad = v0.41 값(알루미늄·유리 반사·그림자 네 겹)으로 되돌림. 07 장면 v0.12 도 같은 값.
   사진 합성(photo_devices_p3.py·assets/p3/unsplash/)은 기록으로 남기고 쓰지 않는다
 - **v0.46:** 펜슬 뒤끝 거의 반구(0.95R), 길이 600 -> 500 (굵기 그대로), 07 장면 v0.13 같게 (사용자: 끝이 더 둥글어야, 너무 길다)
+- **v0.47:** 펜슬 실제 비율 -- 앞 iPad 화면 590px = iPad Pro 13" 화면 폭 198.6mm(1mm = 2.97px), Apple Pencil 166 × 8.9mm -> 길이 495·지름 27px.
+  07 장면(화면 716px)은 598px (v0.46 은 417 로 30% 짧았다). (사용자: 굵기는 그대로고 짧아지기만 했다)
+- **v0.48:** 펜슬 실루엣 = 무료 사진 펜슬(Unsplash B)에서 잰 윤곽(`photo_devices_p3.pencil_silhouette`: 축을 따라 굵기 / 몸통 굵기, 계단은 가우시안으로 이음) --
+  펜촉 앞 1.3%·뾰족, 원뿔 ~8.5% 까지, 뒤끝 둥글게. 3D 음영·밝기는 그대로. 07 장면 v0.15 (사용자: 촉이 더 뾰족해야, 실루엣은 사진 펜슬 따라)
 - 남은 것: 사용자 확정 -> Etsy 사진 10장 교체 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.

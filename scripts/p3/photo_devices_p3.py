@@ -204,3 +204,58 @@ def pencil_photo(length, angle):
     v = tip + pad - cxy
     t = np.array([v[0] * math.cos(r) - v[1] * math.sin(r), v[0] * math.sin(r) + v[1] * math.cos(r)]) + np.array(out.size) / 2
     return out, (float(t[0]), float(t[1]))
+
+
+def pencil_silhouette():
+    """사진 B 펜슬의 실루엣 -- 펜촉(u=0) -> 뒤끝(u=1) 을 따라 굵기 / 몸통 굵기. 반환 (u, 비율, 펜촉 끝 u).
+    devices_p3.pencil_png 가 이 윤곽으로 3D 펜슬을 그린다 (사용자 2026-09-28: 촉이 더 뾰족해야, 실루엣은 무료 사진 펜슬 따라).
+    사진의 그늘진 쪽은 밝기 기준에서 빠져 굵기가 덜 재진다 -> 절대 굵기는 쓰지 않고 몸통 대비 비율만 쓴다."""
+    img = _load("B")
+    x0, y0, x1, y1 = 150, 1040, 520, 1990
+    hsv = cv2.cvtColor(img[y0:y1, x0:x1], cv2.COLOR_BGR2HSV).astype(int)
+    like = (hsv[..., 1] < 60) & (hsv[..., 2] > 110)
+    m0 = _largest(cv2.morphologyEx(like.astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8)))
+    ys, xs = np.nonzero(m0)
+    pts = np.stack([xs, ys], 1).astype(np.float32)
+    c = pts.mean(0)
+    ax = np.linalg.svd(pts - c, full_matrices=False)[2][0]
+    if ax[1] > 0:
+        ax = -ax                                                 # 위쪽(펜촉)을 향하게
+    nrm = np.array([-ax[1], ax[0]])
+    proj = (pts - c) @ ax
+    ts = np.arange(int(proj.max()), int(proj.min()) - 1, -1)    # 펜촉 -> 뒤끝
+    h, w = like.shape
+    wid, val = [], []
+    for t in ts:
+        p0 = c + ax * t
+        n = 0
+        for sgn in (-1, 1):
+            k = 0
+            while k < 60:
+                q = p0 + nrm * sgn * (k + 1)
+                xi, yi = int(round(q[0])), int(round(q[1]))
+                if not (0 <= xi < w and 0 <= yi < h) or not like[yi, xi]:
+                    break
+                k += 1
+            n += k
+        wid.append(n)
+        xi, yi = int(round(p0[0])), int(round(p0[1]))
+        val.append(hsv[yi, xi, 2] if 0 <= xi < w and 0 <= yi < h else 0)
+    wid = np.array(wid, float)
+    k = 5
+    wid = np.median(np.lib.stride_tricks.sliding_window_view(np.pad(wid, k // 2, mode="edge"), k), axis=1)
+    L = len(wid)
+    u = np.arange(L) / (L - 1)
+    body = np.median(wid[int(L * .2):int(L * .9)])
+    r = np.clip(wid / body, 0, 1)
+    head, tail = u < 0.12, u > 0.9
+    r[head] = np.maximum.accumulate(r[head])                   # 펜촉 쪽은 굵어지기만, 뒤끝 쪽은 가늘어지기만 (재는 잡음 제거)
+    r[tail] = np.maximum.accumulate(r[tail][::-1])[::-1]
+    r[(u >= 0.12) & (u <= 0.9)] = 1.0
+    # 1px 단위로 잰 굵기라 계단이 진다(3D 로 그리면 고리처럼 보였다) -> 가우시안으로 부드럽게 이음
+    g = np.exp(-0.5 * (np.arange(-12, 13) / 4.0) ** 2); g /= g.sum()
+    r = np.convolve(np.pad(r, 12, mode="edge"), g, mode="valid")
+    r[(u >= 0.15) & (u <= 0.88)] = 1.0
+    r[0] = r[-1] = 0.0                                          # 양 끝을 닫는다 (뒤끝이 납작하게 잘려 보였다)
+    nib_u = float(u[int(np.argmax(np.array(val[2:]) > 170)) + 2])   # 펜촉(회색) -> 원뿔(흰색) 밝기가 뛰는 곳
+    return u, r, nib_u
