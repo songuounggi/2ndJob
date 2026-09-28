@@ -16,7 +16,7 @@ import pypdfium2 as pdfium
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 VER = "v0.23"
-DRAFT = "draft-v0.31"   # v0.31: 01 청록 띠 V1 -- 종이 위 1/3 에서 끝, 청록->바탕을 OKLab 으로 직접 잇고 ease 12단(마스크 투명은 중간이 탁했다 -- 사용자) / v0.30: v0.30: 01 청록 띠를 종이 중간까지 늘리고 경계 짧게(흐림이 종이 윗가장자리와 겹쳐 어색했다 -- 사용자) / v0.29: v0.29: 페이지 그림의 책상(회색 네모)을 투명하게 -- 색 배경 위에서 네모 모서리가 드러났다. 종이 그림자는 알파로 남긴다, CSS 네모 그림자 뺌 / v0.28: v0.28: 07 장면 투명 배경(장면 v0.8) / v0.27: v0.27: 배경에 색 -- 01 은 청록 띠(C) + 스티커, 나머지는 리소 원(B2, 팔레트 색) + 스티커, 원·띠 경계 흐림 (사용자: 경쟁작보다 썰렁하다) / v0.26: v0.26: 플래너 v0.23 페이지(모서리 하이라이트 고침)·장면 v0.7 로 다시 찍음. 구성·문구 그대로 / v0.25: v0.25: 10 Works anywhere 뺌, 스티커를 7번째로(사용자), 파일 번호 = 올릴 순서. 09 의 15일 고리 작게·정확히(3월 달력 잘라낸 그림 속 15 글자 가운데) / v0.24: v0.24: 09 페이지 크게(아래가 비었다), 15 고리 가운데로 / v0.23: v0.23: 09 선을 그림이 다 들어온 뒤에 잰다(v0.22 는 엉뚱한 곳), 점선 정리 / v0.22: v0.22: 09 허공 화살표(사용자: 아마추어 같다) -> 누르는 자리에 번호 표시(탭 물결), 3월 달력 확대 카드, 그날 페이지 제목으로 곡선 연결 / v0.21: v0.21: 11 장면 그림자 잘림 경계선 없앰(장면 v0.6) / v0.20: v0.20: 11 스티커 장면을 iPad 세로 통째로(잘라 넣어 가로 모드처럼 보였다 -- 사용자), 배경색 같게 / v0.19: v0.19: v0.22 페이지(종이 W1)로 다시 찍음, 06 에 스티커 키트 한 줄(판매 파일 5번째 ZIP), 11 스티커 실사용 장면 후보(10장 중 하나와 바꿀 것, 사용자 선택) / v0.18: v0.17: 영문 교정된 v0.8 페이지로 다시 찍음 / v0.16: 09 화살표·TAP 에 그림자(사용자: 썰렁하다) / v0.15: 배지를 페이지 밖으로 올린 것보다 v0.14(페이지 윗가장자리에 걸침, 본문은 안 가림)가 낫다(사용자) -> v0.14 위치로 / v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
+DRAFT = "draft-v0.36"   # v0.36: v0.35 의 스티커 자리 (1650,70,200) 도 04 와 9px -> (1650,55,195). v0.35 폴더는 03 까지만 -- 04 에서 멈춤 / v0.35: 오른쪽 위 스티커 자리 (1600,150,230)->(1650,70,200) 10장 공통 -- 04 제목 끝이 SORT OF 스티커와 103px 겹쳤다 + 글자-스티커 16px 검사. 06 제목 "4 PDFs." 뒤 줄바꿈(balance 가 "Pick" 뒤에서 끊었다) / v0.34: 01 청록 띠를 제목과 페이지 사이로 올림 -- 전환 660->730px(부제 아래 652 · 페이지 위 737 사이 안에서 끝난다). 띠가 너무 커서 상품이 묻혔다(사용자) / v0.33: v0.32 + 08 펼침 높이 900->870·간격 268->259 (제목이 커져 안전 영역 1750 을 24px 넘었다. v0.32 폴더는 07 까지만 -- 08 에서 멈춤) / v0.32: 제목 키움 A안 -- .k 34->40, h1 104->150(01 hero 176), p.s 42->48, 제목·부제 text-wrap:balance (폰 Etsy 앱에서 제목이 너무 작았다, 사용자: 상품 1·2 와 일관되게 전부 A) / v0.31: 01 청록 띠 V1 -- 종이 위 1/3 에서 끝, 청록->바탕을 OKLab 으로 직접 잇고 ease 12단(마스크 투명은 중간이 탁했다 -- 사용자) / v0.30: v0.30: 01 청록 띠를 종이 중간까지 늘리고 경계 짧게(흐림이 종이 윗가장자리와 겹쳐 어색했다 -- 사용자) / v0.29: v0.29: 페이지 그림의 책상(회색 네모)을 투명하게 -- 색 배경 위에서 네모 모서리가 드러났다. 종이 그림자는 알파로 남긴다, CSS 네모 그림자 뺌 / v0.28: v0.28: 07 장면 투명 배경(장면 v0.8) / v0.27: v0.27: 배경에 색 -- 01 은 청록 띠(C) + 스티커, 나머지는 리소 원(B2, 팔레트 색) + 스티커, 원·띠 경계 흐림 (사용자: 경쟁작보다 썰렁하다) / v0.26: v0.26: 플래너 v0.23 페이지(모서리 하이라이트 고침)·장면 v0.7 로 다시 찍음. 구성·문구 그대로 / v0.25: v0.25: 10 Works anywhere 뺌, 스티커를 7번째로(사용자), 파일 번호 = 올릴 순서. 09 의 15일 고리 작게·정확히(3월 달력 잘라낸 그림 속 15 글자 가운데) / v0.24: v0.24: 09 페이지 크게(아래가 비었다), 15 고리 가운데로 / v0.23: v0.23: 09 선을 그림이 다 들어온 뒤에 잰다(v0.22 는 엉뚱한 곳), 점선 정리 / v0.22: v0.22: 09 허공 화살표(사용자: 아마추어 같다) -> 누르는 자리에 번호 표시(탭 물결), 3월 달력 확대 카드, 그날 페이지 제목으로 곡선 연결 / v0.21: v0.21: 11 장면 그림자 잘림 경계선 없앰(장면 v0.6) / v0.20: v0.20: 11 스티커 장면을 iPad 세로 통째로(잘라 넣어 가로 모드처럼 보였다 -- 사용자), 배경색 같게 / v0.19: v0.19: v0.22 페이지(종이 W1)로 다시 찍음, 06 에 스티커 키트 한 줄(판매 파일 5번째 ZIP), 11 스티커 실사용 장면 후보(10장 중 하나와 바꿀 것, 사용자 선택) / v0.18: v0.17: 영문 교정된 v0.8 페이지로 다시 찍음 / v0.16: 09 화살표·TAP 에 그림자(사용자: 썰렁하다) / v0.15: 배지를 페이지 밖으로 올린 것보다 v0.14(페이지 윗가장자리에 걸침, 본문은 안 가림)가 낫다(사용자) -> v0.14 위치로 / v0.14: 07 배지가 페이지 머리글을 가렸다 -> 페이지 바로 위(밖), 계단 따라 / v0.13: 07 배지를 각 페이지 왼쪽 위로, 페이지 계단을 따라(사용자). 08 은 그대로 / v0.11: 07 만 라벨을 06 처럼 청록 배경 + 흰 글자, 기울이지 않음(사용자). 08 은 그대로 (v0.12 는 08 까지 바꾸다 간격 검사에서 멈춤) / v0.10: 07 BRAIN WEATHER 배지가 REVIEW 배지에 붙었다 -> 배지 글자 22px / v0.9: 07·08 배지가 페이지 어긋남을 따라 높이가 제각각 -> 한 줄로 / v0.8: 07·08 페이지가 작고 아래가 비었다 -> 크게 겹쳐 펼침 / v0.7: 10장으로(사용자: 기존 두 상품 10장) -- 07 한 달, 08 12월, 09 2탭, 10 어디서나 / v0.6: 안전 영역 검사가 06 마지막 배지(오른쪽 1754px)에서 멈춤 -> 배지를 표지 안쪽으로 (v0.6 폴더는 01-05 만 있다) / v0.5: 배지 5도, 안전 영역(글자가 왼쪽 120px 에서 시작 -> 검색 목록에서 잘림) / v0.4: 15도는 너무 기울었다 -> 8도(사용자) / v0.3: 배지 시계방향 15도(사용자) / v0.1: 05 썸네일 3줄이 아래로 잘림, 06 아래가 비었다 / v0.2: 06 표지 네 장이 멀리서 구분 안 됨 -> 배지
 PDF = ROOT / "output" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.pdf"
 HTML = ROOT / "src" / "prod3" / "planner" / VER / "ADHD-Year-Planner-2027-mon.html"
 OUT = ROOT / "output" / "prod3" / "listing" / DRAFT
@@ -81,9 +81,9 @@ CSS = f"""
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{width:2000px;height:2000px;overflow:hidden;background:#e9e6e3;color:{INK};font-family:'Source Serif 4',Georgia,serif}}
 .wrap{{position:absolute;inset:0;padding:250px 260px;display:flex;flex-direction:column}}   /* 안전 영역: Etsy 검색은 양옆 ~140px 을 자르고 4:3 자리는 가운데만 -- product2-student.md 목업 안전 영역 */
-.k{{font-size:34px;letter-spacing:.14em;text-transform:uppercase;color:{CYAN}}}
-h1{{font-size:104px;font-weight:600;line-height:1.02;margin:22px 0 26px;letter-spacing:-.01em}}
-p.s{{font-size:42px;font-style:italic;color:{N700};line-height:1.3}}
+.k{{font-size:40px;letter-spacing:.14em;text-transform:uppercase;color:{CYAN}}}
+h1{{font-size:150px;font-weight:600;line-height:1.0;margin:22px 0 26px;letter-spacing:-.01em;text-wrap:balance}}
+p.s{{font-size:48px;font-style:italic;color:{N700};line-height:1.3;text-wrap:balance}}   /* balance: 제목·부제 끝에 한 단어만 떨어지지 않게 (v0.32) */
 .row{{flex:1;min-height:0;display:flex;gap:50px;align-items:flex-end;justify-content:center;margin-top:50px}}
 .pg{{height:100%;max-height:1000px;max-width:48%;object-fit:contain}}
 .pg.t{{transform:rotate(-2deg)}} .pg.u{{transform:rotate(1.5deg)}}
@@ -189,15 +189,18 @@ def _oklab_band(end, span=300, a=(0, 103, 134), b=(239, 235, 230)):
     return f"linear-gradient(to bottom,{','.join(stops)})"
 
 
-HERO_BAND_END = 1080   # 01 의 두 페이지 위 1/3 (페이지 위 738 · 아래 1762 px 에서 잰 값 -- 아래 렌더에서 다시 재서 어긋나면 멈춘다)
-C_BAND = ('<style>body{background:#efebe6}.k{color:#95c9d9}h1{color:#fdfcfa}p.s{color:#d7e8ee}'
-          '.band{-webkit-mask-image:none;mask-image:none;top:0;left:0;right:0;height:2000px;background:' + _oklab_band(HERO_BAND_END) + '}</style>'
+HERO_BAND_END, HERO_BAND_SPAN = 695, 70   # v0.34: 전환(청록->바탕)이 부제 아래와 페이지 위 사이 간격(v0.33 에서 652~737px) 안에 들어간다.
+# 부제가 옅은 글자라 흐린 바탕에 걸리면 안 읽히고, 종이 윗가장자리에 흐림이 겹치면 어색하다(v0.30 사용자). 아래 렌더에서 재서 벗어나면 멈춘다.
+# (v0.31~v0.33: 띠 끝 = 페이지 위 1/3, 1080px -- 띠가 너무 커서 상품을 가렸다, 2026-09-28 사용자)
+C_BAND = ('<style>body{background:#efebe6}.k{color:#95c9d9}h1{color:#fdfcfa;font-size:176px}p.s{color:#d7e8ee}'
+          '.band{-webkit-mask-image:none;mask-image:none;top:0;left:0;right:0;height:2000px;background:' + _oklab_band(HERO_BAND_END, HERO_BAND_SPAN) + '}</style>'
           '<div class="band"></div>')
 
 
 def props(*items):
     """스티커 소품 -- 네 모서리 자리 (왼쪽 위 알약, 오른쪽 위 원, 왼쪽 아래 알약, 오른쪽 아래 네모). 글자 안전 영역 밖"""
-    slots = [(60, 110, 80, -10), (1600, 150, 230, 12), (40, 1800, 90, -8), (1760, 1560, 190, 9)]
+    slots = [(60, 110, 80, -10), (1650, 55, 195, 12),   # 오른쪽 위: v0.34 까지 (1600, 150, 230) -- 04 제목과 겹쳤다
+             (40, 1800, 90, -8), (1760, 1560, 190, 9)]
     return "".join(f'<img class="pp" src="{STK}/{r}" style="left:{x}px;top:{y}px;height:{h}px;transform:rotate({a}deg)">'
                    for r, (x, y, h, a) in zip(items, slots) if r)
 
@@ -228,7 +231,7 @@ SHOTS = {
       <h1>Year, months, weeks, every day – and 45 tools.</h1>
       <div class="grid">{"".join(img(k, "") for k in ["year", "m3", "w12", "d3-15", "admin", "rsd", "budget", "dopamine"])}</div>""",
     "06_files": f"""<div class="k">What you get</div>
-      <h1>4 PDFs. Pick your start day.</h1>
+      <h1>4 PDFs.<br>Pick your start day.</h1>
       <div class="list"><span class="pill">2026 · Monday start</span><span class="pill">2026 · Sunday start</span><br>
         <span class="pill">2027 · Monday start</span><span class="pill">2027 · Sunday start</span></div>
       <div class="list"><b>Ten tabs</b> on every page · every day <b>two taps</b> away<br>
@@ -245,7 +248,7 @@ SHOTS = {
     "08_month": f"""<div class="k">Every month · four pages that work together</div>
       <h1>Plan it. Track it.<br>Look back.</h1>
       <p class="s">A calendar, a plan, a brain weather tracker and a review – linked to each other.</p>
-      {fan([("m3", "Calendar"), ("mp3", "Plan"), ("bw3", "Brain weather"), ("mr3", "Review")], 900, 268, 18, "solid", top=True)}""",
+      {fan([("m3", "Calendar"), ("mp3", "Plan"), ("bw3", "Brain weather"), ("mr3", "Review")], 870, 259, 18, "solid", top=True)}""",
     "09_december": f"""<div class="k">By December</div>
       <h1>A user manual for<br>your own brain.</h1>
       <p class="s">Keep the experiments that worked. Notes you wrote to future you wait in a year-end mailbox.</p>
@@ -278,6 +281,44 @@ SHOTS = {
       </script>""",
 }
 
+MIN_PX = {".k": 40, "h1": 150, "p.s": 48}   # v0.32: 폰 Etsy 앱(상세 폭 ~390pt, 목록 ~200pt)에서 읽히는 하한 -- v0.31(104px)은 너무 작았다
+# 글자 크기 하한 + 마지막 줄 한 단어(외톨이) -- 단어마다 Range 로 줄(top)을 모아 센다
+CHECK_JS = """(min) => {
+  const bad = [];
+  for (const [sel, px] of Object.entries(min))
+    for (const e of document.querySelectorAll(sel))
+      if (parseFloat(getComputedStyle(e).fontSize) < px) bad.push(`${sel} ${getComputedStyle(e).fontSize} < ${px}px`);
+  for (const e of document.querySelectorAll('h1,p.s')) {
+    const tops = [];
+    const w = document.createTreeWalker(e, NodeFilter.SHOW_TEXT);
+    for (let n; (n = w.nextNode());)
+      for (const m of n.textContent.matchAll(/\\S+/g)) {
+        const r = document.createRange(); r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length);
+        tops.push(Math.round(r.getClientRects()[0].top));
+      }
+    const lines = [...new Set(tops)];
+    if (lines.length > 1 && tops.filter(t => t === lines[lines.length - 1]).length === 1)
+      bad.push(`외톨이 단어: ${e.textContent.trim().slice(-30)}`);
+  }
+  return bad;
+}"""
+
+# 글자 줄(줄 상자)과 스티커 소품(.pp) 사이 16px 이상 -- v0.34 에서 04 제목 끝이 오른쪽 위 스티커와 겹쳤다
+PROP_GAP_JS = """() => {
+  const pp = [...document.querySelectorAll('.pp')].map(e => e.getBoundingClientRect()), bad = [];
+  for (const e of document.querySelectorAll('.k,h1,p.s')) {
+    const w = document.createTreeWalker(e, NodeFilter.SHOW_TEXT);
+    for (let n; (n = w.nextNode());) {
+      const r = document.createRange(); r.selectNodeContents(n);
+      for (const t of r.getClientRects()) for (const p of pp) {
+        const gap = Math.max(p.left - t.right, t.left - p.right, p.top - t.bottom, t.top - p.bottom);
+        if (gap < 16) bad.push(`${n.textContent.trim().slice(0, 24)} ${Math.round(gap)}px`);
+      }
+    }
+  }
+  return bad;
+}"""
+
 from playwright.sync_api import sync_playwright  # noqa: E402
 
 with sync_playwright() as p:
@@ -300,10 +341,17 @@ with sync_playwright() as p:
             raise SystemExit(f"{name}: 배지 사이가 16px 보다 좁다 {close}")
         if out_of:
             raise SystemExit(f"{name}: 안전 영역(가로 260-1740, 세로 250-1750) 밖 글자 {out_of}")
-        if name == "01_hero":   # 띠 끝이 두 페이지 위 1/3 인가 (사용자 V1)
-            t, b = pg.evaluate("() => { const r=[...document.querySelectorAll('.row img')].map(e=>e.getBoundingClientRect()); return [Math.min(...r.map(x=>x.top)), Math.max(...r.map(x=>x.bottom))]; }")
-            if abs(t + (b - t) / 3 - HERO_BAND_END) > 12:
-                raise SystemExit(f"01: 띠 끝 {HERO_BAND_END} 이 페이지 위 1/3 ({t + (b - t) / 3:.0f}) 과 어긋난다")
+        near = pg.evaluate(PROP_GAP_JS)
+        if near:
+            raise SystemExit(f"{name}: 글자와 스티커 소품 사이가 16px 보다 좁다 {near}")
+        small = pg.evaluate(CHECK_JS, MIN_PX)
+        if small:
+            raise SystemExit(f"{name}: 제목·부제 {small}")
+        if name == "01_hero":   # 띠 전환이 부제 아래와 페이지 위 사이에 들어가는가 (v0.34 사용자)
+            sb, t = pg.evaluate("() => [document.querySelector('p.s').getBoundingClientRect().bottom, Math.min(...[...document.querySelectorAll('.row img')].map(e => e.getBoundingClientRect().top))]")
+            b0, b1 = HERO_BAND_END - HERO_BAND_SPAN / 2, HERO_BAND_END + HERO_BAND_SPAN / 2
+            if not (sb + 4 <= b0 and b1 <= t - 4):
+                raise SystemExit(f"01: 띠 전환 {b0:.0f}~{b1:.0f}px 이 부제 아래({sb:.0f}) ~ 페이지 위({t:.0f}) 사이를 벗어난다")
         pg.screenshot(path=str(OUT / f"{name}.png"))
         print(OUT / f"{name}.png")
     br.close()
