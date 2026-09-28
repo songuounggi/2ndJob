@@ -209,7 +209,7 @@ For personal use. Please do not resell or redistribute the files.
 5. `DRAFT` 를 올려(draft-v0.32~) 새로 뽑고, **폰 크기(폭 390px)로 줄인 미리보기**를 함께 만들어 확인한 뒤 사용자 확정
 6. Etsy 에서 사진 10장 교체 -- 사진은 파일과 달리 언제 바꿔도 기존 구매자에게 영향이 없다. 교체 후 `shop.md` 0-1절 리스팅 이미지 표에 한 줄
 
-**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.52/`, 사용자 확인 대기**
+**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.53/` (올릴 사본 `output/prod3/upload/listing-images-v0.53/`), 사용자 확인 대기**
 - 시안 비교 `output/prod3/preview/title-size-v1/compare_phone.png` (지금 / A 150 / B 172 / C 196). B·C 는 02 페이지가 865·610px 로 줄고 09 가 안전 영역 밖.
   추천(01 만 C)은 **반려 -- "상품 1·2 와 일관성", 전부 A** (사용자)
 - **A 안 확정:** `.k` 40 / `h1` 150 (01 hero 176) / `p.s` 48, 제목·부제 `text-wrap:balance`(끝에 한 단어만 떨어지던 것 -- 01 "brain.", 03 "tomorrow."). 문구는 그대로
@@ -273,6 +273,10 @@ For personal use. Please do not resell or redistribute the files.
   확인: 원본 위에 윤곽선 겹침, 몸통 단면 밝기 RMS 4.5(전엔 13 단계 어두웠다), 이음선 밝기 곡선 RMS 4.7(가장 어두운 점 193 vs 195).
   07 장면 v0.19: KEEP 스티커 690 -> 640 (실제 비율로 길어진 펜슬에 붙었다). 검사 check_pencil_p3 는 이 윤곽을 잰다(옛 방식 60회 FAIL, 지금 5회 OK)
   **교훈: 모양·색은 기준 이미지를 받아 픽셀로 재고 겹쳐 본 뒤 보낸다 -- 짐작·다른 사진·자동 측정으로 10번 넘게 헛돌았다**
+- **v0.53 (사용자: 02~10 원의 그라데이션이 고급스럽다 -> 01 띠에도, 단 01 청록 색은 바꾸지 말 것):** 01 띠 경계 = 원(B2)과 같은 번짐 --
+  하늘색 #95c9d9 띠를 20px 아래에 깔고 청록 #006786 을 **곱하기 없이** 얹어 둘 다 blur 26px. 청록은 렌더에서 rgb(0,103,134) 그대로 확인.
+  (원과 똑같이 곱하기로 하면 rgb(12,91,122) 로 짙어졌다 -- 시안 1, 반려.) 전환 10~90% = 778~856px, 가운데 815 (배지 아래 755 · iPad 위 869 의 가운데).
+  띠 검사를 렌더 픽셀(x=1900 세로줄)로 바꿈 -- v0.31 FAIL(981~1170), v0.53 PASS
 - 남은 것: 사용자 확정 -> Etsy 사진 10장 교체 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.
