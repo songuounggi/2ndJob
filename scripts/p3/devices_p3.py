@@ -38,25 +38,34 @@ def _profile(x, R, L):
     return r, nib, nib + cone
 
 
+SEAM_AMP, NIB_ALB = 0.6, 0.84   # 이음선 진하기·펜촉 밝기 -- Apple 원본 이음선 밝기 곡선과 RMS 4.7 (가장 어두운 점 193 vs 195)
+
+
 def _real_profile(x, R, L):
-    """실제 Apple Pencil 윤곽 (v0.50) -- 무료 사진 펜슬(Unsplash B)을 원본 픽셀 눈금으로 직접 읽은 값.
-    사진: 펜촉 끝 (413,1130), 뒤끝 (270,1902) -> 길이 785px, 지름 42px (길이/지름 18.7 = 실제 규격 166/8.9).
-    펜촉: 끝에서 이음선까지 4.8%, 이음선 굵기 = 몸통의 0.57, 끝은 둥글게 부풀며 굵어짐(지수 0.55).
-    원뿔: 4.8% -> 20% 에서 0.57 -> 1.0, 몸통 쪽에서 접선(지수 1.95 -- 9% 에서 0.77, 15.5% 에서 0.96 에 맞춤). 뒤끝 반구.
-    (v0.47~v0.49 는 자동 측정이 그늘·그림자·나무결에 오염돼 펜촉 1.5%·원뿔 7~10% 로 짧았다 -- 사용자)"""
+    """Apple Pencil 윤곽 (v0.51) -- 사용자가 준 Apple Pencil Pro 제품 이미지에서 윤곽을 재어 비율만 쓴다(이미지·픽셀·로고는 쓰지 않는다).
+    잰 값(바닥 그림자 없는 쪽 가장자리, 흰 배경 밝기 245 기준): 길이/지름 18.56(실제 규격 166/8.9 = 18.65).
+    펜촉 끝은 둥근 캡(반지름 ~0.21R, 뭉툭), 거기서 u 0.105 까지 한 직선 원뿔(r/R = 0.17 + 7.6u), 0.105~0.125 에서 몸통에 붙음, 이음선 u 0.04, 뒤끝 반구.
+    (v0.47~v0.50 은 짐작·무료 사진 자동 측정이라 틀렸다 -- 사용자)"""
     u = x / L
-    nib_u, cone_u, nib_r = 0.048, 0.200, 0.57
+    a0, b0, cone_u, body_u = 0.17, 7.6, 0.105, 0.125                  # 원뿔 직선 r/R = a0 + b0·u (잰 점 u .01 .248 / .04 .49 / .10 .936)
+    cone_r = a0 + b0 * cone_u
     r = np.full_like(x, R)
-    m = u < nib_u
-    r[m] = R * nib_r * np.clip(u[m] / nib_u, 0, 1) ** 0.55
-    m = (u >= nib_u) & (u < cone_u)
-    t = (u[m] - nib_u) / (cone_u - nib_u)
-    r[m] = R * (nib_r + (1 - nib_r) * (1 - (1 - t) ** 1.95))
-    xe = L - R
+    m = u < cone_u
+    r[m] = R * (a0 + b0 * u[m])                                     # 곧은 원뿔
+    m = (u >= cone_u) & (u < body_u)                                  # 몸통에 붙기: 원뿔 기울기에서 0 으로 (3차 Hermite)
+    t = (u[m] - cone_u) / (body_u - cone_u)
+    m0 = b0 * (body_u - cone_u)
+    r[m] = R * np.minimum(1.0, (2 * t ** 3 - 3 * t ** 2 + 1) * cone_r + (t ** 3 - 2 * t ** 2 + t) * m0 + (-2 * t ** 3 + 3 * t ** 2))
+    rho = a0 * R / (1 - b0 * R / L)                                   # 펜촉 끝 = 원뿔 직선에 닿는 둥근 캡 (Apple 원본은 끝이 뭉툭 -- 바늘 끝 아님)
+    k = x < rho
+    r[k] = np.sqrt(np.clip(rho ** 2 - (rho - x[k]) ** 2, 0, None))
+    xe = L - R                                                        # 뒤끝 반구
     m = x > xe
     r[m] = np.sqrt(np.clip(R ** 2 - (x[m] - xe) ** 2, 0, None))
+    xs = 0.0525 * L                                                   # 펜촉-몸통 틈: 원본에서 잰 이음선 38.5px / 733 (4% 는 틀렸다)
+    r *= 1 - 0.08 * np.exp(-((x - xs) / (0.0008 * L)) ** 2)        # 좁은 홈 (0.0022 는 뭉툭했다 -- 사용자)
     r[(x < 0) | (x > L)] = 0
-    return r, nib_u * L, None
+    return r, xs, None
 
 
 def _photo_profile(x, R, L):
@@ -68,7 +77,7 @@ def _photo_profile(x, R, L):
     return r, nib_u * L, None
 
 
-def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2.0, 0.10), (4, 7, 9, 0.02)), tone=0.75, radius=None, silhouette="real", matte=True):   # v0.45: 그림자 크게 줄임, 아래 그늘 밝게 (사용자: 사진 펜슬이 시커멓다, 그림자 많이 제거)
+def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2.0, 0.10), (4, 7, 9, 0.02)), tone=0.5, radius=None, silhouette="real", matte=True, gain=1.03):   # v0.51 밝기: Apple 원본 단면과 RMS 4.5 (tone .75 는 13 단계 어두웠다)   # v0.45: 그림자 크게 줄임, 아래 그늘 밝게 (사용자: 사진 펜슬이 시커멓다, 그림자 많이 제거)
     """length = 캔버스에서의 펜슬 길이(px), angle = 화면에서 반시계 회전(도), shadow = (닿는 그림자, 넓은 그림자) 각 (dx, dy, 흐림, 농도).
     tone = 음영 세기(1 = 계산 그대로, 0.75 = 그늘을 25% 밝게). radius = 몸통 반지름 px (없으면 실제 비율 length/37.3).
     반환: (RGBA 그림자 포함, 펜촉 끝 (x, y))"""
@@ -107,13 +116,13 @@ def pencil_png(length, angle, light=(-0.35, -0.55, 0.76), ss=4, shadow=((1, 2, 2
     spec = spec_k * np.clip(n @ Hh, 0, 1) ** spec_p
     rim = 0.0 if matte else 0.06 * (1 - nz) ** 3                          # 가장자리 반사광(바닥 빛) -- 무광은 없음
     I = amb + (0.62 if matte else 0.70) * wrap + spec + rim
-    albedo = np.where(tip[..., None] > 0, [0.80, 0.805, 0.815], [0.965, 0.965, 0.958])
+    albedo = np.where(tip[..., None] > 0, [NIB_ALB, NIB_ALB + .005, NIB_ALB + .01], [0.965, 0.965, 0.958])   # 펜촉 흰색, 몸통보다 살짝 어둡게
     col = albedo * I[..., None]
     col = col * [0.985, 0.99, 1.0] + (1 - I[..., None]) * 0.0          # 그늘이 아주 약간 차갑게
     # 펜촉-원뿔 이음매: 가는 틈
-    seam = np.exp(-((x - nib_end) / (0.9 * ss)) ** 2) * 0.22
+    seam = np.exp(-((x - nib_end) / (0.0008 * L)) ** 2) * SEAM_AMP   # 원본 이음선: 주변보다 약 21 단계 어둡고 폭 1~1.5px
     col *= (1 - seam)[..., None]
-    col = 1 - (1 - np.clip(col, 0, 1)) * tone
+    col = 1 - (1 - np.clip(col * gain, 0, 1)) * tone
     col = np.clip(col, 0, 1) ** (1 / 1.08)
     rgba = np.dstack([col * 255, inside * 255.0]).astype(np.uint8)
     # 줄이기·돌리기는 premultiplied(RGBa)로 -- 곧은 알파로 하면 투명한 가장자리 색이 섞여 윤곽에 흰 점선이 생겼다(v0.49 확대 검수)

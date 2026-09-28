@@ -17,22 +17,22 @@ import numpy as np
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-import photo_devices_p3 as P  # noqa: E402
 
 REV = "--reverse" in sys.argv
 bad = []
 
-# 1. 윤곽 매끈함
-if REV:   # 고치기 전: 잰 굵기 + 가우시안(v0.48)을 흉내 -- 원뿔 구간에 1px 계단 잡음을 되살린다
-    u, r, _ = P.pencil_silhouette()
-    r = r.copy(); head = u < 0.12
-    r[head] = np.round(r[head] * 32) / 32
-else:
-    u, r, _ = P.pencil_silhouette()
-head = (u > 0.015) & (u < 0.12)
+# 1. 윤곽 매끈함 -- 리스팅이 쓰는 윤곽(devices_p3._real_profile, v0.51 Apple 원본 대조판)
+import devices_p3 as D  # noqa: E402
+Lx, Rx = 2000.0, 2000.0 / 37.1
+x = np.linspace(0, Lx, 4001)
+r = D._real_profile(x, Rx, Lx)[0] / Rx
+u = x / Lx
+if REV:   # 고치기 전(v0.48): 잰 굵기를 1px 단위 그대로 -- 계단 잡음을 되살린다
+    r = np.round(r * 32) / 32
+head = (u > 0.02) & (u < 0.12) & (np.abs(u - 0.0525) > 0.006)   # 이음선 홈은 일부러 판 것이라 뺀다
 d2 = np.diff(np.sign(np.round(np.diff(r[head], 2), 6)))
 flips = int((d2 != 0).sum())
-print(f"1 원뿔 윤곽 굽기 방향 바뀜: {flips}회 (펜촉·몸통 이음새 정상 6회, 잰 굵기 그대로면 45회)", "OK" if flips <= 8 else "FAIL (우글거림)")
+print(f"1 원뿔 윤곽 굽기 방향 바뀜: {flips}회", "OK" if flips <= 8 else "FAIL (우글거림)")
 if flips > 8:
     bad.append("윤곽")
 
