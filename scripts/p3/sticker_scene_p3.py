@@ -12,11 +12,14 @@ import re
 import sys
 
 import pymupdf
+
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from devices_p3 import pencil_png  # noqa: E402
 from playwright.sync_api import sync_playwright
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.8"   # v0.8 = full 배치 배경 투명 -- 리스팅 07 의 리소 원이 장면 네모에 잘렸다 / v0.7 v0.7 = 플래너 v0.23 페이지(모서리 하이라이트 고침) / v0.6 v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
+DRAFT = "draft-v0.10"   # v0.10 = full 배치 KEEP 스티커를 펜슬 길 위로(800 -> 690) -- 펜슬이 반쯤 덮어 "…P" 만 보였다 / v0.9 = 펜슬·iPad 를 devices_p3.py 로(3D 음영 펜슬, 알루미늄 테두리 + 유리 베젤) -- 리스팅 01 과 같은 소품 (사용자: SVG 펜슬이 구리다) / v0.8 = full 배치 배경 투명 -- 리스팅 07 의 리소 원이 장면 네모에 잘렸다 / v0.7 v0.7 = 플래너 v0.23 페이지(모서리 하이라이트 고침) / v0.6 v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
 # v0.3   # v0.3 = 손글씨 대조: 금요일 "keep it for March" -> 분기 흐름대로 "keeper → Q1 review", Brain dump "2-min rule next wk"(7주차) -> 13주차 실제 실험 "decide once", 책상 위 NOT FOR ME -> IN MY PLAYBOOK (광고에 부정어 X)
 # v0.2   # v0.2 = 형광펜을 "due Fri!" 위로, Top 3 글자가 체크에 가리지 않게, 연필이 Brain dump 를 덜 덮게, 수요일 글 왼쪽으로
 PLANNER, STICKERS = "v0.23", "draft-v0.8"
@@ -31,22 +34,18 @@ ids = re.findall(r'<section class="pg" id="([^"]+)"', html)
 pg = pymupdf.open(ROOT / f"output/prod3/planner/{PLANNER}/ADHD-Year-Planner-2027-mon.pdf")[ids.index("w12")]
 
 INK = "#1d2740"
-PENCIL = ('<svg class="pencil" viewBox="0 0 760 44"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'
-          '<stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#f2f2f0"/><stop offset="1" stop-color="#d9d8d4"/></linearGradient></defs>'
-          '<path d="M60 4H740a18 18 0 0 1 0 36H60L4 22z" fill="url(#g)"/><path d="M4 22L60 4v36z" fill="#e9e8e4"/><path d="M4 22l18-6v12z" fill="#2b2b2d"/>'
-          '<rect x="700" y="4" width="3" height="36" fill="#cfcfcb"/></svg>')
 # 두 가지 배치. full = 리스팅 11번 자리(가로 1480 x 세로 1110) -- iPad 가 세로로 통째로 보인다 (사용자: 잘라 넣으니 가로 모드로 착각할 수 있다)
 LAYOUTS = {
     "sticker_scene": dict(CW=2000, CH=2000, SW=1700, BZ=34, Y0=170, R=78, SR=46,
                           bg="radial-gradient(ellipse 90% 70% at 50% 35%,#f1eee8 0%,#e6e2da 70%,#ddd8cf 100%)",
                           loose=[("Experiments/in-my-playbook_deep.png", 30, 70, 100, -12), ("Energy/recharge_deep.png", 1380, 36, 96, 9),
                                  ("Experiments/sort-of_stone.png", 1720, 110, 170, 12)],
-                          pencil="left:1380px;top:1900px;width:760px;height:44px;transform:rotate(-24deg)"),
+                          pencil=(1380, 1922, 760, 24)),   # 펜촉 끝 (x, y), 길이, 반시계 각도
     "sticker_scene_full": dict(CW=1480, CH=1110, SW=716, BZ=20, Y0=24, shadow="0 22px 40px rgba(40,30,20,.26),0 6px 14px rgba(40,30,20,.16)", R=46, SR=26, bg="transparent",   # 리스팅 배경과 같은 색
                                loose=[("Experiments/in-my-playbook_deep.png", 20, 110, 62, -12), ("Energy/recharge_deep.png", 70, 470, 58, 8),
                                       ("Brain-weather/great_ink.png", 130, 760, 150, -6), ("Experiments/sort-of_stone.png", 1195, 90, 165, 12),
-                                      ("Small-wins/tiny-step_blush.png", 1200, 500, 54, -8), ("Experiments/keep_mist.png", 1210, 800, 64, 6)],
-                               pencil="left:985px;top:1030px;width:500px;height:30px;transform:rotate(-38deg)"),
+                                      ("Small-wins/tiny-step_blush.png", 1200, 500, 54, -8), ("Experiments/keep_mist.png", 1230, 690, 64, 6)],
+                               pencil=(985, 1045, 500, 38)),
 }
 with sync_playwright() as p:
     br = p.chromium.launch(channel="chrome")
@@ -105,6 +104,9 @@ with sync_playwright() as p:
             hand(443, 379, "next wk: decide once", 10, -1),
             hand(443, 405, "new phone charger", 10, -1),
         ])
+        px, py, plen, pang = L["pencil"]
+        pen, (tx, ty) = pencil_png(plen, pang)
+        pen.save(OUT / f"_pencil_{name}.png")
         loose = "".join(f'<img class="loose" src="{ST}/{rel}" style="left:{x}px;top:{y}px;height:{h}px;transform:rotate({r}deg)">'
                         for rel, x, y, h, r in L["loose"])
         page_html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
@@ -112,19 +114,23 @@ with sync_playwright() as p:
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
 body{{width:{L["CW"]}px;height:{L["CH"]}px;overflow:hidden;position:relative;background:{L["bg"]}}}
-.ipad{{position:absolute;left:{X0}px;top:{L["Y0"]}px;width:{SW + 2 * BZ}px;height:{SH + 2 * BZ}px;border-radius:{L["R"]}px;
-  background:#1c1c1e;padding:{BZ}px;box-shadow:{L.get('shadow', '0 40px 80px rgba(40,30,20,.28),0 10px 24px rgba(40,30,20,.18)')},inset 0 0 0 3px #3a3a3c}}
+.ipad{{position:absolute;left:{X0}px;top:{L["Y0"]}px;width:{SW + 2 * BZ}px;height:{SH + 2 * BZ}px;border-radius:{L["R"]}px;padding:{BZ}px;
+  background:linear-gradient(145deg,#8d8f93 0%,#55575b 9%,#35363a 30%,#2a2b2e 62%,#46484c 88%,#6c6e72 100%);
+  box-shadow:0 1px 1px rgba(0,0,0,.45),0 3px 5px rgba(20,22,26,.30),{L.get('shadow', '0 40px 80px rgba(40,30,20,.28),0 10px 24px rgba(40,30,20,.18)')}}}
+.glass{{position:absolute;inset:{max(4, round(SW * .011))}px;border-radius:{L["R"] - max(4, round(SW * .011))}px;background:#0c0c0e;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.10)}}
+.cam{{position:absolute;left:{(SW + 2 * BZ) / 2 - 5:.0f}px;top:{BZ / 2 - 3:.0f}px;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#3b4a5c 0%,#161a22 45%,#060607 70%)}}
+.screen::after{{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(118deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.035) 38%,rgba(255,255,255,0) 38.2%)}}
 .screen{{position:relative;width:{SW}px;height:{SH}px;border-radius:{L["SR"]}px;overflow:hidden;background:url('_page_{name}.png')}}
 .h{{position:absolute;font-family:'Caveat',cursive;font-weight:500;color:{INK};white-space:nowrap;transform-origin:left center;line-height:1}}
 .s{{position:absolute;transform-origin:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.12))}}
 .pen{{position:absolute}}
 .hl{{position:absolute;background:rgba(237,187,0,.38);border-radius:3px;transform:rotate(-1deg)}}
 .loose{{position:absolute;filter:drop-shadow(0 14px 18px rgba(40,30,20,.25))}}
-.pencil{{position:absolute;{L["pencil"]};transform-origin:left center;filter:drop-shadow(0 18px 16px rgba(40,30,20,.3))}}
+.pencil{{position:absolute;left:{px - tx:.0f}px;top:{py - ty:.0f}px}}
 </style></head><body>
-<div class="ipad"><div class="screen">{on_page}</div></div>
+<div class="ipad"><div class="glass"></div><div class="cam"></div><div class="screen">{on_page}</div></div>
 {loose}
-{PENCIL}
+<img class="pencil" src="_pencil_{name}.png">
 </body></html>"""
         f = OUT / f"{name}.html"
         f.write_text(page_html, encoding="utf-8")

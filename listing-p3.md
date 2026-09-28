@@ -209,7 +209,7 @@ For personal use. Please do not resell or redistribute the files.
 5. `DRAFT` 를 올려(draft-v0.32~) 새로 뽑고, **폰 크기(폭 390px)로 줄인 미리보기**를 함께 만들어 확인한 뒤 사용자 확정
 6. Etsy 에서 사진 10장 교체 -- 사진은 파일과 달리 언제 바꿔도 기존 구매자에게 영향이 없다. 교체 후 `shop.md` 0-1절 리스팅 이미지 표에 한 줄
 
-**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.37/`, 사용자 확인 대기**
+**진행 (2026-09-28 회사 PC, Prod 3 방) -- 후보 `output/prod3/listing/draft-v0.41/`, 사용자 확인 대기**
 - 시안 비교 `output/prod3/preview/title-size-v1/compare_phone.png` (지금 / A 150 / B 172 / C 196). B·C 는 02 페이지가 865·610px 로 줄고 09 가 안전 영역 밖.
   추천(01 만 C)은 **반려 -- "상품 1·2 와 일관성", 전부 A** (사용자)
 - **A 안 확정:** `.k` 40 / `h1` 150 (01 hero 176) / `p.s` 48, 제목·부제 `text-wrap:balance`(끝에 한 단어만 떨어지던 것 -- 01 "brain.", 03 "tomorrow."). 문구는 그대로
@@ -221,6 +221,19 @@ For personal use. Please do not resell or redistribute the files.
 - 새 검사 4개(빌드가 멈춘다), 전부 고치기 전 판에서 걸리는 것 확인: 글자 크기 하한(v0.31 10장 FAIL) · 제목·부제 마지막 줄 한 단어(balance 없는 A 4장 FAIL) ·
   01 띠 전환이 글자·종이 사이 가운데인지, 렌더 픽셀로(v0.36·v0.33 FAIL) · 글자-스티커 16px(v0.34 04 FAIL)
 - v0.32·v0.35 폴더는 빌드가 검사에서 멈춘 불완전판(각 07·03 까지)
+- **01 을 경쟁작처럼 (v0.38~v0.41, 사용자 "조금 더 화려하게?")**: Etsy 폰 검색 상위 10개를 보니 거의 전부 iPad 목업 + 숫자 배지.
+  1위 Manifestable 은 베이지·얇은 세리프로 차분 -- 색은 더하지 않고 청록 유지(주변이 베이지·분홍이라 눈에 띈다).
+  시안 `output/prod3/preview/hero-variants-v1/compare.png` (1 iPad / 2 iPad+배지 / 3 +굵기 700) -> **시안 2 확정**.
+  - 종이 두 장 -> **iPad 두 대**(뒤 표지 · 앞 3월 15일, 화면 = PDF 페이지 그대로) + **Apple Pencil** + 배지 알약 4개
+    `2026 + 2027` · `598 pages a year` · `Hyperlinked` · `+ 253 stickers` (대조표 통과 주장만)
+  - 펜슬·iPad 는 `scripts/p3/devices_p3.py` -- 사용자: SVG 펜슬이 "너무 구리다, 사진처럼". 펜슬은 회전체 표면 법선으로 음영 계산
+    (Apple Pencil 2세대 비율 166mm/8.9mm, 무광 흰색, 회색 펜촉, 그림자 두 겹), iPad 는 알루미늄 테두리 + 유리 베젤 + 카메라 + 화면 반사.
+    07 스티커 장면(v0.10)도 같은 소품으로 바꿈 -- 10장 안에서 펜슬이 둘로 보이지 않게. 07 KEEP 스티커를 펜슬 길 위로
+  - 01 띠: 배지 아래(~755)와 iPad 위(~869) 가운데 812px, 전환 90px
+  - **검색 자르기:** 폰 검색은 정사각형을 4:5 로(양옆, 가로 200-1800 만), PC 검색은 4:3 으로(위아래, 세로 250-1750 만) 자른다.
+    글자는 원래 안전 영역(260-1740 × 250-1750), **iPad 는 4:5·4:3 둘 다 안**(시안 2 는 iPad 아래 1832px 이라 줄임), 스티커·배경 원은 잘려도 된다(사용자).
+    확인 그림 `output/prod3/preview/hero-variants-v1/v041_crops.png`
+  - 새 검사: iPad·펜슬 자르기(시안 2 FAIL 확인), 배지 알약도 안전 영역·스티커 간격 대상. v0.38 은 펜슬 회전 부호가 반대(PIL 은 반시계 +)라 버림
 - 남은 것: 사용자 확정 -> Etsy 사진 10장 교체 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.
