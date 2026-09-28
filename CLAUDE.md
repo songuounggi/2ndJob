@@ -475,7 +475,7 @@ output/prod2/   상품 2 -- planner_student-*.pdf, upload/<버전>/, preview/, l
 output/prod3/   상품 3 -- editions/<버전>/, wireframe/<버전>/, archive_*/ (scripts/p3/README.md)
 ```
 
-**output 은 상품별 폴더다 (2026-09-25 사용자 결정).** 문서의 `output/prod<N>/` 는 그 상품 번호로
+**output 은 상품별 폴더다 (2026-09-25 사용자 결정).** 집 PC 의 실제 구조 스냅숏: `output-tree-home.md` (git 밖이라 다른 PC 에는 없다). 문서의 `output/prod<N>/` 는 그 상품 번호로
 읽는다. `output/` 바로 아래에는 prod1·prod2·prod3 말고 두지 않는다(`check_upload.py` 가 잡는다).
 **만든 것은 지우지도 덮어쓰지도 않는다** -- 다시 빌드할 일이 생기면 버전을 올린다.
 다른 PC 에서 옛 배치(`output/planner_*.pdf` 등)가 남아 있으면 `python scripts/migrate_output_layout.py`.

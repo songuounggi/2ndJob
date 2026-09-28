@@ -83,13 +83,23 @@ python scripts/check_render.py output/prod3/editions/ADHD-Planner-Focus-Edition.
 | `planner/v0.16/`~`v0.18/` | 목록 › · Kickoff 이름 · 의도 검수 문구·링크 | |
 | **`planner/v0.19/`** | 일간 실험 알약, 분기 실험 목록, Playbook 분기 KEEP, SOS 다시 시작, Year review 달 버튼 같은 폭. `qa/v0.19/report.md` 통과 | |
 | `stickers/draft-v0.5/` | 스티커 검수 반영 (129종 253개) | `d935aea` |
+| `planner/v0.20/` | 메모 알약 검정(일간·mailbox), 2쪽 탭 없음 | `449c89e` |
+| `planner/v0.21/` | 리드 칸 알약 청록 테두리 삭제(알약 세 종류) | `1f51ef1` |
+| `planner/v0.22/` | 종이 W1 `#fdfcfa`, 목차 Year 알약 같은 폭 D안 -- **모서리 하이라이트 255 잘림(1/4 원판) 결함, 쓰지 않는다** | `07d9a2e` |
+| **`planner/v0.23/`** | **Etsy 에 올린 판.** v0.22 + 모서리 하이라이트 눌러 담기 0.5 + 디더. 검수 `qa/v0.23/report.md` 전부 통과 | `e02411b` |
+| **`upload/v0.23/`** | **Etsy 에 올린 5개 (2026-09-27, `shop.md` #5~#9)** -- PDF 4 + `ADHD-Year-Planner-Stickers-and-Guide.zip`. **집 PC 에만 있다** | |
+| `stickers/draft-v0.6~0.8/` | ✓~✗ 가운데·종이 W1 / **v0.8 확정**(흰 스티커 회색 외곽선) | `ceba5d0` |
+| `guide/draft-v0.2~0.5/` | 종이 W1 / 단계 세로 가운데 / 도움말 대조 3곳 / **v0.5 확정**(스티커 돌리기 한 줄) | `2fafca3` |
+| `listing/draft-v0.19~0.31/` | 리스팅 이미지 -- **v0.31 확정·올림**(배경 색, 01 청록 띠 V1, 07 스티커, 10 두 번 탭). `listing/etsy_entry_v0.23.txt` = Etsy 입력 시트 | `25c367a` |
+| `preview/sticker_scene/draft-v0.1~0.8/` | 스티커 실사용 장면(`sticker_scene_p3.py`), v0.8 full = 리스팅 07 | |
+| `preview/` 기타 | 결정용 비교 그림: `paper_color/`(종이 12안), `corner/`(모서리), `listing_bg/`(배경 안), `index_chips_options/`, `etsy_live/`(라이브 사진 대조) | |
 | `qa/<버전>/` | 검수 보고서와 검사 로그 (`run_qa_p3.py` + `dogfood_p3.py`) | |
 | `planner/v*/sample-NN/TEST-sample-*.pdf` | 작업 중 몇 장씩 뽑은 **시험본**. 검수용 아님 | |
 | `archive_dated-v0.1/` | 상품 1 모양 날짜형 첫 시도 8판 (반려) | `eb3f67e` |
 | `archive_color-mocks/` | 색만 바꾼 시안 5종 PDF+PNG (반려) | `490fee2` 트리에서 재생성 |
 | `archive_concepts-A-D/` | 새 콘셉트 4종(시계·퀘스트·볼드·노트북) HTML·PDF·PNG (참고용) | `concepts_p3.py` |
 | `preview/` | 검수용 렌더 PNG | |
-| `upload/<버전>/` | (앞으로) Etsy 에 올린 판. 한 번 넣으면 건드리지 않는다 | |
+| `upload/<버전>/` | Etsy 에 올린 판. 한 번 넣으면 건드리지 않는다 (지금 `v0.23`) | |
 
 ## 알약 규칙 (사용자 확정 2026-09-27)
 
