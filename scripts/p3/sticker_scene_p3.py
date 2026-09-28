@@ -21,7 +21,7 @@ from chrome_auto import launch  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-DRAFT = "draft-v0.12"   # v0.12 = 펜슬 모양 사진처럼·그림자 크게 줄임, iPad 는 처음(v0.9) 값 -- devices_p3 v0.45 (사용자) / v0.11 = iPad·펜슬 그림자·반사 옅게, devices_p3 의 값을 그대로 씀(사용자: 과해서 그림판 같다) / v0.10 = full 배치 KEEP 스티커를 펜슬 길 위로(800 -> 690) -- 펜슬이 반쯤 덮어 "…P" 만 보였다 / v0.9 = 펜슬·iPad 를 devices_p3.py 로(3D 음영 펜슬, 알루미늄 테두리 + 유리 베젤) -- 리스팅 01 과 같은 소품 (사용자: SVG 펜슬이 구리다) / v0.8 = full 배치 배경 투명 -- 리스팅 07 의 리소 원이 장면 네모에 잘렸다 / v0.7 v0.7 = 플래너 v0.23 페이지(모서리 하이라이트 고침) / v0.6 v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
+DRAFT = "draft-v0.13"   # v0.13 = 펜슬 뒤끝 반구, 길이 5/6 (굵기 그대로) -- 리스팅 01 과 같게 (사용자) / v0.12 = 펜슬 모양 사진처럼·그림자 크게 줄임, iPad 는 처음(v0.9) 값 -- devices_p3 v0.45 (사용자) / v0.11 = iPad·펜슬 그림자·반사 옅게, devices_p3 의 값을 그대로 씀(사용자: 과해서 그림판 같다) / v0.10 = full 배치 KEEP 스티커를 펜슬 길 위로(800 -> 690) -- 펜슬이 반쯤 덮어 "…P" 만 보였다 / v0.9 = 펜슬·iPad 를 devices_p3.py 로(3D 음영 펜슬, 알루미늄 테두리 + 유리 베젤) -- 리스팅 01 과 같은 소품 (사용자: SVG 펜슬이 구리다) / v0.8 = full 배치 배경 투명 -- 리스팅 07 의 리소 원이 장면 네모에 잘렸다 / v0.7 v0.7 = 플래너 v0.23 페이지(모서리 하이라이트 고침) / v0.6 v0.6 = full 배치 그림자가 아래에서 잘려 리스팅에 경계선 -> iPad 조금 작게, 그림자 짧게 / v0.5 (v0.4 폴더는 INK 정의 빠져 멈춘 빈 폴더)  v0.4 = 리스팅용 full 배치 추가 -- iPad 세로 통째로(사용자: 잘라 넣어 가로 모드로 보였다)
 # v0.3   # v0.3 = 손글씨 대조: 금요일 "keep it for March" -> 분기 흐름대로 "keeper → Q1 review", Brain dump "2-min rule next wk"(7주차) -> 13주차 실제 실험 "decide once", 책상 위 NOT FOR ME -> IN MY PLAYBOOK (광고에 부정어 X)
 # v0.2   # v0.2 = 형광펜을 "due Fri!" 위로, Top 3 글자가 체크에 가리지 않게, 연필이 Brain dump 를 덜 덮게, 수요일 글 왼쪽으로
 PLANNER, STICKERS = "v0.23", "draft-v0.8"
@@ -42,12 +42,12 @@ LAYOUTS = {
                           bg="radial-gradient(ellipse 90% 70% at 50% 35%,#f1eee8 0%,#e6e2da 70%,#ddd8cf 100%)",
                           loose=[("Experiments/in-my-playbook_deep.png", 30, 70, 100, -12), ("Energy/recharge_deep.png", 1380, 36, 96, 9),
                                  ("Experiments/sort-of_stone.png", 1720, 110, 170, 12)],
-                          pencil=(1380, 1922, 760, 24)),   # 펜촉 끝 (x, y), 길이, 반시계 각도
+                          pencil=(1380, 1922, 633, 24, 760 / 37.3)),   # 펜촉 끝 (x, y), 길이, 반시계 각도, 반지름(v0.13: 길이만 5/6)   # 펜촉 끝 (x, y), 길이, 반시계 각도
     "sticker_scene_full": dict(CW=1480, CH=1110, SW=716, BZ=20, Y0=24, R=46, SR=26, bg="transparent",   # 리스팅 배경과 같은 색
                                loose=[("Experiments/in-my-playbook_deep.png", 20, 110, 62, -12), ("Energy/recharge_deep.png", 70, 470, 58, 8),
                                       ("Brain-weather/great_ink.png", 130, 760, 150, -6), ("Experiments/sort-of_stone.png", 1195, 90, 165, 12),
                                       ("Small-wins/tiny-step_blush.png", 1200, 500, 54, -8), ("Experiments/keep_mist.png", 1230, 690, 64, 6)],
-                               pencil=(985, 1045, 500, 38)),
+                               pencil=(985, 1045, 417, 38, 500 / 37.3)),
 }
 with sync_playwright() as p:
     br = launch(p)   # chrome_auto: 새 Chrome 마다 Windows 로그온 실패가 쌓여 계정이 잠겼다(2026-09-28)
@@ -106,8 +106,8 @@ with sync_playwright() as p:
             hand(443, 379, "next wk: decide once", 10, -1),
             hand(443, 405, "new phone charger", 10, -1),
         ])
-        px, py, plen, pang = L["pencil"]
-        pen, (tx, ty) = pencil_png(plen, pang)
+        px, py, plen, pang, prad = L["pencil"]
+        pen, (tx, ty) = pencil_png(plen, pang, radius=prad)
         pen.save(OUT / f"_pencil_{name}.png")
         loose = "".join(f'<img class="loose" src="{ST}/{rel}" style="left:{x}px;top:{y}px;height:{h}px;transform:rotate({r}deg)">'
                         for rel, x, y, h, r in L["loose"])
