@@ -37,7 +37,7 @@ Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
 **상품 3 — 출시 완료 (2026-09-27).** The ADHD Year -- 날짜형 2026·2027 x 월·일 시작 PDF 4개(각 598쪽 7.7MB)
 + 스티커·안내서 ZIP. $19.99, 35% 세일 `YEAR35`(~10/26). 판 `p3-v0.23`, 파이프라인은 `scripts/p3/` 만
 (`scripts/p3/README.md`), 기획 `product3-content.md`·`product3-dated.md`, 원고 `listing-p3.md`. 스티커 실기기 확인은 아직.
-**다음 할 일: ① 리스팅 이미지 제목이 폰에서 너무 작다 -- 키워서 사진 10장 교체 ② GoodNotes 스티커북(.collection)을 iPad 에서 만들어 ZIP 교체 -- 판매 0건일 때** (`listing-p3.md` "다음 할 일").
+**다음 할 일: ② GoodNotes 스티커북(.collection)을 iPad 에서 만들어 ZIP 교체 -- 판매 0건일 때** (`listing-p3.md` "다음 할 일"). ① 리스팅 이미지 제목 키우기는 **2026-09-28 완료** -- 사진 10장 교체(v0.55 + 01 은 v0.56), `shop.md` 리스팅 이미지 #4.
 
 ## 방이 여럿, 저장소는 하나 (중요)
 

@@ -93,8 +93,9 @@ South Korea` / Tagline. 남은 것은 **리스팅 작성과 발행**뿐이다.
 | 2 | 2026-09-23 | `output/prod1/listing_v815/01_hero.png` ~ `10_mosaic.png` (`10_closeup.png` 은 제외) | 10 | 회사 PC 에만 있다. 복귀 후 git 에 넣을 것(`CLAUDE.md`) |
 
 | 3 | 2026-09-24 | **상품 2:** `output/prod2/listing_student/1_hero.png` ~ `10_notes.png` (1→10 순서) | 10 | `python scripts/build_mockups_student.py student-v1.1` (기본 `MOCK_ALT=pastel`: 홀수 어두운·짝수 파스텔). 집 PC 에서 만듦 |
+| 4 | 2026-09-28 | **상품 3:** `output/prod3/upload/listing-images-v0.55/01~10` (10장, 01 → 10 순서) 후 **01 만 `listing-images-v0.56/01_hero.png` 로 교체** (폰에서 알약이 안 읽혔다) | 10 | 회사 PC 에서 만듦. `python scripts/p3/listing_images_p3.py` (DRAFT draft-v0.56). 경위 `listing-p3.md` 리스팅 이미지 절 |
 
-**현재 게시 중: 상품 1 = #2, 상품 2 = #3.**
+**현재 게시 중: 상품 1 = #2, 상품 2 = #3, 상품 3 = #4.**
 
 **상품 3 세일 `YEAR35`** (2026-09-27 설정): 35% / Everywhere / 2026-09-27 ~ **10-26** / Select listings → The ADHD Year 1개. 구매자 가격 $19.99 → $12.99.
 

@@ -285,7 +285,7 @@ For personal use. Please do not resell or redistribute the files.
 - **v0.56 알약 P3 (시안 P1 채움 / P2 진한 테두리 / P3 옅은 바탕 중 사용자 P3):** 바탕 #d4e7ee, 글씨 #005a75 굵기 600, 40px, 테두리 없음. 대비 6.05:1.
   검사: 알약 글자 하한 40px (MIN_PX) -- v0.55 FAIL 34px. 폰 크기 확인 `output/prod3/preview/pills-v1/v056_phone.png`
   **교훈: 리스팅 이미지 글자는 폰 크기(375px 폭 = 약 1/5)로 줄여 읽히는지 본 뒤 보낸다**
-- 남은 것: v0.56 을 Etsy 에 다시 올림 -> `shop.md` 기록 -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
+- **2026-09-28 완료: Etsy 에 v0.55 10장 + 01 은 v0.56 으로 교체 (사용자), 폰 리스팅에서 확인. `shop.md` 리스팅 이미지 #4.** -> `shop.md` 기록 -> 이 절과 CLAUDE.md "다음 할 일 ①" 정리
 
 **올릴 순서 = 파일 번호:** 01 hero · 02 experiments · 03 time links · 04 SOS · 05 inside · 06 files · **07 stickers** · 08 month · 09 december · 10 two taps.
 아래 표의 07~09 는 옛 번호(v0.18)다 -> 지금 08~10. 옛 10(Works anywhere) 의 "세계 공통 날짜만 인쇄·My holidays·노트 4종" 은 설명문에서 말한다.
