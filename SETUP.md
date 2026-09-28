@@ -272,7 +272,7 @@ $env:PLANNER_VERSION="v7-bright"; python scripts/build_planner.py
 상품 3 은 `scripts/p3/` 만 쓴다(`scripts/p3/README.md`). 결과물(output/·src/)은 git 밖이라 **다른 PC 에서는 다시 뽑는다.**
 
 **필요한 것:** `ADHD Planner 디자인 컨셉_v0.1/` 폴더(디자인 핸드오프, git 에 있다 -- `editions_build.py` 의 `HAND`),
-`pip install playwright pymupdf pypdfium2 pikepdf numpy pillow` + `playwright` 가 쓰는 설치된 Chrome(channel="chrome"),
+`pip install playwright pymupdf pypdfium2 pikepdf numpy pillow opencv-python-headless`(OpenCV = 리스팅 01 사진 합성 `photo_devices_p3.py`, 사진은 `assets/p3/unsplash/`) + `playwright` 가 쓰는 설치된 Chrome(channel="chrome"),
 인터넷(Google Fonts: Source Serif 4, 손글씨 Caveat).
 
 ```bash
