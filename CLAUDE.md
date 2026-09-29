@@ -61,7 +61,8 @@ Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
 잡히는 것**뿐이다 -- 빌드 전에 `python -c "import pypdfium2, pikepdf"`.
 
 **한 PC 안에서는 방이 나뉘어도 폴더는 하나다.** Prod 1 과 Prod 2 는 같은
-파일을 본다. 방 이름 끝의 `(Home)` / `(Office)` 가 어느 PC 의 방인지 나타낸다.
+파일을 본다. **방 이름: 회사 PC 방은 접미사 없이, 집 PC 방만 끝에 `(Home)`** (2026-09-29 사용자) --
+예: `Prod 3. 2027 ADHD Planner` / `Prod 3. 2027 ADHD Planner (Home)`.
 
 **스크립트에 절대경로를 박지 않는다.** 폴더 위치가 PC 마다 다르다. 루트는
 스크립트 위치에서 구한다:

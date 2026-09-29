@@ -297,7 +297,7 @@ python scripts/p3/check_listing_p3.py <VERSION>    # 원고 <-> 파일 대조
 
 | PC | 작업 폴더 | 방 이름 예 |
 |---|---|---|
-| 회사 | `C:\Users\ThinkBook\AiProject\2ndJob` | `... (Office)` |
+| 회사 | `C:\Users\ThinkBook\AiProject\2ndJob` | `Prod 3. 2027 ADHD Planner` (접미사 없음) |
 | 집 | `C:\Users\sBrain\2ndJob` | `Prod 1. ADHD Planners (Home)` |
 
 **PC 를 옮겨 앉으면 이 순서로 한다:**
