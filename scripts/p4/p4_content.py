@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.2"   # v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.3"   # v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -33,6 +33,22 @@ START_HERE = {
         ("All too much?", "Tap SOS on any page. Rescue first, tidy later.", "rescue"),
     ],
     "note": "Blank boxes are normal. No streaks, no catching up.",
+}
+
+# 2쪽 순서도 (2026-09-30 사용자 제안). 칸마다 링크. 칸 문구는 Start here·페이지 이름에서 온다
+FLOW = {
+    "title": "How it flows", "sub": "Tap any box to go there.",
+    "boxes": {   # key: (제목, 한 줄, 링크 대상)
+        "open": ("Open the planner", "", "start"),
+        "battery": ("Check your battery", "Low, medium, or full", "energy"),
+        "sos": ("All too much?", "Tap SOS on any page", "rescue"),
+        "energy": ("Energy menu", "Pick by minutes", "energy"),
+        "rescue": ("Rescue mode", "Five steps, then stop", "rescue"),
+        "room": ("Room card", "Ten-minute reset", "house-map"),
+        "done": ("Done enough", "Stop there", "house-map"),
+        "wins": ("Wins log", "It counts", "wins"),
+        "weeks": ("Once a week", "Reset week: one room a day", "weeks"),
+    },
 }
 
 # ------------------------------------------------------------------- 방 --
@@ -224,6 +240,7 @@ BORROWED = re.compile(r"\b(5 things|five things|care tasks|morally neutral|Fly ?
 def all_texts():
     """(어디, 문구) 전부"""
     out = [("cover", t) for t in COVER]
+    out += [("flow", FLOW["title"]), ("flow", FLOW["sub"])] + [("flow", f"{a} {b}".strip()) for a, b, _ in FLOW["boxes"].values()]
     out += [("start", START_HERE["title"]), ("start", START_HERE["sub"]), ("start", START_HERE["note"])]
     out += [("start", a + " " + b) for a, b, _ in START_HERE["steps"]]
     for key, name, steps, done, tools, deep in ROOMS:
@@ -269,7 +286,8 @@ def check():
 
     # 링크 대상이 실제 페이지 key 인가
     pages = {r[0] for r in ROOMS} | {MY_ROOM[0], "dishes-loop", "laundry-loop", "rescue"} | set(TOOL_PAGES)
-    targets = [t for v in ENERGY.values() for _, t in v] + [t for *_, t in START_HERE["steps"]] + [t for *_, t in RESCUE["steps"]]
+    pages |= {"start", "weeks"}
+    targets = [t for *_, t in FLOW["boxes"].values()] + [t for v in ENERGY.values() for _, t in v] + [t for *_, t in START_HERE["steps"]] + [t for *_, t in RESCUE["steps"]]
     need(not [t for t in targets if t not in pages], f"없는 링크 대상 {[t for t in targets if t not in pages]}")
 
     # 문구 원칙 1: 할 일은 6단어 이내 (방 순서·Energy·Daily·Monthly·Seasonal·깊은 청소)

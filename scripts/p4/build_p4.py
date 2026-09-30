@@ -25,7 +25,7 @@ import color_candidates_p4 as cc                    # noqa: E402
 import p4_content as C                              # noqa: E402
 from chrome_auto import CHROME, chrome_args         # noqa: E402
 
-VER = "sample-v0.1"
+VER = "sample-v0.2"   # v0.2 (2026-09-30 사용자): 2쪽 순서도, Energy menu 빈 줄을 칸 아래로 맞춤 + "+" 표시
 OUT_DIR = os.path.join(ROOT, "output", "prod4", "sample", VER)
 SRC = os.path.join(ROOT, "src", f"p4_home-reset_{VER}.html")    # src/ 에 둬야 '../assets/' 가 맞는다
 
@@ -35,7 +35,7 @@ SECTION_OF_TAB = {"home": "A", "energy": "A", "rooms": "B", "routines": "C", "we
 TABS = [("home", "HOME"), ("energy", "ENERGY"), ("rooms", "ROOMS"),
         ("routines", "ROUTINES"), ("weeks", "WEEKS"), ("tools", "TOOLS")]
 ROOM_KEYS = {r[0] for r in C.ROOMS} | {C.MY_ROOM[0]}
-TAB_OF_PAGE = {"cover": "home", "start": "home", "house-map": "home", "index": "home",
+TAB_OF_PAGE = {"cover": "home", "flow": "home", "start": "home", "house-map": "home", "index": "home",
                "energy": "energy", "rescue": "tools"}
 
 
@@ -99,15 +99,24 @@ a.tap{color:inherit;text-decoration:none}
 .st-t{font-size:11pt;font-weight:800}
 .st-d{font-size:9pt;color:var(--mid);margin-top:2pt}
 .go{margin-left:auto;font-size:8pt;font-weight:800;color:var(--accent-text)}
-.em{border-collapse:separate;border-spacing:6pt;width:100%;table-layout:fixed;margin:-6pt}
-.em th{font-size:7.5pt;font-weight:800;color:var(--soft);text-align:left;padding:0 4pt}
-.em td{background:var(--card);border-radius:10pt;vertical-align:top;padding:8pt 8pt 6pt;
-       border:0.4pt solid var(--line)}
-.em .bat{background:none;border:none;font-size:10pt;font-weight:800;width:52pt;vertical-align:middle;padding:0}
+.em{display:grid;grid-template-columns:52pt repeat(4,1fr);gap:6pt;flex:none}
+.em .h{font-size:7.5pt;font-weight:800;color:var(--soft);padding:0 4pt}
+.em .bat{font-size:10pt;font-weight:800;display:flex;align-items:center}
+.em .cell{background:var(--card);border-radius:10pt;padding:8pt 8pt 6pt;border:0.4pt solid var(--line);
+          display:flex;flex-direction:column}
 .em a{display:flex;gap:5pt;align-items:flex-start;color:var(--ink);text-decoration:none;
       font-size:8pt;line-height:1.3;margin-bottom:6pt}
 .em a .dot{margin-top:3pt}
-.em .blank{height:13pt;border-bottom:1px solid var(--line)}
+.em .blank{margin-top:auto;height:14pt;border-bottom:1px solid var(--line);display:flex;align-items:flex-end;
+           font-size:8pt;font-weight:800;color:var(--soft);padding-bottom:1pt}
+.flow{position:relative;width:100%;height:560pt;flex:none}
+.flow svg{position:absolute;left:0;top:0}
+.fb{position:absolute;background:var(--card);border-radius:10pt;border:0.4pt solid rgba(0,0,0,.10);
+    border-left:3pt solid var(--c);padding:0 14pt;display:flex;flex-direction:column;justify-content:center;
+    color:var(--ink);text-decoration:none}
+.fb b{font-size:11pt}
+.fb small{font-size:8.5pt;color:var(--mid);margin-top:2pt}
+.fb.pill{border-radius:99pt;border-left:0.4pt solid rgba(0,0,0,.10);align-items:center}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12pt;flex:1}
 .tile{background:var(--card);border-radius:var(--radius);border:0.4pt solid rgba(0,0,0,.10);
       padding:14pt;display:flex;flex-direction:column;justify-content:space-between;
@@ -159,19 +168,55 @@ def p_start():
 
 def p_energy():
     title, sub = C.TOOL_PAGES["energy"]
-    head_row = '<tr><th></th>' + "".join(f"<th>{m} MIN</th>" for m in C.MINUTES) + "</tr>"
-    rows = ""
+    cells = '<div></div>' + "".join(f'<div class="h">{m} MIN</div>' for m in C.MINUTES)
     for b in C.BATTERIES:
-        cells = ""
+        cells += f'<div class="bat">{b}</div>'
         for m in C.MINUTES:
             items = "".join(f'<a href="#{t}"><span class="dot sm"></span><span>{txt}</span></a>'
                             for txt, t in C.ENERGY[(b, m)])
-            cells += f'<td>{items}<div class="blank"></div></td>'
-        rows += f'<tr><td class="bat">{b}</td>{cells}</tr>'
+            # 빈 줄 = 내 할 일 하나 적는 칸. 칸 맨 아래에 붙여 같은 줄 네 칸이 한 높이 (v0.1 은 글 밑에 붙어 들쭉날쭉)
+            cells += f'<div class="cell" data-row="{b}">{items}<div class="blank">+</div></div>'
     return (bp.head("Energy", title, sub)
-            + f'<div class="body"><table class="em">{head_row}{rows}</table>'
+            + f'<div class="body"><div class="em">{cells}</div>'
             + bp.prompt_card("Today's pick", "one is enough", 3)
             + '</div>')
+
+
+# 2쪽 순서도. 좌표는 pt, 상자마다 링크. 화살표는 인라인 SVG 선(벡터 -- 그라데이션·반투명 없음)
+FLOW_BOX = {  # key: (x, y, w, h, 색 섹션)
+    "open": (170, 0, 160, 40, None), "battery": (0, 90, 220, 64, "A"), "sos": (280, 90, 220, 64, "D"),
+    "energy": (0, 200, 220, 64, "A"), "rescue": (280, 200, 220, 64, "D"),
+    "room": (0, 310, 220, 64, "B"), "done": (0, 420, 220, 64, "B"), "wins": (280, 420, 220, 64, "D"),
+    "weeks": (0, 510, 500, 46, "C"),
+}
+FLOW_ARROWS = [  # 꺾은선 점들 (마지막 점에 화살촉)
+    [(250, 40), (250, 65), (110, 65), (110, 88)], [(250, 65), (390, 65), (390, 88)],
+    [(110, 154), (110, 198)], [(110, 264), (110, 308)], [(110, 374), (110, 418)],
+    [(390, 154), (390, 198)], [(390, 264), (390, 418)], [(220, 452), (278, 452)],
+]
+
+
+def p_flow():
+    f = C.FLOW
+    boxes = ""
+    for key, (x, y, w, h, sec) in FLOW_BOX.items():
+        t, d, target = f["boxes"][key]
+        col = accent(sec)[0] if sec else "var(--line)"
+        cls = "fb pill" if key == "open" else "fb"
+        boxes += (f'<a class="{cls}" href="#{target}" style="left:{x}pt;top:{y}pt;width:{w}pt;height:{h}pt;'
+                  f'--c:{col}"><b>{t}</b>{f"<small>{d}</small>" if d else ""}</a>')
+    lines = ""
+    for pts in FLOW_ARROWS:
+        lines += ('<polyline fill="none" stroke="#9A968F" stroke-width="1" points="'
+                  + " ".join(f"{x},{y}" for x, y in pts) + '"/>')
+        (x1, y1), (x2, y2) = pts[-2], pts[-1]
+        if x1 == x2:
+            lines += f'<polygon fill="#9A968F" points="{x2 - 3.5},{y2 - 6} {x2 + 3.5},{y2 - 6} {x2},{y2}"/>'
+        else:
+            lines += f'<polygon fill="#9A968F" points="{x2 - 6},{y2 - 3.5} {x2 - 6},{y2 + 3.5} {x2},{y2}"/>'
+    svg = f'<svg width="500pt" height="560pt" viewBox="0 0 500 560">{lines}</svg>'
+    return (bp.head("Home", f["title"], f["sub"])
+            + f'<div class="body"><div class="flow">{svg}{boxes}</div></div>')
 
 
 def p_house_map():
@@ -217,7 +262,7 @@ def p_rescue():
             + '</div>')
 
 
-SAMPLE = [("cover", p_cover, {"sos": False}), ("start", p_start, {}), ("energy", p_energy, {}),
+SAMPLE = [("cover", p_cover, {"sos": False}), ("flow", p_flow, {}), ("start", p_start, {}), ("energy", p_energy, {}),
           ("house-map", p_house_map, {}), ("kitchen", lambda: p_room("kitchen"), {}),
           ("rescue", p_rescue, {}),
           ("kitchen", lambda: p_room("kitchen"), {"bw": True, "pid": "kitchen-bw"})]
@@ -235,6 +280,32 @@ def build_html(specs):
     open(SRC, "w", encoding="utf-8").write(html)
     cc.check_urls(html.replace("'../assets/", "'" + cc.ASSETS_URI), OUT_DIR)
     return SRC
+
+
+ALIGN_JS = """() => {
+  const rows = {};
+  document.querySelectorAll('.blank').forEach(b => {
+    const r = b.closest('tr') || b.closest('[data-row]');
+    const k = r.getAttribute('data-row') || [...r.parentElement.children].indexOf(r);
+    (rows[k] = rows[k] || []).push(b.getBoundingClientRect().bottom);
+  });
+  return Object.entries(rows).map(([k, v]) => [k, Math.max(...v) - Math.min(...v)]);
+}"""
+
+
+def check_energy_align(html):
+    """Energy menu 빈 줄이 한 줄(배터리) 안에서 같은 높이인가 -- 0.5px 넘게 어긋나면 FAIL
+    (sample-v0.1: 할 일 2개/3개 칸에서 빈 줄 높이가 들쭉날쭉, 2026-09-30 사용자 지적)"""
+    from playwright.sync_api import sync_playwright
+    from chrome_auto import launch
+    with sync_playwright() as p:
+        br = launch(p)
+        pg = br.new_page(viewport={"width": 816, "height": 1056})
+        pg.goto("file:///" + html.replace(os.sep, "/"))
+        spread = pg.evaluate(ALIGN_JS)
+        br.close()
+    bad = [(k, round(v, 1)) for k, v in spread if v > 0.5]
+    return spread, bad
 
 
 def to_pdf(out):
@@ -263,6 +334,10 @@ def main():
         print(f"snap pass {n}: pinned {k}")
         if not k:
             break
+    spread, bad = check_energy_align(SRC)
+    print("Energy 빈 줄 높이 차이(px):", [(k, round(v, 1)) for k, v in spread], "FAIL" if bad else "OK")
+    if bad:
+        raise SystemExit(f"Energy menu 빈 줄 높이가 어긋남 {bad}")
     out = to_pdf(os.path.join(OUT_DIR, f"home-reset_{VER}.pdf"))
     print("->", out)
 
