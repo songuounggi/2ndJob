@@ -136,6 +136,7 @@ a.tap{color:inherit;text-decoration:none}
 .tb{width:100%;border-collapse:collapse;table-layout:fixed}
 .tb th{font-size:7pt;font-weight:800;color:var(--soft);text-align:left;padding:0 6pt 5pt;
        border-bottom:1px solid var(--line);letter-spacing:.04em}
+.tb tr:first-child>th{border-top:1px solid var(--line);padding-top:5pt}
 .tb td{border-bottom:1px solid var(--line);padding:0 6pt;font-size:9pt;vertical-align:middle}
 .tb td+td,.tb th+th{border-left:1px solid var(--line)}
 .tb td.c{padding:0;text-align:center}
@@ -336,7 +337,7 @@ def to_pdf(out):
     return out
 
 
-FULL_VER = "v0.2"   # v0.2: Index 잘림·노트 내부 이름·주간 요일 머리글·sprint 괘선 (check_p4 배치 검사)
+FULL_VER = "v0.5"   # v0.5: Index 오른쪽 목록 카드 넘침 27px (줄 간격 4 -> 3pt)   # v0.4: check_lines -- sprint 부풀림, Index·주간 좌우 끝 맞춤   # v0.3 v0.3: 표 헤더 위에도 선 -- 위아래 대칭 (사용자)   # v0.2 v0.2: Index 잘림·노트 내부 이름·주간 요일 머리글·sprint 괘선 (check_p4 배치 검사)
 
 
 def snap():

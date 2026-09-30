@@ -84,8 +84,9 @@ def p_index():
               ("Weeks", ["weeks"]), ("Tools", ["tools"] + [k for k in TOOL_KEYS if not k.startswith("notes-")]
                                            + ["notes-ruled"])]
     # v0.1 은 오른쪽(Routines + Tools 18줄)이 페이지 아래로 잘렸다 -> 줄 간격을 줄이고 노트는 한 줄로, 양쪽 줄 수를 맞춘다
-    left = "".join(card(g, link_list(k, 4)) for g, k in groups[:3] + groups[4:5])
-    right = "".join(card(g, link_list(k, 4)) for g, k in groups[3:4] + groups[5:])
+    lg, rg = groups[:3] + groups[4:5], groups[3:4] + groups[5:]
+    left = "".join(card(g, link_list(k, 3), 1 if i == len(lg) - 1 else "none") for i, (g, k) in enumerate(lg))
+    right = "".join(card(g, link_list(k, 3), 1 if i == len(rg) - 1 else "none") for i, (g, k) in enumerate(rg))
     return (bp.head("Home", t, sub) + f'<div class="body"><div class="row">'
             f'<div class="col" style="flex:1">{left}</div><div class="col" style="flex:1">{right}</div>'
             f'</div></div>')
@@ -235,7 +236,7 @@ def p_week(n):
             + f'<div class="row" style="flex:none">'
               f'{card(L["week_rooms"], table(["", L["room"], ""], rows, ["18%", "70%", "12%"], box_cols=(2,), row_h=24), 1.3)}'
               f'<div class="col" style="flex:1">{card(L["week_deep"], "<div class=field></div>")}'
-              f'{card(L["week_loops"], loops)}</div></div>'
+              f'{card(L["week_loops"], loops, 1)}</div></div>'
             + bp.prompt_card(L["week_wins"], "", 3) + bp.prompt_card(L["slid"], L["slid_hint"], 2)
             + nav + '</div>')
 
@@ -259,9 +260,11 @@ def p_sprint():
     ring = ('<svg width="54pt" height="54pt" viewBox="0 0 54 54"><circle cx="27" cy="27" r="23" fill="none" '
             'stroke="var(--accent)" stroke-width="2.4"/><text x="27" y="31" text-anchor="middle" '
             'font-size="11" font-weight="800" fill="var(--accent-text)">5:00</text></svg>')
+    # 카드가 높이를 정하고(stretch) 안쪽 열이 여분 줄을 자른다. v0.3 은 align-items:flex-start 라
+    # 안쪽 열이 여분 줄만큼 590px 부풀었다(check_lines 6번, LINES.md 1-4)
     rounds = "".join(
-        f'<div class="card" style="flex:1;flex-direction:row;gap:16pt;align-items:flex-start;overflow:hidden">'
-        f'<div style="text-align:center">{ring}<div class="st-d">{L["round"]} {i}</div></div>'
+        f'<div class="card" style="flex:1;flex-direction:row;gap:16pt;align-items:stretch;min-height:0">'
+        f'<div style="text-align:center;align-self:flex-start">{ring}<div class="st-d">{L["round"]} {i}</div></div>'
         f'<div style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">'
         f'<div class="label">{L["did"]}</div>{bp.lines(3)}</div></div>' for i in range(1, 4))
     return (bp.head("Tools", t, sub) + f'<div class="body">{rounds}'

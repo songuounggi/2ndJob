@@ -24,6 +24,7 @@ EXPECT_PAGES = 107
 #  b 카드 밖 괘선: 괘선이 카드 아래로 삐져나옴 (92쪽 sprint)
 #  c 칸 넘침: 표 칸 글자가 칸보다 넓다 (Reset week 의 요일 머리글)
 #  d 내부 이름 노출: 목록에 페이지 key 가 그대로 (90쪽 notes-blank-1)
+#  e 표 위아래 비대칭: 헤더 위는 열리고 마지막 행 아래만 닫힘 (v0.2 전 표, 사용자 지적)
 LAYOUT_JS = """() => {
   const out = [];
   document.querySelectorAll('section.page').forEach(pg => {
@@ -47,6 +48,14 @@ LAYOUT_JS = """() => {
     });
     pg.querySelectorAll('.tb th, .tb td').forEach(t => {
       if (t.scrollWidth > t.clientWidth + 1) out.push(['c 칸 넘침', id, t.textContent.trim().slice(0, 12)]);
+    });
+    // e 표 위아래 대칭: 헤더 위 선과 마지막 행 아래 선이 둘 다 있거나 둘 다 없어야 한다 (2026-09-30 사용자)
+    pg.querySelectorAll('.tb').forEach(t => {
+      const rows = t.querySelectorAll('tr'); if (rows.length < 2) return;
+      const top = [...rows[0].children].map(c => parseFloat(getComputedStyle(c).borderTopWidth) > 0);
+      const bot = [...rows[rows.length - 1].children].map(c => parseFloat(getComputedStyle(c).borderBottomWidth) > 0);
+      if (top.some(x => x) !== bot.some(x => x) || new Set(top).size > 1 || new Set(bot).size > 1)
+        out.push(['e 표 위아래 비대칭', id, '']);
     });
     pg.querySelectorAll('a').forEach(a => {
       if (/^(notes|deep|day)-|^w\d+$/.test(a.textContent.trim())) out.push(['d 내부 이름', id, a.textContent.trim()]);

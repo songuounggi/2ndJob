@@ -57,6 +57,7 @@ FAIL 때 되돌아가는 곳. 6절 시나리오는 상품 3 전용이던 것을 
 | Chrome 은 `scripts/chrome_auto.py` 로 켠다 | 새 프로필마다 로그온 실패 1회 → Windows 계정 잠김 | `CLAUDE.md` "빌드가 Windows 계정을 잠근다" |
 | 절대경로 없음: `grep -rn -i "C:\\\\Users\|/c/Users" scripts` 가 빈 결과 | PC 마다 폴더가 다르다 | `CLAUDE.md` |
 | `python -c "import pypdfium2, pikepdf"` | 패키지 없는 Python 이 잡히는 일 | `CLAUDE.md` Python 표 |
+| **`LINES.md` 0절을 읽고**, 빌드마다 `scripts/check_lines.py` 를 돌린다 | 상품 4 에서 안 읽고 표를 짜서 사용자가 선 비대칭·줄 어긋남을 찾았다(2026-09-30) | `LINES.md` |
 
 ---
 

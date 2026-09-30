@@ -69,6 +69,10 @@
 > **2026-09-30 전체 빌드 v0.2** (`python scripts/p4/build_p4.py full`): 컬러 링크판 + 흑백판 각 107쪽,
 > `output/prod4/planner/v0.2/home-reset_v0.2_{color,BW}-FINAL.pdf` (3.4MB / 3.4MB). 검사 `scripts/p4/check_p4.py`
 > (쪽 수·죽은 링크·고아 페이지·탭 하이라이트·원고 누락·배치 4종) + `check_render.py` 모두 FAILURES 0.
+> **v0.5 (같은 날)**: 표 헤더 위에도 선(위아래 대칭, 사용자), 공용 선 검사기 `check_lines.py` 를 처음 돌려
+> sprint 괘선 부풀림·Index 와 주간 페이지 좌우 끝 어긋남을 고침. **검사 세 개를 매 빌드 돌린다:**
+> `check_p4.py <버전>` · `check_lines.py src/p4_home-reset_<버전>_{color,BW}.html` · `check_render.py <PDF>` -- v0.5 전부 0.
+> (LINES.md 0절을 제작 전에 읽지 않고 표를 짰다 -- 4단계 부록 "제작 전 확인 목록"에 넣을 것)
 > **보류: 2쪽 순서도 디자인** -- 사용자 "너무 촌스럽다"(09-30). 내용·링크는 두고 모양만 다시 짠다.
 
 ### 3-1. HOME (5)
