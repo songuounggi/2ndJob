@@ -92,6 +92,32 @@ Pinterest 자신이 "일반 Business 계정을 만들고 나중에 업데이트�
 | `Digital Planning` | GoodNotes, Notability, iPad and Android planning. |
 | `Focus & Executive Function` | Tools for starting, deciding, and remembering. |
 
+### 이 계정은 2019년에 만든 개인 계정이다 -- 옛 보드 4개가 공개로 남아 있다 (2026-09-30 확인)
+
+프로필 생성일 `2019-01-08`. 새로 판 계정이 아니라 **쓰던 개인 계정을 비즈니스로
+전환한 것**이다. 그래서 공개 보드가 이렇게 섞여 있다:
+
+| 보드 | |
+|---|---|
+| `ADHD Planner` | 상품용. 2026-09 에 만듦 |
+| `약국 디자인` `약국 인테리어` `배경화면` `그림` | **개인 보드. 2019년 것** |
+
+핀을 본 미국·영국 구매자가 프로필을 눌러 들어오면 **한국어 약국 인테리어
+보드가 같이 보인다.** 치명적이지는 않지만 "ADHD 플래너 파는 곳" 이라는 인상이
+흐려진다.
+
+**정리한다면 지우지 말고 비공개(Secret)로 돌린다** -- 이 프로젝트 규칙이
+"아무것도 지우지 않는다" 이고, 비공개 보드는 나만 보이되 그대로 남는다.
+
+**아직 결정하지 않았다 (사용자에게 다시 물을 것, 2026-10-03 쯤).** 지금 순위는
+핀 5장 올리기가 먼저다. 프로필 유입이 실제로 생긴 뒤에 판단해도 늦지 않다.
+
+프로필: https://www.pinterest.com/songandparkstudio/
+보드:   https://www.pinterest.com/songandparkstudio/adhd-planner/
+**로그아웃 상태로는 보드 안이 안 보인다** -- Pinterest 가 막는다. 확인은 로그인해서.
+
+---
+
 ---
 
 ## 3. 핀 올리기
