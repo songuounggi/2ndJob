@@ -17,7 +17,8 @@ Etsy에 판매할 디지털 다운로드 상품을 만드는 프로젝트.
 | **`shop.md`** | Etsy 숍 계정 설정과 발행 절차의 확정값. **0-1절 업로드 이력표** — Etsy 에 올릴 때마다 한 줄 추가, `scripts/check_upload.py` 로 대조 |
 | **`listing.md`** | 상품 1의 제목·태그·영문 설명·가격 |
 | **`forecast.md`** | 예상치와 실제의 대조. **2026-09-29 기준선 -- 리스팅별 조회·판매·찜.** 핀터레스트 효과는 이 표와 비교해 잰다. **다음 대조일 2026-10-21** |
-| **`product2-student.md`** | 상품 2(ADHD 학생용 플래너) 기획과 제작 배치 |
+| **`product2-content.md`** | **상품 2 내용 계획(기획서).** 페이지 지도·문구 원칙·원래 기획 대조. 5-1 검사는 `scripts/check_plan_student.py` |
+| **`product2-student.md`** | 상품 2 **작업 일지** — 결정과 함정의 시간순 기록. 기획은 `product2-content.md` |
 | **`pinterest.md`** | 핀터레스트 계정 설정과 핀 문구 |
 | **`SETUP.md`** | 다른 PC 에서 clone 해서 빌드하는 전 과정 |
 
