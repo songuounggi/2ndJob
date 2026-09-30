@@ -381,24 +381,7 @@ def build_full():
         outs.append(final)
         print(tag, "->", final, os.path.getsize(final), "B")
     BW = False
-    refresh_latest(outs)
     return outs
-
-
-def refresh_latest(finals):
-    """output/prod4/LATEST 에 최신판 두 개만 알아보기 쉬운 이름으로 (2026-09-30 사용자: "어디 있는지 모르겠다").
-    버전 폴더의 원본은 그대로 두고, 여기 있던 옛 사본만 바꾼다 -- 사본이라 잃는 것이 없다."""
-    import glob
-    import shutil
-    latest = os.path.join(ROOT, "output", "prod4", "LATEST")
-    os.makedirs(latest, exist_ok=True)
-    for old in glob.glob(os.path.join(latest, "*.pdf")):
-        os.remove(old)
-    import pymupdf
-    for f, kind in zip(finals, ("컬러", "흑백")):
-        n = len(pymupdf.open(f))
-        shutil.copy(f, os.path.join(latest, f"상품4_최신_{FULL_VER}_{kind}_{n}쪽.pdf"))
-    print("LATEST ->", latest)
 
 
 def pages_pages(mod):
