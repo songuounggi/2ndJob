@@ -473,15 +473,75 @@ The fastest way to reach me is an Etsy message. I usually reply within a day.
 > 주소가 걸리는 곳은 Shop Home 하단의 "Add more details for buyers"(EU DSA)
 > 이고, `Private individual` 이면 필수가 아닐 가능성이 높다(4번 참조).
 
-### 3-4. Shop announcement — 발행 직후
+### 3-4. Shop announcement — **현재 문구 (2026-09-30 교체, 숍 페이지에서 반영 확인)**
 
-앞 ~160자만 펼쳐 보이고 나머지는 "Read more"로 접힌다.
+앞 ~160자만 펼쳐 보이고 나머지는 "Read more"로 접힌다. **세 상품을 첫 문장에 넣는다** --
+상품 2·3 이 조회 3·5 로 묻혀 있어, 숍에 들어온 사람이 첫 줄에서 셋 다 있다는 걸 알아야 한다.
+
+```
+Three ADHD planners, all on launch sale: Undated, Student, and the dated
+2026-2027 ADHD Year. Instant download, built for GoodNotes and Notability on iPad.
+
+Every page is hyperlinked, so you are never more than a couple of taps from
+anything you need. The undated ones never expire - start any day, skip a week,
+nothing to catch up on.
+
+Not sure which one fits? Just message me. I usually reply within a day.
+```
+
+**날짜·쿠폰 코드를 쓰지 않는다.** 옛 문구가 `Launch week` 로 시작해 9일간 늙은 채로
+있었다. 세일 종료일이 셋 다 다르고(10/20·10/23·10/26), **상품 1 세일이 코드인지 자동인지
+아직 미확인**이라 적으면 틀린다(0-1절 판매 표 2번 행).
+
+옛 문구 (2026-09-21 ~ 09-30, 상품 1 만 광고했다):
 
 ```
 Launch week: 40% off the Undated ADHD Planner. Instant download, works in
 GoodNotes and Notability, no dates to expire. Questions? Just message me —
 I usually reply within a day.
 ```
+
+### 3-6. About 섹션 — **아직 안 넣었다. 문구는 아래 것을 쓴다**
+
+**지금 급하지 않다** (2026-09-30 판단). About 은 리스팅이 아니라 숍 페이지에 있어
+검색으로 들어온 사람은 거의 안 본다. 주당 조회 30 인 지금은 **볼 사람이 없다.**
+`forecast.md` 의 레버 표에도 없는 항목이다. 시간 남을 때 붙여넣으면 된다.
+
+**Headline**
+
+```
+Planners for brains that do not run on a schedule
+```
+
+**Story**
+
+```
+Most planners are designed for people who already have the habit. They assume you
+will show up every day, and when you don't, they leave a wall of blank pages
+looking disappointed in you.
+
+These are built the other way around. No dates are printed anywhere, so nothing
+expires and nothing is ever "missed" - you start on a Wednesday in March if that is
+when you are ready. The pages are for the parts that actually go wrong: guessing
+how long a task will take, naming the thing you are avoiding, deciding when
+everything feels equally urgent. And every page is hyperlinked, because hunting
+through 500 pages is its own kind of tax on attention.
+
+Everything here is a digital download. It works in GoodNotes and Notability on an
+iPad, on Android tablets, and it prints at home if paper suits you better.
+
+If something does not work the way you expected, message me. I read everything.
+```
+
+**Shop member bio**
+
+```
+Song - I design the planners here. I rebuild a page whenever it turns out to look
+better than it works.
+```
+
+**1인칭 당사자 표현은 쓰지 않는다** -- 4절과 `CLAUDE.md` "판매 글에 사용자에 관한 사실을
+지어내지 않는다" 참조. 위 문구는 **설계 원칙**만 말하고, 전부 상품에 실재하는 사실이다.
 
 ### 3-5. Shop icon — **미결정**
 
@@ -792,6 +852,11 @@ Etsy 제안: `ADHD Wellness Digital Planner, Undated GoodNotes Journal (PDF)`
    원인인지 영영 알 수 없다
 
 나머지 항목(`Your shop`, `Service standards`)은 초록불이다.
+
+> **2026-09-30 다시 확인 -- 빨간 `1 factor` 는 여전히 제목 제안 하나뿐이다.** 화면:
+> `Your listings ⚠ "2 listings have new title recommendations"` / `Your shop ✓ Awesome work`
+> / `Service standards ✓ 주문 5건 넘어야 데이터가 나온다`. **정책 위반도 설정 누락도 아니다.**
+> 앞으로 이 빨간 배지를 보면 이 절을 먼저 읽고, 제목 제안이면 작업 순서를 바꾸지 않는다.
 
 > **2026-09-27 다시 봄 -- 제목 유지 결정을 뒤집는 쪽으로 기울었다 (상품 3 올릴 때 같이 진행, 사용자).**
 > 앱 `Etsy search visibility` 가 "2 listings have new title recommendations" 로 계속 권고. 사용자: 어제·오늘 view·visit 0.
