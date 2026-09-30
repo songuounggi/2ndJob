@@ -77,6 +77,12 @@
 > 화살표 글자를 SVG 로(Nunito 에 없어 맑은 고딕으로 대체되던 129곳). 보고서 `output/prod4/planner/v0.7/qa/report.md`.
 > **v0.8 (같은 날, 사용자 결정 3건 반영)**: 30쪽 요일 7칸 순환표(기획서대로), 103쪽 이사 체크리스트 12개, 33·34쪽 루프는
 > 2×2 격자 유지(기획서 수정). 검사 세 개 전부 0. **새 문구 119개 확인 대기**: `output/prod4/planner/v0.8/qa/new_copy_for_review.csv`.
+> **6단계 써 보기 v0.9 (같은 날)**: `scripts/p4/dogfood_p4.py` -- 링크를 눌러 시나리오 12개(공통 3 + 상품별 6 + 빈틈 3).
+> v0.8 에서 5개가 막혔다: Routines 에 목차가 없어 다른 루틴으로 못 감 / Rescue 에서 Sprint·Guests 로 못 감 / 주간에서 방 카드로 못 감.
+> 사용자 결정으로 **Routines 목차 페이지 추가(29쪽, 총 108쪽)** + 링크 7곳(Rescue→Sprint·Guests, 주간 "This week's rooms"→House map,
+> Energy 배터리→그날 페이지, Guests 줄→방 카드, 루프→Wins). v0.9: **막힌 곳 0**, 검사 세 개 0.
+> 새 문구 2줄 확인 대기: Routines 목차 제목·부제 (`PAGE_TEXT["routines"]`).
+> 참고(디자인): 배터리 이름·Guests 줄은 링크지만 겉모습은 글자 그대로라 누를 수 있는지 안 보인다 -- 순서도와 함께 디자인 때 볼 것.
 > **보류: 2쪽 순서도 디자인** -- 사용자 "너무 촌스럽다"(09-30). 내용·링크는 두고 모양만 다시 짠다.
 
 ### 3-1. HOME (5)
@@ -149,7 +155,7 @@
 | 104 | **Notes: dot grid** | P1 | 벡터 점(`dot_svg`) |
 | 105–106 | **Notes: blank × 2** | P1 | |
 
-**합계 약 107쪽** (HOME 5 + ENERGY 4 + ROOMS 19 + ROUTINES 8 + WEEKS 53 + TOOLS 18). 월간 12장으로 줄이면 약 66쪽.
+**합계 약 108쪽** (6단계에서 Routines 목차 +1) (HOME 5 + ENERGY 4 + ROOMS 19 + ROUTINES 8 + WEEKS 53 + TOOLS 18). 월간 12장으로 줄이면 약 66쪽.
 
 ### 3-7. 링크 규칙
 

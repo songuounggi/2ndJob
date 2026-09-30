@@ -18,7 +18,7 @@
 | 이름 | **The ADHD Home Reset** — *clean by energy, not by schedule* |
 | 무엇 | ADHD 성인용 청소·집안 루틴 **디지털 플래너**(하이퍼링크 PDF). Etsy 판매, $8.99 |
 | 구매자 | 미국·영국의 ADHD 성인. **iPad + GoodNotes** 에서 손글씨로 쓴다 |
-| 쪽 수 | 107쪽, 날짜 없음(undated) |
+| 쪽 수 | 108쪽, 날짜 없음(undated) (2026-09-30 Routines 목차 추가로 107→108) |
 | 판형 | US Letter 세로 **612 × 792 pt** |
 | 핵심 기능 | PDF 내부 링크 -- 상자·탭을 누르면 그 페이지로 간다. **GoodNotes 에서 되는 상호작용은 이것 하나뿐** |
 
@@ -33,13 +33,13 @@
 |---|---|---|---|---|
 | 1 | Open the planner | — | 3쪽 Start here | 없음(중립) |
 | 2 | Check your battery | Low, medium, or full | 6쪽 Energy menu | A 민트 |
-| 3 | All too much? | Tap SOS on any page | 91쪽 Rescue mode | D 아쿠아 |
+| 3 | All too much? | Tap SOS on any page | 92쪽 Rescue mode | D 아쿠아 |
 | 4 | Energy menu | Pick by minutes | 6쪽 Energy menu | A 민트 |
-| 5 | Rescue mode | Five steps, then stop | 91쪽 Rescue mode | D 아쿠아 |
+| 5 | Rescue mode | Five steps, then stop | 92쪽 Rescue mode | D 아쿠아 |
 | 6 | Room card | Ten-minute reset | 4쪽 House map | B 레몬 |
 | 7 | Done enough | Stop there | 4쪽 House map | B 레몬 |
-| 8 | Wins log | It counts | 100쪽 Wins log | D 아쿠아 |
-| 9 | Once a week | Reset week: one room a day | 37쪽 Weeks | C 라벤더 |
+| 8 | Wins log | It counts | 101쪽 Wins log | D 아쿠아 |
+| 9 | Once a week | Reset week: one room a day | 38쪽 Weeks | C 라벤더 |
 
 페이지 제목 `How it flows`, 부제 `Tap any box to go there.`
 

@@ -54,6 +54,8 @@ def title_of(key):
         kind, _, n = key[6:].partition("-")
         t, sub = C.PAGE_TEXT["notes-" + kind]
         return f"{t} ({sub.lower()}{' ' + n if n else ''})"
+    if key == "routines":
+        return C.PAGE_TEXT["routines"][0]
     for src in (C.TOOL_PAGES, C.PAGE_TEXT):
         if key in src:
             return src[key][0]
@@ -81,7 +83,7 @@ def p_index():
     N = C.SECTION_NAMES
     groups = [(N["home"], ["flow", "start", "house-map"]), (N["energy"], ["energy", "day-Low", "day-Medium", "day-Full"]),
               (N["rooms"], ["rooms"] + [r[0] for r in C.ROOMS] + ["myroom"]),
-              (N["routines"], ["daily", "rotation", "monthly", "seasonal", "laundry-loop", "dishes-loop",
+              (N["routines"], ["routines", "daily", "rotation", "monthly", "seasonal", "laundry-loop", "dishes-loop",
                             "who-does-what", "kids-pets"]),
               (N["weeks"], ["weeks"]), (N["tools"], ["tools"] + [k for k in TOOL_KEYS if not k.startswith("notes-")]
                                            + ["notes-ruled"])]
@@ -151,6 +153,14 @@ def p_myroom():
 
 
 # ----------------------------------------------------------- ROUTINES --
+ROUTINE_KEYS = ["daily", "rotation", "monthly", "seasonal", "laundry-loop", "dishes-loop", "who-does-what", "kids-pets"]
+
+
+def p_routines():
+    t, sub = C.PAGE_TEXT["routines"]
+    return bp.head(C.SECTION_NAMES["routines"], t, sub) + f'<div class="body">{card("", link_list(ROUTINE_KEYS, 9))}</div>'
+
+
 def p_daily():
     t, sub = C.TOOL_PAGES["daily"]
     cards = ""
@@ -195,7 +205,7 @@ def p_loop(key, title, stages):
     title, sub = C.LOOP_PAGES[key]
     return (bp.head(C.SECTION_NAMES["routines"], title, sub) + '<div class="body">'
             f'<div class="row">{cells[0]}{cells[1]}</div><div class="row">{cells[2]}{cells[3]}</div>'
-            + bp.prompt_card(L["my_fix"], "", 3) + '</div>')
+            + bp.prompt_card(L["my_fix"], "", 3) + link("wins", C.TOOL_PAGES["wins"][0]) + '</div>')
 
 
 def p_who():
@@ -227,6 +237,8 @@ def p_weeks():
 def p_week(n):
     t, sub = C.WEEK_PAGE
     rows = [[d] for d in DAYS]
+    # 칸 이름이 House map 으로 간다 (6단계 시나리오 3: 주간에서 방 카드로 갈 길이 없었다)
+    rooms_label = f'<a class="tap" href="#house-map">{L["week_rooms"]} {B.ARR_R}</a>'
     # 좁은 칸이라 요일은 한 글자 (v0.1 은 MON TUE 가 칸을 넘쳐 붙었다)
     loops = table([""] + [d[0] for d in DAYS], [[L["laundry"]], [L["dishes"]]], ["30%"] + ["10%"] * 7,
                   box_cols=range(1, 8), row_h=24)
@@ -236,7 +248,7 @@ def p_week(n):
     nav += "</div>"
     return (bp.head(C.SECTION_NAMES["weeks"], t.format(n=n), sub) + '<div class="body">'
             + f'<div class="row" style="flex:none">'
-              f'{card(L["week_rooms"], table(["", L["room"], ""], rows, ["18%", "70%", "12%"], box_cols=(2,), row_h=24), 1.3)}'
+              f'{card(rooms_label, table(["", L["room"], ""], rows, ["18%", "70%", "12%"], box_cols=(2,), row_h=24), 1.3)}'
               f'<div class="col" style="flex:1">{card(L["week_deep"], "<div class=field></div>")}'
               f'{card(L["week_loops"], loops, 1)}</div></div>'
             + bp.prompt_card(L["week_wins"], "", 3) + bp.prompt_card(L["slid"], L["slid_hint"], 2)
@@ -275,7 +287,13 @@ def p_sprint():
 
 def p_guests():
     t, sub, steps = C.GUESTS
-    rows = [["", s] for s in steps] + blank_rows(2)
+    room_of = {n: k for k, n, *_ in C.ROOMS}
+    room_of["Entry"] = "entry"
+
+    def linked(s):
+        head = s.split(":")[0]
+        return f'<a class="tap" href="#{room_of[head]}">{s}</a>' if head in room_of else s
+    rows = [["", linked(s)] for s in steps] + blank_rows(2)
     return (bp.head(C.SECTION_NAMES["tools"], t, sub) + '<div class="body">'
             + card("", table(["", L["task"]], rows, ["26pt", "auto"], box_cols=(0,), row_h=40))
             + f'<div class="card" style="flex:none"><div class="st-t">{L["hide"]}</div></div></div>')
@@ -338,7 +356,7 @@ def specs():
         s += [(k, (lambda kk: lambda: B.p_room(kk))(k), "rooms"),
               (f"deep-{k}", (lambda kk: lambda: p_deep(kk))(k), "rooms")]
     s += [("myroom", p_myroom, "rooms"), ("deep-myroom", lambda: p_deep("myroom"), "rooms")]
-    s += [("daily", p_daily, "routines"), ("rotation", p_rotation, "routines"), ("monthly", p_monthly, "routines"),
+    s += [("routines", p_routines, "routines"), ("daily", p_daily, "routines"), ("rotation", p_rotation, "routines"), ("monthly", p_monthly, "routines"),
           ("seasonal", p_seasonal, "routines"),
           ("laundry-loop", lambda: p_loop("laundry-loop", "Laundry loop", C.LAUNDRY_LOOP), "routines"),
           ("dishes-loop", lambda: p_loop("dishes-loop", "Dishes loop", C.DISHES_LOOP), "routines"),

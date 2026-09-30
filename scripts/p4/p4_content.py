@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.6"   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.7"   # v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -236,6 +236,7 @@ PAGE_TEXT = {
     "deep": ("{room}: deep clean", "Once a month or once a season. Any order."),
     "myroom": ("My room", "Name it and write your own order."),
     "weeks": ("Weeks", "Fifty-two reset weeks. Start on any week."),
+    "routines": ("Routines", "The small repeats that keep it from piling up."),   # 6단계에서 추가 (09-30)
     "tools": ("Tools", "For the days that need a different way in."),
     "notes-ruled": ("Notes", "Lined"), "notes-dots": ("Notes", "Dot grid"), "notes-blank": ("Notes", "Blank"),
 }

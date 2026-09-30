@@ -70,7 +70,7 @@ def bloom_file(k):
     return name
 
 
-TAB_TARGET = {"home": "index", "energy": "energy", "rooms": "rooms", "routines": "daily",
+TAB_TARGET = {"home": "index", "energy": "energy", "rooms": "rooms", "routines": "routines",
               "weeks": "weeks", "tools": "tools"}      # 탭을 누르면 가는 페이지 (전체 빌드)
 
 
@@ -155,7 +155,7 @@ a.tap{color:inherit;text-decoration:none}
 
 # --------------------------------------------------------------- 페이지 --
 def p_cover():
-    counts = ["4", "19", "61", "18"]     # 섹션별 쪽 수 -- check_p4 가 실제 쪽 수와 대조한다
+    counts = ["4", "19", "62", "18"]     # 섹션별 쪽 수 -- check_p4 가 실제 쪽 수와 대조한다
     items = [(k, t.replace("&", "&amp;"), d, n) for k, (t, d), n in
              zip(["energy", "rooms", "routines", "tools"], C.COVER_ITEMS, counts)]
     rows = "".join(
@@ -195,7 +195,7 @@ def p_energy():
     title, sub = C.TOOL_PAGES["energy"]
     cells = '<div></div>' + "".join(f'<div class="h">{m} MIN</div>' for m in C.MINUTES)
     for b in C.BATTERIES:
-        cells += f'<div class="bat">{b}</div>'
+        cells += f'<a class="bat tap" href="#day-{b}">{b}</a>'
         for m in C.MINUTES:
             items = "".join(f'<a href="#{t}"><span class="dot sm"></span><span>{txt}</span></a>'
                             for txt, t in C.ENERGY[(b, m)])
@@ -284,6 +284,11 @@ def p_rescue():
             + f'<div class="body">{steps}'
             + f'<a class="card tap" href="#wins" style="flex:none;padding:14pt 18pt">'
               f'<div class="step"><div class="st-t">{r["after"]}</div><div class="go">{C.TOOL_PAGES["wins"][0]} {ARR_R}</div></div></a>'
+            + '<div class="row" style="flex:none">'
+            + "".join(f'<a class="card tap" href="#{k}" style="flex:1;padding:12pt 18pt"><div class="step">'
+                      f'<div class="st-t" style="font-size:10pt">{t}</div><div class="go">{ARR_R}</div></div></a>'
+                      for k, t in (("sprint", C.SPRINT[0]), ("guests", C.GUESTS[0])))
+            + '</div>'
             + '</div>')
 
 
@@ -344,7 +349,7 @@ def to_pdf(out):
     return out
 
 
-FULL_VER = "v0.8"   # v0.8: 사용자 결정 -- 30쪽 요일 7칸 순환표, 103쪽 이사 체크리스트 12개   # v0.7: 5-5 검수 -- 화살표 글자를 SVG 로(맑은 고딕 대체 129곳)   # v0.6: 5-1 검수 -- 박힌 문구 23개를 원고로, 표지 -> 2쪽 링크   # v0.5: Index 오른쪽 목록 카드 넘침 27px (줄 간격 4 -> 3pt)   # v0.4: check_lines -- sprint 부풀림, Index·주간 좌우 끝 맞춤   # v0.3 v0.3: 표 헤더 위에도 선 -- 위아래 대칭 (사용자)   # v0.2 v0.2: Index 잘림·노트 내부 이름·주간 요일 머리글·sprint 괘선 (check_p4 배치 검사)
+FULL_VER = "v0.9"   # v0.9: 6단계 써 보기 -- Routines 목차(108쪽), 빈틈 링크 7곳   # v0.8: 사용자 결정 -- 30쪽 요일 7칸 순환표, 103쪽 이사 체크리스트 12개   # v0.7: 5-5 검수 -- 화살표 글자를 SVG 로(맑은 고딕 대체 129곳)   # v0.6: 5-1 검수 -- 박힌 문구 23개를 원고로, 표지 -> 2쪽 링크   # v0.5: Index 오른쪽 목록 카드 넘침 27px (줄 간격 4 -> 3pt)   # v0.4: check_lines -- sprint 부풀림, Index·주간 좌우 끝 맞춤   # v0.3 v0.3: 표 헤더 위에도 선 -- 위아래 대칭 (사용자)   # v0.2 v0.2: Index 잘림·노트 내부 이름·주간 요일 머리글·sprint 괘선 (check_p4 배치 검사)
 
 
 def snap():

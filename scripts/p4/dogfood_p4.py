@@ -83,18 +83,24 @@ if bad_home:
     stuck.append(("3 돌아오기", 0, "", f"HOME/SOS 가 안 되는 쪽 {bad_home}"))
     print(f"  ✗ 3 돌아오기: {bad_home}")
 else:
-    print("  ✓ 3 돌아오기: 아무 쪽(w30·deep-car·restock·seasonal·kids-pets)에서 HOME → 5 Index, SOS → 91 Rescue")
+    print(f"  ✓ 3 돌아오기: 아무 쪽(w30·deep-car·restock·seasonal·kids-pets)에서 HOME → {P['index'] + 1} Index, "
+          f"SOS → {P['rescue'] + 1} Rescue")
 
 print("\n[상품별 -- product4-content.md 6절]")
 run("1 기운 없는 날", "cover", [("The ADHD", "flow"), ("Open the planner", "start"), ("Check your battery", "energy"),
                              ("Clear the nightstand", "bedroom"), ("HOME", "index")])
 run("2 엉망일 때", "w10", [("SOS", "rescue"), ("15-minute sprint", "sprint"), ("Wins log", "wins")])
-run("3 한 주", "rooms", [("WEEKS", "weeks"), ("7", "w7"), ("Kitchen", "kitchen")])
+run("3 한 주", "rooms", [("WEEKS", "weeks"), ("7", "w7"), ("This week", "house-map"), ("Kitchen", "kitchen"),
+                        ("Deep clean list", "deep-kitchen")])
 run("3b 다음 주", "w7", [("Next week", "w8")])
-run("4 빨래 산", "index", [("ROUTINES", "daily"), ("Laundry loop", "laundry-loop"), ("Wins log", "wins")])
+run("4 빨래 산", "index", [("ROUTINES", "routines"), ("Laundry loop", "laundry-loop"), ("Wins log", "wins")])
 run("5 손님 온다", "w20", [("SOS", "rescue"), ("Guests in 2 hours", "guests"), ("Entry", "entry")])
-run("6 같이 산다", "index", [("ROUTINES", "daily"), ("Who does what", "who-does-what"), ("Kids", "kids-pets"),
-                          ("Weekly rotation", "rotation")])
+run("6 같이 산다", "index", [("ROUTINES", "routines"), ("Who does what", "who-does-what"), ("ROUTINES", "routines"),
+                          ("Kids", "kids-pets"), ("ROUTINES", "routines"), ("Weekly rotation", "rotation")])
+print("\n[빈틈 링크 -- 6단계에서 추가]")
+run("Energy -> 그날 페이지", "energy", [("Low", "day-Low")])
+run("Guests -> 방 카드", "guests", [("Bathroom", "bathroom")])
+run("루프 -> Wins", "dishes-loop", [("Wins log", "wins")])
 
 print(f"\n막힌 곳 {len(stuck)}개")
 for s in stuck:

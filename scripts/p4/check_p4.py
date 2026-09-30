@@ -17,7 +17,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 import p4_content as C  # noqa: E402
 
-EXPECT_PAGES = 107
+EXPECT_PAGES = 108   # 6단계에서 Routines 목차 추가 (09-30)
 
 # 배치 검사 (v0.1 전체 빌드를 눈으로 보고 찾은 결함 -- 2026-09-30)
 #  a 페이지 밖: 내용이 페이지 아래로 넘어가 잘림 (5쪽 Index 의 Tools 목록)
