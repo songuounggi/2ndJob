@@ -47,28 +47,38 @@ def tab_of(key):
     return "tools"
 
 
+BW = False          # 흑백 인쇄판을 그리는 중이면 True (accent 가 회색을 준다)
+
+
 def accent(k):
-    """(장식, 틴트, 글자용) -- 후보의 1번 강조색. 탭 레일은 전 페이지 이 네 색"""
-    return cc.palette(CAND[k])[0]
+    """(장식, 틴트, 글자용) -- 후보의 1번 강조색. 탭 레일은 전 페이지 이 네 색. 흑백판은 회색"""
+    return GRAY_ACC if BW else cc.palette(CAND[k])[0]
 
 
 GRAY = dict(bg="#FFFFFF", ink="#2B2B2B", mid="#555555", soft="#6B6B6B", line="#CFCFCF", field="#F2F2F2")
 GRAY_ACC = ("#8A8A8A", "#EDEDED", "#3F3F3F")
 
 
+COLOR_VER = "colors-v0.2"      # 색 확정표의 판 -- 번짐 파일 이름은 색 판을 따른다
+
+
 def bloom_file(k):
-    name = f"p4_bloom_{k}_{VER}.png"
+    name = f"p4_bloom_{k}_{COLOR_VER}.png"
     path = os.path.join(ROOT, "assets", name)
     if not os.path.exists(path):
         cc.bake_bloom(CAND[k], path)
     return name
 
 
+TAB_TARGET = {"home": "index", "energy": "energy", "rooms": "rooms", "routines": "daily",
+              "weeks": "weeks", "tools": "tools"}      # 탭을 누르면 가는 페이지 (전체 빌드)
+
+
 def rail(active, bw=False):
     out = []
     for k, lab in TABS:
         a, _, tx = GRAY_ACC if bw else accent(SECTION_OF_TAB[k])
-        out.append(f'<a class="{"on" if k == active else ""}" href="#{k}" style="--acc:{a};--acc-text:{tx}">'
+        out.append(f'<a class="{"on" if k == active else ""}" href="#{TAB_TARGET[k]}" style="--acc:{a};--acc-text:{tx}">'
                    f'<i style="background:{a}"></i><span>{lab}</span></a>')
     return f'<nav class="rail">{"".join(out)}</nav>'
 
@@ -76,8 +86,8 @@ def rail(active, bw=False):
 SOS = ('<a href="#rescue" class="sos">SOS</a>')
 
 
-def page(key, body, bw=False, sos=True, pid=None):
-    t = tab_of(key)
+def page(key, body, bw=False, sos=True, pid=None, tab=None):
+    t = tab or tab_of(key)
     k = SECTION_OF_TAB[t]
     c = GRAY if bw else CAND[k]
     a, ti, tx = GRAY_ACC if bw else accent(k)
@@ -123,6 +133,13 @@ a.tap{color:inherit;text-decoration:none}
       color:var(--ink);text-decoration:none;position:relative}
 .tile b{font-size:12pt}
 .tile small{font-size:7.5pt;color:var(--soft)}
+.tb{width:100%;border-collapse:collapse;table-layout:fixed}
+.tb th{font-size:7pt;font-weight:800;color:var(--soft);text-align:left;padding:0 6pt 5pt;
+       border-bottom:1px solid var(--line);letter-spacing:.04em}
+.tb td{border-bottom:1px solid var(--line);padding:0 6pt;font-size:9pt;vertical-align:middle}
+.tb td+td,.tb th+th{border-left:1px solid var(--line)}
+.tb td.c{padding:0;text-align:center}
+.bx{display:inline-block;width:11pt;height:11pt;border:1.2px solid var(--line);border-radius:3pt;vertical-align:middle}
 .chk{display:flex;align-items:center;gap:10pt;flex:1;border-bottom:1px solid var(--line);font-size:10pt}
 .chk:last-child{border-bottom:none}
 """
@@ -319,10 +336,55 @@ def to_pdf(out):
     return out
 
 
+FULL_VER = "v0.2"   # v0.2: Index 잘림·노트 내부 이름·주간 요일 머리글·sprint 괘선 (check_p4 배치 검사)
+
+
+def snap():
+    bp.SRC = SRC                                      # snap_cards 는 bp.SRC 를 고친다
+    for n in range(1, 8):
+        k = bp.snap_cards()
+        print(f"  snap pass {n}: pinned {k}")
+        if not k:
+            break
+
+
+def build_full():
+    """컬러 링크판 + 흑백 인쇄판. 둘 다 dedupe 해서 -FINAL (CLAUDE.md: 빌드 후 반드시 중복 제거)"""
+    global SRC, OUT_DIR, BW
+    import pages_p4
+    OUT_DIR = os.path.join(ROOT, "output", "prod4", "planner", FULL_VER)
+    os.makedirs(OUT_DIR, exist_ok=True)
+    outs = []
+    for bw in (False, True):
+        BW = bw
+        tag = "BW" if bw else "color"
+        SRC = os.path.join(ROOT, "src", f"p4_home-reset_{FULL_VER}_{tag}.html")
+        specs = [(k, fn, dict(tab=tab, sos=(k != "cover"), bw=bw)) for k, fn, tab in pages_pages(pages_p4)]
+        build_html(specs)
+        snap()
+        raw = to_pdf(os.path.join(OUT_DIR, f"home-reset_{FULL_VER}_{tag}.pdf"))
+        final = raw[:-4] + "-FINAL.pdf"
+        subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "dedupe_pdf.py"), raw, final], check=True)
+        outs.append(final)
+        print(tag, "->", final, os.path.getsize(final), "B")
+    BW = False
+    return outs
+
+
+def pages_pages(mod):
+    return mod.specs()
+
+
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "sample"
+    if mode == "full":
+        shadow = os.path.join(ROOT, "assets", "shadow_v8.20-undated.png")
+        if not os.path.exists(shadow):
+            bp.shadow_png(shadow)
+        build_full()
+        return
     if mode != "sample":
-        raise SystemExit("지금은 sample 만 -- 전체 빌드는 표본 확인 뒤 (PROCESS.md 4단계)")
+        raise SystemExit("mode = sample | full")
     os.makedirs(OUT_DIR, exist_ok=True)
     shadow = os.path.join(ROOT, "assets", "shadow_v8.20-undated.png")
     if not os.path.exists(shadow):

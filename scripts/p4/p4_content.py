@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.3"   # v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.4"   # v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -223,6 +223,40 @@ TOOL_PAGES = {   # 제목, 부제 (칸만 있는 페이지)
 WEEK_PAGE = ("Reset week {n}", "This week's rooms, one deep clean, and the wins.")
 
 
+# ------------------------------------------------ 전체 빌드용 작은 문구 --
+# 표본 뒤 전체 빌드에서 새로 생긴 제목·부제·칸 이름 (2026-09-30). 사용자 확인 전 -- 5단계 검수 때 목록으로 보인다
+PAGE_TEXT = {
+    "index": ("Index", "Everything in here, one tap away."),
+    "rooms": ("Rooms", "Pick one. Ten minutes, then stop."),
+    "deep": ("{room}: deep clean", "Once a month or once a season. Any order."),
+    "myroom": ("My room", "Name it and write your own order."),
+    "weeks": ("Weeks", "Fifty-two reset weeks. Start on any week."),
+    "tools": ("Tools", "For the days that need a different way in."),
+    "notes-ruled": ("Notes", "Lined"), "notes-dots": ("Notes", "Dot grid"), "notes-blank": ("Notes", "Blank"),
+}
+LABELS = {
+    # 방 카드
+    "reset": "10-minute reset", "done": "Done enough", "need": "You'll need", "last": "Last reset",
+    "hot": "Hotspots", "hot_hint": "where it always piles up", "deep_link": "Deep clean list",
+    "card_link": "Back to the room card", "task": "Task", "last_done": "Last done", "room_name": "Room name",
+    # 에너지·순환·주간
+    "pick": "Today's pick", "pick_hint": "one is enough", "slid": "Slid to next week",
+    "slid_hint": "no penalty, just the next slot", "week_rooms": "This week's rooms",
+    "week_deep": "One deep clean", "week_loops": "Loops this week", "week_wins": "Wins",
+    "prev": "Previous week", "next": "Next week", "room": "Room",
+    # 루틴
+    "stuck": "Stuck here?", "my_fix": "What works for me", "who": "Who", "how_often": "How often",
+    "turn": "Whose turn", "kids": "Kids can do", "age": "Age", "pets": "Pet care", "month": "Month",
+    "season_extra": "My own",
+    # 도구
+    "round": "Round", "did": "What I did", "hide": "Everything else goes in one box.",
+    "item": "Item", "keep": "Keep", "toss": "Toss", "donate": "Donate", "give_back": "Give back",
+    "thing": "Thing", "home": "Its home", "left": "How much is left", "buy": "Buy",
+    "full": "Full", "half": "Half", "low": "Low", "with": "With", "how_long": "How long",
+    "date": "Date", "minutes": "Minutes", "guess": "Guess", "actual": "Actual",
+    "project": "Project", "first_step": "First step", "timer": "Timer set for",
+}
+
 # ----------------------------------------------------------------- 검사 --
 BANNED = re.compile(
     r"\b(fail\w*|lazy|should|must|streaks?|(?:fall\w*|fell|get\w*|got|are|you\'re|running) behind|catch(?:ing)? up|perfect\w*|"
@@ -257,6 +291,7 @@ def all_texts():
     out += [("doom", t) for t in DOOM_PILE[:2]] + [("doom", t) for t in DOOM_PILE[2]]
     out += [("dopamine", t) for t in DOPAMINE[:2]] + [("dopamine", a + " " + b) for a, b in DOPAMINE[2]]
     out += [(k, t) for k, v in TOOL_PAGES.items() for t in v] + [("week", t) for t in WEEK_PAGE]
+    out += [(k, t) for k, v in PAGE_TEXT.items() for t in v] + [("label", t) for t in LABELS.values()]
     return out
 
 

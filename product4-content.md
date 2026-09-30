@@ -66,6 +66,11 @@
 > 흑백 인쇄판은 탭 레일과 SOS 를 **그대로 둔다**(사용자). Energy menu 칸의 빈 줄은 칸 맨 아래에 붙이고 `+` 표시
 > (표본 v0.1 에서 높이가 들쭉날쭉 -- 사용자 지적, `build_p4.check_energy_align` 이 잰다).
 
+> **2026-09-30 전체 빌드 v0.2** (`python scripts/p4/build_p4.py full`): 컬러 링크판 + 흑백판 각 107쪽,
+> `output/prod4/planner/v0.2/home-reset_v0.2_{color,BW}-FINAL.pdf` (3.4MB / 3.4MB). 검사 `scripts/p4/check_p4.py`
+> (쪽 수·죽은 링크·고아 페이지·탭 하이라이트·원고 누락·배치 4종) + `check_render.py` 모두 FAILURES 0.
+> **보류: 2쪽 순서도 디자인** -- 사용자 "너무 촌스럽다"(09-30). 내용·링크는 두고 모양만 다시 짠다.
+
 ### 3-1. HOME (5)
 
 | # | 페이지 | 구분 | 내용 | 링크 |
