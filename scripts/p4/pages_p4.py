@@ -161,9 +161,10 @@ def p_daily():
 
 
 def p_rotation():
-    rooms = [n for _, n, *_ in C.ROOMS] + ["&nbsp;"]
+    # 기획서 3-4: 요일 7칸에 방을 하나씩 (2026-09-30 사용자 확정). v0.7 은 방 9줄 x 요일 격자였다
+    rows = [[d] for d in DAYS]
     return (bp.head(C.SECTION_NAMES["routines"], C.ROTATION_TITLE, C.WEEKLY_ROTATION_SUB) + '<div class="body">'
-            + card("", table([L["room"]] + DAYS, [[n] for n in rooms], ["30%"] + ["10%"] * 7, row_h=30))
+            + card("", table(["", L["room"], ""], rows, ["16%", "72%", "12%"], box_cols=(2,), row_h=40))
             + bp.prompt_card(L["slid"], L["slid_hint"], 4) + '</div>')
 
 
@@ -302,6 +303,13 @@ def simple_table_page(key, headers, widths, n, box_cols=(), row_h=26):
             + card("", table(headers, blank_rows(n), widths, box_cols=box_cols, row_h=row_h)) + '</div>')
 
 
+def p_big_reset():
+    t, sub = C.TOOL_PAGES["big-reset"]
+    rows = [["", x] for x in C.BIG_RESET] + blank_rows(19 - len(C.BIG_RESET))
+    return (bp.head(C.SECTION_NAMES["tools"], t, sub) + '<div class="body">'
+            + card("", table(["", L["task"]], rows, ["26pt", "auto"], box_cols=(0,), row_h=26)) + '</div>')
+
+
 def p_dopamine():
     t, sub, parts = C.DOPAMINE
     return bp.head(C.SECTION_NAMES["tools"], t, sub) + '<div class="body">' + "".join(bp.prompt_card(a, b, 2) for a, b in parts) + '</div>'
@@ -351,8 +359,7 @@ def specs():
                                                      ["60%", "20%", "20%"], 19), "tools"),
           ("projects", lambda: simple_table_page("projects", [L["project"], L["first_step"]],
                                                  ["40%", "60%"], 13, row_h=38), "tools"),
-          ("big-reset", lambda: simple_table_page("big-reset", ["", L["task"]], ["26pt", "auto"], 19,
-                                                  box_cols=(0,)), "tools"),
+          ("big-reset", p_big_reset, "tools"),
           ("notes-ruled", lambda: p_notes("ruled"), "tools"), ("notes-dots", lambda: p_notes("dots"), "tools"),
           ("notes-blank-1", lambda: p_notes("blank"), "tools"), ("notes-blank-2", lambda: p_notes("blank"), "tools")]
     PAGE_NO.clear()

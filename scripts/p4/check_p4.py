@@ -173,7 +173,8 @@ def check(ver, tag):
     # 문구 누락: 원고의 핵심 문구가 HTML 에 있나 (5-1 기획서 대조의 최소판)
     must = ([t for v in C.ENERGY.values() for t, _ in v] + [s for rm in C.ROOMS for s in rm[2]]
             + [rm[3] for rm in C.ROOMS] + [d for rm in C.ROOMS for d in rm[5]] + C.MONTHLY
-            + [a for a, _, _ in C.RESCUE["steps"]] + [b for _, b in C.LAUNDRY_LOOP + C.DISHES_LOOP])
+            + [a for a, _, _ in C.RESCUE["steps"]] + [b for _, b in C.LAUNDRY_LOOP + C.DISHES_LOOP]
+            + C.BIG_RESET)
     plain = html.replace("&amp;", "&").replace("&#x27;", "'")
     missing = [t for t in must if t not in plain]
     if missing:

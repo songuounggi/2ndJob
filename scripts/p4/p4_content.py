@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.5"   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.6"   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -180,6 +180,11 @@ DISHES_LOOP = [("Use", "Keep one cup per person out"),
                ("Wash", "Set a 10-minute timer, stop when it rings"),
                ("Put away", "Unload while the kettle boils")]
 WEEKLY_ROTATION_SUB = "One room a day. Missed one? Slide it to the next."
+# 103쪽 Moving or big reset -- 미리 채운 항목 (2026-09-30 사용자: "미리 채운 항목 10~12개 + 빈 줄")
+BIG_RESET = ["Book the date and the help", "Collect boxes, tape, and markers", "Pack one room a day",
+             "Label every box by room", "Pack an open-first box", "Donate what you won't move",
+             "Clear out the fridge and freezer", "Update your address everywhere", "Clean each room once it's empty",
+             "Photograph the meter readings", "Keep keys and papers in one bag", "Unpack the bed and bathroom first"]
 
 # ----------------------------------------------------------------- 도구 --
 RESCUE = {
@@ -313,6 +318,7 @@ def all_texts():
     out += [("start", t) for t in START_PROMPT] + [("room", ROOM_SUB), ("rotation", ROTATION_TITLE)]
     out += [(k, t) for k, v in LOOP_PAGES.items() for t in v]
     out += [("daily", k) for k in DAILY_RESET] + [("seasonal", k) for k in SEASONAL]
+    out += [("big-reset", t) for t in BIG_RESET]
     return out
 
 
@@ -339,6 +345,7 @@ def check():
     need(all(len(v) == 5 for v in SEASONAL.values()) and len(SEASONAL) == 4, "Seasonal 4 x 5 아님")
     need(len(RESCUE["steps"]) == 5 and len(DECLUTTER[2]) == 5, "Rescue·Declutter 5 아님")
     need(len(LAUNDRY_LOOP) == 4 and len(DISHES_LOOP) == 4, "루프 4단계 아님")
+    need(10 <= len(BIG_RESET) <= 12 and len(set(BIG_RESET)) == len(BIG_RESET), "이사 체크리스트 10~12개, 중복 없이")
 
     # 링크 대상이 실제 페이지 key 인가
     pages = {r[0] for r in ROOMS} | {MY_ROOM[0], "dishes-loop", "laundry-loop", "rescue"} | set(TOOL_PAGES)
@@ -348,7 +355,8 @@ def check():
 
     # 문구 원칙 1: 할 일은 6단어 이내 (방 순서·Energy·Daily·Monthly·Seasonal·깊은 청소)
     tasks = ([s for r in ROOMS for s in r[2] + r[5]] + [t for v in ENERGY.values() for t, _ in v]
-             + [t for v in DAILY_RESET.values() for t in v] + MONTHLY + [t for v in SEASONAL.values() for t in v])
+             + [t for v in DAILY_RESET.values() for t in v] + MONTHLY + [t for v in SEASONAL.values() for t in v]
+             + BIG_RESET)
     need(not [t for t in tasks if words(t) > 7], f"7단어 초과 {[t for t in tasks if words(t) > 7]}")
     dup_energy = [t for v in ENERGY.values() for t, _ in v]
     need(len(dup_energy) == len(set(dup_energy)), "Energy menu 중복")
