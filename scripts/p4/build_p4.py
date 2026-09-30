@@ -83,7 +83,12 @@ def rail(active, bw=False):
     return f'<nav class="rail">{"".join(out)}</nav>'
 
 
-SOS = ('<a href="#rescue" class="sos">SOS</a>')
+SOS = f'<a href="#rescue" class="sos">{C.SOS_LABEL}</a>'
+
+# 화살표는 글자가 아니라 벡터. "→" "←" 는 Nunito 에 없어 PC 마다 다른 글꼴로 대신 찍힌다(v0.6: 맑은 고딕 129곳)
+ARR_R = ('<svg class="ar" viewBox="0 0 10 10"><path d="M1 5h7M5.2 2.2 8 5l-2.8 2.8" fill="none" '
+         'stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+ARR_L = ARR_R.replace('class="ar"', 'class="ar l"')
 
 
 def page(key, body, bw=False, sos=True, pid=None, tab=None):
@@ -141,6 +146,8 @@ a.tap{color:inherit;text-decoration:none}
 .tb td+td,.tb th+th{border-left:1px solid var(--line)}
 .tb td.c{padding:0;text-align:center}
 .bx{display:inline-block;width:11pt;height:11pt;border:1.2px solid var(--line);border-radius:3pt;vertical-align:middle}
+.ar{width:7pt;height:7pt;vertical-align:-.5pt;margin-left:3pt}
+.ar.l{transform:scaleX(-1);margin:0 3pt 0 0}
 .chk{display:flex;align-items:center;gap:10pt;flex:1;border-bottom:1px solid var(--line);font-size:10pt}
 .chk:last-child{border-bottom:none}
 """
@@ -148,10 +155,9 @@ a.tap{color:inherit;text-decoration:none}
 
 # --------------------------------------------------------------- 페이지 --
 def p_cover():
-    items = [("energy", "Energy menu", "pick by battery and time", "4"),
-             ("rooms", "Rooms", "nine rooms, ten-minute resets", "19"),
-             ("routines", "Routines &amp; weeks", "daily, weekly, the loops", "61"),
-             ("tools", "Tools", "rescue, sprint, declutter", "18")]
+    counts = ["4", "19", "61", "18"]     # 섹션별 쪽 수 -- check_p4 가 실제 쪽 수와 대조한다
+    items = [(k, t.replace("&", "&amp;"), d, n) for k, (t, d), n in
+             zip(["energy", "rooms", "routines", "tools"], C.COVER_ITEMS, counts)]
     rows = "".join(
         f'<div style="display:flex;align-items:center;gap:12pt;padding:11pt 0;'
         f'{"" if i == len(items) - 1 else "border-bottom:1px solid var(--line)"}">'
@@ -162,10 +168,11 @@ def p_cover():
     title, sub = C.COVER
     return (f'<div class="head" style="flex:1;display:flex;flex-direction:column;align-items:center;'
             f'justify-content:center;text-align:center"><div class="coverrule"></div>'
-            f'<span class="chip">UNDATED &middot; NO-GUILT</span>'
-            f'<div style="font-size:31pt;font-weight:700;line-height:1.18;margin-top:20pt;letter-spacing:-.02em">'
-            f'{title.replace("ADHD ", "ADHD<br>")}</div>'
-            f'<div style="color:var(--mid);font-size:11pt;margin-top:12pt">{sub.capitalize()}.</div></div>'
+            f'<span class="chip">{C.COVER_CHIP}</span>'
+            f'<a href="#flow" style="display:block;color:inherit;text-decoration:none;font-size:31pt;'
+            f'font-weight:700;line-height:1.18;margin-top:20pt;letter-spacing:-.02em">'
+            f'{title.replace("ADHD ", "ADHD<br>")}</a>'
+            f'<div style="color:var(--mid);font-size:11pt;margin-top:12pt">{C.COVER_SUB}</div></div>'
             f'<div class="card" style="flex:none;padding:6pt 22pt;margin-bottom:40pt">{rows}</div>')
 
 
@@ -174,13 +181,13 @@ def p_start():
     steps = "".join(
         f'<a class="card tap" href="#{target}" style="flex:none;padding:18pt 20pt">'
         f'<div class="step"><div class="num">{i}</div><div><div class="st-t">{t}</div>'
-        f'<div class="st-d">{d}</div></div><div class="go">Go &rarr;</div></div></a>'
+        f'<div class="st-d">{d}</div></div><div class="go">{C.GO} {ARR_R}</div></div></a>'
         for i, (t, d, target) in enumerate(s["steps"], 1))
-    return (bp.head("Home", s["title"], s["sub"])
+    return (bp.head(C.SECTION_NAMES["home"], s["title"], s["sub"])
             + f'<div class="body">{steps}'
             + f'<div class="card" style="flex:none;padding:14pt 20pt"><div style="font-size:9pt;color:var(--mid)">'
               f'{s["note"]}</div></div>'
-            + bp.prompt_card("The room that bugs me most", "start there next time", 4)
+            + bp.prompt_card(*C.START_PROMPT, 4)
             + '</div>')
 
 
@@ -194,9 +201,9 @@ def p_energy():
                             for txt, t in C.ENERGY[(b, m)])
             # 빈 줄 = 내 할 일 하나 적는 칸. 칸 맨 아래에 붙여 같은 줄 네 칸이 한 높이 (v0.1 은 글 밑에 붙어 들쭉날쭉)
             cells += f'<div class="cell" data-row="{b}">{items}<div class="blank">+</div></div>'
-    return (bp.head("Energy", title, sub)
+    return (bp.head(C.SECTION_NAMES["energy"], title, sub)
             + f'<div class="body"><div class="em">{cells}</div>'
-            + bp.prompt_card("Today's pick", "one is enough", 3)
+            + bp.prompt_card(C.LABELS["pick"], C.LABELS["pick_hint"], 3)
             + '</div>')
 
 
@@ -233,7 +240,7 @@ def p_flow():
         else:
             lines += f'<polygon fill="#9A968F" points="{x2 - 6},{y2 - 3.5} {x2 - 6},{y2 + 3.5} {x2},{y2}"/>'
     svg = f'<svg width="500pt" height="560pt" viewBox="0 0 500 560">{lines}</svg>'
-    return (bp.head("Home", f["title"], f["sub"])
+    return (bp.head(C.SECTION_NAMES["home"], f["title"], f["sub"])
             + f'<div class="body"><div class="flow">{svg}{boxes}</div></div>')
 
 
@@ -241,9 +248,9 @@ def p_house_map():
     title, sub = C.TOOL_PAGES["house-map"]
     rooms = [(k, n) for k, n, *_ in C.ROOMS] + [C.MY_ROOM]
     tiles = "".join(
-        f'<a class="tile" href="#{k}"><b>{n}</b><div><small>Last reset</small>'
+        f'<a class="tile" href="#{k}"><b>{n}</b><div><small>{C.LABELS["last"]}</small>'
         f'<div class="field" style="margin-top:4pt"></div></div></a>' for k, n in rooms)
-    return bp.head("Home", title, sub) + f'<div class="body"><div class="tiles">{tiles}</div></div>'
+    return bp.head(C.SECTION_NAMES["home"], title, sub) + f'<div class="body"><div class="tiles">{tiles}</div></div>'
 
 
 def p_room(key):
@@ -252,18 +259,18 @@ def p_room(key):
                   f'font-size:8pt">{i}</span>{s}</div>' for i, s in enumerate(steps, 1))
     tool_chips = " ".join(f'<span class="chip" style="margin:0 4pt 4pt 0">{t}</span>' for t in tools)
     dates = "".join('<div class="field" style="flex:1"></div>' for _ in range(5))
-    return (bp.head("Rooms", name, "Ten minutes, top to bottom. Then stop.")
+    return (bp.head(C.SECTION_NAMES["rooms"], name, C.ROOM_SUB)
             + '<div class="body">'
-            + f'<div class="card" style="flex:1.4"><div class="label">10-minute reset</div>'
+            + f'<div class="card" style="flex:1.4"><div class="label">{C.LABELS["reset"]}</div>'
               f'<div style="flex:1;display:flex;flex-direction:column">{chk}</div></div>'
-            + f'<div class="card" style="flex:none"><div class="label">Done enough</div>'
+            + f'<div class="card" style="flex:none"><div class="label">{C.LABELS["done"]}</div>'
               f'<div style="font-size:11pt;font-weight:700">{done}</div></div>'
             + '<div class="row" style="flex:none">'
-            + f'<div class="card" style="flex:1"><div class="label">You\'ll need</div><div>{tool_chips}</div></div>'
-            + f'<div class="card" style="flex:1"><div class="label">Last reset</div>'
+            + f'<div class="card" style="flex:1"><div class="label">{C.LABELS["need"]}</div><div>{tool_chips}</div></div>'
+            + f'<div class="card" style="flex:1"><div class="label">{C.LABELS["last"]}</div>'
               f'<div style="display:flex;gap:6pt">{dates}</div></div></div>'
-            + bp.prompt_card("Hotspots", "where it always piles up", 3)
-            + f'<a class="tap go" href="#deep-{key}" style="flex:none">Deep clean list &rarr;</a>'
+            + bp.prompt_card(C.LABELS["hot"], C.LABELS["hot_hint"], 3)
+            + f'<a class="tap go" href="#deep-{key}" style="flex:none">{C.LABELS["deep_link"]} {ARR_R}</a>'
             + '</div>')
 
 
@@ -273,10 +280,10 @@ def p_rescue():
         f'<a class="card tap" href="#{t}" style="flex:1;padding:12pt 18pt;justify-content:center">'
         f'<div class="step"><div class="num">{i}</div><div><div class="st-t">{a}</div>'
         f'<div class="st-d">{b}</div></div></div></a>' for i, (a, b, t) in enumerate(r["steps"], 1))
-    return (bp.head("Tools", r["title"], r["sub"])
+    return (bp.head(C.SECTION_NAMES["tools"], r["title"], r["sub"])
             + f'<div class="body">{steps}'
             + f'<a class="card tap" href="#wins" style="flex:none;padding:14pt 18pt">'
-              f'<div class="step"><div class="st-t">{r["after"]}</div><div class="go">Wins log &rarr;</div></div></a>'
+              f'<div class="step"><div class="st-t">{r["after"]}</div><div class="go">{C.TOOL_PAGES["wins"][0]} {ARR_R}</div></div></a>'
             + '</div>')
 
 
@@ -337,7 +344,7 @@ def to_pdf(out):
     return out
 
 
-FULL_VER = "v0.5"   # v0.5: Index 오른쪽 목록 카드 넘침 27px (줄 간격 4 -> 3pt)   # v0.4: check_lines -- sprint 부풀림, Index·주간 좌우 끝 맞춤   # v0.3 v0.3: 표 헤더 위에도 선 -- 위아래 대칭 (사용자)   # v0.2 v0.2: Index 잘림·노트 내부 이름·주간 요일 머리글·sprint 괘선 (check_p4 배치 검사)
+FULL_VER = "v0.7"   # v0.7: 5-5 검수 -- 화살표 글자를 SVG 로(맑은 고딕 대체 129곳)   # v0.6: 5-1 검수 -- 박힌 문구 23개를 원고로, 표지 -> 2쪽 링크   # v0.5: Index 오른쪽 목록 카드 넘침 27px (줄 간격 4 -> 3pt)   # v0.4: check_lines -- sprint 부풀림, Index·주간 좌우 끝 맞춤   # v0.3 v0.3: 표 헤더 위에도 선 -- 위아래 대칭 (사용자)   # v0.2 v0.2: Index 잘림·노트 내부 이름·주간 요일 머리글·sprint 괘선 (check_p4 배치 검사)
 
 
 def snap():

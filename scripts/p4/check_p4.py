@@ -80,6 +80,54 @@ def check_layout(src):
     return found
 
 
+TEXT_JS = """() => {
+  const out = [];
+  document.querySelectorAll('section.page').forEach(pg => {
+    const w = document.createTreeWalker(pg, NodeFilter.SHOW_TEXT);
+    let n; while ((n = w.nextNode())) { const t = n.textContent.trim(); if (t) out.push([pg.id, t]); }
+  });
+  return out;
+}"""
+
+
+def check_copy(src):
+    """5-1 기획서 대조: 페이지에 보이는 글자가 전부 원고(p4_content)에서 왔나. 숫자·요일·기호는 뺀다.
+    v0.5 에서 빌드 코드에 직접 박힌 문구 17개가 나왔다(표지 칩, 방 카드 부제, 루프 제목 등)."""
+    import html as H
+    sys.path.insert(0, os.path.join(ROOT, "scripts"))
+    from chrome_auto import launch
+    from playwright.sync_api import sync_playwright
+    known = set()
+    for _, t in C.all_texts():
+        known.add(t)
+        known.update(x.strip() for x in re.split(r"(?<=[.?!])\s+", t))
+    for a, b, _ in C.START_HERE["steps"] + C.RESCUE["steps"]:
+        known.update([a, b])
+    for a, b in C.LAUNDRY_LOOP + C.DISHES_LOOP + C.DOPAMINE[2] + C.DAY_PAGE_CARDS:
+        known.update([a, b])
+    for a, b, _ in C.FLOW["boxes"].values():
+        known.update([a, b])
+    known.update(C.RESCUE[k] for k in ("title", "sub", "after"))
+    known.update(C.COVER[0].replace("ADHD ", "ADHD\n").split("\n"))      # 표지 제목은 두 줄로 나뉜다
+    skip = re.compile(r"^(\d+|\d+ MIN|[MTWFS]|MON|TUE|WED|THU|FRI|SAT|SUN|HOME|ENERGY|ROOMS|ROUTINES|WEEKS|TOOLS|"
+                      r"Low|Medium|Full|\+|→|←|5:00|Week|of)$")
+    with sync_playwright() as p:
+        br = launch(p)
+        pg = br.new_page(viewport={"width": 816, "height": 1056})
+        pg.goto("file:///" + src.replace(os.sep, "/"))
+        found = pg.evaluate(TEXT_JS)
+        br.close()
+    extra = {}
+    for pid, t in found:
+        t = H.unescape(t).replace("→", "").replace("←", "").strip()
+        if not t or skip.match(t) or t in known:
+            continue
+        if re.fullmatch(r"Reset week \d+|.+: deep clean|Round \d|Notes \(.+\)", t):
+            continue
+        extra.setdefault(t, pid)
+    return extra
+
+
 def check(ver, tag):
     fails = []
     src = os.path.join(ROOT, "src", f"p4_home-reset_{ver}_{tag}.html")
@@ -130,6 +178,27 @@ def check(ver, tag):
     missing = [t for t in must if t not in plain]
     if missing:
         fails.append(f"원고 문구가 PDF 원본에 없음 {len(missing)}: {missing[:5]}")
+    # 표지의 섹션별 쪽 수가 실제와 같은가 (5-4)
+    import pages_p4
+    tabs = [t for _, _, t in pages_p4.specs()]
+    real = [tabs.count("energy"), tabs.count("rooms"), tabs.count("routines") + tabs.count("weeks"), tabs.count("tools")]
+    printed = re.findall(r'<span class="chip">(\d+)</span>', re.search(r'id="cover".*?</section>', html, re.S).group(0))
+    if [int(x) for x in printed] != real:
+        fails.append(f"표지 쪽 수 {printed} != 실제 {real}")
+    # 표지 -> 2쪽 링크 (기획서 3-1)
+    if 'href="#flow"' not in re.search(r'id="cover".*?</section>', html, re.S).group(0):
+        fails.append("표지에 2쪽(flow) 링크 없음")
+    # 5-5 글꼴: Nunito(가변 글꼴이라 Chrome 이 이름 없는 Type3 로 넣는다 -- 상품 1 판매본과 같음) 말고는 없어야 한다.
+    # v0.6 에서 화살표 → ← 129곳이 맑은 고딕으로 대신 찍혔다
+    import pymupdf
+    d = pymupdf.open(pdf)
+    other = sorted({f[3] for pg in d for f in pg.get_fonts() if f[3] and "Nunito" not in f[3]})
+    d.close()
+    if other:
+        fails.append(f"허용 밖 글꼴 {other}")
+    extra = check_copy(src)
+    if extra:
+        fails.append(f"원고 밖 문구 {len(extra)}개: " + "; ".join(f"{t} ({p})" for t, p in list(extra.items())[:25]))
     lay = check_layout(src)
     if lay:
         kinds = {}

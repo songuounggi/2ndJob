@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.4"   # v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.5"   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -234,6 +234,21 @@ PAGE_TEXT = {
     "tools": ("Tools", "For the days that need a different way in."),
     "notes-ruled": ("Notes", "Lined"), "notes-dots": ("Notes", "Dot grid"), "notes-blank": ("Notes", "Blank"),
 }
+# 5-1 검수(2026-09-30)에서 찾은 것: 빌드 코드에 직접 박혀 있던 문구. 원고로 옮겼다 -- 사용자 확인 전
+SECTION_NAMES = {"home": "Home", "energy": "Energy", "rooms": "Rooms", "routines": "Routines",
+                 "weeks": "Weeks", "tools": "Tools"}
+COVER_CHIP = "UNDATED · NO-GUILT"
+COVER_SUB = "Clean by energy, not by schedule."
+COVER_ITEMS = [("Energy menu", "pick by battery and time"), ("Rooms", "nine rooms, ten-minute resets"),
+               ("Routines & weeks", "daily, weekly, the loops"), ("Tools", "rescue, sprint, declutter")]
+SOS_LABEL = "SOS"
+GO = "Go"
+START_PROMPT = ("The room that bugs me most", "start there next time")
+ROOM_SUB = "Ten minutes, top to bottom. Then stop."
+ROTATION_TITLE = "Weekly rotation"
+LOOP_PAGES = {"laundry-loop": ("Laundry loop", "Wash, dry, fold, put away. Where do you stop?"),
+              "dishes-loop": ("Dishes loop", "Use, soak, wash, put away. Where do you stop?")}
+
 LABELS = {
     # 방 카드
     "reset": "10-minute reset", "done": "Done enough", "need": "You'll need", "last": "Last reset",
@@ -255,6 +270,7 @@ LABELS = {
     "full": "Full", "half": "Half", "low": "Low", "with": "With", "how_long": "How long",
     "date": "Date", "minutes": "Minutes", "guess": "Guess", "actual": "Actual",
     "project": "Project", "first_step": "First step", "timer": "Timer set for",
+    "deep_chip": "deep clean", "laundry": "Laundry", "dishes": "Dishes",
 }
 
 # ----------------------------------------------------------------- 검사 --
@@ -292,6 +308,11 @@ def all_texts():
     out += [("dopamine", t) for t in DOPAMINE[:2]] + [("dopamine", a + " " + b) for a, b in DOPAMINE[2]]
     out += [(k, t) for k, v in TOOL_PAGES.items() for t in v] + [("week", t) for t in WEEK_PAGE]
     out += [(k, t) for k, v in PAGE_TEXT.items() for t in v] + [("label", t) for t in LABELS.values()]
+    out += [("section", t) for t in SECTION_NAMES.values()] + [("cover", COVER_CHIP), ("cover", COVER_SUB)]
+    out += [("cover", t) for pair in COVER_ITEMS for t in pair] + [("ui", SOS_LABEL), ("ui", GO)]
+    out += [("start", t) for t in START_PROMPT] + [("room", ROOM_SUB), ("rotation", ROTATION_TITLE)]
+    out += [(k, t) for k, v in LOOP_PAGES.items() for t in v]
+    out += [("daily", k) for k in DAILY_RESET] + [("seasonal", k) for k in SEASONAL]
     return out
 
 

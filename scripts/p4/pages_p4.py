@@ -43,7 +43,7 @@ def blank_rows(n):
 
 
 def link(target, text):
-    return f'<a class="tap go" href="#{target}" style="flex:none">{text} &rarr;</a>'
+    return f'<a class="tap go" href="#{target}" style="flex:none">{text} {B.ARR_R}</a>'
 
 
 def title_of(key):
@@ -60,7 +60,8 @@ def title_of(key):
     return {"cover": C.COVER[0], "flow": C.FLOW["title"], "start": C.START_HERE["title"],
             "rescue": C.RESCUE["title"], "sprint": C.SPRINT[0], "guests": C.GUESTS[0],
             "doom": C.DOOM_PILE[0], "declutter": C.DECLUTTER[0], "dopamine": C.DOPAMINE[0],
-            "rotation": "Weekly rotation", "laundry-loop": "Laundry loop", "dishes-loop": "Dishes loop",
+            "rotation": C.ROTATION_TITLE, "laundry-loop": C.LOOP_PAGES["laundry-loop"][0],
+            "dishes-loop": C.LOOP_PAGES["dishes-loop"][0],
             "day-Low": C.DAY_PAGES["Low"][0], "day-Medium": C.DAY_PAGES["Medium"][0],
             "day-Full": C.DAY_PAGES["Full"][0]}.get(key, key)
 
@@ -77,17 +78,18 @@ def link_list(keys, pad=7):
 # --------------------------------------------------------------- HOME --
 def p_index():
     t, sub = C.PAGE_TEXT["index"]
-    groups = [("Home", ["flow", "start", "house-map"]), ("Energy", ["energy", "day-Low", "day-Medium", "day-Full"]),
-              ("Rooms", ["rooms"] + [r[0] for r in C.ROOMS] + ["myroom"]),
-              ("Routines", ["daily", "rotation", "monthly", "seasonal", "laundry-loop", "dishes-loop",
+    N = C.SECTION_NAMES
+    groups = [(N["home"], ["flow", "start", "house-map"]), (N["energy"], ["energy", "day-Low", "day-Medium", "day-Full"]),
+              (N["rooms"], ["rooms"] + [r[0] for r in C.ROOMS] + ["myroom"]),
+              (N["routines"], ["daily", "rotation", "monthly", "seasonal", "laundry-loop", "dishes-loop",
                             "who-does-what", "kids-pets"]),
-              ("Weeks", ["weeks"]), ("Tools", ["tools"] + [k for k in TOOL_KEYS if not k.startswith("notes-")]
+              (N["weeks"], ["weeks"]), (N["tools"], ["tools"] + [k for k in TOOL_KEYS if not k.startswith("notes-")]
                                            + ["notes-ruled"])]
     # v0.1 은 오른쪽(Routines + Tools 18줄)이 페이지 아래로 잘렸다 -> 줄 간격을 줄이고 노트는 한 줄로, 양쪽 줄 수를 맞춘다
     lg, rg = groups[:3] + groups[4:5], groups[3:4] + groups[5:]
     left = "".join(card(g, link_list(k, 3), 1 if i == len(lg) - 1 else "none") for i, (g, k) in enumerate(lg))
     right = "".join(card(g, link_list(k, 3), 1 if i == len(rg) - 1 else "none") for i, (g, k) in enumerate(rg))
-    return (bp.head("Home", t, sub) + f'<div class="body"><div class="row">'
+    return (bp.head(C.SECTION_NAMES["home"], t, sub) + f'<div class="body"><div class="row">'
             f'<div class="col" style="flex:1">{left}</div><div class="col" style="flex:1">{right}</div>'
             f'</div></div>')
 
@@ -100,7 +102,7 @@ def p_day(b):
     last = (f'<div class="card" style="flex:none;flex-direction:row;align-items:center;gap:12pt">'
             f'<span class="bx" style="width:16pt;height:16pt"></span><div><div class="st-t">{l4}</div>'
             f'<div class="st-d">{h4}</div></div></div>')
-    return (bp.head("Energy", t, sub) + '<div class="body">' + today
+    return (bp.head(C.SECTION_NAMES["energy"], t, sub) + '<div class="body">' + today
             + bp.prompt_card(l2, h2, 3) + bp.prompt_card(l3, h3, 3) + last
             + link("energy", C.TOOL_PAGES["energy"][0]) + '</div>')
 
@@ -112,10 +114,10 @@ def p_rooms():
     rows = "".join(
         f'<div style="display:flex;align-items:center;padding:9pt 0;border-bottom:1px solid var(--line)">'
         f'<a href="#{k}" style="flex:1;color:var(--ink);text-decoration:none;font-size:11pt;font-weight:700">{n}</a>'
-        f'<a href="#deep-{k}" class="chip" style="text-decoration:none">deep clean</a>'
+        f'<a href="#deep-{k}" class="chip" style="text-decoration:none">{L["deep_chip"]}</a>'
         f'<span style="width:34pt;text-align:right;color:var(--soft);font-size:9pt">{PAGE_NO.get(k, "")}</span></div>'
         for k, n in rooms)
-    return (bp.head("Rooms", t, sub) + f'<div class="body">{card("", rows)}'
+    return (bp.head(C.SECTION_NAMES["rooms"], t, sub) + f'<div class="body">{card("", rows)}'
             + link("house-map", C.TOOL_PAGES["house-map"][0]) + '</div>')
 
 
@@ -126,7 +128,7 @@ def p_deep(key):
         _, name, _, _, _, deep = next(r for r in C.ROOMS if r[0] == key)
     t, sub = C.PAGE_TEXT["deep"]
     rows = [[d] for d in deep] + blank_rows(16 - len(deep))
-    return (bp.head("Rooms", t.format(room=name), sub) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["rooms"], t.format(room=name), sub) + '<div class="body">'
             + card("", table([L["task"], L["last_done"], "", ""], rows, ["52%", "16%", "16%", "16%"], row_h=28))
             + link(key, L["card_link"]) + '</div>')
 
@@ -137,7 +139,7 @@ def p_myroom():
                     f'font-size:8pt">{i}</span><div class="field" style="flex:1;height:16pt"></div></div>'
                     for i in range(1, 7))
     dates = "".join('<div class="field" style="flex:1"></div>' for _ in range(5))
-    return (bp.head("Rooms", t, sub) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["rooms"], t, sub) + '<div class="body">'
             + bp.field_row(L["room_name"])
             + f'<div class="card" style="flex:1.4"><div class="label">{L["reset"]}</div>'
               f'<div style="flex:1;display:flex;flex-direction:column">{steps}</div></div>'
@@ -155,12 +157,12 @@ def p_daily():
     for lab, tasks in C.DAILY_RESET.items():
         rows = [[x] for x in tasks] + blank_rows(2)
         cards += card(lab, table([L["task"]] + DAYS, rows, ["37%"] + ["9%"] * 7, box_cols=range(1, 8), row_h=30), 1)
-    return bp.head("Routines", t, sub) + f'<div class="body">{cards}</div>'
+    return bp.head(C.SECTION_NAMES["routines"], t, sub) + f'<div class="body">{cards}</div>'
 
 
 def p_rotation():
     rooms = [n for _, n, *_ in C.ROOMS] + ["&nbsp;"]
-    return (bp.head("Routines", "Weekly rotation", C.WEEKLY_ROTATION_SUB) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["routines"], C.ROTATION_TITLE, C.WEEKLY_ROTATION_SUB) + '<div class="body">'
             + card("", table([L["room"]] + DAYS, [[n] for n in rooms], ["30%"] + ["10%"] * 7, row_h=30))
             + bp.prompt_card(L["slid"], L["slid_hint"], 4) + '</div>')
 
@@ -168,7 +170,7 @@ def p_rotation():
 def p_monthly():
     t, sub = C.TOOL_PAGES["monthly"]
     rows = [[x] for x in C.MONTHLY] + blank_rows(4)
-    return (bp.head("Routines", t, sub) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["routines"], t, sub) + '<div class="body">'
             + card("", table([L["task"], L["month"], ""], rows, ["62%", "26%", "12%"], box_cols=(2,), row_h=28))
             + '</div>')
 
@@ -179,7 +181,7 @@ def p_seasonal():
     for season, tasks in C.SEASONAL.items():
         rows = [["", x] for x in tasks] + [["", f'<span style="color:var(--soft)">{L["season_extra"]}</span>']]
         cards.append(card(season, table(["", L["task"]], rows, ["22pt", "auto"], box_cols=(0,), row_h=30), 1))
-    return (bp.head("Routines", t, sub) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["routines"], t, sub) + '<div class="body">'
             f'<div class="row">{cards[0]}{cards[1]}</div><div class="row">{cards[2]}{cards[3]}</div></div>')
 
 
@@ -189,23 +191,22 @@ def p_loop(key, title, stages):
               f'<span class="bx" style="margin-left:auto;width:14pt;height:14pt"></span></div>'
               f'<div class="label" style="margin-top:14pt">{L["stuck"]}</div>'
               f'<div style="font-size:10pt">{fix}</div></div>') for i, (stage, fix) in enumerate(stages, 1)]
-    sub = {"laundry-loop": "Wash, dry, fold, put away. Where do you stop?",
-           "dishes-loop": "Use, soak, wash, put away. Where do you stop?"}[key]
-    return (bp.head("Routines", title, sub) + '<div class="body">'
+    title, sub = C.LOOP_PAGES[key]
+    return (bp.head(C.SECTION_NAMES["routines"], title, sub) + '<div class="body">'
             f'<div class="row">{cells[0]}{cells[1]}</div><div class="row">{cells[2]}{cells[3]}</div>'
             + bp.prompt_card(L["my_fix"], "", 3) + '</div>')
 
 
 def p_who():
     t, sub = C.TOOL_PAGES["who-does-what"]
-    return (bp.head("Routines", t, sub) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["routines"], t, sub) + '<div class="body">'
             + card("", table([L["task"], L["who"], L["how_often"], L["turn"]], blank_rows(17),
                              ["40%", "20%", "20%", "20%"], row_h=28)) + '</div>')
 
 
 def p_kids():
     t, sub = C.TOOL_PAGES["kids-pets"]
-    return (bp.head("Routines", t, sub) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["routines"], t, sub) + '<div class="body">'
             + card(L["kids"], table([L["task"], L["who"], L["age"]], blank_rows(7), ["60%", "25%", "15%"], row_h=26))
             + card(L["pets"], table([L["task"]] + DAYS, blank_rows(5), ["37%"] + ["9%"] * 7,
                                     box_cols=range(1, 8), row_h=26)) + '</div>')
@@ -217,7 +218,7 @@ def p_weeks():
     chips = "".join(f'<a href="#w{w}" style="text-align:center;padding:11pt 0;background:var(--chip);'
                     f'color:var(--accent-text);border-radius:10pt;font-size:9.5pt;font-weight:800;'
                     f'text-decoration:none">{w}</a>' for w in range(1, 53))
-    return (bp.head("Weeks", t, sub) + '<div class="body"><div class="card" style="flex:1">'
+    return (bp.head(C.SECTION_NAMES["weeks"], t, sub) + '<div class="body"><div class="card" style="flex:1">'
             '<div style="display:grid;grid-template-columns:repeat(5,74pt);gap:11pt;justify-content:center;'
             f'align-content:center;height:100%">{chips}</div></div></div>')
 
@@ -226,13 +227,13 @@ def p_week(n):
     t, sub = C.WEEK_PAGE
     rows = [[d] for d in DAYS]
     # 좁은 칸이라 요일은 한 글자 (v0.1 은 MON TUE 가 칸을 넘쳐 붙었다)
-    loops = table([""] + [d[0] for d in DAYS], [["Laundry"], ["Dishes"]], ["30%"] + ["10%"] * 7,
+    loops = table([""] + [d[0] for d in DAYS], [[L["laundry"]], [L["dishes"]]], ["30%"] + ["10%"] * 7,
                   box_cols=range(1, 8), row_h=24)
     nav = '<div style="display:flex;justify-content:space-between;flex:none">'
-    nav += (f'<a class="tap go" href="#w{n - 1}" style="margin:0">&larr; {L["prev"]}</a>' if n > 1 else "<span></span>")
-    nav += (f'<a class="tap go" href="#w{n + 1}">{L["next"]} &rarr;</a>' if n < 52 else "<span></span>")
+    nav += (f'<a class="tap go" href="#w{n - 1}" style="margin:0">{B.ARR_L}{L["prev"]}</a>' if n > 1 else "<span></span>")
+    nav += (f'<a class="tap go" href="#w{n + 1}">{L["next"]} {B.ARR_R}</a>' if n < 52 else "<span></span>")
     nav += "</div>"
-    return (bp.head("Weeks", t.format(n=n), sub) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["weeks"], t.format(n=n), sub) + '<div class="body">'
             + f'<div class="row" style="flex:none">'
               f'{card(L["week_rooms"], table(["", L["room"], ""], rows, ["18%", "70%", "12%"], box_cols=(2,), row_h=24), 1.3)}'
               f'<div class="col" style="flex:1">{card(L["week_deep"], "<div class=field></div>")}'
@@ -251,7 +252,7 @@ def p_tools():
     t, sub = C.PAGE_TEXT["tools"]
     keys = TOOL_KEYS
     half = (len(keys) + 1) // 2
-    return (bp.head("Tools", t, sub) + '<div class="body"><div class="row" style="flex:none">'
+    return (bp.head(C.SECTION_NAMES["tools"], t, sub) + '<div class="body"><div class="row" style="flex:none">'
             f'{card("", link_list(keys[:half]), 1)}{card("", link_list(keys[half:]), 1)}</div></div>')
 
 
@@ -267,14 +268,14 @@ def p_sprint():
         f'<div style="text-align:center;align-self:flex-start">{ring}<div class="st-d">{L["round"]} {i}</div></div>'
         f'<div style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">'
         f'<div class="label">{L["did"]}</div>{bp.lines(3)}</div></div>' for i in range(1, 4))
-    return (bp.head("Tools", t, sub) + f'<div class="body">{rounds}'
+    return (bp.head(C.SECTION_NAMES["tools"], t, sub) + f'<div class="body">{rounds}'
             + link("wins", C.TOOL_PAGES["wins"][0]) + '</div>')
 
 
 def p_guests():
     t, sub, steps = C.GUESTS
     rows = [["", s] for s in steps] + blank_rows(2)
-    return (bp.head("Tools", t, sub) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["tools"], t, sub) + '<div class="body">'
             + card("", table(["", L["task"]], rows, ["26pt", "auto"], box_cols=(0,), row_h=40))
             + f'<div class="card" style="flex:none"><div class="st-t">{L["hide"]}</div></div></div>')
 
@@ -282,7 +283,7 @@ def p_guests():
 def p_doom():
     t, sub, cats = C.DOOM_PILE
     cs = [bp.prompt_card(c, "", 5) for c in cats]
-    return (bp.head("Tools", t, sub) + '<div class="body">' + bp.field_row(L["timer"])
+    return (bp.head(C.SECTION_NAMES["tools"], t, sub) + '<div class="body">' + bp.field_row(L["timer"])
             + f'<div class="row">{cs[0]}{cs[1]}</div><div class="row">{cs[2]}{cs[3]}</div></div>')
 
 
@@ -290,20 +291,20 @@ def p_declutter():
     t, sub, qs = C.DECLUTTER
     q = "".join(f'<div class="step" style="padding:4pt 0"><div class="num" style="width:18pt;height:18pt;'
                 f'font-size:8pt">{i}</div><div style="font-size:10pt">{x}</div></div>' for i, x in enumerate(qs, 1))
-    return (bp.head("Tools", t, sub) + '<div class="body">' + card("", q)
+    return (bp.head(C.SECTION_NAMES["tools"], t, sub) + '<div class="body">' + card("", q)
             + card("", table([L["item"], L["keep"], L["toss"], L["donate"], L["give_back"]], blank_rows(11),
                              ["44%", "14%", "14%", "14%", "14%"], box_cols=(1, 2, 3, 4), row_h=26)) + '</div>')
 
 
 def simple_table_page(key, headers, widths, n, box_cols=(), row_h=26):
     t, sub = C.TOOL_PAGES[key]
-    return (bp.head("Tools", t, sub) + '<div class="body">'
+    return (bp.head(C.SECTION_NAMES["tools"], t, sub) + '<div class="body">'
             + card("", table(headers, blank_rows(n), widths, box_cols=box_cols, row_h=row_h)) + '</div>')
 
 
 def p_dopamine():
     t, sub, parts = C.DOPAMINE
-    return bp.head("Tools", t, sub) + '<div class="body">' + "".join(bp.prompt_card(a, b, 2) for a, b in parts) + '</div>'
+    return bp.head(C.SECTION_NAMES["tools"], t, sub) + '<div class="body">' + "".join(bp.prompt_card(a, b, 2) for a, b in parts) + '</div>'
 
 
 def p_notes(kind):
@@ -314,7 +315,7 @@ def p_notes(kind):
         inner = f'<div class="card" style="flex:1">{bp.lines(30)}</div>'
     else:
         inner = '<div class="card" style="flex:1"></div>'
-    return bp.head("Tools", t, sub) + f'<div class="body">{inner}</div>'
+    return bp.head(C.SECTION_NAMES["tools"], t, sub) + f'<div class="body">{inner}</div>'
 
 
 # -------------------------------------------------------------- 목록 --
