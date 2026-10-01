@@ -25,7 +25,14 @@
 - **`design/prod4/the-adhd-home-reset-design-v1.0.zip`** (3.8MB, 82개). 아래 v1(18:02)은 옛것
 - 안: `README.md`(디자인 인수인계서) · **`pages_turn25.html`**(전체 디자인 HTML) · `reference/`(CLAUDE_prod4.md, background_bake.js, 메모 1개)
   · `assets/` · **`screenshots/p001_cover.jpg` ~ `p107_notes-blank_p107-108.jpg`** -- 쪽 번호가 붙어 있어 108쪽 지도와 바로 짝지어진다
-- 진행: 받아서 푸시만 했다(49c4e9f). **README 는 아직 안 읽었다** -- 사용자 토큰 99% 에서 멈춤
+- 진행 (10-01 19시~): **README·reference 2개·HTML 구조 정독 완료.** 요점 --
+  정답 그림 = `screenshots/p###` 38장 / `assets/25-*.jpg` = 배경 재료(번짐·유리 탭·켜진 탭·SOS·카드 그림자·배너 번짐을 구운 JPG) /
+  정확한 수치 = `pages_turn25.html`(쪽마다 612×792 상자, 배경 JPG 위에 글자·선·체크를 pt 절대 좌표로, 스크립트·그라데이션·그림자 CSS 0) /
+  우선순위 README 규칙 > HTML 수치 > 그림. 문구는 확정 원고 그대로(대소문자·줄 나눔만 다름, 39쪽 힌트만 "next slot" 으로 짧아짐).
+  HTML 링크는 대부분 `href="#"` 자리표시(일부 #p3 #p37 #p91 #p100 은 쪽 번호가 1씩 어긋남) -- 링크는 우리 페이지 key 로 다시 건다.
+  화살표 → ← 112곳은 글자라 Nunito 에 없어 대체 글꼴로 찍힌다 -- 우리 쪽에서 해결(웹 글꼴 지정 또는 SVG).
+- 질문 대기: ① 39~90쪽 Reset week 에 "← Previous week" 넣을지(시안은 Next 만) ② 39쪽 힌트 "next slot" vs 확정 "no penalty, just the next slot"
+  ③ 흑백 인쇄판 방식(시안은 컬러뿐 -- 그림자·유리 탭이 배경 JPG 에 구워져 있다)
 - 다음: 압축 풀기 → README·reference·HTML 정독 → 질문 모아 묻기 → 표본 → v0.10 → 검사 일곱 줄
 
 ### (옛것) 디자인 시안 v1 도착 (2026-10-01 18:02, 사용자 "심혈을 기울여 완성")
