@@ -230,6 +230,8 @@ COPY_FIX = [
     (lambda k: k == "rotation", "Slide it to the next.", lambda: C.WEEKLY_ROTATION_SUB.split("? ", 1)[1]),
     (lambda k: k.startswith("day-"), "PICK THREE AT MOST", lambda: C.DAY_PAGE_CARDS[0][1].upper()),
     (lambda k: k == "cover", "nine rooms, ten-minute resets", lambda: C.COVER_ITEMS[1][1]),     # v0.11 빈 방 둘째로 열 방
+    # 할 일이 눌린다는 안내 (v0.11 재시험: "목록인 줄 알고 지나친다" 3명)
+    (lambda k: k == "energy", "Pick by battery and time, not by day.", lambda: C.TOOL_PAGES["energy"][1]),
 ]
 
 
@@ -267,7 +269,8 @@ def additions(page, key):
         card = (f'<div style="position:absolute;left:{c["x"]}px;top:{c["y"]:g}px;width:{c["w"]}px;height:{c["h"]}px;'
                 f'border-radius:16px;background:#FFFFFF;box-sizing:border-box;"></div>'
                 f'<div style="position:absolute;left:{c["x"] + 24}px;top:{c["y"] + 18:g}px;width:{c["w"] - 48}px;height:22px;'
-                f'display:flex;align-items:center;justify-content:flex-start;{LABEL_CSS}">{C.LABELS["from_menu"].upper()}</div>'
+                f'display:flex;align-items:center;justify-content:flex-start;{LABEL_CSS}">{C.LABELS["from_menu"].upper()} · '
+                f'{C.LABELS["tap_one"].upper()}</div>'
                 + "".join(rows))
         page = page[:page.rfind("</div>")] + card + "</div>"
     elif key == "house-map":
@@ -654,6 +657,20 @@ def to_bw(page, num):
         # 목차·표 카드(766 까지)와 2쪽 순서도 글자에 겹쳤다. check_v2 8 이 끝에서 18pt 이상·겹침 0·카드 밖을 잰다
         page = (page[:page.rfind("</div>")] + f'<div style="position:absolute;left:0;top:{BW_PAGE_NO_TOP}px;width:612px;text-align:center;'
                 f'font-size:7.5px;font-weight:600;color:#7A7A7A">{num}</div></div>')
+    # 종이에서 길 찾기 (10-01 사용자, 재시험 인쇄파): SOS 옆에 Rescue 쪽 번호 / 10쪽 · 40쪽에 쪽 번호 규칙 한 줄.
+    # 번호는 쪽 목록에서 계산한다 -- 규칙 자체가 맞는지는 check_v2 8 이 잰다
+    keys = [k for k, _, _ in pages_p4.specs()]
+    key = keys[num - 1]
+    add = ""
+    if key != "cover":
+        add += (f'<div style="position:absolute;left:470px;top:30px;width:72px;height:18px;display:flex;align-items:center;'
+                f'justify-content:flex-end;font-size:7.5px;font-weight:600;color:#7A7A7A">'
+                f'{C.LABELS["page_short"]}{keys.index("rescue") + 1}</div>')
+    rule = {"rooms": C.LABELS["deep_next"], "weeks": C.LABELS["week_page"].format(p=keys.index("weeks") + 1)}.get(key)
+    if rule:
+        add += f'<div style="position:absolute;left:84px;top:116px;{HINT_CSS}">{rule}</div>'
+    if add:
+        page = page[:page.rfind("</div>")] + add + "</div>"
     page = re.sub(r"#[0-9A-Fa-f]{6}\b", lambda m: gray(m.group(0)), page)
     page = re.sub(r"rgba\((\d+),(\d+),(\d+),", lambda m: "rgba(%d,%d,%d," % ((round(
         0.2126 * int(m.group(1)) + 0.7152 * int(m.group(2)) + 0.0722 * int(m.group(3))),) * 3), page)

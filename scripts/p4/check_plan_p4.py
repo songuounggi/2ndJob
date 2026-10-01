@@ -15,6 +15,8 @@ v0.10 은 시안 HTML 을 틀로 쓴다. 시안이 문구를 빼거나 바꿨으
   5 판 글자의 금지 표현(5-4): 원고 검사(p4_content.check)는 원고만 본다 -- 시안에 박힌 글자까지 완성 판에서 다시.
     BANNED(실패·의학 표현) · FIRST_PERSON(1인칭 당사자) · UK(영국식) -- 허용은 원고와 같은 ALLOWED_BANNED 만
   7 방 카드로 가는 길: 집 지도 · 방 목록 · 목차에 방 카드 10개 전부(v0.11 빈 방 둘째) -- 방 목록엔 깊은 청소도
+  8 할 일이 그 쪽에 있다: Energy 할 일마다 목적지(방 카드 단계·Done enough·준비물 / 깊은 청소 목록)에 핵심 단어가 하나 이상
+    (관사·방 이름 빼고). 루프로 가는 일은 빼고 본다(리스팅 "the loop it belongs to"). v0.11 재시험 리뷰어 "누른 쪽에 그 일이 없다"
   6 써 보기 뒤 더한 것(10-01 사용자): 39~90쪽 Wins "this week" · "WEEK OF" 칸 / 7~9쪽 "FROM THE ENERGY MENU" 에 그 배터리
     할 일이 원고(ENERGY)와 같은 목록 · 같은 목적지 / 방 카드 9장 "← Energy menu" -> 6쪽
 의도한 차이(사용자 확정)는 ALLOW 에 이유와 함께.
@@ -177,7 +179,7 @@ def main(ver):
                 fails.append(f"{n} {k}: 날짜 칸(WEEK OF) 없음")
         elif k.startswith("day-"):
             b_ = k[4:]
-            i = body.find(f'>{C.LABELS["from_menu"].upper()}<')
+            i = body.find(f'>{C.LABELS["from_menu"].upper()}')        # 라벨 뒤에 " · TAP ONE" 이 붙는다(10-01 재시험)
             got = re.findall(r'<a href="#([^"]+)">([^<]+)</a>', body[i:]) if i >= 0 else []
             want = [(tg, H.escape(t)) for m in C.MINUTES for t, tg in C.ENERGY.get((b_, m), [])]
             if got != want:
@@ -185,6 +187,22 @@ def main(ver):
         elif k in {r[0] for r in C.ROOMS} | {kk for kk, _ in C.MY_ROOMS}:
             if not re.search(r'<a href="#energy" style="position:absolute;left:84px;top:754px;[^"]*">.*?Energy menu</a>', body, re.S):
                 fails.append(f"{n} {k}: '← Energy menu' 없음")
+
+    # 8 할 일이 그 쪽에 있다
+    stop = {"the", "a", "an", "one", "and", "to", "of", "in", "out", "up", "by", "for", "or", "into", "on", "off", "your",
+            "it", "its", "from", "with", "at", "all", "two", "five", "room", "rooms"}
+    wd = lambda s: {w for w in re.findall(r"[a-z]+", s.lower()) if w not in stop}
+    R = {r[0]: r for r in C.ROOMS}
+    for (b_, m_), tasks in C.ENERGY.items():
+        for t, tg in tasks:
+            if tg.endswith("-loop"):
+                continue
+            room = tg[5:] if tg.startswith("deep-") else tg
+            if room not in R:
+                continue
+            page_txt = " ".join(R[room][5]) if tg.startswith("deep-") else " ".join(R[room][2]) + " " + R[room][3] + " " + " ".join(R[room][4])
+            if not (wd(t) - wd(R[room][1])) & wd(page_txt):
+                fails.append(f"할 일 '{t}' ({b_} {m_}분) -> {tg}: 그 쪽에 이 일이 없음")
 
     # 7 방 카드로 가는 길 (v0.11 빈 방 둘째, 10-01 사용자): 집 지도 · 10쪽 방 목록 · 5쪽 목차에 방 카드 전부, 방 목록엔 깊은 청소도
     rooms_all = [r[0] for r in C.ROOMS] + [k for k, _ in C.MY_ROOMS]

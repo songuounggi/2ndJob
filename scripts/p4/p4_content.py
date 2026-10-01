@@ -77,7 +77,7 @@ ROOMS = [
       "Sort one dresser drawer", "Clear the closet floor", "Wash the pillows", "Wipe the light switches",
       "Flip or rotate the mattress"]),
     ("living", "Living room",
-     ["Cups and dishes to the kitchen", "Trash into one bag", "Fold the blankets",
+     ["Cups and dishes to the kitchen", "Trash into one bag", "Fold blankets, fluff the pillows",
       "Remotes and chargers in one spot", "Clear the coffee table", "Vacuum the middle of the room"],
      "You could sit down, and so could a guest.",
      ["trash bag", "basket", "vacuum", "cloth"],
@@ -86,7 +86,7 @@ ROOMS = [
       "Wash the cushion covers", "Vacuum along the baseboards"]),
     ("entry", "Entry & hallway",
      ["Pair the shoes by the door", "Hang up the coats", "Mail to the desk tray",
-      "Bags off the floor", "Keys into their bowl", "Shake out the door mat"],
+      "Bags off the floor", "Keys into their bowl", "Shake the mat, sweep the floor"],
      "You can walk in without stepping over anything.",
      ["shoe rack", "key bowl", "broom"],
      ["Wipe the front door", "Sort the coat closet", "Donate shoes nobody wears",
@@ -143,7 +143,7 @@ ENERGY = {
     ("Full", 2):    [("Take out the recycling", "kitchen"), ("Swap in fresh hand towels", "bathroom")],
     ("Full", 5):    [("Wipe down the desk", "desk"), ("Shake out the door mat", "entry")],
     ("Full", 10):   [("Mop the kitchen floor", "deep-kitchen"), ("Scrub the shower walls", "deep-bathroom"),
-                     ("Clear the desk to empty", "desk")],
+                     ("Clear the desk to empty", "deep-desk")],
     ("Full", 20):   [("Vacuum the car", "deep-car"), ("Deep clean one cabinet", "deep-kitchen"),
                      ("Wash the towels and bath mats", "laundry-loop")],
 }
@@ -184,7 +184,7 @@ DISHES_LOOP = [("Use", "Keep one cup per person out"),
                ("Soak", "Fill the sink with hot water first"),
                ("Wash", "Set a 10-minute timer, stop when it rings"),
                ("Put away", "Unload while the kettle boils")]
-WEEKLY_ROTATION_SUB = "One room a day. Missed one? Slide it to tomorrow."
+WEEKLY_ROTATION_SUB = "One room a day. Missed one? Slide it to the next slot."   # 같은 쪽 카드 "just the next slot" 과 같은 말 (10-01 재시험)
 # 103쪽 Moving or big reset -- 미리 채운 항목 (2026-09-30 사용자: "미리 채운 항목 10~12개 + 빈 줄")
 BIG_RESET = ["Book the date and the help", "Collect boxes, tape, and markers", "Pack one room a day",
              "Label every box by room", "Pack an open-first box", "Donate what you won't move",
@@ -228,7 +228,7 @@ TOOL_PAGES = {   # 제목, 부제 (칸만 있는 페이지)
     "kids-pets": ("Kids & pets tasks", "Jobs they can own."),
     "who-does-what": ("Who does what", "Split it on paper before it turns into an argument."),
     "house-map": ("House map", "Tap a room. Ten minutes, then stop."),
-    "energy": ("Energy menu", "Pick by battery and time, not by day."),
+    "energy": ("Energy menu", "Pick by battery and time, not by day. Tap a task to open it."),
     "monthly": ("Monthly deep clean", "Once a month. Any order."),
     "seasonal": ("Seasonal reset", "Four times a year."),
     "daily": ("Daily reset", "Two small resets a day."),
@@ -275,7 +275,10 @@ LABELS = {
     # slid_hint_short: Reset week 반쪽 카드용 (10-01 사용자: 원고 문구가 카드 끝을 넘어서)
     "slid_hint_short": "no penalty",
     # 10-01 사용자 (6단계 써 보기): 주간 Wins 칸 = 그 주 것(101쪽 Wins log 는 언제든) / 주간 날짜 칸 / 하루 쪽에 그 배터리 할 일
-    "wins_hint": "this week", "my_rooms": "My rooms", "week_of": "Week of", "from_menu": "From the Energy menu", "week_rooms": "This week's rooms",
+    "wins_hint": "this week", "my_rooms": "My rooms", "week_of": "Week of", "from_menu": "From the Energy menu", "tap_one": "tap one",
+    # 흑백판(종이)만: SOS 옆 쪽 번호, 10·40쪽 쪽 번호 규칙 (10-01 재시험, 인쇄파 구매자)
+    "page_short": "p.", "deep_next": "Each deep clean list is the page after its room card.",
+    "week_page": "Week N is on page {p} + N.", "week_rooms": "This week's rooms",
     "week_deep": "One deep clean", "week_loops": "Loops this week", "week_wins": "Wins",
     "prev": "Previous week", "next": "Next week", "room": "Room",
     # 루틴

@@ -75,6 +75,17 @@
   그림자 자리가 바뀐 배경은 `variant_bg` 가 디자인 굽기 코드로 다시 굽고 새 자리 밖이 원본과 같은지 재서 다르면 빌드를 멈춘다
   (하루 0.015 · 방 0.001 · My room 0.211 · 방 목록 0.190 · 주간 0.191). 검사: check_plan_p4 6·7 (고치기 전 판에서 FAIL 확인)
   결과: `output/prod4/planner/v0.11/home-reset_v0.11_color-FINAL.pdf`(5.1MB) · `…_BW-FINAL.pdf`(3.6MB), 110쪽
+- **6단계 재시험 v0.11 (10-01, 구매자 역할 7명)** -- 막힘 0 · 쓰는 칸 눌러 넘어감 0 · 탭 문제 0 · 리뷰어 별점 3 → 4.
+  **규칙대로 고친 것**: 94쪽 Rescue 2·3단계 카드 전체(→ 하나만 눌렸다) · 할 일 cabinet → 부엌 깊은 청소, mail pile → 거실 깊은 청소,
+  clear the desk → 책상 깊은 청소 · 흑백판 쪽 번호 아래 772 → 위쪽 가운데 35(종이 끝 4~6mm 라 프린터 여백에 걸림) · 리스팅 "two rooms".
+  **결정 (10-01 사용자)**: 33쪽 부제 "Slide it to the next slot."(같은 쪽 카드 "just the next slot" 과 같게) · 17쪽 03 "Fold blankets,
+  fluff the pillows", 19쪽 06 "Shake the mat, sweep the floor" + 리스팅 "Every task links to the room card, deep clean list, or loop it
+  belongs to." · 6쪽 부제 끝 "Tap a task to open it.", 7~9쪽 라벨 "… · TAP ONE" · 흑백판 SOS 옆 "p.94", 10쪽 "Each deep clean list is
+  the page after its room card.", 40쪽 "Week N is on page 40 + N." 검사: check_plan_p4 8(할 일이 그 쪽에 있다, 고치기 전 원고 3건 FAIL),
+  check_v2 8(흑백판 SOS 쪽 번호·규칙 줄·규칙이 판과 맞나, 쪽 번호 끝에서 18pt·겹침 0), check_listing(빈 방 개수)
+  **남은 것(낮음 -- 다음에 사용자 확인)**: 방 카드에서 Guests·주간으로 돌아가는 길 · Wins 칸과 Wins log 관계 안내 · Kids & pets 표에
+  WHO·체크 칸 · My room 카드 Last reset 5칸(다른 방 10칸)·Hotspots 부제 · 33쪽 방 줄 8개(방 10개) · 106쪽 "Moving or big reset"
+  항목이 전부 이사용 · 107쪽 Notes 제목 두 번 · 96쪽 같은 말 두 번 · 97쪽 "Timer set for" · "vs." · 2쪽 "Pick by minutes"
 - **다음**: 7단계 iPad(집). 쪽 번호를 말할 때는 v0.11 기준(29쪽 뒤 +2: Routines 31 · Weeks 40 · Reset week 41~92 · Tools 93 ·
   Rescue 94 · Guests 96 · Wins log 103 · Notes 107~110).
   **함정**: 이 PC 의 셸 도구는 명령을 넘길 때 `\\` 를 `\` 하나로 줄인다 -- heredoc 안 파이썬 `"\\1"` 이 제어 문자 `\x01` 이

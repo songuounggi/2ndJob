@@ -47,7 +47,7 @@ goodnotes cleaning
 ```
 Clean by energy, not by schedule. Pick a task that fits today's battery, reset one room in ten minutes, and stop at "done enough."
 
-This is an undated cleaning and home routine planner for ADHD brains. A weekly chore chart expects the same energy every Monday. This one starts from how much you have today. Low battery and five minutes? Load five dishes. Full battery and twenty minutes? Vacuum the car. Every task links to the page that walks you through it.
+This is an undated cleaning and home routine planner for ADHD brains. A weekly chore chart expects the same energy every Monday. This one starts from how much you have today. Low battery and five minutes? Load five dishes. Full battery and twenty minutes? Vacuum the car. Every task links to the room card, deep clean list, or loop it belongs to.
 
 WHAT YOU GET
 

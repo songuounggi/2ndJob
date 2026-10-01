@@ -188,8 +188,9 @@ def check(ver, tag):
                 continue
             if all(x.lower() in K for x in parts):
                 continue
-            # 화살표를 앞 단어와 묶으면 글자 조각이 "Check your" / "battery" 처럼 나뉜다 -- 조각은 단어 단위로 본다
-            if all(wd in KW for wd in re.findall(r"[a-z0-9'&?]+", t2.lower())):
+            # 화살표를 앞 단어와 묶으면 글자 조각이 "Check your" / "battery" 처럼 나뉜다 -- 조각은 단어 단위로 본다.
+            # 숫자만인 단어는 뺀다 -- 쪽 번호처럼 판에서 계산되는 값이다(흑백판 "p.94", "page 40 + N")
+            if all(wd in KW for wd in re.findall(r"[a-z0-9'&?]+", t2.lower()) if not wd.isdigit()):
                 continue
             extra.setdefault(t2, i)
     if extra:
@@ -237,6 +238,21 @@ def check(ver, tag):
                 low_or_hit.append(f"{n + 1}(끝에서 {edge:.1f}pt{', 겹침 ' + str(hit) if hit else ''})")
         if low_or_hit:
             fails.append(f"흑백판 쪽 번호 자리 문제 {len(low_or_hit)}: {low_or_hit[:6]}")
+        # 종이 길 찾기(10-01 재시험): SOS 옆 "p.<Rescue 쪽>" (표지 빼고) / 10쪽 · 40쪽 규칙 한 줄 -- 규칙 자체가 맞는지도
+        resc = ids.index("rescue") + 1
+        no_sos = [n + 1 for n, m in enumerate(secs) if n and f'>{C.LABELS["page_short"]}{resc}</div>' not in m.group(2)]
+        if no_sos:
+            fails.append(f"흑백판 SOS 옆 쪽 번호(p.{resc}) 없는 쪽 {len(no_sos)}: {no_sos[:8]}")
+        wk = ids.index("weeks") + 1
+        need_rule = {"rooms": C.LABELS["deep_next"], "weeks": C.LABELS["week_page"].format(p=wk)}
+        for k, txt in need_rule.items():
+            if H.escape(txt, quote=False) not in secs[ids.index(k)].group(2):
+                fails.append(f"흑백판 {ids.index(k) + 1}쪽 쪽 번호 규칙 줄 없음: {txt}")
+        rooms_all = [r[0] for r in C.ROOMS] + [k for k, _ in C.MY_ROOMS]
+        bad_rule = [k for k in rooms_all if ids.index("deep-" + k) != ids.index(k) + 1]
+        bad_rule += [f"w{n}" for n in range(1, 53) if ids.index(f"w{n}") + 1 != wk + n]
+        if bad_rule:
+            fails.append(f"흑백판 쪽 번호 규칙이 판과 다름: {bad_rule[:6]}")
         bare = len(re.findall(r'style="(?:[^"]*;)?width:14px;height:14px;border-radius:(?:4\.5px|50%);(?![^"]*border:)[^"]*"', html))
         bare += len(re.findall(r'style="height:26px;border-radius:8px;(?![^"]*border:)[^"]*"', html))
         if bare:
