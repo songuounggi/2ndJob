@@ -211,7 +211,7 @@ def check(ver, tag):
         for n, p in enumerate(doc):
             pix = p.get_pixmap(matrix=pymupdf.Matrix(.5, .5))
             hsv = Image.frombytes("RGB", (pix.width, pix.height), pix.samples).convert("HSV")
-            if max(hsv.getdata(1)) > 8:
+            if hsv.getchannel(1).getextrema()[1] > 8:          # 채도 최대 (getdata 는 Pillow 14 에서 사라진다)
                 colored.append(n + 1)
             # 바탕: 오른쪽 아래 빈 곳(알약 아래, 카드 밖)이 흰 종이여야 한다 -- v0.10 첫 빌드는 99쪽이 245 회색
             if pix.pixel(int(pix.width * .97), int(pix.height * .995))[0] < 254:

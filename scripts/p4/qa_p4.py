@@ -7,6 +7,7 @@
 스크롤·렌더 속도(check_scroll_speed)도 여기서 컬러판·흑백판 둘 다 -- 10-01 사용자: "필수 검수로, 네가 검수하는 곳에".
 """
 import os
+import re
 import subprocess
 import sys
 
@@ -31,10 +32,12 @@ CHECKS = [
 
 
 def ok(name, out, code):
-    tail = out.strip().splitlines()[-1] if out.strip() else ""
+    """결과 줄을 찾아 판정한다 -- 마지막 줄로 보면 뒤에 붙은 경고(stderr)를 결과로 읽는다(첫 실행에서 5-3 을 거짓 FAIL)"""
     if "dogfood" in name:
         return "막힌 곳 0개" in out
-    return code == 0 and ("FAIL 0" in tail or "FAILURES: 0" in tail or "통과" in tail)
+    if code != 0 or re.search(r"^FAIL:|^\s*(color|BW):\s+FAIL|FAILURES: [1-9]", out, re.M):
+        return False
+    return bool(re.search(r"FAIL 0|FAILURES: 0|검사 통과", out))
 
 
 def main():
