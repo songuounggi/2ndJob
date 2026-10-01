@@ -116,7 +116,28 @@ For personal use. Please do not resell or redistribute the files.
 | 링크판 | `The-ADHD-Home-Reset-Cleaning-Planner-110-pages.pdf` | `output/prod4/planner/<버전>/home-reset_<버전>_color-FINAL.pdf` |
 | 흑백 인쇄판 | `The-ADHD-Home-Reset-Printable-Black-and-White.pdf` | `…_BW-FINAL.pdf` |
 
-## 리스팅 사진 — 10장 계획 (만들기는 순서도 디자인이 끝난 뒤)
+## 리스팅 사진 — 10장 계획
+
+**시안 draft-v0.5 (10-01, 사용자 확인 대기)**: `output/prod4/listing/draft-v0.5/01_hero.png ~ 10_files.png` (한눈에: `_contact_sheet.png`).
+`python scripts/p4/listing_images_p4.py` -- 판매 PDF v0.11 쪽을 렌더해 2000x2000 에 배치. 상품 1 대표 사진 틀(크림 바탕 · 배지 · 큰 제목 ·
+숫자 알약 · 단순 패드) + 섹션 색 번짐. 제목 150px(01 은 170). 글자 안전 영역(가로 260-1740 · 세로 250-1750)·기기(가로 200-1800)·라벨과
+그림 겹침을 재고 넘으면 멈춘다. 숫자(110 pages · 31 tasks · Ten rooms · 52 weeks)는 판에서 센다. 문구는 이 파일 설명·원고에 있는 말만.
+고칠 때는 DRAFT 를 올린다(이미 있는 폴더면 멈춘다). v0.1·v0.2 는 검사에서 멈춘 불완전판
+
+| # | 파일 | 제목 (draft-v0.5) |
+|---|---|---|
+| 01 | `01_hero` | The ADHD Home Reset -- 110 pages · Hyperlinked · Printable B&W |
+| 02 | `02_energy` | Pick by battery, not by day |
+| 03 | `03_rooms` | Ten minutes, then stop |
+| 04 | `04_rescue` | For when it is all too much |
+| 05 | `05_flow` | One page shows the whole system |
+| 06 | `06_tabs` | Every page is one tap away |
+| 07 | `07_print` | Black & white for paper |
+| 08 | `08_weeks` | Skip a week. Nothing to catch up on. |
+| 09 | `09_inside` | 110 pages, six sections |
+| 10 | `10_files` | 2 files |
+
+처음 계획 (10장의 무엇):
 
 | # | 무엇 | 메모 |
 |---|---|---|
