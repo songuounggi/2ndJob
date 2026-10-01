@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""상품 4 v0.10~ -- 디자인 시안(claude.ai/design, TURN 25)을 틀로 110쪽(v0.10 은 108쪽)을 만든다 (PROCESS.md 4단계).
+"""상품 4 v0.10~ -- 디자인 시안(claude.ai/design, TURN 25)을 틀로 109쪽(v0.10 108 · v0.11 110)을 만든다 (PROCESS.md 4단계).
 
 디자인 인수인계: design/prod4/the-adhd-home-reset-design-v1.0.zip 의 README.md (반드시 먼저 읽을 것).
   - pages_turn25.html: 대표 38쪽. 쪽마다 612x792 상자, 배경 JPG(번짐·유리 탭·그림자·배너 번짐을 구움) 위에
@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.11"     # v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 (10-01 사용자)
+VER = "v0.12"     # v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -41,7 +41,7 @@ TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "ener
             "dishes-loop": 34, "who-does-what": 36, "kids-pets": 37, "weeks": 38, "tools": 91, "rescue": 92,
             "sprint": 93, "guests": 94, "doom": 95, "declutter": 96, "where-things-live": 97, "restock": 98,
             "dopamine": 99, "body-doubling": 100, "wins": 101, "guess-actual": 102, "projects": 103,
-            "big-reset": 104, "notes-ruled": 105, "notes-dots": 106, "notes-blank-1": 107, "notes-blank-2": 107}
+            "big-reset": 104, "notes-ruled": 105, "notes-dots": 106, "notes-blank": 107}
 TAB_OF = {"home": 0, "energy": 1, "rooms": 2, "routines": 3, "weeks": 4, "tools": 5}
 TAB_TARGET = {"HOME": "index", "ENERGY": "energy", "ROOMS": "rooms", "ROUTINES": "routines",
               "WEEKS": "weeks", "TOOLS": "tools"}
@@ -311,6 +311,9 @@ def additions(page, key):
         n1, n2 = (n for _, n in C.MY_ROOMS)
         page = (page[:row.start()] + row.group(1) + n1 + row.group(2) + "27" + row.group(3)
                 + row.group(1) + n2 + row.group(2) + "29" + row.group(3) + page[row.end():])
+        page = notes_one(page, key)
+    elif key == "tools":
+        page = notes_one(page, key)
     elif key in ROOM_OF or key in dict(C.MY_ROOMS):
         pill = (f'<a href="#energy" style="position:absolute;left:84px;top:754px;width:100px;height:24px;border-radius:12px;'
                 f'display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800">'
@@ -420,6 +423,28 @@ def arrow_link(tgt, col):
     """글자 끝 → 만 누르는 링크. 손끝 여유 6pt(padding)를 주되 음수 margin 으로 배치는 그대로"""
     return (f'<a href="#{tgt}" style="padding:6px 6px 6px 0;margin:-6px -6px -6px 0">'
             f'<span style="margin-left:4px;color:{col}">→</span></a>')
+
+
+def notes_one(page, key):
+    """노트 세 종류 한 장씩 (v0.12, 10-01 사용자): 목차의 "Notes (blank 1)" -> "Notes (blank)", "Notes (blank 2)" 줄은 뺀다.
+    5쪽은 흘러가는 목록이라 줄만 뺀다. 93쪽은 좌표 표라 마지막 줄을 빼면서 가로선 하나 · 세로선 26 · 카드 500 -> 474(아래 18 유지)"""
+    blank = C.PAGE_TEXT["notes-blank"][0] + " (" + C.PAGE_TEXT["notes-blank"][1].lower() + ")"
+    if key == "index":
+        row2 = re.search(r'<a href="#" style="display:flex;justify-content:space-between;align-items:center;height:20px;'
+                         r'padding-left:13px;font-size:9.5px"><span>Notes \(blank 2\)<span[^>]*>→</span></span><span[^>]*>108</span></a>', page)
+        if not row2:
+            raise SystemExit("[index] Notes (blank 2) 줄을 못 찾음")
+        page = page[:row2.start()] + page[row2.end():]
+        return must_replace(page, ">Notes (blank 1)<", f">{blank}<", key)
+    row2 = re.search(r'<div style="position:absolute;left:108px;top:594px;[^"]*">Notes \(blank 2\)<span[^>]*>→</span></div>'
+                     r'<div style="position:absolute;left:500px;top:594px;[^"]*">108</div>', page)
+    if not row2:
+        raise SystemExit("[tools] Notes (blank 2) 줄을 못 찾음")
+    page = page[:row2.start()] + page[row2.end():]
+    page = must_replace(page, ">Notes (blank 1)<", f">{blank}<", key)
+    page = must_replace(page, " M108,620 H560 ", " ", key)
+    page = must_replace(page, "M500,182 V616 ", "M500,182 V590 ", key)
+    return must_replace(page, "left:84px;top:138px;width:500px;height:500px;", "left:84px;top:138px;width:500px;height:474px;", key)
 
 
 def renumber(page, key, order):
@@ -701,8 +726,8 @@ def build(keys=None, bw=False):
     tpl = templates(design)
     specs = pages_p4.specs()
     order = [k for k, _, _ in specs]
-    if len(order) != 110:
-        raise SystemExit(f"쪽 수 {len(order)} != 110")
+    if len(order) != 109:
+        raise SystemExit(f"쪽 수 {len(order)} != 109")
     pages = []
     rel = os.path.relpath(os.path.join(design, "assets"), os.path.join(ROOT, "src")).replace(os.sep, "/")
     rel_of = lambda f: os.path.relpath(f, os.path.join(ROOT, "src")).replace(os.sep, "/")

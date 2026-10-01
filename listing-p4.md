@@ -52,8 +52,8 @@ This is an undated cleaning and home routine planner for ADHD brains. A weekly c
 WHAT YOU GET
 
 2 files:
-• Hyperlinked planner PDF — 110 pages for Goodnotes, Notability, and other PDF note apps
-• Printable black-and-white PDF — the same 110 pages in grayscale, easy on ink. US Letter size; prints on A4 with "fit to page"
+• Hyperlinked planner PDF — 109 pages for Goodnotes, Notability, and other PDF note apps
+• Printable black-and-white PDF — the same 109 pages in grayscale, easy on ink. US Letter size; prints on A4 with "fit to page"
 
 THREE THINGS A CHORE CHART DOES NOT DO
 
@@ -113,20 +113,20 @@ For personal use. Please do not resell or redistribute the files.
 
 | 파일 | 올릴 이름 | 원본 |
 |---|---|---|
-| 링크판 | `The-ADHD-Home-Reset-Cleaning-Planner-110-pages.pdf` | `output/prod4/planner/<버전>/home-reset_<버전>_color-FINAL.pdf` |
+| 링크판 | `The-ADHD-Home-Reset-Cleaning-Planner-109-pages.pdf` | `output/prod4/planner/<버전>/home-reset_<버전>_color-FINAL.pdf` |
 | 흑백 인쇄판 | `The-ADHD-Home-Reset-Printable-Black-and-White.pdf` | `…_BW-FINAL.pdf` |
 
 ## 리스팅 사진 — 10장 계획
 
-**시안 draft-v0.5 (10-01, 사용자 확인 대기)**: `output/prod4/listing/draft-v0.5/01_hero.png ~ 10_files.png` (한눈에: `_contact_sheet.png`).
-`python scripts/p4/listing_images_p4.py` -- 판매 PDF v0.11 쪽을 렌더해 2000x2000 에 배치. 상품 1 대표 사진 틀(크림 바탕 · 배지 · 큰 제목 ·
+**시안 draft-v0.6 (10-01, 사용자 확인 대기 -- v0.5 와 같은 구성, 판 v0.12 109쪽으로 다시 찍음)**: `output/prod4/listing/draft-v0.6/01_hero.png ~ 10_files.png` (한눈에: `_contact_sheet.png`).
+`python scripts/p4/listing_images_p4.py` -- 판매 PDF v0.12 쪽을 렌더해 2000x2000 에 배치. 상품 1 대표 사진 틀(크림 바탕 · 배지 · 큰 제목 ·
 숫자 알약 · 단순 패드) + 섹션 색 번짐. 제목 150px(01 은 170). 글자 안전 영역(가로 260-1740 · 세로 250-1750)·기기(가로 200-1800)·라벨과
-그림 겹침을 재고 넘으면 멈춘다. 숫자(110 pages · 31 tasks · Ten rooms · 52 weeks)는 판에서 센다. 문구는 이 파일 설명·원고에 있는 말만.
+그림 겹침을 재고 넘으면 멈춘다. 숫자(109 pages · 31 tasks · Ten rooms · 52 weeks)는 판에서 센다. 문구는 이 파일 설명·원고에 있는 말만.
 고칠 때는 DRAFT 를 올린다(이미 있는 폴더면 멈춘다). v0.1·v0.2 는 검사에서 멈춘 불완전판
 
-| # | 파일 | 제목 (draft-v0.5) |
+| # | 파일 | 제목 (draft-v0.6) |
 |---|---|---|
-| 01 | `01_hero` | The ADHD Home Reset -- 110 pages · Hyperlinked · Printable B&W |
+| 01 | `01_hero` | The ADHD Home Reset -- 109 pages · Hyperlinked · Printable B&W |
 | 02 | `02_energy` | Pick by battery, not by day |
 | 03 | `03_rooms` | Ten minutes, then stop |
 | 04 | `04_rescue` | For when it is all too much |
@@ -134,7 +134,7 @@ For personal use. Please do not resell or redistribute the files.
 | 06 | `06_tabs` | Every page is one tap away |
 | 07 | `07_print` | Black & white for paper |
 | 08 | `08_weeks` | Skip a week. Nothing to catch up on. |
-| 09 | `09_inside` | 110 pages, six sections |
+| 09 | `09_inside` | 109 pages, six sections |
 | 10 | `10_files` | 2 files |
 
 처음 계획 (10장의 무엇):
@@ -158,7 +158,7 @@ For personal use. Please do not resell or redistribute the files.
 
 | 문장 | 확인 |
 |---|---|
-| 110 pages (두 파일 모두) | PDF 쪽 수 |
+| 109 pages (두 파일 모두) | PDF 쪽 수 (v0.12 -- v0.10 108 · v0.11 110) |
 | 31 tasks | `p4_content.ENERGY` 개수 |
 | ten rooms / six-step | `ROOMS` 8 + My room 1·2 (v0.11), 방마다 6단계 |
 | 52 undated reset weeks | `w1`~`w52` |

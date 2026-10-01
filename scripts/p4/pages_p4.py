@@ -258,7 +258,7 @@ def p_week(n):
 # -------------------------------------------------------------- TOOLS --
 TOOL_KEYS = ["rescue", "sprint", "guests", "doom", "declutter", "where-things-live", "restock", "dopamine",
              "body-doubling", "wins", "guess-actual", "projects", "big-reset",
-             "notes-ruled", "notes-dots", "notes-blank-1", "notes-blank-2"]
+             "notes-ruled", "notes-dots", "notes-blank"]
 
 
 def p_tools():
@@ -381,7 +381,7 @@ def specs():
                                                  ["40%", "60%"], 13, row_h=38), "tools"),
           ("big-reset", p_big_reset, "tools"),
           ("notes-ruled", lambda: p_notes("ruled"), "tools"), ("notes-dots", lambda: p_notes("dots"), "tools"),
-          ("notes-blank-1", lambda: p_notes("blank"), "tools"), ("notes-blank-2", lambda: p_notes("blank"), "tools")]
+          ("notes-blank", lambda: p_notes("blank"), "tools")]   # v0.12~ 노트 세 종류 한 장씩 (10-01 사용자 -- 빈 노트만 두 장일 이유가 없었다)
     PAGE_NO.clear()
     PAGE_NO.update({k: i for i, (k, _, _) in enumerate(s, 1)})
     return s

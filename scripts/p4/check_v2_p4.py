@@ -42,11 +42,13 @@ REP = {"cover": "p001", "flow": "p002", "start": "p003", "house-map": "p004", "i
        "tools": "p091", "rescue": "p092", "sprint": "p093", "guests": "p094", "doom": "p095", "declutter": "p096",
        "where-things-live": "p097", "restock": "p098", "dopamine": "p099", "body-doubling": "p100", "wins": "p101",
        "guess-actual": "p102", "projects": "p103", "big-reset": "p104", "notes-ruled": "p105", "notes-dots": "p106",
-       "notes-blank-1": "p107"}
+       "notes-blank": "p107"}
 DIFF_MAX = 3.5      # 같은 틀·같은 내용이면 글자 안티에일리어싱 차이로 1.4~2.9 (v0.10 표본 실측)
 # 기획서 링크 중 사용자 결정으로 뺀 것 (10-01, 써 보기 6단계) -- 이유는 product4-content.md 인계 절
 LOST_OK = {"rescue": {"kitchen", "house-map"},      # 92쪽 1 Trash first·4 Clear a path 링크 뺌 (내용과 안 맞는 곳)
            "energy": {"car"}}                        # 6쪽 차 할 일 2개 -> 깊은 청소(deep-car) 로 (그 일이 있는 쪽)
+# v0.9 쪽 이름이 바뀌거나 결정으로 빠진 쪽 (v0.12, 10-01 사용자: 노트 세 종류 한 장씩) -- None 은 뺀 쪽
+KEY_RENAMED = {"notes-blank-1": "notes-blank", "notes-blank-2": None}
 DESIGN_LABELS = {"page", "week", "room", "task"}     # 디자인이 정한 표 머리(원고의 칸 이름을 대문자로 쓴 것 포함)
 
 PAGE_JS = """() => {
@@ -125,6 +127,8 @@ def check(ver, tag):
         per = lambda h: {m.group(1): set(re.findall(r'href="#([^"]+)"', m.group(2))) for m in
                          re.finditer(r'<section class="page" id="([^"]+)"[^>]*>(.*?)</section>', h, re.S)}
         old, new = per(open(base, encoding="utf-8").read()), per(html)
+        ren = lambda x: KEY_RENAMED.get(x, x)
+        old = {ren(k): {ren(t) for t in v} - {None} for k, v in old.items() if ren(k)}
         lost = {k: sorted(old[k] - new.get(k, set()) - {k} - LOST_OK.get(k, set()))
                 for k in old if old[k] - new.get(k, set()) - {k} - LOST_OK.get(k, set())}
         if lost:
@@ -278,7 +282,7 @@ def check(ver, tag):
 
 
 if __name__ == "__main__":
-    ver = sys.argv[1] if len(sys.argv) > 1 else "v0.11"
+    ver = sys.argv[1] if len(sys.argv) > 1 else "v0.12"
     total = 0
     for tag in ("color", "BW"):
         f = check(ver, tag)

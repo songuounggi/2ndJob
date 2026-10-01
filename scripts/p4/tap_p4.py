@@ -19,7 +19,7 @@ import pymupdf
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VER = os.environ.get("P4_VER", "v0.11")
+VER = os.environ.get("P4_VER", "v0.12")
 SCALE = 2
 FINGER = 6
 
