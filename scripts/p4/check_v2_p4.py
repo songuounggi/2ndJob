@@ -3,7 +3,7 @@
 
     python scripts/p4/check_v2_p4.py v0.10
 
-  1 쪽 수 108 · 쪽 크기 612x792pt (v0.10 첫 표본은 px 단위 때문에 459x594pt 였다)
+  1 쪽 수 = specs(v0.11 부터 110, v0.10 은 108) · 쪽 크기 612x792pt (v0.10 첫 표본은 px 단위 때문에 459x594pt 였다)
   2 링크: 죽은 링크 0 · 들어올 길 없는 쪽 0 · PDF 링크 주석이 쪽마다 있음
     + 기획서 링크: v0.9(기획서대로 써 보기 통과한 판)의 쪽별 목적지가 전부 있음 -- 시안에 화살표가 없다고 링크가
       빠지면 안 된다(10-01 사용자). v0.10 첫 빌드는 빠진 쪽이 57개였다
@@ -101,8 +101,9 @@ def check(ver, tag):
     ids = re.findall(r'<section class="page" id="([^"]+)"', html)
 
     # 1
-    if len(doc) != 108 or len(ids) != 108:
-        fails.append(f"쪽 수 PDF {len(doc)} / HTML {len(ids)} != 108")
+    want_n = len(__import__("pages_p4").specs()) if ver != "v0.10" else 108
+    if len(doc) != want_n or len(ids) != want_n:
+        fails.append(f"쪽 수 PDF {len(doc)} / HTML {len(ids)} != {want_n}")
     sizes = {(round(p.rect.width), round(p.rect.height)) for p in doc}
     if sizes != {(612, 792)}:
         fails.append(f"쪽 크기 {sizes} != 612x792pt")
@@ -243,7 +244,7 @@ def check(ver, tag):
 
 
 if __name__ == "__main__":
-    ver = sys.argv[1] if len(sys.argv) > 1 else "v0.10"
+    ver = sys.argv[1] if len(sys.argv) > 1 else "v0.11"
     total = 0
     for tag in ("color", "BW"):
         f = check(ver, tag)

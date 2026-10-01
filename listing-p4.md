@@ -52,13 +52,13 @@ This is an undated cleaning and home routine planner for ADHD brains. A weekly c
 WHAT YOU GET
 
 2 files:
-• Hyperlinked planner PDF — 108 pages for Goodnotes, Notability, and other PDF note apps
-• Printable black-and-white PDF — the same 108 pages in grayscale, easy on ink. US Letter size; prints on A4 with "fit to page"
+• Hyperlinked planner PDF — 110 pages for Goodnotes, Notability, and other PDF note apps
+• Printable black-and-white PDF — the same 110 pages in grayscale, easy on ink. US Letter size; prints on A4 with "fit to page"
 
 THREE THINGS A CHORE CHART DOES NOT DO
 
 • Energy menu — 31 tasks sorted by battery (low, medium, full) and time (2, 5, 10, 20 minutes)
-• Room reset cards — nine rooms, each with a six-step, ten-minute order and a "done enough" line so you know when to stop
+• Room reset cards — ten rooms, each with a six-step, ten-minute order and a "done enough" line so you know when to stop
 • Rescue mode — for when it is all too much: trash first, gather the dishes, one basket of clothes, clear a path, one surface. An SOS button on every page after the cover takes you there
 
 WHAT'S INSIDE
@@ -113,7 +113,7 @@ For personal use. Please do not resell or redistribute the files.
 
 | 파일 | 올릴 이름 | 원본 |
 |---|---|---|
-| 링크판 | `The-ADHD-Home-Reset-Cleaning-Planner-108-pages.pdf` | `output/prod4/planner/<버전>/home-reset_<버전>_color-FINAL.pdf` |
+| 링크판 | `The-ADHD-Home-Reset-Cleaning-Planner-110-pages.pdf` | `output/prod4/planner/<버전>/home-reset_<버전>_color-FINAL.pdf` |
 | 흑백 인쇄판 | `The-ADHD-Home-Reset-Printable-Black-and-White.pdf` | `…_BW-FINAL.pdf` |
 
 ## 리스팅 사진 — 10장 계획 (만들기는 순서도 디자인이 끝난 뒤)
@@ -137,9 +137,9 @@ For personal use. Please do not resell or redistribute the files.
 
 | 문장 | 확인 |
 |---|---|
-| 108 pages (두 파일 모두) | PDF 쪽 수 |
+| 110 pages (두 파일 모두) | PDF 쪽 수 |
 | 31 tasks | `p4_content.ENERGY` 개수 |
-| nine rooms / six-step | `ROOMS` 8 + My room, 방마다 6단계 |
+| ten rooms / six-step | `ROOMS` 8 + My room 1·2 (v0.11), 방마다 6단계 |
 | 52 undated reset weeks | `w1`~`w52` |
 | Six tabs: Home, Energy, Rooms, Routines, Weeks, Tools | `build_p4.TABS` |
 | under 6 MB | 두 PDF 크기 상한. v0.10(디자인 시안 판) 컬러 5.0MB · 흑백 3.5MB -- v0.9 까지는 3.4~3.5MB 라 4 MB 였다 (10-01) |

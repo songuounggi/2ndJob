@@ -62,12 +62,12 @@ low = desc.lower()
 need(all(n == pages["color"] for n in pages.values()), f"두 파일 쪽 수가 다름 {pages}")
 need(f"{pages['color']} pages" in desc, f"설명 쪽 수 != 판 {pages['color']}")
 need(f"{sum(len(v) for v in C.ENERGY.values())} tasks" in desc, "Energy 할 일 개수 불일치")
-n_rooms = len(C.ROOMS) + 1
-need({9: "nine"}.get(n_rooms, str(n_rooms)) + " rooms" in low, f"방 개수 불일치 ({n_rooms})")
+n_rooms = len(C.ROOMS) + len(C.MY_ROOMS)
+need({9: "nine", 10: "ten"}.get(n_rooms, str(n_rooms)) + " rooms" in low, f"방 개수 불일치 ({n_rooms})")
 need(all(len(r[2]) == 6 for r in C.ROOMS) and "six-step" in low, "방 카드 6단계 불일치")
 need("52 undated reset weeks" in desc, "주간 52 불일치")
 # "Every task links to the room card ..." 는 목적지가 전부 방 카드일 때만 -- 6개는 루프, 7개는 깊은 청소로 간다(10-01, 써 보기 6단계)
-room_keys = {r[0] for r in C.ROOMS} | {C.MY_ROOM[0]}
+room_keys = {r[0] for r in C.ROOMS} | {k for k, _ in C.MY_ROOMS}
 not_room = [t for v in C.ENERGY.values() for t, tg in v if tg not in room_keys]
 need(not (re.search(r"task links to the room card", desc) and not_room),
      f"설명이 '할 일 -> 방 카드' 라고 하는데 방 카드가 아닌 곳으로 가는 할 일 {len(not_room)}개")

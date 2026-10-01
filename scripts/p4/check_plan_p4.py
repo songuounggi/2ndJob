@@ -14,6 +14,7 @@ v0.10 은 시안 HTML 을 틀로 쓴다. 시안이 문구를 빼거나 바꿨으
     쪽 번호로 읽어 10-01 사용자 결정으로 다른 목차와 같은 뜻으로 바꿈
   5 판 글자의 금지 표현(5-4): 원고 검사(p4_content.check)는 원고만 본다 -- 시안에 박힌 글자까지 완성 판에서 다시.
     BANNED(실패·의학 표현) · FIRST_PERSON(1인칭 당사자) · UK(영국식) -- 허용은 원고와 같은 ALLOWED_BANNED 만
+  7 방 카드로 가는 길: 집 지도 · 방 목록 · 목차에 방 카드 10개 전부(v0.11 빈 방 둘째) -- 방 목록엔 깊은 청소도
   6 써 보기 뒤 더한 것(10-01 사용자): 39~90쪽 Wins "this week" · "WEEK OF" 칸 / 7~9쪽 "FROM THE ENERGY MENU" 에 그 배터리
     할 일이 원고(ENERGY)와 같은 목록 · 같은 목적지 / 방 카드 9장 "← Energy menu" -> 6쪽
 의도한 차이(사용자 확정)는 ALLOW 에 이유와 함께.
@@ -32,8 +33,8 @@ import pages_p4  # noqa: E402
 
 ALLOW = {
     # 문구: 이유
-    "no penalty, just the next slot": "39~90쪽 힌트를 'no penalty' 로 줄임 (10-01 사용자, 카드 넘침)",
-    "How much is left": "98쪽 Restock 머리 -- 시안 README 9절이 남은 양을 Full / Half / Low 체크 칸으로 정했다"
+    "no penalty, just the next slot": "Reset week 힌트를 'no penalty' 로 줄임 (10-01 사용자, 카드 넘침)",
+    "How much is left": "Restock list 머리 -- 시안 README 9절이 남은 양을 Full / Half / Low 체크 칸으로 정했다"
                         "(기획서 '남은 양 칸 + 살 것' 은 그대로)",
 }
 
@@ -109,7 +110,7 @@ def main(ver):
         skip |= {("loop", f"{a} {b}") for a, b in pairs}
     for w, t in C.all_texts():
         if "{room}" in t:
-            items += [("deep-" + r[0], t.replace("{room}", r[1])) for r in C.ROOMS] + [("deep-myroom", t.replace("{room}", C.MY_ROOM[1]))]
+            items += [("deep-" + r[0], t.replace("{room}", r[1])) for r in C.ROOMS] + [("deep-" + k, t.replace("{room}", n)) for k, n in C.MY_ROOMS]
             skip.add((w, t))
         if w == "daily" and t in C.DAILY_RESET:          # "Morning (5 min)" -> 시안은 "Morning" / "5 min" 두 요소
             items += [("daily", x.strip(" ()")) for x in re.split(r"[()]", t) if x.strip(" ()")]
@@ -181,9 +182,17 @@ def main(ver):
             want = [(tg, H.escape(t)) for m in C.MINUTES for t, tg in C.ENERGY.get((b_, m), [])]
             if got != want:
                 fails.append(f"{n} {k}: 할 일 목록이 원고와 다름 ({len(got)} / {len(want)})")
-        elif k in {r[0] for r in C.ROOMS} | {C.MY_ROOM[0]}:
+        elif k in {r[0] for r in C.ROOMS} | {kk for kk, _ in C.MY_ROOMS}:
             if not re.search(r'<a href="#energy" style="position:absolute;left:84px;top:754px;[^"]*">.*?Energy menu</a>', body, re.S):
                 fails.append(f"{n} {k}: '← Energy menu' 없음")
+
+    # 7 방 카드로 가는 길 (v0.11 빈 방 둘째, 10-01 사용자): 집 지도 · 10쪽 방 목록 · 5쪽 목차에 방 카드 전부, 방 목록엔 깊은 청소도
+    rooms_all = [r[0] for r in C.ROOMS] + [k for k, _ in C.MY_ROOMS]
+    for k, need_keys in (("house-map", rooms_all), ("rooms", rooms_all + ["deep-" + r for r in rooms_all]), ("index", rooms_all)):
+        if k in secs:
+            miss = [x for x in need_keys if f'href="#{x}"' not in secs[k]]
+            if miss:
+                fails.append(f"{ids.index(k) + 1} {k}: 가는 링크 없음 {miss}")
 
     print(f"상품 4 기획서 대조 {ver} -- 문구 {len(seen)}개, 쪽 {len(ids)}")
     if unused:
@@ -197,4 +206,4 @@ def main(ver):
 
 
 if __name__ == "__main__":
-    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.10") else 0)
+    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.11") else 0)

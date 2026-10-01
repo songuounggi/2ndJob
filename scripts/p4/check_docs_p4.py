@@ -14,6 +14,7 @@
 인용(> 로 시작하는 줄)과 제목에 "기록"이 든 절은 그날의 기록이라 보지 않는다 -- 현재 사실은 표와 본문에 쓴다.
 링크가 갈 곳이 없는지는 check_p4 가 본다(죽은 링크·들어올 길 없는 페이지·링크 주석 수).
 """
+import glob
 import os
 import re
 import sys
@@ -25,13 +26,15 @@ sys.path.insert(0, HERE)
 import p4_content as C  # noqa: E402
 import pages_p4  # noqa: E402
 
-DOCS = ["product4-content.md", "listing-p4.md", "product4-design-handoff.md"]
+# product4-design-handoff.md 는 빼고 본다: v0.9(108쪽) 때 claude.ai/design 에 보낸 인수인계서(보낸 문서의 기록).
+# 디자인 v1.0 을 받은 뒤로 쓰지 않는다 -- 쪽 번호를 지금 판에 맞추면 "110쪽 판 v0.9" 같은 거짓이 된다 (10-01, v0.11)
+DOCS = ["product4-content.md", "listing-p4.md"]
 
 
 def titles():
     """쪽 번호(1부터) -> (key, 제목, 탭)"""
     rooms = {k: n for k, n, *_ in C.ROOMS}
-    rooms["myroom"] = C.MY_ROOM[1]
+    rooms.update(dict(C.MY_ROOMS))          # v0.11 빈 방 둘
     out = {}
     for i, (k, _, tab) in enumerate(pages_p4.specs(), 1):
         if k == "cover":
@@ -40,8 +43,8 @@ def titles():
             t = C.PAGE_TEXT["deep"][0].format(room=rooms[k[5:]])
         elif re.fullmatch(r"w\d+", k):
             t = C.WEEK_PAGE[0].format(n=k[1:])
-        elif k == "myroom":
-            t = C.PAGE_TEXT["myroom"][0]
+        elif k in dict(C.MY_ROOMS):
+            t = C.PAGE_TEXT[k][0]
         else:
             t = pages_p4.title_of(k)
         out[i] = (k, t, tab)
@@ -102,6 +105,13 @@ def check():
                 n = int(next(g for g in m.groups() if g))
                 if n != n_pages and n >= 60:
                     fails.append(f"{doc}:{no} 쪽 수 '{m.group(0)}' -- 실제 {n_pages}쪽")
+    # d 제어 문자 0 -- 이 PC 의 셸 도구가 heredoc 안 `\\1` 을 `\x01` 로 바꿔 정규식·문서가 깨졌다(10-01)
+    for f in DOCS + sorted(glob.glob(os.path.join(ROOT, "scripts", "p4", "*.py"))):
+        path = f if os.path.isabs(f) else os.path.join(ROOT, f)
+        text = open(path, encoding="utf-8").read()
+        bad = sorted({text.count("\n", 0, i) + 1 for i, c in enumerate(text) if ord(c) < 32 and c not in "\n\t\r"})
+        if bad:
+            fails.append(f"{os.path.basename(path)}: 제어 문자 줄 {bad[:5]}")
     return n_pages, fails
 
 

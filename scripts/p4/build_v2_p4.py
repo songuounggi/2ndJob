@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""상품 4 v0.10~ -- 디자인 시안(claude.ai/design, TURN 25)을 틀로 108쪽을 만든다 (PROCESS.md 4단계).
+"""상품 4 v0.10~ -- 디자인 시안(claude.ai/design, TURN 25)을 틀로 110쪽(v0.10 은 108쪽)을 만든다 (PROCESS.md 4단계).
 
 디자인 인수인계: design/prod4/the-adhd-home-reset-design-v1.0.zip 의 README.md (반드시 먼저 읽을 것).
   - pages_turn25.html: 대표 38쪽. 쪽마다 612x792 상자, 배경 JPG(번짐·유리 탭·그림자·배너 번짐을 구움) 위에
@@ -33,15 +33,16 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.10"     # 디자인 v1.0 첫 전체 빌드
+VER = "v0.11"     # v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 (10-01 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
-TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27,
+TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
             "routines": 29, "daily": 30, "rotation": 31, "monthly": 32, "seasonal": 33, "laundry-loop": 34,
             "dishes-loop": 34, "who-does-what": 36, "kids-pets": 37, "weeks": 38, "tools": 91, "rescue": 92,
             "sprint": 93, "guests": 94, "doom": 95, "declutter": 96, "where-things-live": 97, "restock": 98,
             "dopamine": 99, "body-doubling": 100, "wins": 101, "guess-actual": 102, "projects": 103,
             "big-reset": 104, "notes-ruled": 105, "notes-dots": 106, "notes-blank-1": 107, "notes-blank-2": 107}
+TAB_OF = {"home": 0, "energy": 1, "rooms": 2, "routines": 3, "weeks": 4, "tools": 5}
 TAB_TARGET = {"HOME": "index", "ENERGY": "energy", "ROOMS": "rooms", "ROUTINES": "routines",
               "WEEKS": "weeks", "TOOLS": "tools"}
 
@@ -127,8 +128,9 @@ def fill_room(page, key):
 
 def fill_deep(page, key):
     room = key[5:]
-    if room == "myroom":
-        name, tasks = C.MY_ROOM[1], [""] * 8
+    my = dict(C.MY_ROOMS)
+    if room in my:
+        name, tasks = my[room], [""] * 8
     else:
         name, tasks = ROOM_OF[room][1], ROOM_OF[room][5]
     page = must_replace(page, f">{KITCHEN[1]}: deep clean<", f">{H.escape(name)}: deep clean<", key)
@@ -187,7 +189,8 @@ PREV_W = 120      # "← Previous week" 9pt 800 + 여백. Next 알약(100)과 �
 
 
 def week_bg(design, tpl):
-    """Reset week 배경 변형: 2~51주(Previous + Next), 52주(Previous 만). 디자인 굽기 코드로 같은 방식"""
+    """(v0.10 에서만 썼다 -- v0.11 부터 variant_bg 가 그림자 자리가 바뀐 모든 쪽을 같은 방식으로 굽고 원본과 대조한다)
+    Reset week 배경 변형: 2~51주(Previous + Next), 52주(Previous 만). 디자인 굽기 코드로 같은 방식"""
     import bake_bg_p4 as K
     gen = os.path.join(DESIGN_DIR, "generated")
     mid, last = os.path.join(gen, "p4-week-mid.jpg"), os.path.join(gen, "p4-week-last.jpg")
@@ -201,6 +204,8 @@ def week_bg(design, tpl):
 
 
 def fill(page, key):
+    if key in dict(C.MY_ROOMS):           # 시안 27쪽 제목 "My room" -> "My room 1" / "My room 2" (v0.11)
+        return must_replace(page, ">My room<", f">{dict(C.MY_ROOMS)[key]}<", key)
     if key in ROOM_OF and key != "kitchen":
         return fill_room(page, key)
     if key.startswith("deep-") and key != "deep-kitchen":
@@ -224,6 +229,7 @@ COPY_FIX = [
     (lambda k: k == "daily", "Once a day, one small thing.", lambda: C.TOOL_PAGES["daily"][1]),
     (lambda k: k == "rotation", "Slide it to the next.", lambda: C.WEEKLY_ROTATION_SUB.split("? ", 1)[1]),
     (lambda k: k.startswith("day-"), "PICK THREE AT MOST", lambda: C.DAY_PAGE_CARDS[0][1].upper()),
+    (lambda k: k == "cover", "nine rooms, ten-minute resets", lambda: C.COVER_ITEMS[1][1]),     # v0.11 빈 방 둘째로 열 방
 ]
 
 
@@ -264,7 +270,45 @@ def additions(page, key):
                 f'display:flex;align-items:center;justify-content:flex-start;{LABEL_CSS}">{C.LABELS["from_menu"].upper()}</div>'
                 + "".join(rows))
         page = page[:page.rfind("</div>")] + card + "</div>"
-    elif key in ROOM_OF or key == C.MY_ROOM[0]:
+    elif key == "house-map":
+        # 9번째 타일 = 빈 방 둘 (v0.11, 10-01 사용자) -- 타일 모양 그대로, 이름 "My rooms", Go 자리에 "Room 1 →" "Room 2 →"
+        page = must_replace(page, '<span style="font-size:12.5px;font-weight:800">My room</span>',
+                            f'<span style="font-size:12.5px;font-weight:800">{C.LABELS["my_rooms"]}</span>', key)
+        i = page.index(f'>{C.LABELS["my_rooms"]}<')
+        go = re.search(r'<span style="align-self:flex-end;margin-top:10px;font-size:9px;font-weight:800">Go'
+                       r'(<span style="margin-left:4px;color:#7D6A28">→</span>)</span>', page[i:])    # 시안은 글자(linkify 가 링크로)
+        if not go:
+            raise SystemExit("[house-map] My rooms 타일의 Go 를 못 찾음")
+        two = ('<div style="align-self:flex-end;margin-top:10px;display:flex;gap:12px;font-size:9px;font-weight:800">'
+               + "".join(f'<a href="#{k}">{C.LABELS["room"]} {n[-1]}{go.group(1)}</a>' for k, n in C.MY_ROOMS) + '</div>')
+        page = page[:i + go.start()] + two + page[i + go.end():]
+    elif key == "rooms":
+        # 10쪽 표에 My room 2 줄 (v0.11): 줄 26 그대로 아래로 하나 -- 가로선 하나 · 세로선 26 · 카드 292 -> 318(아래 18 유지)
+        row = re.search(r'(<div style="position:absolute;left:108px;top:386px;[^"]*">)My room(</div>)'
+                        r'(<div style="position:absolute;left:410px;top:386px;[^"]*">.*?</div>)'
+                        r'(<div style="position:absolute;left:510px;top:386px;[^"]*">)27(</div>)', page, re.S)
+        if not row:
+            raise SystemExit("[rooms] My room 줄을 못 찾음")
+        n1, n2 = (n for _, n in C.MY_ROOMS)
+        first = row.group(1) + n1 + row.group(2) + row.group(3) + row.group(4) + "27" + row.group(5)
+        second = (first.replace("top:386px", "top:412px").replace(f">{n1}<", f">{n2}<")
+                  .replace(">27<", ">29<"))       # 쪽 번호는 renumber 가 실제 쪽으로 다시 쓴다
+        page = page[:row.start()] + first + second + page[row.end():]
+        page = must_replace(page, "M108,412 H560 ", "M108,412 H560 M108,438 H560 ", key)
+        page = must_replace(page, "M410,182 V408 M510,182 V408 ", "M410,182 V434 M510,182 V434 ", key)
+        page = must_replace(page, "left:84px;top:138px;width:500px;height:292px;",
+                            "left:84px;top:138px;width:500px;height:318px;", key)
+    elif key == "index":
+        # 5쪽 목차 Rooms 칸에 My room 2 줄 (v0.11). 왼쪽 카드(628)는 위에서 흘러 채우는 구조라 줄 하나(20)가 들어간다
+        row = re.search(r'(<a href="#" style="display:flex;justify-content:space-between;align-items:center;height:20px;'
+                        r'padding-left:13px;font-size:9.5px"><span>)My room(<span[^>]*>→</span></span>'
+                        r'<span[^>]*>)27(</span></a>)', page)
+        if not row:
+            raise SystemExit("[index] My room 줄을 못 찾음")
+        n1, n2 = (n for _, n in C.MY_ROOMS)
+        page = (page[:row.start()] + row.group(1) + n1 + row.group(2) + "27" + row.group(3)
+                + row.group(1) + n2 + row.group(2) + "29" + row.group(3) + page[row.end():])
+    elif key in ROOM_OF or key in dict(C.MY_ROOMS):
         pill = (f'<a href="#energy" style="position:absolute;left:84px;top:754px;width:100px;height:24px;border-radius:12px;'
                 f'display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800">'
                 f'<span style="margin-right:4px;color:#7D6A28">←</span>{H.escape(pages_p4.title_of("energy"))}</a>')
@@ -272,30 +316,29 @@ def additions(page, key):
     return page
 
 
-def variant_bg(page, key, rel_of):
+def variant_bg(page, key, rel_of, tpl_html):
     """additions 로 그림자 자리가 바뀐 쪽의 배경을 디자인 굽기 코드로 다시 굽는다.
     파일 이름에 그림자 자리 지문을 붙여 낡은 배경을 다시 쓰지 않는다. 새로 넣은 자리 밖은 원본 시안 배경과 같아야 한다 --
     다르면 빌드를 멈춘다(10-01 사용자: "타협한 것들이 오류를 만들어서는 안 된다")"""
     import hashlib
     import json
     import bake_bg_p4 as K
-    if key.startswith("day-"):
-        col, tab = "mint", 1
-    elif key in ROOM_OF or key == C.MY_ROOM[0]:
-        col, tab = "lemon", 2
-    else:
+    rects = K.rects_of(page)
+    base = K.rects_of(tpl_html)
+    if rects == base:                    # 시안 원본과 그림자 자리가 같으면 원본 배경 그대로
         return page
+    tab = TAB_OF[[t for kk, _, t in pages_p4.specs() if kk == key][0]]
+    col = {0: "mint", 1: "mint", 2: "lemon", 3: "lavender", 4: "lavender", 5: "aqua"}[tab]
     m = re.search(r'src="([^"]*/assets/(25-[\w-]+)\.jpg)"', page)
     if not m:
         raise SystemExit(f"[{key}] 원본 배경을 못 찾음")
     orig = os.path.join(DESIGN_DIR, "design_handoff_adhd_home_reset", "assets", m.group(2) + ".jpg")
-    rects = K.rects_of(page)
     sig = hashlib.md5(json.dumps([col, tab, rects], sort_keys=True).encode()).hexdigest()[:8]
     out = os.path.join(DESIGN_DIR, "generated", f"p4-{m.group(2)[3:]}-{sig}.jpg")
     if not os.path.exists(out):
         K.bake([(out, K.COLORS[col], tab, rects)])
-        new = [r for r in rects if (r["y"] >= 600 and key.startswith("day-")) or (r["y"] == 754 and r["x"] == 84)]
-        d = K.masked_diff(orig, out, new, pad=34)
+        changed = [r for r in rects if r not in base] + [r for r in base if r not in rects]     # 새로 넣거나 바뀐 자리
+        d = K.masked_diff(orig, out, changed, pad=34)
         print(f"   배경 다시 굽기 {key}: {os.path.basename(out)} -- 새 자리 밖 원본과 차이 {d:.3f}")
         if d > 1.0:
             os.remove(out)
@@ -344,7 +387,7 @@ def plan_links(page, key):
         page, n = re.subn(r'(flex:none"></span><span>)([^<]+)(</span>)',
                           lambda m: wrap(m) if H.unescape(m.group(2)).lower() in T else m.group(0), page)
     elif key == "rooms":
-        names = [r[1] for r in C.ROOMS] + [C.MY_ROOM[1]]
+        names = [r[1] for r in C.ROOMS] + [n for _, n in C.MY_ROOMS]
         for nm in names:       # 시안은 & 를 그대로 쓴다(Entry & hallway)
             nm = nm if f">{nm}</div>" in page else H.escape(nm)
             page = must_replace(page, f">{nm}</div>",
@@ -376,6 +419,30 @@ def arrow_link(tgt, col):
             f'<span style="margin-left:4px;color:{col}">→</span></a>')
 
 
+def renumber(page, key, order):
+    """인쇄된 쪽 번호 = 그 줄 링크가 실제로 가는 쪽. 시안의 숫자는 108쪽 기준이라 v0.11(110쪽)에서 29쪽 뒤가 2씩 틀린다.
+    (1) 링크 안의 숫자(5쪽 목차 · 1쪽 표지 알약) (2) 표 줄의 숫자 칸(10 · 29 · 91쪽) -- 같은 높이의 링크(깊은 청소 제외).
+    38쪽 Weeks 칸("WEEK n")은 주 번호라 건드리지 않는다. check_plan_p4 4 가 결과를 잰다.
+    목차 쪽에만 -- 다른 쪽의 단계 번호가 우연히 링크와 같은 높이에 있어도 바뀌지 않게"""
+    if key not in ("cover", "index", "rooms", "routines", "tools"):
+        return page
+
+    def in_link(m):
+        dest, inner = m.group(1), m.group(2)
+        if "WEEK" in inner or dest not in order:
+            return m.group(0)
+        return (f'<a href="#{dest}"' + re.sub(r'(<span style="[^"]*">)(\d{1,3})(</span>)',
+                                                 lambda x: x.group(1) + str(order.index(dest) + 1) + x.group(3), inner) + "</a>")
+    page = re.sub(r'<a href="#([^"]+)"(.*?)</a>', in_link, page, flags=re.S)
+    tops = {}
+    for dest, top in re.findall(r'<a href="#([^"]+)" style="position:absolute;left:[\d.]+px;top:([\d.]+)px', page):
+        if not dest.startswith("deep-") and dest in order:
+            tops.setdefault(top, dest)
+    return re.sub(r'(<div style="position:absolute;left:[\d.]+px;top:([\d.]+)px;[^"]*">)(\d{1,3})(</div>)',
+                  lambda m: m.group(1) + str(order.index(tops[m.group(2)]) + 1) + m.group(4) if m.group(2) in tops else m.group(0),
+                  page)
+
+
 def card_overlays(page, key):
     """카드 전체를 누르게 -- 모양은 그대로, 카드 위에 투명한 링크 상자 (10-01 사용자, 써 보기 6단계).
     4쪽 House map 은 부제가 "Tap a room." 인데 작은 "Go →" 만 눌렸다 -- 타일 위쪽(이름 ~ LAST RESET 위)만 덮어
@@ -387,14 +454,15 @@ def card_overlays(page, key):
     over = []
     for i, c in enumerate(cards):
         end = cards[i + 1].start() if i + 1 < len(cards) else len(page)
+        hrefs = set(re.findall(r'<a href="#([^"]+)"', page[c.start():end]))
         go = re.search(r'<a href="#([^"]+)"', page[c.start():end])
-        if not go:
+        if not go or len(hrefs) > 1:              # 목적지가 둘인 타일(4쪽 My rooms -- v0.11)은 덮지 않는다
             continue
         x, y, w, h = (float(v) for v in c.groups())
         if key == "house-map":
             h = HOUSE_TILE_LINK_H
         over.append(f'<a href="#{go.group(1)}" style="position:absolute;left:{x:g}px;top:{y:g}px;width:{w:g}px;height:{h:g}px"></a>')
-    want = 9 if key == "house-map" else 3
+    want = 8 if key == "house-map" else 3
     if len(over) != want:
         raise SystemExit(f"[{key}] 카드 링크 상자 {len(over)} != {want}")
     return page[:page.rfind("</div>")] + "".join(over) + "</div>"
@@ -429,7 +497,8 @@ def link_targets():
         t[a.lower()] = tg
     for k, n, *_ in C.ROOMS:
         t[n.lower()] = k
-    t[C.MY_ROOM[1].lower()] = C.MY_ROOM[0]
+    for k, n in C.MY_ROOMS:
+        t[n.lower()] = k
     t["index"] = "index"
     return t
 
@@ -470,11 +539,11 @@ def relink(page, key, order):
     """시안의 href 를 전부 우리 페이지 key 로. 못 정하면 멈춘다(죽은 링크 0)"""
     T = link_targets()
     seq = {"start": ["energy", "house-map", "rescue"],
-           "house-map": [r[0] for r in C.ROOMS] + ["myroom"],
+           "house-map": [r[0] for r in C.ROOMS],      # 9번째 타일 My rooms 는 목적지를 직접 적은 두 링크 (v0.11)
            "cover": ["energy", "rooms", "routines", "tools"]}
     used = {k: 0 for k in seq}
     out, pos, bad = [], 0, []
-    room_row = iter([r[0] for r in C.ROOMS] + ["myroom"])
+    room_row = iter([r[0] for r in C.ROOMS] + [k for k, _ in C.MY_ROOMS])
     for m in re.finditer(r'<a href="([^"]*)"', page):
         a_end = page.index("</a>", m.end())
         txt = text_of(page[page.index(">", m.end()) + 1:a_end])      # 여는 태그의 속성은 빼고 글자만
@@ -610,11 +679,10 @@ def build(keys=None, bw=False):
     tpl = templates(design)
     specs = pages_p4.specs()
     order = [k for k, _, _ in specs]
-    if len(order) != 108:
-        raise SystemExit(f"쪽 수 {len(order)} != 108")
+    if len(order) != 110:
+        raise SystemExit(f"쪽 수 {len(order)} != 110")
     pages = []
     rel = os.path.relpath(os.path.join(design, "assets"), os.path.join(ROOT, "src")).replace(os.sep, "/")
-    mid, last = week_bg(design, tpl)
     rel_of = lambda f: os.path.relpath(f, os.path.join(ROOT, "src")).replace(os.sep, "/")
     for k in (keys or order):
         page = tpl[template_of(k)]
@@ -623,13 +691,12 @@ def build(keys=None, bw=False):
         page = fill(page, k)
         page = copy_fix(page, k)
         page = additions(page, k)
-        page = variant_bg(page, k, rel_of)
+        page = variant_bg(page, k, rel_of, tpl[template_of(k)])
         page = plan_links(page, k)
-        if re.fullmatch(r"w\d+", k) and k != "w1":
-            page = re.sub(r'src="[^"]*25-week\.jpg"', f'src="{rel_of(last if k == "w52" else mid)}"', page)
         page = norm_rail(page)
         page = linkify(page)
         page = relink(page, k, order)
+        page = renumber(page, k, order)
         page = card_overlays(page, k)
         page = arrows(page)
         if bw:

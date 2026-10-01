@@ -115,7 +115,10 @@ ROOMS = [
      ["Vacuum the seats and floor", "Clean the inside windows", "Wash the floor mats", "Empty the trunk",
       "Wipe the dashboard", "Clean the door pockets", "Restock the car kit", "Wash the outside"]),
 ]
-MY_ROOM = ("myroom", "My room")     # 이름·순서를 구매자가 채운다 -- 미리 인쇄 없음
+MY_ROOM = ("myroom", "My room 1")     # 이름·순서를 구매자가 채운다 -- 미리 인쇄 없음
+# 빈 방 카드 둘째 (10-01 사용자, 6단계 써 보기 가족 구매자: "아이 방·다용도실 두 개가 필요") -- v0.11 부터 110쪽
+MY_ROOM_2 = ("myroom-2", "My room 2")
+MY_ROOMS = [MY_ROOM, MY_ROOM_2]
 
 # ----------------------------------------------------------------- 에너지 --
 BATTERIES = ["Low", "Medium", "Full"]
@@ -238,7 +241,8 @@ PAGE_TEXT = {
     "index": ("Index", "Everything in here, one tap away."),
     "rooms": ("Rooms", "Pick one. Ten minutes, then stop."),
     "deep": ("{room}: deep clean", "Once a month or once a season. Any order."),
-    "myroom": ("My room", "Name it and write your own order."),
+    "myroom": ("My room 1", "Name it and write your own order."),
+    "myroom-2": ("My room 2", "Name it and write your own order."),
     "weeks": ("Weeks", "Fifty-two reset weeks. Start on any week."),
     "routines": ("Routines", "The small repeats that keep it from piling up."),   # 6단계에서 추가 (09-30)
     "tools": ("Tools", "For the days that need a different way in."),
@@ -249,7 +253,7 @@ SECTION_NAMES = {"home": "Home", "energy": "Energy", "rooms": "Rooms", "routines
                  "weeks": "Weeks", "tools": "Tools"}
 COVER_CHIP = "UNDATED · NO-GUILT"
 COVER_SUB = "Clean by energy, not by schedule."
-COVER_ITEMS = [("Energy menu", "pick by battery and time"), ("Rooms", "nine rooms, ten-minute resets"),
+COVER_ITEMS = [("Energy menu", "pick by battery and time"), ("Rooms", "ten rooms, ten-minute resets"),
                ("Routines & weeks", "daily, weekly, the loops"), ("Tools", "rescue, sprint, declutter")]
 SOS_LABEL = "SOS"
 GO = "Go"
@@ -270,7 +274,7 @@ LABELS = {
     # slid_hint_short: Reset week 반쪽 카드용 (10-01 사용자: 원고 문구가 카드 끝을 넘어서)
     "slid_hint_short": "no penalty",
     # 10-01 사용자 (6단계 써 보기): 주간 Wins 칸 = 그 주 것(101쪽 Wins log 는 언제든) / 주간 날짜 칸 / 하루 쪽에 그 배터리 할 일
-    "wins_hint": "this week", "week_of": "Week of", "from_menu": "From the Energy menu", "week_rooms": "This week's rooms",
+    "wins_hint": "this week", "my_rooms": "My rooms", "week_of": "Week of", "from_menu": "From the Energy menu", "week_rooms": "This week's rooms",
     "week_deep": "One deep clean", "week_loops": "Loops this week", "week_wins": "Wins",
     "prev": "Previous week", "next": "Next week", "room": "Room",
     # 루틴
@@ -357,7 +361,7 @@ def check():
     need(10 <= len(BIG_RESET) <= 12 and len(set(BIG_RESET)) == len(BIG_RESET), "이사 체크리스트 10~12개, 중복 없이")
 
     # 링크 대상이 실제 페이지 key 인가
-    pages = {r[0] for r in ROOMS} | {MY_ROOM[0], "dishes-loop", "laundry-loop", "rescue"} | set(TOOL_PAGES)
+    pages = {r[0] for r in ROOMS} | {r[0] for r in MY_ROOMS} | {"dishes-loop", "laundry-loop", "rescue"} | set(TOOL_PAGES)
     pages |= {"deep-" + r[0] for r in ROOMS}
     pages |= {"start", "weeks"}
     targets = [t for *_, t in FLOW["boxes"].values()] + [t for v in ENERGY.values() for _, t in v] + [t for *_, t in START_HERE["steps"]] + [t for *_, t in RESCUE["steps"]]

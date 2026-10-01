@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""상품 4 5-2 디자인 검사 (v0.10~ 디자인 시안 판) -- 시안 README 11절 "검수 방법" 을 108쪽 전부에.
+"""상품 4 5-2 디자인 검사 (v0.10~ 디자인 시안 판) -- 시안 README 11절 "검수 방법" 을 전 쪽에(v0.11 110쪽).
 
     python scripts/p4/check_design_p4.py v0.10
 
@@ -17,7 +17,7 @@ README 11절: 계산 말고 실측 / 글꼴을 다 불러온 뒤 / 축소·확�
   F 링크 →: 본문 링크는 → 를 단다, 간격 4, 섹션 진한색, 글자 크기를 따로 주지 않는다(앞 글자와 같은 크기) -- 규칙 5.
     예외: 탭 레일·SOS(README §7-2), 38쪽 Weeks 칸(§8), 기획서 링크 중 보이지 않게 둔 것(10-01 사용자)
   G 선: 테두리 선은 0.6 · 세 색(#D3DBD6 / #E3E9E5 / #ECF0ED) -- 규칙 7
-  H 왼쪽 탭: 6개 위치가 108쪽 모두 같다(12 + 128 x 순서) -- 시안 원본 3·92·94쪽이 2~4pt 아래라 넘길 때 튀었다(10-01)
+  H 왼쪽 탭: 6개 위치가 전 쪽 같다(12 + 128 x 순서) -- 시안 원본 3·92·94쪽이 2~4pt 아래라 넘길 때 튀었다(10-01)
   I 쓰는 칸 옆 링크: 체크 상자·동그라미(14)에서 12pt 안에 링크 상자(PDF 실제 상자)가 없다 = 손끝 오차 6pt(tap_p4) + 여유 6pt.
     94쪽 Guests 는 10pt 라 체크 상자 끝에서 4pt 만 빗나가도 넘어갔다(10-01, 써 보기 6단계)
 """
@@ -125,7 +125,8 @@ def main(ver):
     num = lambda k: ids.index(k) + 1
     # A
     for k in ids:
-        rep = ids[B.template_of(k) - 1]
+        # 대표 쪽 = 같은 틀을 쓰는 첫 쪽 (시안 쪽 번호로 찾으면 v0.11 처럼 쪽이 밀린 판에서 엉뚱한 쪽과 비교한다)
+        rep = next(x for x in ids if B.template_of(x) == B.template_of(k))
         if rep == k:
             continue
         # 폭 미지정 상자는 글자 길이를, 높이 미지정 상자는 내용(줄 수)을 따라간다 -- 방 카드 준비물 칩 1~2줄(카드 크기는 고정).
@@ -223,4 +224,4 @@ def main(ver):
 
 
 if __name__ == "__main__":
-    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.10") else 0)
+    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.11") else 0)

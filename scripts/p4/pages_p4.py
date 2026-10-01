@@ -356,6 +356,8 @@ def specs():
         s += [(k, (lambda kk: lambda: B.p_room(kk))(k), "rooms"),
               (f"deep-{k}", (lambda kk: lambda: p_deep(kk))(k), "rooms")]
     s += [("myroom", p_myroom, "rooms"), ("deep-myroom", lambda: p_deep("myroom"), "rooms")]
+    # v0.11~ 빈 방 카드 둘째 (10-01 사용자). 옛 파이프라인(build_p4, v0.9 까지)은 첫째 함수를 그대로 부른다 -- 더 쓰지 않는다
+    s += [("myroom-2", p_myroom, "rooms"), ("deep-myroom-2", lambda: p_deep("myroom"), "rooms")]
     s += [("routines", p_routines, "routines"), ("daily", p_daily, "routines"), ("rotation", p_rotation, "routines"), ("monthly", p_monthly, "routines"),
           ("seasonal", p_seasonal, "routines"),
           ("laundry-loop", lambda: p_loop("laundry-loop", "Laundry loop", C.LAUNDRY_LOOP), "routines"),
