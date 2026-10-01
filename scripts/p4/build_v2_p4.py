@@ -475,23 +475,26 @@ def card_overlays(page, key):
     """카드 전체를 누르게 -- 모양은 그대로, 카드 위에 투명한 링크 상자 (10-01 사용자, 써 보기 6단계).
     4쪽 House map 은 부제가 "Tap a room." 인데 작은 "Go →" 만 눌렸다 -- 타일 위쪽(이름 ~ LAST RESET 위)만 덮어
     LAST RESET 쓰는 줄은 쓰다가 넘어가지 않게 둔다. 3쪽 Start here 는 단계 카드 3개 전체.
-    Rescue 2·3단계 카드도 전체(v0.11 재시험: "→ 하나만 눌린다" 구매자 4명 -- 카드에 체크 상자가 없어 넓혀도 안전하다)"""
+    Rescue 2·3단계 카드도 전체(v0.11 재시험: "→ 하나만 눌린다" 구매자 4명 -- 카드에 체크 상자가 없어 넓혀도 안전하다).
+    Rescue 아래 배너 "Log it in Wins. Rescue counts. Wins log →" 도 전체(10-01 사용자 질문: 흰 카드만 덮어 배너는 글자·→ 만 눌렸다).
+    흰 카드는 빈 상자 옆에 내용이 따로 놓이고(다음 카드까지가 그 카드), 배너는 상자 안에 글자·링크가 들어 있다(첫 </div> 까지)"""
     if key not in ("house-map", "start", "rescue"):
         return page
     cards = list(re.finditer(r'<div style="position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;'
-                             r'height:([\d.]+)px;border-radius:16px;background:#FFFFFF;', page))
+                             r'height:([\d.]+)px;border-radius:16px;background:(#FFFFFF|transparent);', page))
     over = []
     for i, c in enumerate(cards):
-        end = cards[i + 1].start() if i + 1 < len(cards) else len(page)
+        banner = c.group(5) == "transparent"
+        end = page.index("</div>", c.start()) if banner else (cards[i + 1].start() if i + 1 < len(cards) else len(page))
         hrefs = set(re.findall(r'<a href="#([^"]+)"', page[c.start():end]))
         go = re.search(r'<a href="#([^"]+)"', page[c.start():end])
         if not go or len(hrefs) > 1:              # 목적지가 둘인 타일(4쪽 My rooms -- v0.11)은 덮지 않는다
             continue
-        x, y, w, h = (float(v) for v in c.groups())
+        x, y, w, h = (float(v) for v in c.groups()[:4])
         if key == "house-map":
             h = HOUSE_TILE_LINK_H
         over.append(f'<a href="#{go.group(1)}" style="position:absolute;left:{x:g}px;top:{y:g}px;width:{w:g}px;height:{h:g}px"></a>')
-    want = {"house-map": 8, "start": 3, "rescue": len(C.RESCUE["linked"])}[key]
+    want = {"house-map": 8, "start": 3, "rescue": len(C.RESCUE["linked"]) + 1}[key]     # rescue: 단계 카드 + 아래 배너
     if len(over) != want:
         raise SystemExit(f"[{key}] 카드 링크 상자 {len(over)} != {want}")
     return page[:page.rfind("</div>")] + "".join(over) + "</div>"

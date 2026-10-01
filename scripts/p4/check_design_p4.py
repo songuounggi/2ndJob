@@ -20,6 +20,8 @@ README 11절: 계산 말고 실측 / 글꼴을 다 불러온 뒤 / 축소·확�
   H 왼쪽 탭: 6개 위치가 전 쪽 같다(12 + 128 x 순서) -- 시안 원본 3·92·94쪽이 2~4pt 아래라 넘길 때 튀었다(10-01)
   I 쓰는 칸 옆 링크: 체크 상자·동그라미(14)에서 12pt 안에 링크 상자(PDF 실제 상자)가 없다 = 손끝 오차 6pt(tap_p4) + 여유 6pt.
     94쪽 Guests 는 10pt 라 체크 상자 끝에서 4pt 만 빗나가도 넘어갔다(10-01, 써 보기 6단계)
+  J 카드 전체: 링크가 하나뿐이고 쓰는 칸(체크 14 · 쓰는 줄)이 없는 카드·배너는 상자 전체가 눌린다(덮개 링크).
+    94쪽 Rescue 배너 "Wins log →" 만 글자·→ 로 눌렸다 -- 흰 카드만 덮고 배너를 빠뜨렸다(10-01 사용자 질문)
 """
 import os
 import re
@@ -97,6 +99,20 @@ JS = r"""() => {
       });
       id++;
     }
+    // J: 카드·배너(모서리 16) 안 링크 -- 목적지 하나 · 쓰는 칸 없음이면 상자 전체를 덮는 링크가 있어야
+    pg.cards = [];
+    const links = [...sec.querySelectorAll('a[href^="#"]')].filter(a => !a.querySelector('[style*="vertical-rl"]') && a.textContent.trim() !== 'SOS');
+    [...sec.querySelectorAll('div')].filter(d => d.style.borderRadius === '16px').forEach(b => {
+      const r = b.getBoundingClientRect();
+      const ins = links.filter(a => { const q = a.getBoundingClientRect(); return q.width && q.left >= r.left - 1 && q.right <= r.right + 1 && q.top >= r.top - 1 && q.bottom <= r.bottom + 1; });
+      const hrefs = new Set(ins.map(a => a.getAttribute('href')));
+      if (hrefs.size !== 1) return;
+      const writes = [...sec.querySelectorAll('span,div')].some(e => { const q = e.getBoundingClientRect(); const cs = getComputedStyle(e);
+        return q.left >= r.left && q.right <= r.right && q.top >= r.top && q.bottom <= r.bottom && (Math.abs(q.width - 14) < .5 && Math.abs(q.height - 14) < .5 || parseFloat(cs.borderBottomWidth) > 0 && q.width > 60); });
+      if (writes) return;
+      const covered = ins.some(a => { const q = a.getBoundingClientRect(); return q.width >= r.width - 2 && q.height >= r.height * .5; });
+      if (!covered) pg.cards.push([Math.round(r.top - o.top), ins[0].textContent.trim().slice(0, 24)]);
+    });
     out[sec.id] = pg;
   });
   return out;
@@ -121,7 +137,7 @@ def main(ver):
         got = pg.evaluate(JS)
         br.close()
 
-    fails = {k: [] for k in "ABCDEFGHI"}
+    fails = {k: [] for k in "ABCDEFGHIJ"}
     num = lambda k: ids.index(k) + 1
     # A
     for k in ids:
@@ -208,9 +224,12 @@ def main(ver):
                 dy = max(a[1] - c[3], c[1] - a[3], 0)
                 if (dx * dx + dy * dy) ** .5 < GAP:
                     fails["I"].append(f"{num(k)} {k}: 체크 상자 옆 링크 ({a[0]:.0f}, {a[1]:.0f}) {round((dx * dx + dy * dy) ** .5, 1)}pt")
+    for k in ids:
+        for top, t in got[k]["cards"]:
+            fails["J"].append(f"{num(k)} {k}: y{top} 카드·배너에 링크 하나뿐인데 전체가 안 눌림 (\"{t}\")")
     names = {"A": "같은 틀 = 같은 배치", "B": "글자 넘침", "C": "글자 겹침", "D": "체크 상자 14 · 4.5",
              "E": "쪽 아래 알약 y754", "F": "링크 →", "G": "선 0.6 · 세 색", "H": "왼쪽 탭 위치 통일",
-             "I": f"쓰는 칸 옆 링크 {GAP}pt"}
+             "I": f"쓰는 칸 옆 링크 {GAP}pt", "J": "카드 전체 링크"}
     total = 0
     print(f"상품 4 디자인 검사 {ver} -- {len(ids)}쪽, 글꼴 로드 후 1배 실측")
     for k, v in fails.items():
