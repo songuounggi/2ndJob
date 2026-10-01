@@ -14,6 +14,8 @@
   5 글꼴: Nunito(Chrome 이 이름 없는 Type3 로 넣음) 말고 없음 -- 화살표가 대체 글꼴로 찍히던 일(v0.6)
   6 넘침: 글자가 자기 카드의 안쪽 여백(10pt)을 넘거나 카드 밖으로 나가지 않음 -- Reset week 힌트(10-01)
   7 디자인 대조: 대표 38쪽을 screenshots/ 정답 그림과 비교, 평균 차이(0~255) 기준 이하
+  8 흑백판: 쪽마다 그림 0 · 색 픽셀 0(채도 8 이하) · 바탕 흰색 -- v0.10 첫 빌드는 구운 Reset week 배경이
+    흑백판 40~90쪽에 컬러로 남았다(써 보기 6단계, 인쇄파 구매자 역할이 찾음)
 """
 import html as H
 import io
@@ -189,6 +191,25 @@ def check(ver, tag):
         fails.append(f"원고 밖 문구 {len(extra)}: " + "; ".join(f"{t} ({i})" for t, i in list(extra.items())[:12]))
     if got["over"]:
         fails.append(f"카드 넘침 {len(got['over'])}: {got['over'][:8]}")
+    # 8
+    if tag == "BW":
+        from PIL import Image
+        imgs = [n + 1 for n, p in enumerate(doc) if p.get_images()]
+        if imgs:
+            fails.append(f"흑백판에 그림이 든 쪽 {len(imgs)}: {imgs[:10]}")
+        colored, grayish = [], []
+        for n, p in enumerate(doc):
+            pix = p.get_pixmap(matrix=pymupdf.Matrix(.5, .5))
+            hsv = Image.frombytes("RGB", (pix.width, pix.height), pix.samples).convert("HSV")
+            if max(hsv.getdata(1)) > 8:
+                colored.append(n + 1)
+            # 바탕: 오른쪽 아래 빈 곳(알약 아래, 카드 밖)이 흰 종이여야 한다 -- v0.10 첫 빌드는 99쪽이 245 회색
+            if pix.pixel(int(pix.width * .97), int(pix.height * .995))[0] < 254:
+                grayish.append(n + 1)
+        if colored:
+            fails.append(f"흑백판에 색이 있는 쪽 {len(colored)}: {colored[:10]}")
+        if grayish:
+            fails.append(f"흑백판 바탕이 흰색이 아닌 쪽 {len(grayish)}: {grayish[:10]}")
     # 7
     if tag == "color" and os.path.isdir(SHOTS):
         from PIL import Image, ImageChops

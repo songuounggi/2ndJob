@@ -66,6 +66,14 @@ n_rooms = len(C.ROOMS) + 1
 need({9: "nine"}.get(n_rooms, str(n_rooms)) + " rooms" in low, f"방 개수 불일치 ({n_rooms})")
 need(all(len(r[2]) == 6 for r in C.ROOMS) and "six-step" in low, "방 카드 6단계 불일치")
 need("52 undated reset weeks" in desc, "주간 52 불일치")
+# 설명의 예시 "Low battery and five minutes? Load five dishes." 가 실제 Energy menu 칸에 있나 -- v0.10 까지 "Full ... twenty
+# minutes? Clean out the fridge" 였는데 fridge 는 Medium x 20 칸이었다(써 보기 6단계, 리뷰어 구매자 역할이 찾음)
+WORD_MIN = {"two": 2, "five": 5, "ten": 10, "twenty": 20}
+examples = re.findall(r"(Low|Medium|Full) battery and (two|five|ten|twenty) minutes\? ([^.?]+)\.", desc)
+need(examples, "설명에 배터리 예시 문장이 없음")
+for bat, m, task in examples:
+    cell = [t for t, _ in C.ENERGY.get((bat, WORD_MIN[m]), [])]
+    need(task in cell, f"설명 예시 '{bat} x {m} min -> {task}' 가 Energy menu 칸 {cell} 에 없음")
 tab_line = re.search(r"Six tabs run down the side of every page: (.*?)\.", desc)
 need(tab_line and tab_line.group(1) == "Home, Energy, Rooms, Routines, Weeks, Tools", "탭 이름 불일치")
 cap = re.search(r"Each file is under (\d+) MB", desc)

@@ -397,14 +397,20 @@ def gray(hexcol):
 
 
 def to_bw(page):
-    page = re.sub(r'<img src="[^"]*25-[^"]*"[^>]*>', "", page)                     # 배경 JPG 빼기
+    # 그림은 전부 뺀다(배경 JPG·구운 Reset week 배경·2쪽 그림자 PNG) -- 흑백판 = 배경 없이 + 카드 테두리 (10-01 사용자).
+    # v0.10 첫 빌드는 시안 배경(25-*)만 골라 빼서 구운 주간 배경 51장이 흑백판 40~90쪽에 컬러로 남았다(써 보기 6단계에서 찾음)
+    page = re.sub(r"<img\b[^>]*>", "", page)
+    # 쪽 바탕(섹션 paper 4색)은 흰 종이로 -- 회색으로 바꾸면 245 로 쪽 전체를 칠해 잉크를 쓴다. v0.10 첫 빌드는 Home 민트만
+    # 바꿔 나머지 99쪽 바탕이 회색이었다(써 보기 6단계, 리뷰어·인쇄파 구매자 역할이 찾음)
+    for paper in ("#F3F7F4", "#F9F8F0", "#F7F6FA", "#F2F7F8"):
+        page = page.replace(f"background:{paper}", "background:#FFFFFF")
     page = re.sub(r"#[0-9A-Fa-f]{6}\b", lambda m: gray(m.group(0)), page)
     page = re.sub(r"rgba\((\d+),(\d+),(\d+),", lambda m: "rgba(%d,%d,%d," % ((round(
         0.2126 * int(m.group(1)) + 0.7152 * int(m.group(2)) + 0.0722 * int(m.group(3))),) * 3), page)
     # 카드·배너에 연한 회색 테두리 (사용자 10-01: 배경 없이 + 카드 테두리). 그림자가 없으니 경계가 필요하다
     page = re.sub(r"(border-radius:16px;background:(?:#FFFFFF|transparent);box-sizing:border-box;)",
                   r"\1border:0.6px solid #C9C9C9;", page)
-    return page.replace("background:#F3F7F4", "background:#FFFFFF")
+    return page
 
 
 # ----------------------------------------------------------------- 조립 --
