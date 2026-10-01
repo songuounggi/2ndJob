@@ -265,6 +265,56 @@ It never expires, so you buy it once and use it for years. There is no wall of m
 
 ---
 
+## 상품 4 The ADHD Home Reset 핀 원고 (**초안** 2026-10-02 -- 출시 뒤 리스팅 링크를 걸어 올린다)
+
+그림: `output/prod4/pinterest/draft-v0.2/01_guests.png ~ 06_undated.png` (`python scripts/p4/pinterest_p4.py`, 1000x1500).
+각도 6개를 서로 다르게: 손님맞이 · 기운 없는 날 · 엉망일 때 · 10분 방 · 인쇄 · 날짜 없음. **01 손님맞이를 먼저** -- 11~12월
+연말 손님맞이 시즌(`product4-content.md` 판매 계획)에 맞추려면 출시 직후 바로 올려야 한다(핀은 몇 주에 걸쳐 퍼진다).
+보드는 지금 규칙대로 전부 `ADHD Planner`. 문구는 `listing-p4.md` 설명·원고에 있는 말만, 1인칭 당사자 표현 없음.
+제목은 피드에 보이는 **앞 40자** 안에서 말이 끝나게.
+
+### P4-01_guests
+**Title** `Guests in 2 hours? Clean what they see`
+**Description**
+```
+A cleaning planner for ADHD brains with a "guests in 2 hours" page: entry, bathroom, living room, kitchen, and one box for everything else. Each room links to a ten-minute reset card. Hyperlinked PDF for Goodnotes and Notability, plus a printable black-and-white version.
+```
+
+### P4-02_energy
+**Title** `Low battery? Pick a 2-minute task`
+**Description**
+```
+Clean by energy, not by schedule. The energy menu sorts 31 tasks by battery (low, medium, full) and time (2, 5, 10, 20 minutes), and every task links to the page it belongs to. An undated ADHD cleaning planner for Goodnotes and Notability.
+```
+
+### P4-03_rescue
+**Title** `House all too much? Try Rescue mode`
+**Description**
+```
+Rescue mode for ADHD cleaning: trash first, gather the dishes, one basket of clothes, clear a path, one surface. Then stop. An SOS button on every page after the cover takes you there. Hyperlinked PDF planner for Goodnotes and Notability.
+```
+
+### P4-04_rooms
+**Title** `10-minute room resets, then stop`
+**Description**
+```
+Ten room reset cards, each with a six-step, ten-minute order and a "done enough" line so you know when to stop. A deep clean list for every room. Undated ADHD home reset planner, hyperlinked for Goodnotes, printable in black and white.
+```
+
+### P4-05_print
+**Title** `Printable ADHD home reset checklist`
+**Description**
+```
+The same pages as the hyperlinked planner in grayscale, easy on ink. US Letter size; prints on A4 with "fit to page". Energy menu, room reset cards, rescue mode, 52 undated reset weeks, and cleaning tools.
+```
+
+### P4-06_undated
+**Title** `Skip a week. Nothing to catch up on.`
+**Description**
+```
+52 undated reset weeks. Start on any week; blank boxes are normal and there is nothing to catch up on. Missed a day? Slide it to the next slot. An ADHD cleaning and home routine planner for Goodnotes, Notability, and print.
+```
+
 ### 핀 올릴 때 실제로 막히는 것들 (2026-09-30, 상품 1 핀 5장 올리며 확인)
 
 **태그(`태그된 주제`) 는 영어 키워드가 안 먹는다.** 검색 키워드를 받는 칸이 아니라
