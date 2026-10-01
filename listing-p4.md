@@ -59,7 +59,7 @@ THREE THINGS A CHORE CHART DOES NOT DO
 
 • Energy menu — 31 tasks sorted by battery (low, medium, full) and time (2, 5, 10, 20 minutes)
 • Room reset cards — nine rooms, each with a six-step, ten-minute order and a "done enough" line so you know when to stop
-• Rescue mode — for when it is all too much: trash first, gather the dishes, one basket of clothes, clear a path, one surface. An SOS button on every page takes you there
+• Rescue mode — for when it is all too much: trash first, gather the dishes, one basket of clothes, clear a path, one surface. An SOS button on every page after the cover takes you there
 
 WHAT'S INSIDE
 
@@ -72,7 +72,7 @@ Tools — 15-minute sprint, guests in 2 hours, doom pile triage, declutter decis
 
 FINDING THINGS
 
-Six tabs run down the side of every page: Home, Energy, Rooms, Routines, Weeks, Tools. Tap SOS in the corner of any page to jump to rescue mode.
+Six tabs run down the side of every page: Home, Energy, Rooms, Routines, Weeks, Tools. Tap SOS in the corner of any page after the cover to jump to rescue mode.
 
 NO STREAKS
 
