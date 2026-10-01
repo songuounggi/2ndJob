@@ -18,6 +18,19 @@
 | 8 리스팅 | 원고 초안 `listing-p4.md` (제작과 나란히). 결정 3건 대기 |
 | 9 출시 · 10 알리기 | 아직 |
 
+### ★ 디자인 전체 시안 도착 (2026-10-01 18:02, 사용자 "심혈을 기울여 완성")
+
+- 파일: **`design/prod4/the-adhd-home-reset-design-v1.zip`** (git 에 있다 -- 집 PC 는 `git pull` 만). 1.35MB, 44개
+  - `design_handoff_adhd_home_reset/README.md` -- **디자인 쪽 인수인계서 (25KB). 이걸 처음부터 끝까지 읽는다**
+  - `assets/25-*.jpg` 39장 -- 페이지 종류별 시안 (cover·flow·start·housemap·index·energy·battery·kitchen·deep·myroom·roomslist·
+    routinesIdx·daily·rotation·monthly·seasonal·loop·who·kids·weeks·week·toolsIdx·rescue·sprint·guests·doom·declutter·where·restock·
+    dopamine·body·wins·timeg·projects·moving·lined·dots·blankp 등) + `card-shadow.png`
+- 원본: 회사 PC `Desktop\MyWork\99.Indivisual\2ndJob\Prod 4\The ADHD Home Reset 프로젝트.zip`
+- **다음 (3단계 다시 → 4단계 v0.10)**: ① 압축을 풀어 README 를 끝까지 읽는다 ② 시안 39장을 지금 108쪽 페이지 목록과 짝짓는다
+  ③ **구현 전에 질문을 모아 한 번에 묻는다**(시안에 없는 페이지, GoodNotes 에서 깨지는 효과, 문구가 달라진 곳) ④ 답을 받고 표본 →
+  전체 빌드 v0.10 → 검사 일곱 줄. 확정 문구·108쪽 구조·링크는 README 가 바꾸라고 하지 않는 한 그대로
+- 사용자 토큰이 모자라 **받아 두기만** 했다 -- 내용은 아직 안 읽었다
+
 ### 집 PC 에서 먼저 할 일 (순서대로)
 
 1. `git pull` → **다시 빌드** (output·src 는 git 밖이라 따라오지 않는다):
