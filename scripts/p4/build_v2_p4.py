@@ -227,6 +227,82 @@ COPY_FIX = [
 ]
 
 
+LABEL_CSS = "font-size:7.5px;font-weight:800;letter-spacing:0.12em;color:#66716B"     # 시안 칸 라벨(TODAY I'LL DO 등)
+HINT_CSS = "font-size:8.5px;color:#66716B"                                             # 시안 제목 옆 작은 글씨(no penalty)
+DAY_MENU_CARD = dict(x=84, y=628.6, w=500, h=114)   # 하루 쪽 마지막 카드(538+74.6=612.6) 아래 16 · 알약(754) 위
+
+
+def additions(page, key):
+    """6단계 써 보기 뒤 사용자 결정(10-01)으로 시안에 더한 것. 모양은 시안에 이미 있는 요소를 그대로 쓴다.
+    - 39~90쪽: Wins 제목 옆 "this week"(= Slid 의 "no penalty" 모양) · 제목 오른쪽 "WEEK OF ____" 날짜 칸
+    - 7~9쪽: 마지막 카드 아래 "FROM THE ENERGY MENU" 카드 -- 그 배터리의 할 일을 분 별로(누르면 그 일이 있는 쪽)
+    - 11~27쪽 방 카드: 아래 왼쪽 "← Energy menu" 알약(= 7~9쪽 알약, 폭 100)
+    그림자를 받는 카드·알약은 variant_bg 가 디자인 굽기 코드로 배경을 다시 굽는다"""
+    if re.fullmatch(r"w\d+", key):
+        page = must_replace(page, '<span style="font-size:12px;font-weight:800">Wins</span>',
+                            f'<span style="font-size:12px;font-weight:800">Wins</span><span style="{HINT_CSS}">'
+                            f'{C.LABELS["wins_hint"]}</span>', key)
+        # 날짜 칸은 "This week's rooms" 카드 안, 제목과 같은 줄 오른쪽(148~170, 표 머리 176 위). 처음엔 카드 밖 바탕(라벤더)에
+        # 두었더니 쓰는 줄이 안 보였다 -- 시안의 쓰는 줄은 늘 흰 카드 안이다
+        field = (f'<div style="position:absolute;left:392px;top:148px;width:168px;height:22px;display:flex;align-items:flex-end;'
+                 f'gap:8px"><span style="{LABEL_CSS};padding-bottom:3px">{C.LABELS["week_of"].upper()}</span>'
+                 f'<div style="flex:1;box-sizing:border-box;height:22px;border-bottom:0.6px solid #E3E9E5"></div></div>')
+        page = page[:page.rfind("</div>")] + field + "</div>"
+    elif key.startswith("day-"):
+        b = key[4:]
+        c = DAY_MENU_CARD
+        rows = []
+        for i, m in enumerate(C.MINUTES):
+            tasks = C.ENERGY.get((b, m), [])
+            links = " · ".join(f'<a href="#{tg}">{H.escape(t)}</a>' for t, tg in tasks)
+            rows.append(f'<div style="position:absolute;left:{c["x"] + 24}px;top:{c["y"] + 40 + 14 * i:g}px;width:{c["w"] - 48}px;'
+                        f'height:14px;display:flex;gap:8px;font-size:8.5px;line-height:14px;white-space:nowrap">'
+                        f'<span style="flex:none;width:38px;{LABEL_CSS}">{m} MIN</span><span>{links}</span></div>')
+        card = (f'<div style="position:absolute;left:{c["x"]}px;top:{c["y"]:g}px;width:{c["w"]}px;height:{c["h"]}px;'
+                f'border-radius:16px;background:#FFFFFF;box-sizing:border-box;"></div>'
+                f'<div style="position:absolute;left:{c["x"] + 24}px;top:{c["y"] + 18:g}px;width:{c["w"] - 48}px;height:22px;'
+                f'display:flex;align-items:center;justify-content:flex-start;{LABEL_CSS}">{C.LABELS["from_menu"].upper()}</div>'
+                + "".join(rows))
+        page = page[:page.rfind("</div>")] + card + "</div>"
+    elif key in ROOM_OF or key == C.MY_ROOM[0]:
+        pill = (f'<a href="#energy" style="position:absolute;left:84px;top:754px;width:100px;height:24px;border-radius:12px;'
+                f'display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800">'
+                f'<span style="margin-right:4px;color:#7D6A28">←</span>{H.escape(pages_p4.title_of("energy"))}</a>')
+        page = page[:page.rfind("</div>")] + pill + "</div>"
+    return page
+
+
+def variant_bg(page, key, rel_of):
+    """additions 로 그림자 자리가 바뀐 쪽의 배경을 디자인 굽기 코드로 다시 굽는다.
+    파일 이름에 그림자 자리 지문을 붙여 낡은 배경을 다시 쓰지 않는다. 새로 넣은 자리 밖은 원본 시안 배경과 같아야 한다 --
+    다르면 빌드를 멈춘다(10-01 사용자: "타협한 것들이 오류를 만들어서는 안 된다")"""
+    import hashlib
+    import json
+    import bake_bg_p4 as K
+    if key.startswith("day-"):
+        col, tab = "mint", 1
+    elif key in ROOM_OF or key == C.MY_ROOM[0]:
+        col, tab = "lemon", 2
+    else:
+        return page
+    m = re.search(r'src="([^"]*/assets/(25-[\w-]+)\.jpg)"', page)
+    if not m:
+        raise SystemExit(f"[{key}] 원본 배경을 못 찾음")
+    orig = os.path.join(DESIGN_DIR, "design_handoff_adhd_home_reset", "assets", m.group(2) + ".jpg")
+    rects = K.rects_of(page)
+    sig = hashlib.md5(json.dumps([col, tab, rects], sort_keys=True).encode()).hexdigest()[:8]
+    out = os.path.join(DESIGN_DIR, "generated", f"p4-{m.group(2)[3:]}-{sig}.jpg")
+    if not os.path.exists(out):
+        K.bake([(out, K.COLORS[col], tab, rects)])
+        new = [r for r in rects if (r["y"] >= 600 and key.startswith("day-")) or (r["y"] == 754 and r["x"] == 84)]
+        d = K.masked_diff(orig, out, new, pad=34)
+        print(f"   배경 다시 굽기 {key}: {os.path.basename(out)} -- 새 자리 밖 원본과 차이 {d:.3f}")
+        if d > 1.0:
+            os.remove(out)
+            raise SystemExit(f"[{key}] 다시 구운 배경이 새 자리 밖에서 원본과 다르다({d:.3f}) -- 그림자 자리를 확인")
+    return page.replace(m.group(1), rel_of(out))
+
+
 def copy_fix(page, key):
     for when, old, new in COPY_FIX:
         if when(key):
@@ -546,6 +622,8 @@ def build(keys=None, bw=False):
         page = page.replace('src="assets/', f'src="{rel}/')
         page = fill(page, k)
         page = copy_fix(page, k)
+        page = additions(page, k)
+        page = variant_bg(page, k, rel_of)
         page = plan_links(page, k)
         if re.fullmatch(r"w\d+", k) and k != "w1":
             page = re.sub(r'src="[^"]*25-week\.jpg"', f'src="{rel_of(last if k == "w52" else mid)}"', page)

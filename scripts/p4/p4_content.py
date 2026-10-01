@@ -268,7 +268,9 @@ LABELS = {
     "pick": "Today's pick", "pick_hint": "one is enough", "slid": "Slid to next week",
     "slid_hint": "no penalty, just the next slot",
     # slid_hint_short: Reset week 반쪽 카드용 (10-01 사용자: 원고 문구가 카드 끝을 넘어서)
-    "slid_hint_short": "no penalty", "week_rooms": "This week's rooms",
+    "slid_hint_short": "no penalty",
+    # 10-01 사용자 (6단계 써 보기): 주간 Wins 칸 = 그 주 것(101쪽 Wins log 는 언제든) / 주간 날짜 칸 / 하루 쪽에 그 배터리 할 일
+    "wins_hint": "this week", "week_of": "Week of", "from_menu": "From the Energy menu", "week_rooms": "This week's rooms",
     "week_deep": "One deep clean", "week_loops": "Loops this week", "week_wins": "Wins",
     "prev": "Previous week", "next": "Next week", "room": "Room",
     # 루틴

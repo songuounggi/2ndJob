@@ -85,6 +85,20 @@ def bake(jobs):
         br.close()
 
 
+def masked_diff(a, b, rects, pad=34):
+    """두 배경의 평균 차이 -- rects(새로 넣은 카드·알약)와 그 그림자 범위(pad pt)는 빼고. 그림 2배(1pt = 2px)"""
+    from PIL import Image, ImageChops, ImageDraw
+    A, B = Image.open(a).convert("L"), Image.open(b).convert("L")
+    mask = Image.new("L", A.size, 255)
+    dr = ImageDraw.Draw(mask)
+    for r in rects:
+        dr.rectangle([(r["x"] - pad) * 2, (r["y"] - pad) * 2, (r["x"] + r["w"] + pad) * 2, (r["y"] + r["h"] + pad) * 2], fill=0)
+    d = ImageChops.difference(A, B)
+    h = d.histogram(mask)
+    n = sum(h)
+    return sum(i * c for i, c in enumerate(h)) / max(n, 1)
+
+
 def mean_diff(a, b):
     from PIL import Image, ImageChops
     A, B = Image.open(a).convert("L"), Image.open(b).convert("L")

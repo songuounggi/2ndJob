@@ -14,6 +14,8 @@ v0.10 은 시안 HTML 을 틀로 쓴다. 시안이 문구를 빼거나 바꿨으
     쪽 번호로 읽어 10-01 사용자 결정으로 다른 목차와 같은 뜻으로 바꿈
   5 판 글자의 금지 표현(5-4): 원고 검사(p4_content.check)는 원고만 본다 -- 시안에 박힌 글자까지 완성 판에서 다시.
     BANNED(실패·의학 표현) · FIRST_PERSON(1인칭 당사자) · UK(영국식) -- 허용은 원고와 같은 ALLOWED_BANNED 만
+  6 써 보기 뒤 더한 것(10-01 사용자): 39~90쪽 Wins "this week" · "WEEK OF" 칸 / 7~9쪽 "FROM THE ENERGY MENU" 에 그 배터리
+    할 일이 원고(ENERGY)와 같은 목록 · 같은 목적지 / 방 카드 9장 "← Energy menu" -> 6쪽
 의도한 차이(사용자 확정)는 ALLOW 에 이유와 함께.
 """
 import html as H
@@ -163,6 +165,25 @@ def main(ver):
                 if name == "금지 표현" and any(m.group(0) in a for a in C.ALLOWED_BANNED) and                         any(a in re.sub(r"\s+", " ", plain) for a in C.ALLOWED_BANNED):
                     continue
                 fails.append(f"{ids.index(k) + 1} {k}: {name} \"{m.group(0)}\"")
+
+    # 6
+    for k, body in secs.items():
+        n = ids.index(k) + 1
+        if re.fullmatch(r"w\d+", k):
+            if f'>Wins</span><span style="font-size:8.5px;color:#66716B">{C.LABELS["wins_hint"]}</span>' not in body:
+                fails.append(f"{n} {k}: Wins 옆 '{C.LABELS['wins_hint']}' 없음")
+            if f'>{C.LABELS["week_of"].upper()}</span><div style="flex:1;box-sizing:border-box;height:22px;border-bottom:' not in body:
+                fails.append(f"{n} {k}: 날짜 칸(WEEK OF) 없음")
+        elif k.startswith("day-"):
+            b_ = k[4:]
+            i = body.find(f'>{C.LABELS["from_menu"].upper()}<')
+            got = re.findall(r'<a href="#([^"]+)">([^<]+)</a>', body[i:]) if i >= 0 else []
+            want = [(tg, H.escape(t)) for m in C.MINUTES for t, tg in C.ENERGY.get((b_, m), [])]
+            if got != want:
+                fails.append(f"{n} {k}: 할 일 목록이 원고와 다름 ({len(got)} / {len(want)})")
+        elif k in {r[0] for r in C.ROOMS} | {C.MY_ROOM[0]}:
+            if not re.search(r'<a href="#energy" style="position:absolute;left:84px;top:754px;[^"]*">.*?Energy menu</a>', body, re.S):
+                fails.append(f"{n} {k}: '← Energy menu' 없음")
 
     print(f"상품 4 기획서 대조 {ver} -- 문구 {len(seen)}개, 쪽 {len(ids)}")
     if unused:
