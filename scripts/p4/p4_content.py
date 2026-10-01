@@ -124,7 +124,8 @@ MY_ROOMS = [MY_ROOM, MY_ROOM_2]
 BATTERIES = ["Low", "Medium", "Full"]
 MINUTES = [2, 5, 10, 20]
 # (배터리, 분) -> [(할 일, 링크 대상)]. 대상 = 그 일이 실제로 있는 쪽: 방 카드 / 깊은 청소(deep-방) / 루프 (10-01 사용자:
-# 6단계 써 보기에서 "누른 방 카드에 그 일이 없다" -- 깊은 청소 목록에 있는 7개를 deep- 쪽으로)
+# 6단계 써 보기에서 "누른 방 카드에 그 일이 없다" -- 깊은 청소 목록에 있는 7개를 deep- 쪽으로. v0.11 재시험에서 2개 더:
+# cabinet -> 부엌 깊은 청소 "Wipe cabinet fronts", mail pile -> 거실 깊은 청소 "Sort the magazine and mail pile")
 ENERGY = {
     ("Low", 2):     [("Take out one bag of trash", "kitchen"), ("Wipe the bathroom sink", "bathroom"),
                      ("Line up the shoes by the door", "entry")],
@@ -132,7 +133,7 @@ ENERGY = {
                      ("Clear the nightstand", "bedroom")],
     ("Low", 10):    [("Fold one basket sitting down", "laundry-loop"), ("Empty the car door pockets", "deep-car"),
                      ("Reset the couch and pillows", "living")],
-    ("Low", 20):    [("Unload and reload the dishwasher", "dishes-loop"), ("Sort the mail pile", "deep-desk")],
+    ("Low", 20):    [("Unload and reload the dishwasher", "dishes-loop"), ("Sort the mail pile", "deep-living")],
     ("Medium", 2):  [("Wipe the stovetop", "kitchen"), ("Wipe the bathroom mirror", "bathroom")],
     ("Medium", 5):  [("Clear the kitchen counter", "kitchen"), ("Pull up the covers", "bedroom"),
                      ("Sweep the entry", "entry")],
@@ -143,7 +144,7 @@ ENERGY = {
     ("Full", 5):    [("Wipe down the desk", "desk"), ("Shake out the door mat", "entry")],
     ("Full", 10):   [("Mop the kitchen floor", "deep-kitchen"), ("Scrub the shower walls", "deep-bathroom"),
                      ("Clear the desk to empty", "desk")],
-    ("Full", 20):   [("Vacuum the car", "deep-car"), ("Deep clean one cabinet", "kitchen"),
+    ("Full", 20):   [("Vacuum the car", "deep-car"), ("Deep clean one cabinet", "deep-kitchen"),
                      ("Wash the towels and bath mats", "laundry-loop")],
 }
 

@@ -216,9 +216,27 @@ def check(ver, tag):
         if grayish:
             fails.append(f"흑백판 바탕이 흰색이 아닌 쪽 {len(grayish)}: {grayish[:10]}")
         # 인쇄용(10-01 사용자): 쪽 번호(표지 빼고) · 쓰는 칸(체크 14 · Last reset)에 테두리
-        nums = [n + 1 for n, m in enumerate(secs) if n and f'top:772px;width:612px;text-align:center;font-size:7.5px;font-weight:600;color:#7A7A7A">{n + 1}<' not in m.group(2)]
+        nums = [n + 1 for n, m in enumerate(secs) if n and not re.search(
+            r'top:[\d.]+px;width:612px;text-align:center;font-size:7.5px;font-weight:600;color:#7A7A7A">' + str(n + 1) + "<", m.group(2))]
         if nums:
             fails.append(f"흑백판 쪽 번호가 없거나 틀린 쪽 {len(nums)}: {nums[:10]}")
+        # 쪽 번호가 종이 끝에서 18pt(6.4mm) 이상 위, 다른 글자와 겹치지 않음 -- 가정용 프린터 아래 여백 3~6mm (v0.11 재시험)
+        low_or_hit = []
+        for n, p in enumerate(doc):
+            if not n:
+                continue
+            words = p.get_text("words")
+            mine = [w for w in words if w[4] == str(n + 1) and abs((w[0] + w[2]) / 2 - 306) < 12 and (w[1] < 80 or w[1] > 700)]
+            if not mine:
+                low_or_hit.append(f"{n + 1}(없음)")
+                continue
+            w0 = mine[0]
+            hit = [w[4] for w in words if w is not w0 and w[0] < w0[2] + 2 and w[2] > w0[0] - 2 and w[1] < w0[3] + 2 and w[3] > w0[1] - 2]
+            edge = min(w0[1], 792 - w0[3])                      # 위·아래 가까운 종이 끝까지
+            if edge < 18 or hit:
+                low_or_hit.append(f"{n + 1}(끝에서 {edge:.1f}pt{', 겹침 ' + str(hit) if hit else ''})")
+        if low_or_hit:
+            fails.append(f"흑백판 쪽 번호 자리 문제 {len(low_or_hit)}: {low_or_hit[:6]}")
         bare = len(re.findall(r'style="(?:[^"]*;)?width:14px;height:14px;border-radius:(?:4\.5px|50%);(?![^"]*border:)[^"]*"', html))
         bare += len(re.findall(r'style="height:26px;border-radius:8px;(?![^"]*border:)[^"]*"', html))
         if bare:

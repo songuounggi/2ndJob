@@ -65,6 +65,10 @@ need(f"{sum(len(v) for v in C.ENERGY.values())} tasks" in desc, "Energy 할 일 
 n_rooms = len(C.ROOMS) + len(C.MY_ROOMS)
 need({9: "nine", 10: "ten"}.get(n_rooms, str(n_rooms)) + " rooms" in low, f"방 개수 불일치 ({n_rooms})")
 need(all(len(r[2]) == 6 for r in C.ROOMS) and "six-step" in low, "방 카드 6단계 불일치")
+# 이름을 직접 붙이는 방 개수 = MY_ROOMS -- v0.11 에서 둘이 됐는데 "one room you name yourself" 가 남아 있었다(재시험 리뷰어)
+named = re.search(r"(\w+) rooms? you name yourself", low)
+need(named and named.group(1) == {1: "one", 2: "two"}.get(len(C.MY_ROOMS)),
+     f"설명의 '... room(s) you name yourself' 가 빈 방 {len(C.MY_ROOMS)}개와 다름 ({named.group(0) if named else '문장 없음'})")
 need("52 undated reset weeks" in desc, "주간 52 불일치")
 # "Every task links to the room card ..." 는 목적지가 전부 방 카드일 때만 -- 6개는 루프, 7개는 깊은 청소로 간다(10-01, 써 보기 6단계)
 room_keys = {r[0] for r in C.ROOMS} | {k for k, _ in C.MY_ROOMS}

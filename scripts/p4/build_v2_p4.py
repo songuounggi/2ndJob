@@ -446,8 +446,9 @@ def renumber(page, key, order):
 def card_overlays(page, key):
     """카드 전체를 누르게 -- 모양은 그대로, 카드 위에 투명한 링크 상자 (10-01 사용자, 써 보기 6단계).
     4쪽 House map 은 부제가 "Tap a room." 인데 작은 "Go →" 만 눌렸다 -- 타일 위쪽(이름 ~ LAST RESET 위)만 덮어
-    LAST RESET 쓰는 줄은 쓰다가 넘어가지 않게 둔다. 3쪽 Start here 는 단계 카드 3개 전체"""
-    if key not in ("house-map", "start"):
+    LAST RESET 쓰는 줄은 쓰다가 넘어가지 않게 둔다. 3쪽 Start here 는 단계 카드 3개 전체.
+    Rescue 2·3단계 카드도 전체(v0.11 재시험: "→ 하나만 눌린다" 구매자 4명 -- 카드에 체크 상자가 없어 넓혀도 안전하다)"""
+    if key not in ("house-map", "start", "rescue"):
         return page
     cards = list(re.finditer(r'<div style="position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;'
                              r'height:([\d.]+)px;border-radius:16px;background:#FFFFFF;', page))
@@ -462,7 +463,7 @@ def card_overlays(page, key):
         if key == "house-map":
             h = HOUSE_TILE_LINK_H
         over.append(f'<a href="#{go.group(1)}" style="position:absolute;left:{x:g}px;top:{y:g}px;width:{w:g}px;height:{h:g}px"></a>')
-    want = 8 if key == "house-map" else 3
+    want = {"house-map": 8, "start": 3, "rescue": len(C.RESCUE["linked"])}[key]
     if len(over) != want:
         raise SystemExit(f"[{key}] 카드 링크 상자 {len(over)} != {want}")
     return page[:page.rfind("</div>")] + "".join(over) + "</div>"
@@ -623,6 +624,7 @@ def gray(hexcol):
     return "#%02X%02X%02X" % (y, y, y)
 
 
+BW_PAGE_NO_TOP = 35
 BW_LINES = {"#D3DBD6": "#B4B4B4", "#E3E9E5": "#C2C2C2", "#ECF0ED": "#CCCCCC", "#E9EEEB": "#CCCCCC"}
 
 
@@ -647,7 +649,10 @@ def to_bw(page, num):
         page = page.replace(f"solid {a}", f"solid {b}").replace(f'stroke="{a}"', f'stroke="{b}"')
     page = re.sub(r'style="([^"]*)"', bw_cell, page)
     if num > 1:
-        page = (page[:page.rfind("</div>")] + f'<div style="position:absolute;left:0;top:772px;width:612px;text-align:center;'
+        # 쪽 번호 자리 = 위쪽 가운데, 이동 경로·SOS 와 같은 줄(top 35). v0.11 첫 판은 아래 772 라 종이 끝에서 4~6mm --
+        # 가정용 프린터의 인쇄 안 되는 아래 여백(3~6mm)에 걸릴 수 있었다(써 보기 재시험, 인쇄파 구매자). 아래로 올리면(760)
+        # 목차·표 카드(766 까지)와 2쪽 순서도 글자에 겹쳤다. check_v2 8 이 끝에서 18pt 이상·겹침 0·카드 밖을 잰다
+        page = (page[:page.rfind("</div>")] + f'<div style="position:absolute;left:0;top:{BW_PAGE_NO_TOP}px;width:612px;text-align:center;'
                 f'font-size:7.5px;font-weight:600;color:#7A7A7A">{num}</div></div>')
     page = re.sub(r"#[0-9A-Fa-f]{6}\b", lambda m: gray(m.group(0)), page)
     page = re.sub(r"rgba\((\d+),(\d+),(\d+),", lambda m: "rgba(%d,%d,%d," % ((round(

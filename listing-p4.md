@@ -65,7 +65,7 @@ WHAT'S INSIDE
 
 Home — how it flows, start here, a house map, and an index
 Energy — the energy menu, plus a page for low, medium, and full battery days
-Rooms — kitchen, bathroom, bedroom, living room, entry and hallway, laundry, desk and office, car, and one room you name yourself, each with a deep clean list
+Rooms — kitchen, bathroom, bedroom, living room, entry and hallway, laundry, desk and office, car, and two rooms you name yourself, each with a deep clean list
 Routines — daily reset, weekly rotation, monthly deep clean, seasonal reset, laundry and dishes loops, who does what, kids and pets tasks
 Weeks — 52 undated reset weeks
 Tools — 15-minute sprint, guests in 2 hours, doom pile triage, declutter decisions, where things live, restock list, cleaning dopamine menu, body doubling log, wins log, time guess vs actual, projects list, moving or big reset, and notes
