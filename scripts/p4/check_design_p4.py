@@ -1,0 +1,200 @@
+# -*- coding: utf-8 -*-
+"""상품 4 5-2 디자인 검사 (v0.10~ 디자인 시안 판) -- 시안 README 11절 "검수 방법" 을 108쪽 전부에.
+
+    python scripts/p4/check_design_p4.py v0.10
+
+README 11절: 계산 말고 실측 / 글꼴을 다 불러온 뒤 / 축소·확대 화면 금지 / 같은 틀을 쓰는 쪽 전체를 쪽 번호별로.
+그래서 브라우저에서 쪽 확대(zoom 4/3)를 끄고 1pt = 1px 로 잰다(빌드 CSS 의 zoom 은 인쇄용).
+
+  A 같은 틀 = 같은 배치: 반복 쪽(방 카드·깊은 청소·하루·Reset week 등)의 상자 위치·크기가 대표 쪽(시안이 실측을
+    통과한 쪽, 정답 그림과 일치 -- check_v2 7)과 같은가. 줄 26 · 카드 아래 18 · 짝 높이 · 번호 카드 72 · 배너는
+    대표 쪽에서 정해졌으니 배치가 같으면 같다. 의도한 차이: Reset week 의 Previous 알약(10-01 사용자)
+  B 글자 넘침: 글자가 자기 상자(위치가 정해진 가장 가까운 상자) 밖으로, 또는 쪽 밖으로 나가지 않는다.
+    글자 상자와 카드가 따로 놓인 곳(카드 위에 얹은 글자)은 check_v2_p4 6 "카드 넘침" 이 본다 -- 99쪽 힌트(10-01)
+  C 글자 겹침: 서로 다른 글자 줄이 겹치지 않는다
+  D 체크 상자: 14x14 상자는 모서리 4.5(체크) 또는 원(동그라미) -- README 규칙 4
+  E 쪽 아래 알약: 높이 24 · 모서리 12 알약은 y754 -- 규칙 9
+  F 링크 →: 본문 링크는 → 를 단다, 간격 4, 섹션 진한색, 글자 크기를 따로 주지 않는다(앞 글자와 같은 크기) -- 규칙 5.
+    예외: 탭 레일·SOS(README §7-2), 38쪽 Weeks 칸(§8), 기획서 링크 중 보이지 않게 둔 것(10-01 사용자)
+  G 선: 테두리 선은 0.6 · 세 색(#D3DBD6 / #E3E9E5 / #ECF0ED) -- 규칙 7
+"""
+import os
+import re
+import sys
+
+sys.stdout.reconfigure(encoding="utf-8")
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
+import build_v2_p4 as B  # noqa: E402
+
+LINE_COLORS = {"#D3DBD6", "#E3E9E5", "#ECF0ED"}
+# 예외: 1쪽 표지 목차 구분선 0.6 #E9EEEB 3개 -- 시안 원본 값(대표 쪽, 표가 아님). README 규칙 7 은 표 선
+SECTION_D = {"rgb(83, 115, 100)", "rgb(125, 106, 40)", "rgb(110, 100, 144)", "rgb(35, 117, 129)"}
+
+JS = r"""() => {
+  const R = r => [Math.round(r.left * 10) / 10, Math.round(r.top * 10) / 10, Math.round(r.width * 10) / 10, Math.round(r.height * 10) / 10];
+  const out = {};
+  document.querySelectorAll('section.page').forEach(sec => {
+    const o = sec.getBoundingClientRect();
+    const rel = r => ({left: r.left - o.left, top: r.top - o.top, right: r.right - o.left, bottom: r.bottom - o.top,
+                       width: r.width, height: r.height});
+    const pg = {boxes: [], over: [], texts: [], checks: [], pills: [], links: [], lines: []};
+    const all = [...sec.querySelectorAll('*')].filter(e => !e.closest('svg') || e.tagName === 'svg');
+    all.forEach(e => {
+      const cs = getComputedStyle(e), r = rel(e.getBoundingClientRect());
+      if (r.width === 0 && r.height === 0) return;
+      if (e.tagName !== 'svg' && cs.position === 'absolute')
+        pg.boxes.push([e.tagName, !!e.style.width, ...R(r), !e.style.height]);
+      // 세로 넘침은 줄 높이로 잰다(글자 사각형은 글꼴 위아래 여백까지라 제목마다 4pt 쯤 크게 나온다)
+      if (e.style.height && e.scrollHeight > e.clientHeight + 1 && cs.overflow === 'visible' && e.textContent.trim())
+        pg.over.push([e.textContent.trim().slice(0, 30) + ' (아래로)', e.scrollHeight - e.clientHeight]);
+      if (Math.abs(r.width - 14) < .3 && Math.abs(r.height - 14) < .3 && cs.borderRadius !== '0px')
+        pg.checks.push([cs.borderRadius, (e.parentElement.textContent || '').trim().slice(0, 20)]);
+      if (e.tagName === 'A' && Math.abs(r.height - 24) < .3 && cs.borderRadius === '12px') pg.pills.push([R(r)[1], e.textContent.trim()]);
+      for (const m of (e.getAttribute('style') || '').matchAll(/border(?:-(?:top|right|bottom|left))?:\s*([\d.]+)px\s+solid\s+(#[0-9A-Fa-f]{6})/g))
+        pg.lines.push([parseFloat(m[1]), m[2].toUpperCase(), e.textContent.trim().slice(0, 16)]);
+      if (e.tagName === 'svg') e.querySelectorAll('[stroke-width="0.6"]').forEach(l =>
+        pg.lines.push([0.6, (l.getAttribute('stroke') || '').toUpperCase(), 'svg']));
+      if (e.tagName === 'A') {
+        const vertical = [...e.querySelectorAll('span')].some(s => s.style.writingMode === 'vertical-rl');
+        const svg = e.querySelector('svg.ar');
+        const sp = svg && svg.closest('span[style]');
+        pg.links.push({text: e.textContent.trim().slice(0, 30), vertical, styled: e.hasAttribute('style'),
+                       href: e.getAttribute('href'), arrow: !!svg,
+                       gap: sp ? getComputedStyle(sp).marginLeft || '' : '', mr: sp ? getComputedStyle(sp).marginRight : '',
+                       color: sp ? getComputedStyle(sp).color : '', ownSize: sp ? !!sp.style.fontSize : false,
+                       sizeSame: sp ? getComputedStyle(sp).fontSize === getComputedStyle(sp.parentElement).fontSize : true});
+      }
+    });
+    // 글자: 줄 단위 사각형, 자기 상자(가장 가까운 위치 지정 조상) 안인가
+    const w = document.createTreeWalker(sec, NodeFilter.SHOW_TEXT);
+    let n, id = 0;
+    while ((n = w.nextNode())) {
+      const t = n.textContent.trim(); if (!t) continue;
+      const rg = document.createRange(); rg.selectNodeContents(n);
+      const rects = [...rg.getClientRects()].map(rel).filter(r => r.width > .5);
+      let box = n.parentElement;
+      while (box && box !== sec && getComputedStyle(box).position !== 'absolute') box = box.parentElement;
+      const br = box && box !== sec ? rel(box.getBoundingClientRect()) : {left: 0, top: 0, right: 612, bottom: 792};
+      const pcs = getComputedStyle(n.parentElement);
+      const vertical = pcs.writingMode === 'vertical-rl';
+      const lh = parseFloat(pcs.lineHeight);
+      rects.forEach(r => {
+        if (!vertical && (r.right > br.right + .5 || r.left < br.left - .5))
+          pg.over.push([t.slice(0, 30), Math.round(Math.max(r.right - br.right, br.left - r.left) * 10) / 10]);
+        if (r.right > 612 || r.top > 792 || r.left < 0) pg.over.push([t.slice(0, 30) + ' (쪽 밖)', 0]);
+        const inset = lh && r.height > lh ? (r.height - lh) / 2 : 0;
+        if (!vertical) pg.texts.push([id, t.slice(0, 24), r.left, r.top + inset, r.right, r.bottom - inset]);
+      });
+      id++;
+    }
+    out[sec.id] = pg;
+  });
+  return out;
+}"""
+
+
+def main(ver):
+    src = os.path.join(ROOT, "src", f"p4_home-reset_{ver}_full_color.html")
+    ids = re.findall(r'<section class="page" id="([^"]+)"', open(src, encoding="utf-8").read())
+    from chrome_auto import launch
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        br = launch(p)
+        pg = br.new_page(viewport={"width": 700, "height": 900})
+        pg.goto("file:///" + src.replace(os.sep, "/"))
+        pg.add_style_tag(content="section.page{zoom:1 !important}")
+        pg.evaluate("Promise.all(['400 10px Nunito','700 10px Nunito','800 10px Nunito','600 10px Nunito']"
+                    ".map(f => document.fonts.load(f))).then(() => document.fonts.ready)")
+        ok = pg.evaluate("['400 10px Nunito','700 10px Nunito','800 15px Nunito'].every(f => document.fonts.check(f))")
+        if not ok:
+            raise SystemExit("글꼴(Nunito)이 다 불러와지지 않았다 -- 잰 값이 대체 글꼴 값이 된다(README 11절)")
+        got = pg.evaluate(JS)
+        br.close()
+
+    fails = {k: [] for k in "ABCDEFG"}
+    num = lambda k: ids.index(k) + 1
+    # A
+    for k in ids:
+        rep = ids[B.template_of(k) - 1]
+        if rep == k:
+            continue
+        # 폭 미지정 상자는 글자 길이를, 높이 미지정 상자는 내용(줄 수)을 따라간다 -- 방 카드 준비물 칩 1~2줄(카드 크기는 고정).
+        # 내용이 길어져 아래와 부딪히면 B(넘침)·C(겹침)가 잡는다
+        cut = lambda b: b[2:4] + [b[4] if b[1] else None, None if b[6] else b[5]]
+        a = [cut(b) for b in got[k]["boxes"]]
+        r = [cut(b) for b in got[rep]["boxes"]]
+        if re.fullmatch(r"w\d+", k):         # Previous 알약(높이 24 · y754)과 그 안 화살표는 대표 쪽(w1)에 없다
+            bottom = lambda b: 745 <= b[1] <= 785
+            a = [b for b in a if not (bottom(b) and b[0] < 300)]
+            r = [b for b in r if not (bottom(b) and b[0] < 300)]
+            if k == "w52":                   # 마지막 주는 Next 알약이 없다
+                a = [b for b in a if not bottom(b)]
+                r = [b for b in r if not bottom(b)]
+        diff = [x for x in a if x not in r]
+        if diff:
+            fails["A"].append(f"{num(k)} {k} (대표 {num(rep)}쪽과 다른 상자 {len(diff)}: {diff[:3]})")
+    for k in ids:
+        g = got[k]
+        # B
+        for t, d in g["over"]:
+            if k == "flow" and t.startswith("Check your battery"):    # README §7-2 적용 사례 "2쪽 Check your battery → 두 줄"
+                continue                                              # (배경 없는 글자 상자, 위아래 2.5pt -- 그림으로 확인)
+            fails["B"].append(f"{num(k)} {k}: \"{t}\" {d}pt")
+        # C
+        T = g["texts"]
+        for i in range(len(T)):
+            for j in range(i + 1, len(T)):
+                a, b = T[i], T[j]
+                if a[0] == b[0]:
+                    continue
+                ox = min(a[4], b[4]) - max(a[2], b[2])
+                oy = min(a[5], b[5]) - max(a[3], b[3])
+                if ox > 1 and oy > 1:
+                    fails["C"].append(f"{num(k)} {k}: \"{a[1]}\" / \"{b[1]}\"")
+        # D
+        for rad, ctx in g["checks"]:
+            if rad not in ("4.5px", "50%", "7px"):
+                fails["D"].append(f"{num(k)} {k}: 모서리 {rad} ({ctx})")
+        # E
+        for top, t in g["pills"]:
+            if abs(top - 754) > .2:
+                fails["E"].append(f"{num(k)} {k}: \"{t}\" y{top}")
+        # F
+        for L in g["links"]:
+            if L["vertical"] or L["text"] in ("SOS",) or not L["styled"]:      # 레일·SOS·보이지 않는 기획서 링크
+                continue
+            if k == "weeks" and re.fullmatch(r"WEEK\s*\d+", L["text"]):
+                continue
+            if not L["arrow"]:
+                fails["F"].append(f"{num(k)} {k}: \"{L['text']}\" → 없음")
+                continue
+            back = L["mr"] == "4px"
+            if not (L["gap"] == "4px" or back):
+                fails["F"].append(f"{num(k)} {k}: \"{L['text']}\" 간격 {L['gap']}/{L['mr']}")
+            if L["color"] not in SECTION_D:
+                fails["F"].append(f"{num(k)} {k}: \"{L['text']}\" 화살표 색 {L['color']}")
+            if L["ownSize"] or not L["sizeSame"]:
+                fails["F"].append(f"{num(k)} {k}: \"{L['text']}\" 화살표 크기가 앞 글자와 다름")
+        # G
+        for wd, col, t in g["lines"]:
+            if abs(wd - 0.6) > .05 or (col not in LINE_COLORS and not (k == "cover" and col == "#E9EEEB")):
+                fails["G"].append(f"{num(k)} {k}: {wd}px {col} ({t})")
+    names = {"A": "같은 틀 = 같은 배치", "B": "글자 넘침", "C": "글자 겹침", "D": "체크 상자 14 · 4.5",
+             "E": "쪽 아래 알약 y754", "F": "링크 →", "G": "선 0.6 · 세 색"}
+    total = 0
+    print(f"상품 4 디자인 검사 {ver} -- {len(ids)}쪽, 글꼴 로드 후 1배 실측")
+    for k, v in fails.items():
+        uniq = list(dict.fromkeys(v))
+        total += len(uniq)
+        print(f"  {'OK  ' if not uniq else 'FAIL'} {k} {names[k]}" + (f" -- {len(uniq)}건" if uniq else ""))
+        for x in uniq[:12]:
+            print("        ", x)
+    print("FAILURES:", total)
+    return total
+
+
+if __name__ == "__main__":
+    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.10") else 0)

@@ -174,8 +174,10 @@ def fill_week(page, key):
         page = page.replace(pill, "")
     if n > 1:
         # 왼쪽 알약 = 같은 모양, x84 · 폭 PREV_W (사용자 10-01). 흰 알약과 그림자는 배경에 굽는다(week_bg)
+        # ← 색 = Next 알약 → 와 같은 섹션 진한색 (README §7-2). v0.10 첫 빌드는 색을 빠뜨려 글자색이었다(check_design F)
+        arrow_col = re.search(r'margin-left:4px;color:(#[0-9A-Fa-f]{6})', m.group(4)).group(1)
         prev = (m.group(1) + "84" + m.group(3)
-                + f'<span style="margin-right:4px">←</span>{C.LABELS["prev"]}' + m.group(5))
+                + f'<span style="margin-right:4px;color:{arrow_col}">←</span>{C.LABELS["prev"]}' + m.group(5))
         prev = re.sub(r"width:[\d.]+px", f"width:{PREV_W}px", prev, count=1)
         page = page[:page.rfind("</div>")] + prev + "</div>"
     return page

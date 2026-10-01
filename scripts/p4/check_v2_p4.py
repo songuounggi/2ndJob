@@ -6,7 +6,9 @@
   1 쪽 수 108 · 쪽 크기 612x792pt (v0.10 첫 표본은 px 단위 때문에 459x594pt 였다)
   2 링크: 죽은 링크 0 · 들어올 길 없는 쪽 0 · PDF 링크 주석이 쪽마다 있음
     + 기획서 링크: v0.9(기획서대로 써 보기 통과한 판)의 쪽별 목적지가 전부 있음 -- 시안에 화살표가 없다고 링크가
-      빠지면 안 된다(10-01 사용자). v0.10 첫 빌드는 57쪽에서 빠져 있었다
+      빠지면 안 된다(10-01 사용자). v0.10 첫 빌드는 빠진 쪽이 57개였다
+    + HTML 링크 = PDF 링크: 쪽마다 목적지 집합이 같고 외부 링크 0 (Chrome 은 목적지 없는 링크를 조용히 버린다)
+    + 주 번호: 39~90쪽 제목 "Reset week n" 과 Previous -> n-1 · Next -> n+1 (1주는 Previous 없음, 52주는 Next 없음)
   3 탭 하이라이트: 쪽마다 켜진 탭(굵기 800) 정확히 1개
   4 원고 밖 문구 0 (p4_content 와 디자인이 정한 표 머리 대문자만)
   5 글꼴: Nunito(Chrome 이 이름 없는 Type3 로 넣음) 말고 없음 -- 화살표가 대체 글꼴로 찍히던 일(v0.6)
@@ -122,6 +124,31 @@ def check(ver, tag):
             fails.append(f"기획서 링크 빠짐 {len(lost)}쪽: " + "; ".join(f"{ids.index(k) + 1} {k} {v}" for k, v in list(lost.items())[:8]))
     else:
         print("   (v0.9 HTML 없음 -- 기획서 링크 대조 건너뜀. python scripts/p4/build_p4.py full 로 v0.9 를 뽑으면 잰다)")
+    secs = list(re.finditer(r'<section class="page" id="([^"]+)"[^>]*>(.*?)</section>', html, re.S))
+    mism = []
+    for n, m in enumerate(secs):
+        want = set(re.findall(r'href="#([^"]+)"', m.group(2)))
+        links = doc[n].get_links()
+        got = {ids[l["page"]] for l in links if l.get("page", -1) >= 0}
+        if want != got or any(l.get("page", -1) < 0 for l in links):
+            mism.append(f"{n + 1} {m.group(1)} {sorted(want ^ got)[:4]}")
+    if mism:
+        fails.append(f"HTML 링크와 PDF 링크가 다른 쪽 {mism[:8]}")
+    badw = []
+    for m in secs:
+        k = m.group(1)
+        if not re.fullmatch(r"w\d+", k):
+            continue
+        n = int(k[1:])
+        body = m.group(2)
+        hrefs = re.findall(r'href="#(w\d+)"[^>]*>(.*?)</a>', body, re.S)
+        nav = {re.sub(r"<[^>]+>", "", t).strip(): w for w, t in hrefs}
+        ok = (f">Reset week {n}<" in body and nav.get(C.LABELS["next"]) == (f"w{n + 1}" if n < 52 else None)
+              and nav.get(C.LABELS["prev"]) == (f"w{n - 1}" if n > 1 else None))
+        if not ok:
+            badw.append(f"{k} {nav}")
+    if badw:
+        fails.append(f"주 번호·앞뒤 주 링크가 틀린 쪽 {badw[:6]}")
     thin = [n + 1 for n, p in enumerate(doc) if len(list(p.links())) < 7]
     if thin:
         fails.append(f"링크 주석이 7개 미만인 쪽 {thin[:10]}")
