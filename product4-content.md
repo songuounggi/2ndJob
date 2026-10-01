@@ -50,7 +50,7 @@
   v0.9 보다 링크가 빠진 쪽이 57개였던 것**(→ 붙은 글자·Weeks 칸을 링크로, 기획서 링크 복원 -- check_v2 에 "기획서 링크 빠짐" 검사,
   고치기 전 판에서 FAIL(57개 쪽) 확인)
 - **5단계 검수 v0.10 (10-01, 자동 전부 0)** -- 매 빌드 돌리는 검사 다섯:
-  `check_plan_p4.py v0.10`(5-1·5-4: 원고 464개가 제 쪽에 있나 · 목차 쪽 번호 131개 = 링크 목적지 · 표지 섹션 쪽 수 ·
+  `check_plan_p4.py v0.10`(5-1·5-4: 원고 464개가 제 쪽에 있나 · 목차 쪽 번호 131개 = 링크 목적지 · 표지 알약 = 섹션 첫 쪽 ·
   판 글자의 금지·1인칭·영국식 표현) / `check_design_p4.py v0.10`(5-2: README §11 을 108쪽에 -- 글꼴 로드 후 1배 실측,
   같은 틀 = 대표 쪽과 같은 배치 · 글자 넘침·겹침 · 체크 14·4.5 · 알약 y754 · 링크 → · 선 0.6·세 색) /
   `check_v2_p4.py v0.10`(5-3: + HTML 링크 1,146 = PDF 링크 · 주 번호·앞뒤 주) / `check_render.py`(5-5) / `check_docs_p4.py`(5-6).
@@ -63,12 +63,14 @@
   94쪽 Guests 체크 상자 옆 숨은 링크 → 줄 끝 → · 92쪽 Rescue 단계 링크 2·3단계만 · 6쪽 할 일 7개 → 깊은 청소 쪽 ·
   리스팅 "links to the room card" → "the page" · 4쪽 방 타일 · 3쪽 카드 전체 링크 · 3·92·94쪽 탭 위치 ·
   흑백판 쓰는 칸 테두리 · 선 진하게 · 쪽 번호. 검사: check_v2 8 · check_design H·I · check_listing 2줄(전부 고치기 전 판에서 FAIL 확인)
-  **아직 결정 안 한 것 (문구·구조 -- 사용자 확인 필요)**: ① 32쪽 "One a month." 오타인지(구매자 3명) ② 30쪽 "Once a day, one
-  small thing." 인데 6개 ③ 31쪽 "Slide it to the next." 과 "Slid to next week", "하루 한 방" 인데 7일 칸 ④ 6쪽 "one is enough" vs
-  7쪽 "pick three at most" ⑤ Wins 를 적는 곳이 39~90쪽 칸과 101쪽 두 곳 ⑥ 1쪽 표지 숫자(섹션 쪽 수)가 쪽 번호로 읽힌다(3명)
-  ⑦ 2쪽 "Done enough → Stop there" 가 집 지도로 감 ⑧ 7~9쪽 하루 쪽이 세 쪽 같은 빈칸 ⑨ 방 카드에서 돌아가는 길(Energy·Guests)
-  ⑩ 영어 다듬기(13 hamper, 25 wheel, 20 Restock the umbrella, 93 last ring, 2 Tap any box, 102 vs., 리스팅 rescue mode 대소문자)
-- **다음**: 위 문구 결정 → 7단계 iPad(집). 셸 heredoc 으로 정규식을 고치면 `` 이
+  **문구 결정 (10-01 사용자)**: 32쪽 "Once a month." · 30쪽 "Two small resets a day." · 31쪽 "Slide it to tomorrow." ·
+  7~9쪽 "one is enough, three at most"(6쪽 "one is enough" 와 맞춤) · 1쪽 표지 알약 = 섹션 첫 쪽(6 · 10 · 29 · 91, 쪽 수로 읽히던 것) ·
+  2쪽 "Done enough" → 101쪽 Wins log · 영어 13쪽 "Hang towels or toss in the hamper"(제안 9단어 → 7단어 규칙으로 줄임) ·
+  25쪽 "steering wheel" · 20쪽 "Put back the umbrella and bags" · 93쪽 "the last timer goes off" · 2쪽 "Tap any step" ·
+  리스팅 "Rescue mode". 시안에 박힌 옛 문구는 `build_v2_p4.COPY_FIX` 가 원고로 바꾼다(원고에 없으면 빌드가 멈춤)
+  **아직 안 정한 것 (구조 -- 다음에 사용자 확인)**: Wins 를 적는 곳이 39~90쪽 칸과 101쪽 두 곳 · 7~9쪽 하루 쪽이 세 쪽 같은
+  빈칸(그 배터리 할 일이 안 보임) · 방 카드에서 돌아가는 길(Energy·Guests 로) · My room 이 하나뿐(가족) · Reset week 에 날짜 칸 없음
+- **다음**: 7단계 iPad(집). 구조 항목은 그 전에 사용자와 정한다. 셸 heredoc 으로 정규식을 고치면 `` 이
   제어 문자로 바뀐다(이번에 두 번) -- 파이썬 파일로 고치거나 Edit 로
 
 ### (옛것) 디자인 시안 v1 도착 (2026-10-01 18:02, 사용자 "심혈을 기울여 완성")

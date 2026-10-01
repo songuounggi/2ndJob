@@ -72,7 +72,7 @@ Tools — 15-minute sprint, guests in 2 hours, doom pile triage, declutter decis
 
 FINDING THINGS
 
-Six tabs run down the side of every page: Home, Energy, Rooms, Routines, Weeks, Tools. Tap SOS in the corner of any page after the cover to jump to rescue mode.
+Six tabs run down the side of every page: Home, Energy, Rooms, Routines, Weeks, Tools. Tap SOS in the corner of any page after the cover to jump to Rescue mode.
 
 NO STREAKS
 

@@ -216,6 +216,34 @@ def fill(page, key):
     return page
 
 
+# 시안에 박힌 옛 문구 -> 원고의 새 문구 (10-01 사용자, 써 보기 6단계에서 문구 모순·오타). 새 문구는 원고에 있어야 한다
+COPY_FIX = [
+    (lambda k: k == "flow", "Tap any box to go there.", lambda: C.FLOW["sub"]),
+    (lambda k: k == "sprint", "Stop when the last ring is done.", lambda: C.SPRINT[1].split(". ", 1)[1]),
+    (lambda k: k == "monthly", "One a month. Any order.", lambda: C.TOOL_PAGES["monthly"][1]),
+    (lambda k: k == "daily", "Once a day, one small thing.", lambda: C.TOOL_PAGES["daily"][1]),
+    (lambda k: k == "rotation", "Slide it to the next.", lambda: C.WEEKLY_ROTATION_SUB.split("? ", 1)[1]),
+    (lambda k: k.startswith("day-"), "PICK THREE AT MOST", lambda: C.DAY_PAGE_CARDS[0][1].upper()),
+]
+
+
+def copy_fix(page, key):
+    for when, old, new in COPY_FIX:
+        if when(key):
+            n = new()
+            if n.lower() == old.lower() or n.lower() not in " ".join(t for _, t in C.all_texts()).lower():
+                raise SystemExit(f"[{key}] 새 문구가 옛 문구와 같거나 원고에 없음: {n}")
+            page = must_replace(page, old, n, key)
+    if key == "cover":
+        # 표지 목차 알약 = 그 섹션 첫 쪽 번호 (10-01 사용자: 쪽 수 4·19·62·18 이 쪽 번호로 읽혔다 -- 다른 목차와 같은 뜻으로)
+        keys = [k for k, _, _ in pages_p4.specs()]
+        firsts = iter(str(keys.index(s) + 1) for s in ("energy", "rooms", "routines", "tools"))
+        page, n = re.subn(r'(border-radius:9px;[^"]*">)(\d+)(</span></a>)', lambda m: m.group(1) + next(firsts) + m.group(3), page)
+        if n != 4:
+            raise SystemExit(f"[cover] 목차 알약 {n} != 4")
+    return page
+
+
 # ------------------------------------------------------------------ 링크 --
 SECTION_D = {"energy": "#537364", "rooms": "#7D6A28"}
 
@@ -517,6 +545,7 @@ def build(keys=None, bw=False):
         page = re.sub(r' data-screen-label="[^"]*"', "", page, count=1)
         page = page.replace('src="assets/', f'src="{rel}/')
         page = fill(page, k)
+        page = copy_fix(page, k)
         page = plan_links(page, k)
         if re.fullmatch(r"w\d+", k) and k != "w1":
             page = re.sub(r'src="[^"]*25-week\.jpg"', f'src="{rel_of(last if k == "w52" else mid)}"', page)

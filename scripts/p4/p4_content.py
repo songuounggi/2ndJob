@@ -37,7 +37,7 @@ START_HERE = {
 
 # 2쪽 순서도 (2026-09-30 사용자 제안). 칸마다 링크. 칸 문구는 Start here·페이지 이름에서 온다
 FLOW = {
-    "title": "How it flows", "sub": "Tap any box to go there.",
+    "title": "How it flows", "sub": "Tap any step to go there.",
     "boxes": {   # key: (제목, 한 줄, 링크 대상)
         "open": ("Open the planner", "", "start"),
         "battery": ("Check your battery", "Low, medium, or full", "energy"),
@@ -45,7 +45,7 @@ FLOW = {
         "energy": ("Energy menu", "Pick by minutes", "energy"),
         "rescue": ("Rescue mode", "Five steps, then stop", "rescue"),
         "room": ("Room card", "Ten-minute reset", "house-map"),
-        "done": ("Done enough", "Stop there", "house-map"),
+        "done": ("Done enough", "Stop there", "wins"),     # 끝낸 뒤 갈 곳 = 다음 칸 Wins log (10-01 사용자, 써 보기 6단계)
         "wins": ("Wins log", "It counts", "wins"),
         "weeks": ("Once a week", "Reset week: one room a day", "weeks"),
     },
@@ -62,7 +62,7 @@ ROOMS = [
      ["Clean out the fridge", "Wipe inside the microwave", "Degrease the stovetop", "Clean the oven door",
       "Wipe cabinet fronts", "Clean the dishwasher filter", "Scrub the sink and drain", "Mop the whole floor"]),
     ("bathroom", "Bathroom",
-     ["Empty the trash can", "Hang towels or hamper them", "Put products in one bin",
+     ["Empty the trash can", "Hang towels or toss in the hamper", "Put products in one bin",
       "Wipe the sink and faucet", "Swish the toilet bowl", "Wipe the mirror if there's time"],
      "Sink wiped, toilet swished, floor clear.",
      ["toilet brush", "spray", "cloth", "trash bags"],
@@ -91,7 +91,7 @@ ROOMS = [
      ["shoe rack", "key bowl", "broom"],
      ["Wipe the front door", "Sort the coat closet", "Donate shoes nobody wears",
       "Clean the light fixture", "Wipe the hallway walls", "Wash the door mat", "Sweep behind the door",
-      "Restock the umbrella and bags"]),
+      "Put back the umbrella and bags"]),
     ("laundry", "Laundry",
      ["Move the wet load to the dryer", "Start the next load", "Fold only what is dry",
       "Hang what wrinkles", "Carry piles to their rooms", "Clear the lint trap"],
@@ -109,7 +109,7 @@ ROOMS = [
       "Dust the monitor", "Sort the inbox pile to zero", "Clear the desktop files", "Wipe the chair"]),
     ("car", "Car",
      ["Trash into one bag", "Cups and bottles out", "Returns and bags to the house",
-      "Shake out the floor mats", "Wipe the wheel and cup holders", "Toss old receipts from the glove box"],
+      "Shake out the floor mats", "Wipe the steering wheel and cup holders", "Toss old receipts from the glove box"],
      "Front seat empty enough for a passenger.",
      ["trash bag", "wipes", "small bin"],
      ["Vacuum the seats and floor", "Clean the inside windows", "Wash the floor mats", "Empty the trunk",
@@ -149,7 +149,7 @@ DAY_PAGES = {   # Low / Medium / Full day 페이지 (product4-content.md 3-2)
     "Medium": ("Medium battery day", "Enough for one room, maybe two."),
     "Full": ("Full battery day", "Spend it on the thing that keeps nagging."),
 }
-DAY_PAGE_CARDS = [("Today I'll do", "pick three at most"), ("On in the background", "music, a podcast, a call"),
+DAY_PAGE_CARDS = [("Today I'll do", "one is enough, three at most"), ("On in the background", "music, a podcast, a call"),
                   ("After, I get", "a small reward, chosen now"), ("That's enough for today", "check it and stop")]
 
 # --------------------------------------------------------------- 루틴 --
@@ -180,7 +180,7 @@ DISHES_LOOP = [("Use", "Keep one cup per person out"),
                ("Soak", "Fill the sink with hot water first"),
                ("Wash", "Set a 10-minute timer, stop when it rings"),
                ("Put away", "Unload while the kettle boils")]
-WEEKLY_ROTATION_SUB = "One room a day. Missed one? Slide it to the next."
+WEEKLY_ROTATION_SUB = "One room a day. Missed one? Slide it to tomorrow."
 # 103쪽 Moving or big reset -- 미리 채운 항목 (2026-09-30 사용자: "미리 채운 항목 10~12개 + 빈 줄")
 BIG_RESET = ["Book the date and the help", "Collect boxes, tape, and markers", "Pack one room a day",
              "Label every box by room", "Pack an open-first box", "Donate what you won't move",
@@ -200,7 +200,7 @@ RESCUE = {
     # 1 Trash first -> 부엌, 4 Clear a path -> 집 지도, 5 One surface -> Wins 는 "구조 화면 밖으로 끌려 나간다"(써 보기 6단계)
     "linked": ("dishes-loop", "laundry-loop"),
 }
-SPRINT = ("15-minute sprint", "Three rounds of five minutes. Stop when the last ring is done.")
+SPRINT = ("15-minute sprint", "Three rounds of five minutes. Stop when the last timer goes off.")
 GUESTS = ("Guests in 2 hours", "Only what they'll see.",
           ["Entry: shoes and coats away", "Bathroom: swish, wipe, fresh towel", "Living room: cups out, blankets folded",
            "Kitchen: dishes in, counter wiped", "Everything else into one box", "Close the doors they won't use"])
@@ -225,9 +225,9 @@ TOOL_PAGES = {   # 제목, 부제 (칸만 있는 페이지)
     "who-does-what": ("Who does what", "Split it on paper before it turns into an argument."),
     "house-map": ("House map", "Tap a room. Ten minutes, then stop."),
     "energy": ("Energy menu", "Pick by battery and time, not by day."),
-    "monthly": ("Monthly deep clean", "One a month. Any order."),
+    "monthly": ("Monthly deep clean", "Once a month. Any order."),
     "seasonal": ("Seasonal reset", "Four times a year."),
-    "daily": ("Daily reset", "Once a day, one small thing."),
+    "daily": ("Daily reset", "Two small resets a day."),
 }
 WEEK_PAGE = ("Reset week {n}", "This week's rooms, one deep clean, and the wins.")
 

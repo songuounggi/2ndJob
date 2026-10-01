@@ -10,7 +10,8 @@ v0.10 은 시안 HTML 을 틀로 쓴다. 시안이 문구를 빼거나 바꿨으
   3 페이지 순서: 판의 쪽 key 순서 = pages_p4.specs() (기획서 페이지 지도는 check_docs_p4 가 specs 와 대조)
   4 인쇄된 숫자(5-4): 목차의 쪽 번호 = 그 줄 링크가 가는 쪽 (5쪽은 번호가 링크 안, 10·29·91쪽은 같은 높이의 줄 링크,
     38쪽 Weeks 칸은 주 번호) /
-    1쪽 표지 알약 = 섹션별 쪽 수 (Energy 4 · Rooms 19 · Routines & weeks 62 · Tools 18 -- v0.9 부터 같은 뜻, 쪽 번호 아님)
+    1쪽 표지 알약 = 섹션 첫 쪽 번호 (6 · 10 · 29 · 91). v0.9~v0.10 첫 판은 섹션 쪽 수(4 · 19 · 62 · 18)였는데 구매자 역할 3명이
+    쪽 번호로 읽어 10-01 사용자 결정으로 다른 목차와 같은 뜻으로 바꿈
   5 판 글자의 금지 표현(5-4): 원고 검사(p4_content.check)는 원고만 본다 -- 시안에 박힌 글자까지 완성 판에서 다시.
     BANNED(실패·의학 표현) · FIRST_PERSON(1인칭 당사자) · UK(영국식) -- 허용은 원고와 같은 ALLOWED_BANNED 만
 의도한 차이(사용자 확정)는 ALLOW 에 이유와 함께.
@@ -149,11 +150,10 @@ def main(ver):
                 dest = [ids.index(h) + 1 for h in tops[top] if h in ids and not h.startswith("deep-")]
                 if dest and int(t) not in dest:
                     fails.append(f"{ids.index(k) + 1} {k}: 번호 {t} 인데 그 줄 링크는 {dest}쪽")
-    tabs = [t for _, _, t in pages_p4.specs()]
-    want = [tabs.count("energy"), tabs.count("rooms"), tabs.count("routines") + tabs.count("weeks"), tabs.count("tools")]
+    want = [ids.index(s) + 1 for s in ("energy", "rooms", "routines", "tools")]     # 섹션 첫 쪽 번호 (10-01 사용자)
     pills = [int(x) for x in re.findall(r'border-radius:9px;[^"]*">(\d{1,3})</span></a>', secs["cover"])]
     if pills != want:
-        fails.append(f"1 cover: 섹션 쪽 수 알약 {pills} != 실제 {want}")
+        fails.append(f"1 cover: 목차 알약 {pills} != 섹션 첫 쪽 {want}")
     print(f"  인쇄된 번호 {nums}개 대조 · 표지 알약 {pills}")
     # 5
     for k, body in secs.items():
