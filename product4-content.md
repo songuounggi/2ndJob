@@ -76,7 +76,7 @@
   (하루 0.015 · 방 0.001 · My room 0.211 · 방 목록 0.190 · 주간 0.191). 검사: check_plan_p4 6·7 (고치기 전 판에서 FAIL 확인)
   결과: `output/prod4/planner/v0.11/home-reset_v0.11_color-FINAL.pdf`(5.1MB) · `…_BW-FINAL.pdf`(3.6MB), 110쪽
 - **6단계 재시험 v0.11 (10-01, 구매자 역할 7명)** -- 막힘 0 · 쓰는 칸 눌러 넘어감 0 · 탭 문제 0 · 리뷰어 별점 3 → 4.
-  **규칙대로 고친 것**: 94쪽 Rescue 2·3단계 카드 전체(→ 하나만 눌렸다) · 할 일 cabinet → 부엌 깊은 청소, mail pile → 거실 깊은 청소,
+  **규칙대로 고친 것**: 94쪽 Rescue mode 의 2·3단계 카드 전체(→ 하나만 눌렸다) · 할 일 cabinet → 부엌 깊은 청소, mail pile → 거실 깊은 청소,
   clear the desk → 책상 깊은 청소 · 흑백판 쪽 번호 아래 772 → 위쪽 가운데 35(종이 끝 4~6mm 라 프린터 여백에 걸림) · 리스팅 "two rooms".
   **결정 (10-01 사용자)**: 33쪽 부제 "Slide it to the next slot."(같은 쪽 카드 "just the next slot" 과 같게) · 17쪽 03 "Fold blankets,
   fluff the pillows", 19쪽 06 "Shake the mat, sweep the floor" + 리스팅 "Every task links to the room card, deep clean list, or loop it
