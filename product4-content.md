@@ -20,7 +20,15 @@
 | 8 리스팅 | 원고 초안 `listing-p4.md` (제작과 나란히). 결정 3건 대기 |
 | 9 출시 · 10 알리기 | 아직 |
 
-### ★ 디자인 전체 시안 도착 (2026-10-01 18:02, 사용자 "심혈을 기울여 완성")
+### ★★ 디자인 v1.0 이 최신 (2026-10-01 18:32) -- **이걸로 작업한다**
+
+- **`design/prod4/the-adhd-home-reset-design-v1.0.zip`** (3.8MB, 82개). 아래 v1(18:02)은 옛것
+- 안: `README.md`(디자인 인수인계서) · **`pages_turn25.html`**(전체 디자인 HTML) · `reference/`(CLAUDE_prod4.md, background_bake.js, 메모 1개)
+  · `assets/` · **`screenshots/p001_cover.jpg` ~ `p107_notes-blank_p107-108.jpg`** -- 쪽 번호가 붙어 있어 108쪽 지도와 바로 짝지어진다
+- 진행: 받아서 푸시만 했다(49c4e9f). **README 는 아직 안 읽었다** -- 사용자 토큰 99% 에서 멈춤
+- 다음: 압축 풀기 → README·reference·HTML 정독 → 질문 모아 묻기 → 표본 → v0.10 → 검사 일곱 줄
+
+### (옛것) 디자인 시안 v1 도착 (2026-10-01 18:02, 사용자 "심혈을 기울여 완성")
 
 - 파일: **`design/prod4/the-adhd-home-reset-design-v1.zip`** (git 에 있다 -- 집 PC 는 `git pull` 만). 1.35MB, 44개
   - `design_handoff_adhd_home_reset/README.md` -- **디자인 쪽 인수인계서 (25KB). 이걸 처음부터 끝까지 읽는다**
