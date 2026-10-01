@@ -124,6 +124,10 @@ For personal use. Please do not resell or redistribute the files.
 그림 겹침을 재고 넘으면 멈춘다. 숫자(109 pages · 31 tasks · Ten rooms · 52 weeks)는 판에서 센다. 문구는 이 파일 설명·원고에 있는 말만.
 고칠 때는 DRAFT 를 올린다(이미 있는 폴더면 멈춘다). v0.1·v0.2 는 검사에서 멈춘 불완전판
 
+**폰 크기 점검 (2026-10-02)** -- `draft-v0.6/_phone_preview.png` (iPhone 390pt 폭, 2배). 검색 썸네일(2열 약 175pt, 4:5 로 양옆 잘림)에서
+제목 01 **18.6pt** · 02~10 **16.4pt** -- 읽힘. 부제·숫자 알약·배지는 5~6pt 라 썸네일에서는 안 읽히고 상세(390pt 전체 폭)에서 8~10pt 굵은
+글씨로 읽힌다. 상품 3 의 "폰에서 알약이 안 읽힘"(얇은 글씨 34px)은 해당 없음(굵은 46px). 사용자가 실제 폰으로 한 번 볼 것
+
 | # | 파일 | 제목 (draft-v0.6) |
 |---|---|---|
 | 01 | `01_hero` | The ADHD Home Reset -- 109 pages · Hyperlinked · Printable B&W |
