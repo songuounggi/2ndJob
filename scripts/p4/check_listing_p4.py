@@ -66,6 +66,11 @@ n_rooms = len(C.ROOMS) + 1
 need({9: "nine"}.get(n_rooms, str(n_rooms)) + " rooms" in low, f"방 개수 불일치 ({n_rooms})")
 need(all(len(r[2]) == 6 for r in C.ROOMS) and "six-step" in low, "방 카드 6단계 불일치")
 need("52 undated reset weeks" in desc, "주간 52 불일치")
+# "Every task links to the room card ..." 는 목적지가 전부 방 카드일 때만 -- 6개는 루프, 7개는 깊은 청소로 간다(10-01, 써 보기 6단계)
+room_keys = {r[0] for r in C.ROOMS} | {C.MY_ROOM[0]}
+not_room = [t for v in C.ENERGY.values() for t, tg in v if tg not in room_keys]
+need(not (re.search(r"task links to the room card", desc) and not_room),
+     f"설명이 '할 일 -> 방 카드' 라고 하는데 방 카드가 아닌 곳으로 가는 할 일 {len(not_room)}개")
 # 설명의 예시 "Low battery and five minutes? Load five dishes." 가 실제 Energy menu 칸에 있나 -- v0.10 까지 "Full ... twenty
 # minutes? Clean out the fridge" 였는데 fridge 는 Medium x 20 칸이었다(써 보기 6단계, 리뷰어 구매자 역할이 찾음)
 WORD_MIN = {"two": 2, "five": 5, "ten": 10, "twenty": 20}

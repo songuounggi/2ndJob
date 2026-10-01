@@ -223,9 +223,11 @@ SECTION_D = {"energy": "#537364", "rooms": "#7D6A28"}
 def plan_links(page, key):
     """시안에 화살표가 없지만 기획서(product4-content.md 페이지 표·3-7)가 링크로 정한 곳 (10-01 사용자)
     - 보이는 링크(→ 추가): 6쪽 배터리 Low/Medium/Full -> 7~9쪽, 10쪽 방 이름 -> 방 카드. 7~9쪽은 Index 말고 길이 없었다
-    - 보이지 않는 링크(모양은 시안 그대로, 글자 위에만): 1쪽 제목 -> 2쪽, 6쪽 할 일 -> 방 카드, 39~90쪽 This week's rooms
-      -> House map, 92쪽 단계 -> 루프·방, 94쪽 방 이름 줄 -> 방 카드
-    목적지는 relink 가 글자로 정한다. 링크 상자는 글자 크기만큼(줄 전체가 아니라) -- 쓰다가 잘못 눌리는 범위를 줄인다"""
+    - 보이지 않는 링크(모양은 시안 그대로, 글자 위에만): 1쪽 제목 -> 2쪽, 6쪽 할 일 -> 그 일이 있는 쪽, 39~90쪽
+      This week's rooms -> House map
+    - 글자 끝 → 만 링크(10-01 사용자, 써 보기 6단계): 94쪽 방 이름 줄 -> 방 카드, 92쪽 2·3단계 -> 설거지·빨래 루프.
+      글자 전체를 링크로 두었더니 94쪽은 체크 상자와 4pt 라 체크하다 넘어갔다. → 는 체크 상자와 멀고 링크인 게 보인다
+    목적지는 relink 가 글자로 정한다(→ 만 링크인 곳은 목적지를 직접 적는다). 링크 상자는 글자 크기만큼"""
     T = link_targets()
     wrap = lambda m: f'{m.group(1)}<a href="#">{m.group(2)}</a>{m.group(3)}'
     if key == "energy":
@@ -249,13 +251,63 @@ def plan_links(page, key):
         lab = H.escape(C.LABELS["week_rooms"], quote=False)
         page = must_replace(page, f">{lab}<", f'><a href="#">{lab}</a><', key)
     elif key == "rescue":
-        for a, _, _ in C.RESCUE["steps"]:
-            page = must_replace(page, f">{H.escape(a)}<", f'><a href="#">{H.escape(a)}</a><', key)
+        for a, _, tg in C.RESCUE["steps"]:
+            if tg in C.RESCUE["linked"]:
+                page = must_replace(page, f">{H.escape(a)}<", f">{H.escape(a)}{arrow_link(tg, TOOLS_D)}<", key)
     elif key == "guests":
-        page = re.sub(r'(<div style="position:absolute;left:132px;[^"]*">)([^<:]+:[^<]*)(</div>)',
-                      lambda m: wrap(m) if m.group(2).split(":")[0].lower() in set(T) | {"entry"} else m.group(0), page)
-        # "Entry" 는 방 이름이 "Entry & hallway" 라 T 에 없다 -- relink 와 같은 예외
+        def row(m):
+            head = m.group(2).split(":")[0].lower()
+            tgt = "entry" if head == "entry" else T.get(head)     # "Entry" 는 방 이름이 "Entry & hallway" 라 T 에 없다
+            return m.group(0) if not tgt else m.group(1) + m.group(2) + arrow_link(tgt, TOOLS_D) + m.group(3)
+        page = re.sub(r'(<div style="position:absolute;left:132px;[^"]*">)([^<:]+:[^<]*)(</div>)', row, page)
     return page
+
+
+TOOLS_D = "#237581"
+
+
+def arrow_link(tgt, col):
+    """글자 끝 → 만 누르는 링크. 손끝 여유 6pt(padding)를 주되 음수 margin 으로 배치는 그대로"""
+    return (f'<a href="#{tgt}" style="padding:6px 6px 6px 0;margin:-6px -6px -6px 0">'
+            f'<span style="margin-left:4px;color:{col}">→</span></a>')
+
+
+def card_overlays(page, key):
+    """카드 전체를 누르게 -- 모양은 그대로, 카드 위에 투명한 링크 상자 (10-01 사용자, 써 보기 6단계).
+    4쪽 House map 은 부제가 "Tap a room." 인데 작은 "Go →" 만 눌렸다 -- 타일 위쪽(이름 ~ LAST RESET 위)만 덮어
+    LAST RESET 쓰는 줄은 쓰다가 넘어가지 않게 둔다. 3쪽 Start here 는 단계 카드 3개 전체"""
+    if key not in ("house-map", "start"):
+        return page
+    cards = list(re.finditer(r'<div style="position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;'
+                             r'height:([\d.]+)px;border-radius:16px;background:#FFFFFF;', page))
+    over = []
+    for i, c in enumerate(cards):
+        end = cards[i + 1].start() if i + 1 < len(cards) else len(page)
+        go = re.search(r'<a href="#([^"]+)"', page[c.start():end])
+        if not go:
+            continue
+        x, y, w, h = (float(v) for v in c.groups())
+        if key == "house-map":
+            h = HOUSE_TILE_LINK_H
+        over.append(f'<a href="#{go.group(1)}" style="position:absolute;left:{x:g}px;top:{y:g}px;width:{w:g}px;height:{h:g}px"></a>')
+    want = 9 if key == "house-map" else 3
+    if len(over) != want:
+        raise SystemExit(f"[{key}] 카드 링크 상자 {len(over)} != {want}")
+    return page[:page.rfind("</div>")] + "".join(over) + "</div>"
+
+
+HOUSE_TILE_LINK_H = 98    # 타일 176 중 위 98 -- LAST RESET 라벨(타일 위에서 약 103)보다 위. check_design 이 겹침을 잰다
+
+
+def norm_rail(page):
+    """왼쪽 탭 6개 = 12 + 128 x 순서 (켜진 탭 배경도 이 자리에 굽는다 -- bake_bg_p4). 시안 원본은 3쪽 WEEKS·TOOLS 4pt,
+    92쪽 TOOLS 2pt, 94쪽 TOOLS 4pt 아래라 넘길 때 튀었다(써 보기 6단계, 10-01 사용자 결정으로 맞춤)"""
+    n = iter(range(6))
+    out, k = re.subn(r'(<a href="[^"]*" style="position:absolute;left:10px;top:)([\d.]+)(px;width:40px;height:128px;)',
+                     lambda m: f"{m.group(1)}{12 + 128 * next(n)}{m.group(3)}", page)
+    if k != 6:
+        raise SystemExit(f"왼쪽 탭 {k} != 6")
+    return out
 def link_targets():
     """글자 -> 페이지 key (쪽 제목·방 이름·할 일·단계 이름)"""
     t = {}
@@ -324,7 +376,9 @@ def relink(page, key, order):
         txt = text_of(page[page.index(">", m.end()) + 1:a_end])      # 여는 태그의 속성은 빼고 글자만
         low = txt.lower()
         tgt = None
-        if txt in TAB_TARGET:
+        if m.group(1)[1:] in order:                  # 목적지를 직접 적은 링크(글자 끝 → 등)
+            tgt = m.group(1)[1:]
+        elif txt in TAB_TARGET:
             tgt = TAB_TARGET[txt]
         elif txt == C.SOS_LABEL:
             tgt = "rescue"
@@ -396,7 +450,18 @@ def gray(hexcol):
     return "#%02X%02X%02X" % (y, y, y)
 
 
-def to_bw(page):
+BW_LINES = {"#D3DBD6": "#B4B4B4", "#E3E9E5": "#C2C2C2", "#ECF0ED": "#CCCCCC", "#E9EEEB": "#CCCCCC"}
+
+
+def bw_cell(m):
+    """쓰는 칸(체크 상자·동그라미 14, Last reset 칸): 흰 바탕 + 회색 테두리 -- 연회색 면은 인쇄하면 사라진다"""
+    st = m.group(1)
+    if re.search(r"width:14px;height:14px;border-radius:(4\.5px|50%)", st) or re.search(r"^height:26px;border-radius:8px;", st):
+        st = re.sub(r"background:#[0-9A-Fa-f]{6}", "background:#FFFFFF;border:0.6px solid #9A9A9A;box-sizing:border-box", st)
+    return f'style="{st}"'
+
+
+def to_bw(page, num):
     # 그림은 전부 뺀다(배경 JPG·구운 Reset week 배경·2쪽 그림자 PNG) -- 흑백판 = 배경 없이 + 카드 테두리 (10-01 사용자).
     # v0.10 첫 빌드는 시안 배경(25-*)만 골라 빼서 구운 주간 배경 51장이 흑백판 40~90쪽에 컬러로 남았다(써 보기 6단계에서 찾음)
     page = re.sub(r"<img\b[^>]*>", "", page)
@@ -404,6 +469,13 @@ def to_bw(page):
     # 바꿔 나머지 99쪽 바탕이 회색이었다(써 보기 6단계, 리뷰어·인쇄파 구매자 역할이 찾음)
     for paper in ("#F3F7F4", "#F9F8F0", "#F7F6FA", "#F2F7F8"):
         page = page.replace(f"background:{paper}", "background:#FFFFFF")
+    # 인쇄용 (10-01 사용자, 써 보기 6단계 인쇄파): 선 한 단계 진하게 / 쓰는 칸 테두리 / 쪽 번호(표지 빼고)
+    for a, b in BW_LINES.items():
+        page = page.replace(f"solid {a}", f"solid {b}").replace(f'stroke="{a}"', f'stroke="{b}"')
+    page = re.sub(r'style="([^"]*)"', bw_cell, page)
+    if num > 1:
+        page = (page[:page.rfind("</div>")] + f'<div style="position:absolute;left:0;top:772px;width:612px;text-align:center;'
+                f'font-size:7.5px;font-weight:600;color:#7A7A7A">{num}</div></div>')
     page = re.sub(r"#[0-9A-Fa-f]{6}\b", lambda m: gray(m.group(0)), page)
     page = re.sub(r"rgba\((\d+),(\d+),(\d+),", lambda m: "rgba(%d,%d,%d," % ((round(
         0.2126 * int(m.group(1)) + 0.7152 * int(m.group(2)) + 0.0722 * int(m.group(3))),) * 3), page)
@@ -448,11 +520,13 @@ def build(keys=None, bw=False):
         page = plan_links(page, k)
         if re.fullmatch(r"w\d+", k) and k != "w1":
             page = re.sub(r'src="[^"]*25-week\.jpg"', f'src="{rel_of(last if k == "w52" else mid)}"', page)
+        page = norm_rail(page)
         page = linkify(page)
         page = relink(page, k, order)
+        page = card_overlays(page, k)
         page = arrows(page)
         if bw:
-            page = to_bw(page)
+            page = to_bw(page, order.index(k) + 1)
         pages.append(f'<section class="page" id="{k}">{page}</section>')
     return ('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>The ADHD Home Reset</title>'
             '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'

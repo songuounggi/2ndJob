@@ -55,6 +55,15 @@ def tap(p, label):
     for t, dest in links(p):
         if label.lower() in t.lower():
             return dest
+    # 글자 끝 → 만 링크인 줄(94쪽 방 이름 줄 · 92쪽 2·3단계, 10-01): 그 글자와 같은 줄, 오른쪽에 있는 링크
+    words = doc[p].get_text("words")
+    hit = [w for w in words if w[4].lower().startswith(label.lower().split()[0])]
+    for w in hit:
+        cy = (w[1] + w[3]) / 2
+        same = [l for l in doc[p].get_links() if l.get("page", -1) >= 0 and l["from"].y0 - 2 <= cy <= l["from"].y1 + 2
+                and l["from"].x0 > w[2] and l["from"].x0 - w[2] < 200]
+        if same:
+            return min(same, key=lambda l: l["from"].x0)["page"]
     if label in RAIL and os.path.exists(V2):
         for l in doc[p].get_links():
             r = l["from"]

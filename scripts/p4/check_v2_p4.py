@@ -14,7 +14,7 @@
   5 글꼴: Nunito(Chrome 이 이름 없는 Type3 로 넣음) 말고 없음 -- 화살표가 대체 글꼴로 찍히던 일(v0.6)
   6 넘침: 글자가 자기 카드의 안쪽 여백(10pt)을 넘거나 카드 밖으로 나가지 않음 -- Reset week 힌트(10-01)
   7 디자인 대조: 대표 38쪽을 screenshots/ 정답 그림과 비교, 평균 차이(0~255) 기준 이하
-  8 흑백판: 쪽마다 그림 0 · 색 픽셀 0(채도 8 이하) · 바탕 흰색 -- v0.10 첫 빌드는 구운 Reset week 배경이
+  8 흑백판: 쪽마다 그림 0 · 색 픽셀 0(채도 8 이하) · 바탕 흰색 · 쪽 번호 · 쓰는 칸 테두리 -- v0.10 첫 빌드는 구운 Reset week 배경이
     흑백판 40~90쪽에 컬러로 남았다(써 보기 6단계, 인쇄파 구매자 역할이 찾음)
 """
 import html as H
@@ -44,6 +44,9 @@ REP = {"cover": "p001", "flow": "p002", "start": "p003", "house-map": "p004", "i
        "guess-actual": "p102", "projects": "p103", "big-reset": "p104", "notes-ruled": "p105", "notes-dots": "p106",
        "notes-blank-1": "p107"}
 DIFF_MAX = 3.5      # 같은 틀·같은 내용이면 글자 안티에일리어싱 차이로 1.4~2.9 (v0.10 표본 실측)
+# 기획서 링크 중 사용자 결정으로 뺀 것 (10-01, 써 보기 6단계) -- 이유는 product4-content.md 인계 절
+LOST_OK = {"rescue": {"kitchen", "house-map"},      # 92쪽 1 Trash first·4 Clear a path 링크 뺌 (내용과 안 맞는 곳)
+           "energy": {"car"}}                        # 6쪽 차 할 일 2개 -> 깊은 청소(deep-car) 로 (그 일이 있는 쪽)
 DESIGN_LABELS = {"page", "week", "room", "task"}     # 디자인이 정한 표 머리(원고의 칸 이름을 대문자로 쓴 것 포함)
 
 PAGE_JS = """() => {
@@ -121,7 +124,8 @@ def check(ver, tag):
         per = lambda h: {m.group(1): set(re.findall(r'href="#([^"]+)"', m.group(2))) for m in
                          re.finditer(r'<section class="page" id="([^"]+)"[^>]*>(.*?)</section>', h, re.S)}
         old, new = per(open(base, encoding="utf-8").read()), per(html)
-        lost = {k: sorted(old[k] - new.get(k, set()) - {k}) for k in old if old[k] - new.get(k, set()) - {k}}
+        lost = {k: sorted(old[k] - new.get(k, set()) - {k} - LOST_OK.get(k, set()))
+                for k in old if old[k] - new.get(k, set()) - {k} - LOST_OK.get(k, set())}
         if lost:
             fails.append(f"기획서 링크 빠짐 {len(lost)}쪽: " + "; ".join(f"{ids.index(k) + 1} {k} {v}" for k, v in list(lost.items())[:8]))
     else:
@@ -210,6 +214,14 @@ def check(ver, tag):
             fails.append(f"흑백판에 색이 있는 쪽 {len(colored)}: {colored[:10]}")
         if grayish:
             fails.append(f"흑백판 바탕이 흰색이 아닌 쪽 {len(grayish)}: {grayish[:10]}")
+        # 인쇄용(10-01 사용자): 쪽 번호(표지 빼고) · 쓰는 칸(체크 14 · Last reset)에 테두리
+        nums = [n + 1 for n, m in enumerate(secs) if n and f'top:772px;width:612px;text-align:center;font-size:7.5px;font-weight:600;color:#7A7A7A">{n + 1}<' not in m.group(2)]
+        if nums:
+            fails.append(f"흑백판 쪽 번호가 없거나 틀린 쪽 {len(nums)}: {nums[:10]}")
+        bare = len(re.findall(r'style="(?:[^"]*;)?width:14px;height:14px;border-radius:(?:4\.5px|50%);(?![^"]*border:)[^"]*"', html))
+        bare += len(re.findall(r'style="height:26px;border-radius:8px;(?![^"]*border:)[^"]*"', html))
+        if bare:
+            fails.append(f"흑백판 쓰는 칸 중 테두리 없는 것 {bare}")
     # 7
     if tag == "color" and os.path.isdir(SHOTS):
         from PIL import Image, ImageChops
