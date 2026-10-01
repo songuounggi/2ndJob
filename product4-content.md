@@ -1,6 +1,8 @@
 # 상품 4 — 기획서 (2026-09-30 사용자 확정)
 
-## ▶ 지금 어디까지 — 인계 (2026-09-30 저녁, 회사 PC `Prod 4. Something` 에서 멈춤)
+## ▶ 지금 어디까지 — 인계 (2026-10-01, 회사 PC `Prod 4. The ADHD Home Reset` -- 옛 이름 `Prod 4. Something`)
+
+방 이름: 회사 `Prod 4. The ADHD Home Reset` / 집 **`Prod 4. The ADHD Home Reset (Home)`** (10-01 사용자, 상품 이름 확정으로)
 
 **다른 방·다른 PC 는 여기부터 읽는다.** 이 절 아래의 긴 기록은 그날 무슨 일이 있었는지이고, 할 일은 여기에만 모았다.
 

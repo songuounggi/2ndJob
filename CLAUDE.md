@@ -44,7 +44,7 @@ Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
 플래너, **108쪽**, 링크 PDF + 흑백 인쇄판, **입구 가격 $8.99**(가격 사다리). `PROCESS.md` **1~6단계 통과**, 7단계 iPad 확인 대기,
 8단계 리스팅 원고 초안(`listing-p4.md`). **인계·남은 결정은 `product4-content.md` 맨 앞 "지금 어디까지"** 가 한곳에 있다.
 판: `output/prod4/planner/v0.9/home-reset_v0.9_{color,BW}-FINAL.pdf` (output 은 git 밖 -- 다른 PC 는 다시 빌드).
-파이프라인 `scripts/p4/` 만(`build_p4.py full`). 방: 회사 `Prod 4. Something` / 집 `Prod 4. Something (Home)`.
+파이프라인 `scripts/p4/` 만(`build_p4.py full`). 방: 회사 `Prod 4. The ADHD Home Reset` / 집 `Prod 4. The ADHD Home Reset (Home)` (10-01 이름 확정으로 `Prod 4. Something` 에서 변경).
 
 ## 지금 병목은 **트래픽이다. 상품이 아니다** (2026-09-29 측정, 모든 방 필독)
 
