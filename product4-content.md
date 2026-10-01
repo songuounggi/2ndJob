@@ -31,8 +31,13 @@
   우선순위 README 규칙 > HTML 수치 > 그림. 문구는 확정 원고 그대로(대소문자·줄 나눔만 다름, 39쪽 힌트만 "next slot" 으로 짧아짐).
   HTML 링크는 대부분 `href="#"` 자리표시(일부 #p3 #p37 #p91 #p100 은 쪽 번호가 1씩 어긋남) -- 링크는 우리 페이지 key 로 다시 건다.
   화살표 → ← 112곳은 글자라 Nunito 에 없어 대체 글꼴로 찍힌다 -- 우리 쪽에서 해결(웹 글꼴 지정 또는 SVG).
-- 질문 대기: ① 39~90쪽 Reset week 에 "← Previous week" 넣을지(시안은 Next 만) ② 39쪽 힌트 "next slot" vs 확정 "no penalty, just the next slot"
-  ③ 흑백 인쇄판 방식(시안은 컬러뿐 -- 그림자·유리 탭이 배경 JPG 에 구워져 있다)
+- **결정 (10-01 사용자)**: ① Reset week 왼쪽에 "← Previous week" 알약 추가 ② 39쪽 힌트는 원고대로 ③ 흑백판 = 배경 없이 + 카드 회색 테두리.
+  README 미결 4건은 기획서로 판단: 7·11쪽 배너 순서 시안대로 / 96쪽 질문 줄 링크 아님 / 96쪽 질문 카드 제목 없음 / 라디오 불필요
+- **제작 v0.10 (진행 중)**: `scripts/p4/build_v2_p4.py` -- 시안 대표 38쪽 HTML 을 **그대로 틀로**, 108쪽에 내용·링크만 갈아 끼운다.
+  `scripts/p4/bake_bg_p4.py` -- 디자인의 배경 굽기 코드를 헤드리스 Chrome 에서 그대로 돌려 Reset week 변형 배경(Previous 알약 그림자)을
+  굽는다. 원본 배경과 차이 0.195 단계(검증). 표본 11쪽 시안과 평균 차이 1.4~2.9 단계(차이 큰 쪽은 내용이 다른 반복 쪽).
+  고친 것: 쪽 크기(px→pt, 459→612pt), 화살표를 앞 단어와 묶기(2쪽 "battery →" 두 줄), flex 상자 공백 사라짐.
+  **남은 질문: Reset week 힌트 "no penalty, just the next slot" 이 카드 오른쪽 끝을 넘는다** (`output/prod4/sample/sample-v0.10/compare/hint_overflow.png`)
 - 다음: 압축 풀기 → README·reference·HTML 정독 → 질문 모아 묻기 → 표본 → v0.10 → 검사 일곱 줄
 
 ### (옛것) 디자인 시안 v1 도착 (2026-10-01 18:02, 사용자 "심혈을 기울여 완성")
