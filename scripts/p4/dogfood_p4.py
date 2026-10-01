@@ -16,10 +16,16 @@ import pymupdf
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 VER = sys.argv[1] if len(sys.argv) > 1 else "v0.8"
-html = open(os.path.join(ROOT, "src", f"p4_home-reset_{VER}_color.html"), encoding="utf-8").read()
+V2 = os.path.join(ROOT, "src", f"p4_home-reset_{VER}_full_color.html")       # v0.10~ 디자인 시안 틀(build_v2_p4)
+html = open(V2 if os.path.exists(V2) else os.path.join(ROOT, "src", f"p4_home-reset_{VER}_color.html"),
+            encoding="utf-8").read()
 ids = re.findall(r'<section class="page" id="([^"]+)"', html)
-ON = [(re.findall(r'<a class="on"[^>]*><i[^>]*></i><span>([A-Z]+)</span>', m.group(0)) or [None])[0]
-      for m in re.finditer(r'<section class="page" id="[^"]+".*?</nav>', html, re.S)]
+if os.path.exists(V2):     # 켜진 탭 = 세로 글자 중 굵기 800
+    ON = [(re.findall(r'writing-mode:vertical-rl;[^"]*font-weight:800;[^"]*">([A-Z]+)<', m.group(1)) or [None])[0]
+          for m in re.finditer(r'<section class="page" id="[^"]+">(.*?)</section>', html, re.S)]
+else:
+    ON = [(re.findall(r'<a class="on"[^>]*><i[^>]*></i><span>([A-Z]+)</span>', m.group(0)) or [None])[0]
+          for m in re.finditer(r'<section class="page" id="[^"]+".*?</nav>', html, re.S)]
 doc = pymupdf.open(os.path.join(ROOT, "output", "prod4", "planner", VER, f"home-reset_{VER}_color-FINAL.pdf"))
 P = {k: i for i, k in enumerate(ids)}          # key -> 0부터 쪽
 stuck = []
@@ -32,14 +38,29 @@ def links(p):
             continue
         r = l["from"]
         t = " ".join(w[4] for w in words if r.contains(pymupdf.Point((w[0] + w[2]) / 2, (w[1] + w[3]) / 2)))
-        out.append((t, l["page"]))
-    return out
+        # 두 줄로 감긴 링크는 줄마다 상자가 따로 생긴다(6쪽 "Clear the" / "nightstand") -- 바로 아래 붙은 같은 목적지면 한 링크
+        if out and out[-1][1] == l["page"] and abs(out[-1][2].y1 - r.y0) < 2 and abs(out[-1][2].x0 - r.x0) < 2:
+            out[-1] = (out[-1][0] + " " + t, l["page"], out[-1][2] | r)
+        else:
+            out.append((t, l["page"], r))
+    return [(t, d) for t, d, _ in out]
+
+
+# v0.10~ 탭 레일 글자는 세로(회전)라 PDF 에서 글자로 못 고른다 -- 레일 자리(x<60)·SOS 배지 자리(오른쪽 위) 링크를 목적지로 고른다
+RAIL = {"HOME": "index", "ENERGY": "energy", "ROOMS": "rooms", "ROUTINES": "routines", "WEEKS": "weeks",
+        "TOOLS": "tools", "SOS": "rescue"}
 
 
 def tap(p, label):
     for t, dest in links(p):
         if label.lower() in t.lower():
             return dest
+    if label in RAIL and os.path.exists(V2):
+        for l in doc[p].get_links():
+            r = l["from"]
+            spot = r.x1 < 60 if label != "SOS" else (r.x0 > 530 and r.y1 < 60)
+            if spot and l.get("page", -1) == P[RAIL[label]]:
+                return l["page"]
     return None
 
 
@@ -61,9 +82,13 @@ def run(name, start, steps):
     print(f"  ✓ {name}: " + " → ".join(path))
 
 
+# v0.10~ 시안: 3쪽 단계·4쪽 방 타일은 "Go →" 알약이 링크다(첫 Go = 첫 단계 Energy / 첫 타일 Kitchen). v0.9 는 글자가 링크
+GO_START = "Go" if os.path.exists(V2) else "Check your battery"
+GO_TILE = "Go" if os.path.exists(V2) else "Kitchen"
+
 print(f"상품 4 {VER} 써 보기 -- {len(ids)}쪽\n")
 print("[공통]")
-run("1 처음 연 사람", "cover", [("The ADHD", "flow"), ("Open the planner", "start"), ("Check your battery", "energy"),
+run("1 처음 연 사람", "cover", [("The ADHD", "flow"), ("Open the planner", "start"), (GO_START, "energy"),
                              ("TOOLS", "tools"), ("Rescue mode", "rescue")])
 # 2 넘기기만: 쪽을 넘기며 켜진 탭이 HOME -> ENERGY -> ROOMS -> ROUTINES -> WEEKS -> TOOLS 순으로 흐르나
 order = ["HOME", "ENERGY", "ROOMS", "ROUTINES", "WEEKS", "TOOLS"]
@@ -87,10 +112,10 @@ else:
           f"SOS → {P['rescue'] + 1} Rescue")
 
 print("\n[상품별 -- product4-content.md 6절]")
-run("1 기운 없는 날", "cover", [("The ADHD", "flow"), ("Open the planner", "start"), ("Check your battery", "energy"),
+run("1 기운 없는 날", "cover", [("The ADHD", "flow"), ("Open the planner", "start"), (GO_START, "energy"),
                              ("Clear the nightstand", "bedroom"), ("HOME", "index")])
 run("2 엉망일 때", "w10", [("SOS", "rescue"), ("15-minute sprint", "sprint"), ("Wins log", "wins")])
-run("3 한 주", "rooms", [("WEEKS", "weeks"), ("7", "w7"), ("This week", "house-map"), ("Kitchen", "kitchen"),
+run("3 한 주", "rooms", [("WEEKS", "weeks"), ("7", "w7"), ("This week", "house-map"), (GO_TILE, "kitchen"),
                         ("Deep clean list", "deep-kitchen")])
 run("3b 다음 주", "w7", [("Next week", "w8")])
 run("4 빨래 산", "index", [("ROUTINES", "routines"), ("Laundry loop", "laundry-loop"), ("Wins log", "wins")])

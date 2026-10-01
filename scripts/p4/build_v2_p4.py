@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.10"
+VER = "v0.10"     # 디자인 v1.0 첫 전체 빌드
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27,
@@ -164,8 +164,8 @@ PILL_NEXT = re.compile(r'(<a href="[^"]*" style="position:absolute;left:)([\d.]+
 def fill_week(page, key):
     n = int(key[1:])
     page = must_replace(page, ">Reset week 1<", f">Reset week {n}<", key)
-    # 힌트: 원고대로 (사용자 10-01) -- 시안은 "next slot"
-    page = must_replace(page, ">next slot<", f">{C.LABELS['slid_hint']}<", key)
+    # 힌트: 시안 "next slot" -> 원고 짧은 꼴 "no penalty" (10-01 사용자 -- 원고 전체 문구는 반쪽 카드 끝을 넘었다)
+    page = must_replace(page, ">next slot<", f">{C.LABELS['slid_hint_short']}<", key)
     m = PILL_NEXT.search(page)
     if not m:
         raise SystemExit(f"[{key}] Next week 알약을 못 찾음")
@@ -209,10 +209,51 @@ def fill(page, key):
         return fill_loop(page, key)
     if re.fullmatch(r"w\d+", key):
         return fill_week(page, key)
+    if key == "dopamine":       # 시안 "podcasts, audiobooks" 가 카드 오른쪽 끝을 넘었다 -> 원고를 줄임 (10-01 사용자)
+        return must_replace(page, ">podcasts, audiobooks<", f">{C.DOPAMINE[2][1][1]}<", key)
     return page
 
 
 # ------------------------------------------------------------------ 링크 --
+SECTION_D = {"energy": "#537364", "rooms": "#7D6A28"}
+
+
+def plan_links(page, key):
+    """시안에 화살표가 없지만 기획서(product4-content.md 페이지 표·3-7)가 링크로 정한 곳 (10-01 사용자)
+    - 보이는 링크(→ 추가): 6쪽 배터리 Low/Medium/Full -> 7~9쪽, 10쪽 방 이름 -> 방 카드. 7~9쪽은 Index 말고 길이 없었다
+    - 보이지 않는 링크(모양은 시안 그대로, 글자 위에만): 1쪽 제목 -> 2쪽, 6쪽 할 일 -> 방 카드, 39~90쪽 This week's rooms
+      -> House map, 92쪽 단계 -> 루프·방, 94쪽 방 이름 줄 -> 방 카드
+    목적지는 relink 가 글자로 정한다. 링크 상자는 글자 크기만큼(줄 전체가 아니라) -- 쓰다가 잘못 눌리는 범위를 줄인다"""
+    T = link_targets()
+    wrap = lambda m: f'{m.group(1)}<a href="#">{m.group(2)}</a>{m.group(3)}'
+    if key == "energy":
+        # 배터리 이름 칸(폭 56) -- 안쪽 span 하나로 감싸 → 가 칸을 넘으면 두 줄로 (README §7-2 "칸 폭·글자 크기 그대로")
+        page, n = re.subn(r'<div (style="position:absolute;left:84px;top:\d+px;width:56px;[^"]*")>(Low|Medium|Full)</div>',
+                          lambda m: f'<a href="#" {m.group(1)}><span>{m.group(2)}<span style="margin-left:4px;'
+                                    f'color:{SECTION_D["energy"]}">→</span></span></a>', page)
+        if n != 3:
+            raise SystemExit(f"[energy] 배터리 이름 {n} != 3")
+        page, n = re.subn(r'(flex:none"></span><span>)([^<]+)(</span>)',
+                          lambda m: wrap(m) if H.unescape(m.group(2)).lower() in T else m.group(0), page)
+    elif key == "rooms":
+        names = [r[1] for r in C.ROOMS] + [C.MY_ROOM[1]]
+        for nm in names:       # 시안은 & 를 그대로 쓴다(Entry & hallway)
+            nm = nm if f">{nm}</div>" in page else H.escape(nm)
+            page = must_replace(page, f">{nm}</div>",
+                                f'>{nm}<span style="margin-left:4px;color:{SECTION_D["rooms"]}">→</span></div>', key)
+    elif key == "cover":
+        page = must_replace(page, ">The ADHD<br>Home Reset<", '><a href="#">The ADHD<br>Home Reset</a><', key)
+    elif re.fullmatch(r"w\d+", key):
+        lab = H.escape(C.LABELS["week_rooms"], quote=False)
+        page = must_replace(page, f">{lab}<", f'><a href="#">{lab}</a><', key)
+    elif key == "rescue":
+        for a, _, _ in C.RESCUE["steps"]:
+            page = must_replace(page, f">{H.escape(a)}<", f'><a href="#">{H.escape(a)}</a><', key)
+    elif key == "guests":
+        page = re.sub(r'(<div style="position:absolute;left:132px;[^"]*">)([^<:]+:[^<]*)(</div>)',
+                      lambda m: wrap(m) if m.group(2).split(":")[0].lower() in set(T) | {"entry"} else m.group(0), page)
+        # "Entry" 는 방 이름이 "Entry & hallway" 라 T 에 없다 -- relink 와 같은 예외
+    return page
 def link_targets():
     """글자 -> 페이지 key (쪽 제목·방 이름·할 일·단계 이름)"""
     t = {}
@@ -235,6 +276,38 @@ def link_targets():
     return t
 
 
+def outside_links(page):
+    """<a>...</a> 밖인 구간인지 판정하는 함수"""
+    spans = [(m.start(), page.index("</a>", m.start())) for m in re.finditer(r"<a\b", page)]
+    return lambda i: not any(s0 <= i <= s1 for s0, s1 in spans)
+
+
+def linkify(page):
+    """시안이 링크로 의도했는데 <a> 가 안 걸린 곳을 <a href="#"> 로 바꾼다 -- relink 가 글자로 목적지를 정한다.
+    (1) 화살표(→)가 붙은 글자 요소 (README §7-2 "링크가 걸린 곳은 →")
+    (2) 38쪽 Weeks 칸 52개 (README §8 "링크 칸" 예외 -- 화살표 없이 링크)
+    v0.10 첫 빌드에서 시안의 <a> 가 일부에만 있어 v0.9 보다 링크 62쪽이 빠졌다(dogfood·링크 대조로 찾음)"""
+    out = page
+    pat = re.compile(r'<(div|span) (style="[^"]*")>([^<]*)(<span style="margin-left:4px;color:[^"]*">→</span>)</\1>')
+    ok = outside_links(out)
+    out = "".join(_sub_outside(out, pat, ok, lambda m: f'<a href="#" {m.group(2)}>{m.group(3)}{m.group(4)}</a>'))
+    pat = re.compile(r'<div (style="position:absolute;[^"]*")>(<span [^>]*>WEEK</span><span [^>]*>\d+</span>)</div>')
+    ok = outside_links(out)
+    out = "".join(_sub_outside(out, pat, ok, lambda m: f'<a href="#" {m.group(1)}>{m.group(2)}</a>'))
+    return out
+
+
+def _sub_outside(text, pat, ok, fn):
+    pos = 0
+    for m in pat.finditer(text):
+        if not ok(m.start()):
+            continue
+        yield text[pos:m.start()]
+        yield fn(m)
+        pos = m.end()
+    yield text[pos:]
+
+
 def relink(page, key, order):
     """시안의 href 를 전부 우리 페이지 key 로. 못 정하면 멈춘다(죽은 링크 0)"""
     T = link_targets()
@@ -253,6 +326,8 @@ def relink(page, key, order):
             tgt = TAB_TARGET[txt]
         elif txt == C.SOS_LABEL:
             tgt = "rescue"
+        elif key == "cover" and low.startswith("the adhd"):       # 표지 제목 -> 2쪽 순서도 (기획서 페이지 표 1행)
+            tgt = "flow"
         elif key in seq and (low.startswith("go") or key == "cover" and used[key] < 4 and low not in T):
             tgt = seq[key][used[key]]
             used[key] += 1
@@ -272,7 +347,7 @@ def relink(page, key, order):
             tgt = "day-" + txt.capitalize()
         elif low.startswith(C.LABELS["week_rooms"].lower()):
             tgt = "house-map"
-        elif ":" in txt and txt.split(":")[0].lower() in T:            # Guests 줄 "Entry: ..." -> 방
+        elif ":" in txt and txt.split(":")[0].lower() in set(T) | {"entry"}:            # Guests 줄 "Entry: ..." -> 방
             head = txt.split(":")[0].lower()
             tgt = "entry" if head == "entry" else T[head]
         else:
@@ -362,8 +437,10 @@ def build(keys=None, bw=False):
         page = re.sub(r' data-screen-label="[^"]*"', "", page, count=1)
         page = page.replace('src="assets/', f'src="{rel}/')
         page = fill(page, k)
+        page = plan_links(page, k)
         if re.fullmatch(r"w\d+", k) and k != "w1":
             page = re.sub(r'src="[^"]*25-week\.jpg"', f'src="{rel_of(last if k == "w52" else mid)}"', page)
+        page = linkify(page)
         page = relink(page, k, order)
         page = arrows(page)
         if bw:

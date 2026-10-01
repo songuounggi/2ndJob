@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.7"   # v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.8"   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -206,7 +206,7 @@ DECLUTTER = ("Declutter decisions", "Stuck on keep or toss? Ask these.",
 DOOM_PILE = ("Doom pile triage", "One pile, fifteen minutes.",
              ["Keep here", "Toss", "Belongs elsewhere", "Needs action"])
 DOPAMINE = ("Cleaning dopamine menu", "What makes the boring part easier?",
-            [("Soundtrack", "playlists that get you moving"), ("Something to listen to", "podcasts, audiobooks"),
+            [("Soundtrack", "playlists that get you moving"), ("Something to listen to", "podcasts"),
              ("Company", "a call, a friend, body doubling online"), ("Reward", "what you get when it's done"),
              ("Make it a game", "beat the timer, one song per task")])
 TOOL_PAGES = {   # 제목, 부제 (칸만 있는 페이지)
@@ -262,7 +262,9 @@ LABELS = {
     "card_link": "Back to the room card", "task": "Task", "last_done": "Last done", "room_name": "Room name",
     # 에너지·순환·주간
     "pick": "Today's pick", "pick_hint": "one is enough", "slid": "Slid to next week",
-    "slid_hint": "no penalty, just the next slot", "week_rooms": "This week's rooms",
+    "slid_hint": "no penalty, just the next slot",
+    # slid_hint_short: Reset week 반쪽 카드용 (10-01 사용자: 원고 문구가 카드 끝을 넘어서)
+    "slid_hint_short": "no penalty", "week_rooms": "This week's rooms",
     "week_deep": "One deep clean", "week_loops": "Loops this week", "week_wins": "Wins",
     "prev": "Previous week", "next": "Next week", "room": "Room",
     # 루틴

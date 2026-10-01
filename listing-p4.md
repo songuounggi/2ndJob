@@ -86,7 +86,7 @@ HOW IT WORKS
 
 WHAT YOU NEED
 
-A tablet and a note-taking app that opens PDFs, or a printer. Each file is under 4 MB.
+A tablet and a note-taking app that opens PDFs, or a printer. Each file is under 6 MB.
 
 A NOTE ON THE LINKS
 
@@ -142,7 +142,7 @@ For personal use. Please do not resell or redistribute the files.
 | nine rooms / six-step | `ROOMS` 8 + My room, 방마다 6단계 |
 | 52 undated reset weeks | `w1`~`w52` |
 | Six tabs: Home, Energy, Rooms, Routines, Weeks, Tools | `build_p4.TABS` |
-| under 4 MB | 두 PDF 크기 (판마다 3.4~3.5MB 로 흔들려 상한으로 적는다) |
+| under 6 MB | 두 PDF 크기 상한. v0.10(디자인 시안 판) 컬러 5.0MB · 흑백 3.5MB -- v0.9 까지는 3.4~3.5MB 라 4 MB 였다 (10-01) |
 | Rescue 다섯 단계 이름 | `RESCUE["steps"]` |
 | 도구 목록 | `pages_p4.TOOL_KEYS` 제목 |
 | 금지: 1인칭 당사자·의학적 주장·영국식 표기 | `p4_content` 의 검사 정규식 |
