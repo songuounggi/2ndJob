@@ -212,6 +212,20 @@ def main(ver):
             if miss:
                 fails.append(f"{ids.index(k) + 1} {k}: 가는 링크 없음 {miss}")
 
+    # 9 구조 논리 L2 (PROCESS.md 5-7, 10-02 사용자): 2쪽 순서도에서 같은 쪽으로 가는 상자 둘 금지 -- 원고와 완성 판 둘 다.
+    #   옛 판(v0.12)은 질문 상자와 답 상자가 같은 쪽으로 가는 쌍이 셋(6쪽 · 94쪽 · 103쪽)이었다
+    tg = [t for *_, t in C.FLOW["boxes"].values()]
+    dup = sorted({t for t in tg if tg.count(t) > 1})
+    if dup:
+        fails.append(f"원고 FLOW: 같은 쪽으로 가는 상자 {dup}")
+    if "flow" in secs:
+        body = secs["flow"]
+        hrefs = [h for h, left, inner in re.findall(r'<a href="#([^"]+)" style="position:absolute;left:([\d.]+)px[^>]*>(.*?)</a>', body, re.S)
+                 if float(left) > 60 and re.sub(r"<[^>]+>", "", inner).strip() != C.SOS_LABEL]          # 왼쪽 탭(left 10)과 SOS 칩은 뺀다
+        dup = sorted({ids.index(h) + 1 for h in hrefs if hrefs.count(h) > 1 and h in ids})
+        if dup:
+            fails.append(f"2 flow: 같은 쪽으로 가는 상자가 둘 이상 -- {', '.join(map(str, dup))}쪽 (구조 논리 L2)")
+
     print(f"상품 4 기획서 대조 {ver} -- 문구 {len(seen)}개, 쪽 {len(ids)}")
     if unused:
         print(f"  (참고) 판 어디에도 안 쓰인 공용 라벨 {len(unused)}: " + "; ".join(f"{w}:{t}" for w, t in unused))
