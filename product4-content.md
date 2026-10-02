@@ -184,6 +184,24 @@
 | S13 | L5 중복 | 96쪽 Guests | "Everything else into one box" 가 줄과 아래 문장에 두 번 (나중에 목록에 있던 것) |
 | S14 | L1 순서 | 2쪽 새 순서도 | Energy menu 에서 고른 일이 루프(36, 37쪽)·깊은 청소 쪽으로 가면 "Stop at Done enough" 가 그 쪽에 없다 -- **반영** -- 시간을 갈래 상자로, 합친 뒤 "Do that one thing, then stop" (사용자 10-02) |
 
+### L11 성인 눈높이 검토 (2026-10-02, v0.14) -- 사용자 결정 대기
+
+`PROCESS.md` 5-7 L11: ① 빈 쪽 시험(빈 노트보다 무엇을 더 해 주나) ② 말투(가르치거나·달래거나·유치하지 않나) ③ 늘려 설명하지 않나.
+번호 N = 눈높이(L11) 항목.
+
+| # | 구분 | 쪽 | 무엇 | 권고 |
+|---|---|---|---|---|
+| N1 | ① 빈 쪽 | 99 Where things live · 100 Restock list · 38 Who does what · 104 Time guess vs actual · 101 Cleaning dopamine menu | **머리줄만 있는 빈 표(빈 카드)** -- 빈 노트에 표를 그리면 끝이라 "대신 생각해 준 것"이 없다 | **미리 채운 항목 + 빈 줄** (106쪽 Moving 이 이미 이 방식, 09-30 사용자). 내용은 상품 안 문구에서: 100 ← 방 카드 준비물(trash bags · dish soap · spray · cloth · detergent …), 99 ← 늘 없어지는 것(keys · mail · chargers · remotes · scissors · batteries …), 38 ← 루틴의 일(dishes · laundry · trash · bathroom …), 104 ← Energy menu 할 일(추측 칸은 비움), 101 ← 카드마다 예시 2~3개 |
+| N2 | ② 늘림·겹침 | 3쪽 Start here | 2쪽 순서도와 같은 말을 글로 한 번 더(L9). 아래 "The room that bugs me most" 칸이 **9줄**인데 답은 한 줄 | 결정: 3쪽을 처음 한 번 쓰는 쪽으로 바꾸기 / 9줄 줄이기 / 그대로 |
+| N3 | ① 빈 쪽 (약함) | 102 Body doubling log | 기록하는 이유가 약하다(103 Wins log · 105 Projects 는 기록장이라 빈 표가 맞다) | 그대로 두고 출시 뒤 리뷰로 판단(나중에) |
+| N4 | ② 늘림 | 7, 8, 9쪽 배터리 날 | 세 장이 제목·할 일 목록만 다르고 카드 넷은 같다(S10 "오늘" 쪽 한 장 문제와 같이) | 그대로 -- S10 결정 때 같이 |
+| N5 | ② 말투 | 1, 3, 7, 33, 41~92, 94, 103쪽 등 | 안심시키는 말이 여러 곳(No-guilt · Blank boxes are normal · Small is still a reset · It counts · Rescue counts · no penalty) -- 하나하나는 괜찮다. **가르치거나 유치한 문장은 못 찾음** | 그대로, **더 늘리지 않는다** |
+| N6 | ② 말투 (경계) | 7~9쪽 "After, I get -- a small reward, chosen now", 101쪽 "Make it a game" | 아이 보상표처럼 읽힐 수 있는 두 곳. 보상·게임처럼 하기는 성인 ADHD 쪽에서 널리 쓰는 방법이라 내용은 맞다 | 그대로 |
+| N7 | (통과) | 6 Energy menu · 방 카드 · 94 Rescue · 36, 37 Loops · 96 Guests · 98 Declutter · 106 Moving · 34, 35 | 빈 노트보다 확실히 더 해 준다(고르기 · 순서 · 멈추는 선 · 막힐 때 방법 · 미리 채운 목록) -- **이 상품의 값**. 리스팅 사진 10장도 여기를 보여 준다 | -- |
+
+모양(파스텔 · 둥근 카드)은 이 범주 상위 상품과 같은 결이라 유치하다고 보지 않는다 -- 2쪽 옛 순서도의 "초등학생용" 인상은 모양이 아니라
+쉬운 내용을 상자 9개로 늘린 구조 탓이었다.
+
 ### 사용자 결정 대기
 
 | # | 무엇 | 선택지 / 자료 |
