@@ -110,6 +110,16 @@ def measure(path, scale=2.0):
     # 있다(상품 3 2027-mon 545쪽: 544장 뒤 330ms, 앞 5장 뒤 69ms, 거꾸로 16ms). 다시 재도 느리면 진짜다
     slow = [i + 1 for i, x in enumerate(r["pdfjs"]["cold"]) if x > LIM["js_max"]][:6]
     r["recheck"] = {p: flip_pdfjs(path, list(range(max(1, p - 3), p + 1)))["cold"][-1] for p in slow}
+    # 두 번째 넘기기도 같다 -- 튄 쪽은 바로 앞 1장 뒤 그 쪽을 3 번 다시 그려 가장 빠른 값으로 다시 판정한다(A 렌더의 rerender 와 같은 방식).
+    # 낮에 다른 프로그램이 CPU 를 쓰면 몇 쪽이 우연히 튄다(2026-10-02: 어젯밤 통과한 v0.11 이 낮에는 [2, 4, 5, 6, 32] 로 튐, 같은 때 상품 1 은 통과).
+    # 진짜 무거운 쪽은 다시 그려도 무겁다
+    w = r["pdfjs"]["warm"]
+    med = st.median(w)
+    hot = [i + 1 for i, x in enumerate(w) if (x > med * LIM["spike"] and x > 100) or x > LIM["max_ms"]][:12]
+    if hot:
+        seq = [q for p in hot for q in (max(1, p - 1), p, p, p)]
+        t = flip_pdfjs(path, seq)["warm"]
+        r["recheck_warm"] = {p: min(t[4 * k + 1: 4 * k + 4]) for k, p in enumerate(hot)}
     return r
 
 
@@ -177,11 +187,17 @@ def report(r, label):
     if real or p95(c) > LIM["js_p95"]:
         fails.append(f"F 처음 넘기기 (다시 재도 {LIM['js_max']}ms 넘는 쪽 {list(real)[:5]} · 상위5% {p95(c):.0f} > {LIM['js_p95']}?)")
     med = st.median(w)
-    spikes = [i + 1 for i, x in enumerate(w) if x > med * LIM["spike"] and x > 100]
+    rw = r.get("recheck_warm", {})
+    bad = lambda p, x: (x > med * LIM["spike"] and x > 100) or x > LIM["max_ms"]
+    spikes = [i + 1 for i, x in enumerate(w) if bad(i + 1, x) and bad(i + 1, rw.get(i + 1, x))]
     print(f"  F 넘기기 두 번째: 평균 {st.mean(w):.0f} · 중앙 {med:.0f} · 상위5% {p95(w):.0f} · 최대 {max(w):.0f}ms (p{w.index(max(w)) + 1})"
-          f" · 튀는 쪽 {spikes[:8] or '없음'}")
-    if max(w) > LIM["max_ms"] or spikes:
-        fails.append(f"F 두 번째 넘기기 (최대 {max(w):.0f} > {LIM['max_ms']} 또는 튀는 쪽 {spikes[:5]})")
+          f" · 다시 재도 튀는 쪽 {spikes[:8] or '없음'}")
+    calm = {p: t for p, t in rw.items() if p not in spikes}
+    if calm:
+        print(f"    (참고) 한 번만 튄 쪽 -- 다시 그리면 " +
+              ", ".join(f"p{p} {w[p - 1]:.0f}->{t:.0f}ms" for p, t in calm.items()) + " (다른 프로그램 부하, FAIL 아님)")
+    if spikes:
+        fails.append(f"F 두 번째 넘기기 (다시 재도 튀거나 {LIM['max_ms']}ms 넘는 쪽 {spikes[:5]})")
     return fails
 
 

@@ -232,6 +232,8 @@ COPY_FIX = [
     (lambda k: k == "cover", "nine rooms, ten-minute resets", lambda: C.COVER_ITEMS[1][1]),     # v0.11 빈 방 둘째로 열 방
     # 할 일이 눌린다는 안내 (v0.11 재시험: "목록인 줄 알고 지나친다" 3명)
     (lambda k: k == "energy", "Pick by battery and time, not by day.", lambda: C.TOOL_PAGES["energy"][1]),
+    # 2쪽 순서도 "Room card" -> "Pick a room" (10-02 사용자, 7단계 iPad: 누르면 집 지도가 나와 이름이 안 맞았다)
+    (lambda k: k == "flow", ">Room card<", lambda: ">" + C.FLOW["boxes"]["room"][0] + "<"),
 ]
 
 
@@ -356,7 +358,7 @@ def copy_fix(page, key):
     for when, old, new in COPY_FIX:
         if when(key):
             n = new()
-            if n.lower() == old.lower() or n.lower() not in " ".join(t for _, t in C.all_texts()).lower():
+            if n.lower() == old.lower() or n.strip("<>").lower() not in " ".join(t for _, t in C.all_texts()).lower():
                 raise SystemExit(f"[{key}] 새 문구가 옛 문구와 같거나 원고에 없음: {n}")
             page = must_replace(page, old, n, key)
     if key == "cover":

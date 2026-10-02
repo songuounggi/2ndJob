@@ -144,6 +144,9 @@
      링크가 넓은 쪽 **40쪽(Weeks), 5쪽(Index), 93쪽(Tools), 4쪽(House map)**(쪽의 30~44% 가 링크 -- 링크 위에서 시작한 스크롤),
      그리고 보통 쪽 몇 장(예: 47쪽 Reset week 7, 11쪽 Kitchen)과 비교. 측정 `scripts/check_scroll_speed.py` (v0.12 통과)
    - 결과는 이 절에 날짜·기기·앱과 함께 적는다
+   - **2026-10-02 사용자 iPad 확인 (v0.12)**: 넘기기·스크롤 양호 -- 40쪽(Weeks) 양옆 39, 41쪽에서 아주 살짝 지연, 47쪽이 11쪽보다 살짝 무겁지만
+     괜찮은 수준. 링크: HOME → 5쪽(Index) 의도대로 유지 · 2쪽(How it flows)의 Done enough → 103쪽, All too much? → 94쪽 확인 · 순서도 "Room card" → "Pick a room"
+     으로 바꿈 · 질문 상자와 행동 상자가 같은 쪽으로 가는 것은 그대로
 
 ### 사용자 결정 대기
 
@@ -283,7 +286,7 @@
 | # | 페이지 | 구분 | 내용 | 링크 |
 |---|---|---|---|---|
 | 1 | 표지 | NEW | `The ADHD Home Reset` / `clean by energy, not by schedule` | → 2 |
-| 2 | **How it flows** (순서도) | NEW (09-30) | 배터리 → Energy menu → 방 카드 → Done enough → Wins / All too much? → Rescue → Wins / 매주 Reset week. 문구 `p4_content.FLOW` | 상자마다 그 페이지로 |
+| 2 | **How it flows** (순서도) | NEW (09-30) | 배터리 → Energy menu → 방 고르기("Pick a room" -- 10-02, 옛 "Room card") → Done enough → Wins / All too much? → Rescue → Wins / 매주 Reset week. 문구 `p4_content.FLOW` | 상자마다 그 페이지로. 질문 상자와 행동 상자가 같은 쪽으로 가는 것(Check your battery·Energy menu → 6쪽, All too much?·Rescue mode → 94쪽, Done enough·Wins log → 103쪽)은 의도 -- 어느 상자를 눌러도 반응 (10-02 사용자) |
 | 3 | **Start here** | NEW | 30초 사용법 세 줄: ① 배터리 고르기 → Energy menu ② 방 고르기 → House map ③ 엉망이면 → Rescue. "빈칸은 실패가 아니다" | 세 개 모두 |
 | 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(그림 아님, 칸). 방마다 "마지막 리셋: ___" 칸 | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) |
 | 5 | Index | NEW | 전 페이지 목록 | 전 페이지 |
@@ -353,6 +356,7 @@
 ### 3-7. 링크 규칙
 
 - 왼쪽 레일 탭 6개는 전 페이지. **현재 탭 하이라이트는 표지 빼고 전부 정확히 1개**(`CLAUDE.md` 500쪽 절 5)
+- **HOME 탭 → 5쪽(Index)** -- 109쪽 전체가 한 장에 있는 목록이라 어디서든 HOME 한 번으로 다시 고른다(상품 1 INDEX 탭과 같은 역할). v0.9 부터, 10-02 사용자 확인
 - `SOS` 칩은 **표지 빼고** 전 페이지 → 94쪽 Rescue mode (표지는 출발점이라 뺀다 -- 10-01 사용자)
 - **페이지 본문에서도 눌러 이동한다** -- 경쟁 리뷰 "탭보다 페이지를 눌러 이동하고 싶다"(조사 2절). 목록·타일·격자 칸 자체가 링크
 - 모든 페이지에 들어오는 길이 1개 이상(고아 페이지 0)

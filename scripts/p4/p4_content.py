@@ -44,7 +44,7 @@ FLOW = {
         "sos": ("All too much?", "Tap SOS on any page", "rescue"),
         "energy": ("Energy menu", "Pick by minutes", "energy"),
         "rescue": ("Rescue mode", "Five steps, then stop", "rescue"),
-        "room": ("Room card", "Ten-minute reset", "house-map"),
+        "room": ("Pick a room", "Ten-minute reset", "house-map"),   # 방 카드 10장 -> 고르는 곳(집 지도). 3쪽 "Pick one room" 과 같은 말 (10-02 사용자)
         "done": ("Done enough", "Stop there", "wins"),     # 끝낸 뒤 갈 곳 = 다음 칸 Wins log (10-01 사용자, 써 보기 6단계)
         "wins": ("Wins log", "It counts", "wins"),
         "weeks": ("Once a week", "Reset week: one room a day", "weeks"),
