@@ -16,6 +16,7 @@
    `python scripts/p4/qa_p4.py v0.13`)
 2. **design 에 2쪽 순서도 맡기기** -- `output/prod4/handoff/flow-v0.4.zip` 을 claude.ai/design 에 올린다(git 에 넣어 두었다).
    설명서 = 묶음 안 `00_HANDOFF.md` = 저장소 `product4-design-handoff.md` v0.4. 시안이 오면 Claude 가 **2쪽만** 바꿔 v0.14 → 전수검수
+2-1. **리스팅 사진 10장 + 핀 6장도 design 에 맡긴다** (10-02 사용자) -- `output/prod4/handoff/listing-v0.2.zip` (집에서는 v0.13 빌드 뒤 `python scripts/p4/handoff_listing_p4.py` 로 다시 만든다 -- 이미 있으면 멈춤). 설명서 = `product4-listing-handoff.md`. 디자인은 간섭하지 않고 크기 · 잘림 · 글자 크기 · 사실만 적었다. 우리 시안 draft-v0.6 은 참고 안 함(1MB 넘었다)
 3. **5-7 S5~S13 결정** (같은 기록 두 곳: 마지막 리셋 · 깊은 청소 · Wins / 한 주치 표 / 목차 순서 등 -- 아래 표)
 4. Claude: **L11 성인 눈높이 검토**(빈 노트보다 무엇을 더 해 주나 · 유치하지 않나) → 그다음 **상품 1 → 3 → 2 구조 논리 검토**(읽기만, `CLAUDE.md` 다음 할 일 5-7 행)
 5. 7단계 iPad: v0.13 으로 미리 볼 수 있는 곳 -- 3쪽(번호 대신 그림), 11쪽 · 7쪽 아래 "Wins log →" 알약. 2쪽은 시안 뒤에
