@@ -163,7 +163,7 @@ def main(ver):
     # 5
     for k, body in secs.items():
         plain = H.unescape(" ".join(p for p in re.split(r"<[^>]+>", re.sub(r"<br\s*/?>", " ", body)) if p.strip()))
-        for name, rx in (("금지 표현", C.BANNED), ("1인칭 당사자", C.FIRST_PERSON), ("영국식", C.UK)):
+        for name, rx in (("금지 표현", C.BANNED), ("1인칭 당사자", C.FIRST_PERSON), ("영국식", C.UK), ("미국에서만", C.US_ONLY)):
             for m in rx.finditer(plain):
                 if name == "금지 표현" and any(m.group(0) in a for a in C.ALLOWED_BANNED) and                         any(a in re.sub(r"\s+", " ", plain) for a in C.ALLOWED_BANNED):
                     continue
@@ -256,6 +256,22 @@ def main(ver):
     if "guests" in secs and C.LABELS["hide"] in secs["guests"]:
         fails.append(f"{ids.index('guests') + 1} guests: '{C.LABELS['hide']}' -- 목록 줄과 같은 말 두 번 (S13)")
 
+    # 14 재검수 R1~R5 (10-02 사용자, 처음부터 전수 재검수에서 -- R1·R2 는 그날 고치다 만든 모순)
+    if "rotation" in secs and C.LABELS["slid"] in secs["rotation"]:
+        fails.append(f"{ids.index('rotation') + 1} rotation: '{C.LABELS['slid']}' 칸 -- 33쪽은 계획 전용, 미룬 일은 주마다 쪽에만 (R1)")
+    if "start" in secs and "DOABLE TODAY" in secs["start"]:
+        fails.append(f"{ids.index('start') + 1} start: 'Doable today?' 라벨이 All too much? 카드까지 덮는다 (R2)")
+    if "energy" in secs:
+        e = secs["energy"]
+        miss = [b for b in C.BATTERIES if f'href="#day-{b}"' not in e[e.find(C.LABELS["pick"]):]]
+        if miss or 'left:108px;top:652px;width:452px"><div' in e:
+            fails.append(f"{ids.index('energy') + 1} energy: Today's pick 이 쓰는 칸 -- 오늘 고른 일은 7~9쪽에만 (R3) {miss}")
+    if "start" in secs:
+        tops = [int(t) for t in re.findall(r'left:108px;top:(\d+)px;width:452px;display:flex;gap:10px', secs["start"])]
+        gaps = [b - a - h for a, b, h in zip(tops, tops[1:], (42, 42, 16))]
+        if len(tops) != 4 or max(gaps) - min(gaps) > 1:
+            fails.append(f"{ids.index('start') + 1} start: Set up once 줄 간격이 고르지 않다 {gaps} (R5)")
+
     print(f"상품 4 기획서 대조 {ver} -- 문구 {len(seen)}개, 쪽 {len(ids)}")
     if unused:
         print(f"  (참고) 판 어디에도 안 쓰인 공용 라벨 {len(unused)}: " + "; ".join(f"{w}:{t}" for w, t in unused))
@@ -268,4 +284,4 @@ def main(ver):
 
 
 if __name__ == "__main__":
-    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.16") else 0)
+    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.17") else 0)

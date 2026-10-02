@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """상품 4 리스팅 사진 10장 + 핀 6장을 claude.ai/design 에 맡길 묶음 (product4-listing-handoff.md).
 
-    python scripts/p4/handoff_listing_p4.py [판, 기본 v0.16]
+    python scripts/p4/handoff_listing_p4.py [판, 기본 v0.17]
     -> output/prod4/handoff/<HANDOFF_VER>/ (00_HANDOFF.md + pages/*.png) + <HANDOFF_VER>.zip
 
 쪽 그림은 판매 PDF 를 그대로 렌더한다(2배, 1224 x 1584) -- 사진 속 화면은 실제 쪽만 쓰게. 쪽 목록 = 인수인계서 4절 · 8-3절.
@@ -21,8 +21,8 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 import pages_p4  # noqa: E402
 
-VER = sys.argv[1] if len(sys.argv) > 1 else "v0.16"
-HANDOFF_VER = "listing-v0.5"   # v0.5: 판 v0.16 -- 4쪽 타일 날짜 칸 뺌 · 41쪽 Wins = 링크 / v0.4: 판 v0.15 -- 3쪽 Set up once · 101쪽 미리 채움 / v0.3: 판 v0.14 -- 2쪽이 design 순서도 시안으로 확정(임시 표시 뺌) / v0.2: 쪽 그림 이름을 쪽 제목으로(w1 -> reset-week-1), 2쪽은 _TEMP 표시 / v0.1: 첫 묶음(보내지 않음)
+VER = sys.argv[1] if len(sys.argv) > 1 else "v0.17"
+HANDOFF_VER = "listing-v0.6"   # v0.6: 판 v0.17 -- 3 · 6 · 33 · 103쪽, 영어 치우침 정리 / v0.5: 판 v0.16 -- 4쪽 타일 날짜 칸 뺌 · 41쪽 Wins = 링크 / v0.4: 판 v0.15 -- 3쪽 Set up once · 101쪽 미리 채움 / v0.3: 판 v0.14 -- 2쪽이 design 순서도 시안으로 확정(임시 표시 뺌) / v0.2: 쪽 그림 이름을 쪽 제목으로(w1 -> reset-week-1), 2쪽은 _TEMP 표시 / v0.1: 첫 묶음(보내지 않음)
 DOC = os.path.join(ROOT, "product4-listing-handoff.md")
 OUT = os.path.join(ROOT, "output", "prod4", "handoff", HANDOFF_VER)
 

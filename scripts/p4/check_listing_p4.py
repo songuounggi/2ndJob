@@ -104,6 +104,8 @@ for line in text.split("\n"):
         fails.append(f"1인칭 당사자: {line.strip()[:80]}")
     if C.UK.search(line):
         fails.append(f"영국식 표기: {line.strip()[:80]}")
+    if C.US_ONLY.search(line):                       # 10-02 사용자: 영어권 어느 나라에도 치우치지 않게
+        fails.append(f"미국에서만 쓰는 말: {line.strip()[:80]}")
 
 # 파일명
 for name in re.findall(r"`(The-ADHD-[^`]+\.pdf)`", md):

@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.16"     # v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.17"     # v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -108,7 +108,14 @@ def must_replace(page, old, new, key, count=1):
 
 
 ROOM_OF = {r[0]: r for r in C.ROOMS}
-KITCHEN = ROOM_OF["kitchen"]
+# 시안 11 · 12쪽(부엌 카드 · 부엌 깊은 청소)에 박힌 글자 -- 다른 방은 이 글자를 원고로 바꿔 만든다. 부엌도 같은 길로(10-02 영어:
+# 원고 부엌 문구가 시안과 달라졌다 -- stovetop -> stove). 원고 ROOMS 와 같은 줄은 그대로 남는다
+KITCHEN = ("kitchen", "Kitchen",
+           ["Take out trash and recycling", "Gather dishes into the sink", "Put food back in the fridge",
+            "Clear one counter", "Wipe counters and stovetop", "Sweep the middle of the floor"],
+           "Counters clear, sink not overflowing.", ["trash bags", "dish soap", "spray", "cloth", "broom"],
+           ["Clean out the fridge", "Wipe inside the microwave", "Degrease the stovetop", "Clean the oven door",
+            "Wipe cabinet fronts", "Clean the dishwasher filter", "Scrub the sink and drain", "Mop the whole floor"])
 
 
 def fill_room(page, key):
@@ -257,6 +264,11 @@ def fill_start(page):
     return page[:page.rfind("</div>")] + label + "</div>"
 
 
+# 3쪽 Set up once 줄 자리 (10-02 재검수 R5 -- 처음 29 / 62 / 72 / 40pt 로 제각각이었다). 제목 줄 끝 510 ~ 카드 아래 18 위(750) 사이에
+# 덩어리 4개(쓰는 칸 = 머리 16 + 줄 26, 링크 줄 = 16)를 같은 간격 31 로: 541 · 614 · 687 · 734 -- check_plan 14 가 간격을 잰다
+SETUP_Y = (541, 614, 687, 734)
+
+
 def start_setup(page):
     """3쪽 아래 카드: 옛 "The room that bugs me most" + 9줄 -> "Set up once" (10-02 사용자, L11). 카드 자리·크기는 시안 그대로.
     쓰는 칸 둘(줄 하나씩) + 다른 쪽으로 가는 줄 둘 -- 빈 방 이름(27, 29쪽 Room name)과 짝 나누기(38쪽)는 그 쪽에 쓴다(L5 같은 기록 두 곳 금지)"""
@@ -276,10 +288,10 @@ def start_setup(page):
     right = lambda inner: f'<span style="margin-left:auto;display:flex;gap:14px;font-size:9px;font-weight:800">{inner}</span>'
     new = (f'<div style="position:absolute;left:108px;top:496px;display:flex;gap:10px;align-items:baseline">'
            f'<span style="font-size:12px;font-weight:800">{H.escape(title)}</span><span style="font-size:8.5px;color:#66716B">{H.escape(hint)}</span></div>'
-           + head(526, *fields[0]) + line(538)
-           + head(588, *fields[1]) + line(600)
-           + head(660, *links[0], right(rooms))
-           + head(700, *links[1], right(go("who-does-what", pages_p4.title_of("who-does-what")))))
+           + head(SETUP_Y[0], *fields[0]) + line(SETUP_Y[0] + 16)
+           + head(SETUP_Y[1], *fields[1]) + line(SETUP_Y[1] + 16)
+           + head(SETUP_Y[2], *links[0], right(rooms))
+           + head(SETUP_Y[3], *links[1], right(go("who-does-what", pages_p4.title_of("who-does-what")))))
     return page[:old.start()] + new + page[old.end():]
 
 
@@ -290,9 +302,9 @@ def fill(page, key):
         return fill_start(page)
     if key in dict(C.MY_ROOMS):          # 시안 27쪽 제목 "My room" -> "My room 1" / "My room 2" (v0.11)
         return must_replace(page, ">My room<", f">{dict(C.MY_ROOMS)[key]}<", key)
-    if key in ROOM_OF and key != "kitchen":
+    if key in ROOM_OF:
         return fill_room(page, key)
-    if key.startswith("deep-") and key != "deep-kitchen":
+    if key.startswith("deep-"):
         return fill_deep(page, key)
     if key.startswith("day-"):
         return fill_day(page, key)
@@ -307,6 +319,10 @@ def fill(page, key):
         return prefill_table(page, key)
     if key in ("monthly", "seasonal"):
         return dedupe_lists(page, key)
+    if key == "rotation":
+        return rotation_plan_only(page)
+    if key == "energy":
+        return energy_today_links(page)
     if key == "guests":
         return drop_guest_banner(page)
     return page
@@ -317,7 +333,8 @@ LIST_V1 = {
     "monthly": ["Clean out the fridge", "Wipe inside the microwave", "Clean the dishwasher filter", "Run a washer cleaning cycle",
                 "Vacuum under the bed", "Wipe light switches and handles", "Wipe the baseboards", "Wash the shower curtain",
                 "Check the freezer", "Dust fans and vents", "Wash the trash cans", "Clear out one drawer"],
-    "seasonal": ["Clear out the entry closet", "Clean the fans", "Deep clean the oven", "Restock the car kit", "Wash the throw blankets"],
+    "seasonal": ["Clear out the entry closet", "Clean the fans", "Deep clean the oven", "Restock the car kit", "Wash the throw blankets",
+                 "Wipe salt off the entry floor", "Fall"],
 }
 
 
@@ -326,12 +343,40 @@ def dedupe_lists(page, key):
         pairs = [(a, b) for a, b in zip(LIST_V1["monthly"], C.MONTHLY) if a != b]
     else:
         new = {"Clear out the entry closet": C.SEASONAL["Spring"][3], "Clean the fans": C.SEASONAL["Summer"][0],
-               "Deep clean the oven": C.SEASONAL["Fall"][2], "Restock the car kit": C.SEASONAL["Fall"][3],
-               "Wash the throw blankets": C.SEASONAL["Winter"][1]}
+               "Deep clean the oven": C.SEASONAL["Autumn"][2], "Restock the car kit": C.SEASONAL["Autumn"][3],
+               "Wash the throw blankets": C.SEASONAL["Winter"][1],
+               "Wipe salt off the entry floor": C.SEASONAL["Winter"][0],     # 10-02 영어: 길 소금은 눈 오는 곳만
+               "Fall": "Autumn"}                                                # 10-02 영어: 계절 이름 Fall 은 미국만
         pairs = [(a, new[a]) for a in LIST_V1["seasonal"]]
     for a, b in pairs:
         page = must_replace(page, f">{a}<", f">{H.escape(b)}<", key)
     return page
+
+
+def rotation_plan_only(page):
+    """33쪽 = 계획 전용 (10-02 사용자, 재검수 R1): "Slid to next week" 카드를 뺀다 -- 미룬 일은 주마다 쪽(41~92)에만.
+    S8 부제("여기서 짜고 체크는 주마다 쪽")가 이 칸과 모순이었다. 카드 자리가 빠지면 variant_bg 가 배경을 다시 굽는다"""
+    m = re.search(r'<div style="position:absolute;left:84px;top:420px;width:500px;height:160px;border-radius:16px;background:#FFFFFF;'
+                  r'box-sizing:border-box;"></div><div style="position:absolute;left:108px;top:438px;[^"]*">'
+                  r'<span[^>]*>' + re.escape(C.LABELS["slid"]) + r'</span>.*?</div>'
+                  r'<div style="position:absolute;left:108px;top:458px;width:452px">(?:<div [^>]*></div>){4}</div>', page)
+    if not m:
+        raise SystemExit("[rotation] Slid to next week 카드를 못 찾음")
+    return page[:m.start()] + page[m.end():]
+
+
+def energy_today_links(page):
+    """6쪽 "Today's pick" 카드: 쓰는 줄 4개 -> 배터리 날 쪽 링크 셋 (10-02 사용자, 재검수 R3 -- 오늘 고른 일은 7~9쪽 한 곳에)"""
+    page = must_replace(page, f'>{C.LABELS["pick_hint"]}</span>', f'>{H.escape(C.LABELS["pick_plan"])}</span>', "energy")
+    m = re.search(r'<div style="position:absolute;left:108px;top:652px;width:452px">(?:<div [^>]*></div>){4}</div>', page)
+    if not m:
+        raise SystemExit("[energy] Today's pick 쓰는 줄 4개를 못 찾음")
+    links = "".join(f'<a href="#day-{b}" style="display:flex;align-items:center;font-size:11px;font-weight:800">'
+                    f'{H.escape(pages_p4.title_of("day-" + b))}<span style="margin-left:4px;color:#537364">→</span></a>'
+                    for b in C.BATTERIES)
+    row = (f'<div style="position:absolute;left:108px;top:652px;width:452px;height:104px;display:flex;align-items:center;'
+           f'justify-content:space-between">{links}</div>')
+    return page[:m.start()] + row + page[m.end():]
 
 
 def drop_guest_banner(page):
@@ -401,6 +446,10 @@ COPY_FIX = [
     # 7~9쪽 목록은 원고에서 만들어 이미 바뀌고, 6쪽 칸은 시안 글자라 여기서 (check_plan 1 이 v0.13 첫 빌드에서 잡음)
     (lambda k: k == "kids-pets", "Jobs they can own.", lambda: C.TOOL_PAGES["kids-pets"][1]),        # 10-02 S9 한 주 한 장
     (lambda k: k == "doom", "One pile, fifteen minutes.", lambda: C.DOOM_PILE[1]),                     # 10-02 S12
+    (lambda k: k == "wins", "What you did, not what's left.", lambda: C.TOOL_PAGES["wins"][1]),          # 10-02 R4 한 장 -- 다시 쓰기
+    # 10-02 영어(사용자): stovetop · couch 는 미국말 -> stove · sofa. 6쪽 칸은 시안 글자라 여기서 (7~9쪽 목록은 원고에서)
+    (lambda k: k == "energy", ">Wipe the stovetop<", lambda: ">" + C.ENERGY[("Medium", 2)][0][0] + "<"),
+    (lambda k: k == "energy", ">Reset the couch and pillows<", lambda: ">" + C.ENERGY[("Low", 10)][2][0] + "<"),
     (lambda k: k == "energy", ">Vacuum one room<",
      lambda: ">" + [t for t, _ in C.ENERGY[("Medium", 10)] if t.startswith("Vacuum")][0] + "<"),
 ]

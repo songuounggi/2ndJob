@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """상품 4 검수 한 번에 (PROCESS.md 5단계 5-1~5-6 + 6단계 dogfood) -- Claude 가 매 빌드 뒤 돌린다.
 
-    python scripts/p4/qa_p4.py v0.16
+    python scripts/p4/qa_p4.py v0.17
 
 하나라도 FAIL 이면 사용자에게 "완료" 라고 보내지 않는다(PROCESS.md 5절 규칙).
 스크롤·렌더 속도(check_scroll_speed)도 여기서 컬러판·흑백판 둘 다 -- 10-01 사용자: "필수 검수로, 네가 검수하는 곳에".
@@ -14,10 +14,12 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-VER = sys.argv[1] if len(sys.argv) > 1 else "v0.16"
+VER = sys.argv[1] if len(sys.argv) > 1 else "v0.17"
 PDF = lambda t: os.path.join(ROOT, "output", "prod4", "planner", VER, f"home-reset_{VER}_{t}-FINAL.pdf")
 
 CHECKS = [
+    # 원고 검사(글자 수 · 금지 표현 · 영국식 표기 등)도 맨 앞에 -- 10-02 재검수: 빠져 있어 v0.16 39쪽 부제 70자 넘침을 못 잡았다
+    ("5-4 원고 (글자 수 · 금지 표현 · 철자)", ["scripts/p4/p4_content.py"]),
     ("5-1·5-4 기획서 대조 · 인쇄된 번호 · 금지 표현", ["scripts/p4/check_plan_p4.py", VER]),
     ("5-2 디자인 (README 11절 · 탭 · 쓰는 칸 옆 링크 · 카드 전체)", ["scripts/p4/check_design_p4.py", VER]),
     ("5-3 판 · 링크 · 흑백판", ["scripts/p4/check_v2_p4.py", VER]),

@@ -11,7 +11,8 @@
   2 죄책감 금지 -- streak·fail·behind·lazy·should 없음. 놓친 날은 다음 칸으로 밀 뿐
   3 "Done enough" 가 기본값. 완벽 기준을 인쇄하지 않는다
   4 의학적 주장 금지  5 1인칭 당사자 표현 금지  6 남의 방법론 이름·고유 용어를 가져오지 않는다
-  7 미국 영어
+  7 철자는 미국식 하나로(color, organize), 단어는 한 나라에서만 쓰는 말 대신 미국 · 영국 · 호주 등이 다 아는 말로
+    (10-02 사용자: "영어권 국가 표현에 치우침 없게"). 다 알아듣는 미국말(trash · closet · dish soap)은 그대로 -- 영국말로 바꾸면 반대로 치우친다
 """
 import csv
 import os
@@ -19,7 +20,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.12"   # v0.12 = 구조 논리 S5~S13(10-02 사용자): 월간 · 계절 겹침 교체, 33 · 32 · 39 · 97 부제, 7~9 다시 쓰기 안내, Wins 한 곳   # v0.11 = L11 성인 눈높이(10-02 사용자): 빈 표 도구 쪽 5장 미리 채움(PREFILL), 3쪽 아래 칸 = 처음 한 번 쓰는 설정   # v0.10 = 구조 논리 검토(10-02 사용자): 3쪽 번호 빼고 갈림, "Vacuum the living room", "Every week", 순서도 시간은 갈래 상자로   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.13"   # v0.13 = 재검수 R1~R4(10-02 사용자): 33쪽 계획 전용 부제, 3쪽 "Pick one way in.", 6쪽 오늘 칸 -> 배터리 날 링크, Wins log 다시 쓰기 안내   # v0.12 = 구조 논리 S5~S13(10-02 사용자): 월간 · 계절 겹침 교체, 33 · 32 · 39 · 97 부제, 7~9 다시 쓰기 안내, Wins 한 곳   # v0.11 = L11 성인 눈높이(10-02 사용자): 빈 표 도구 쪽 5장 미리 채움(PREFILL), 3쪽 아래 칸 = 처음 한 번 쓰는 설정   # v0.10 = 구조 논리 검토(10-02 사용자): 3쪽 번호 빼고 갈림, "Vacuum the living room", "Every week", 순서도 시간은 갈래 상자로   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -29,7 +30,7 @@ START_HERE = {
     "sub": "Thirty seconds, then you're cleaning.",
     # 10-02 사용자(구조 논리 S1): 1 · 2 · 3 번호는 "차례로 다 하라"로 읽혔다 -- 1·2 는 둘 중 하나, 3 은 벅찬 날 갈래(2쪽 순서도와 같은 구조).
     # 번호 자리는 그림(배터리 · 집 · 구명환), 두 카드 위에 "할 만하면 하나를 고른다" 라벨
-    "pick": "Doable today? Pick one way in.",
+    "pick": "Pick one way in.",   # 10-02 R2: "Doable today?" 가 셋째 카드 All too much? 까지 덮었다
     # 아래 칸 = 처음 한 번 쓰는 설정 (10-02 사용자, L11 -- 옛 "The room that bugs me most" 9줄). 같은 기록을 두 곳에 두지 않는다(L5):
     # 빈 방 이름은 27, 29쪽 "Room name" 칸에, 짝 나누기는 38쪽에 -- 여기선 그 쪽으로 가는 링크만
     "setup": ("Set up once", "the first time you open it",
@@ -68,14 +69,14 @@ FLOW = {
 ROOMS = [
     ("kitchen", "Kitchen",
      ["Take out trash and recycling", "Gather dishes into the sink", "Put food back in the fridge",
-      "Clear one counter", "Wipe counters and stovetop", "Sweep the middle of the floor"],
+      "Clear one counter", "Wipe counters and the stove", "Sweep the middle of the floor"],   # 10-02 영어: stovetop(미국) -> stove
      "Counters clear, sink not overflowing.",
      ["trash bags", "dish soap", "spray", "cloth", "broom"],
-     ["Clean out the fridge", "Wipe inside the microwave", "Degrease the stovetop", "Clean the oven door",
+     ["Clean out the fridge", "Wipe inside the microwave", "Degrease the stove", "Clean the oven door",
       "Wipe cabinet fronts", "Clean the dishwasher filter", "Scrub the sink and drain", "Mop the whole floor"]),
     ("bathroom", "Bathroom",
      ["Empty the trash can", "Hang towels or toss in the hamper", "Put products in one bin",
-      "Wipe the sink and faucet", "Swish the toilet bowl", "Wipe the mirror if there's time"],
+      "Wipe the sink", "Swish the toilet bowl", "Wipe the mirror if there's time"],   # 10-02 영어: faucet(미국) 뺌
      "Sink wiped, toilet swished, floor clear.",
      ["toilet brush", "spray", "cloth", "trash bags"],
      ["Scrub the shower walls", "Wash the shower curtain", "Clean the grout lines", "Wipe behind the toilet",
@@ -86,14 +87,14 @@ ROOMS = [
      "Covers pulled up, path to the door clear.",
      ["laundry basket", "trash bag", "cloth"],
      ["Change and wash the sheets", "Vacuum under the bed", "Dust the headboard and lamps",
-      "Sort one dresser drawer", "Clear the closet floor", "Wash the pillows", "Wipe the light switches",
+      "Sort one clothes drawer", "Clear the closet floor", "Wash the pillows", "Wipe the light switches",   # 10-02 영어: dresser(미국)
       "Flip or rotate the mattress"]),
     ("living", "Living room",
      ["Cups and dishes to the kitchen", "Trash into one bag", "Fold blankets, fluff the pillows",
       "Remotes and chargers in one spot", "Clear the coffee table", "Vacuum the middle of the room"],
      "You could sit down, and so could a guest.",
      ["trash bag", "basket", "vacuum", "cloth"],
-     ["Vacuum under the couch cushions", "Dust shelves and frames", "Wash the throw blankets",
+     ["Vacuum under the sofa cushions", "Dust shelves and frames", "Wash the throw blankets",   # 10-02 영어: couch -> sofa
       "Wipe the TV and remotes", "Clean the windowsills", "Sort the magazine and mail pile",
       "Wash the cushion covers", "Vacuum along the baseboards"]),
     ("entry", "Entry & hallway",
@@ -144,9 +145,9 @@ ENERGY = {
     ("Low", 5):     [("Load five dishes", "dishes-loop"), ("Start one laundry load", "laundry-loop"),
                      ("Clear the nightstand", "bedroom")],
     ("Low", 10):    [("Fold one basket sitting down", "laundry-loop"), ("Empty the car door pockets", "deep-car"),
-                     ("Reset the couch and pillows", "living")],
+                     ("Reset the sofa and pillows", "living")],
     ("Low", 20):    [("Unload and reload the dishwasher", "dishes-loop"), ("Sort the mail pile", "deep-living")],
-    ("Medium", 2):  [("Wipe the stovetop", "kitchen"), ("Wipe the bathroom mirror", "bathroom")],
+    ("Medium", 2):  [("Wipe the stove", "kitchen"), ("Wipe the bathroom mirror", "bathroom")],
     ("Medium", 5):  [("Clear the kitchen counter", "kitchen"), ("Pull up the covers", "bedroom"),
                      ("Sweep the entry", "entry")],
     ("Medium", 10): [("Clean the toilet", "bathroom"), ("Vacuum the living room", "living"),   # "one room" 은 아무 방인데 거실 카드로 갔다 (10-02, 구조 논리 S3)
@@ -176,17 +177,19 @@ DAILY_RESET = {
 # 10-02 사용자(구조 논리 S6): 방 깊은 청소 목록과 같은 일 7개를 방에 없는 일로 -- 같은 일을 두 목록에서 따로 체크하지 않게.
 # 냉장고 · 전자레인지 · 식기세척기 필터는 12쪽, 세탁기 청소는 22쪽, 침대 밑은 16쪽, 스위치는 16쪽, 샤워 커튼은 14쪽에 그대로
 MONTHLY = ["Descale the coffee maker", "Clean the vacuum filter", "Replace the kitchen sponge",
-           "Wash the reusable bags", "Check the pantry dates", "Wipe the door handles",
+           "Wash the reusable bags", "Check food dates in the cupboards", "Wipe the door handles",   # 10-02 영어: pantry(미국)
            "Wipe the baseboards", "Clean phone and laptop screens", "Check the freezer", "Dust fans and vents",
            "Wash the trash cans", "Clear out one drawer"]
 SEASONAL = {   # 10-02 사용자(S6): 방 목록 · 월간과 겹치던 5개를 바꿈 (entry closet · fans · oven · car kit · throw blankets)
     "Spring": ["Wash the windows inside", "Put away winter coats", "Wash the curtains",
                "Wash the window screens", "Clean behind the fridge"],
-    "Summer": ["Clean the grill or patio", "Wash the outdoor cushions", "Test the smoke alarms",
+    # 10-02 영어(사용자): 영국 grill = 오븐 굽는 칸 -> barbecue / Fall(미국) -> Autumn / air filter(미국식 중앙 냉난방) -> first-aid kit /
+    # 길 소금(눈 오는 곳만) -> mud
+    "Summer": ["Clean the barbecue or patio", "Wash the outdoor cushions", "Test the smoke alarms",
                "Clear out the freezer", "Donate one bag"],
-    "Fall": ["Wash bedding for winter", "Put away summer clothes", "Clear one storage shelf",
-             "Change the air filter", "Clear the gutters or ask for help"],
-    "Winter": ["Wipe salt off the entry floor", "Wash hats, gloves, and scarves", "Clean the humidifier",
+    "Autumn": ["Wash bedding for winter", "Put away summer clothes", "Clear one storage shelf",   # 10-02 영어: Fall(미국) -> Autumn
+               "Check the first-aid kit", "Clear the gutters or ask for help"],   # air filter = 미국식 중앙 냉난방
+    "Winter": ["Wipe mud off the entry floor", "Wash hats, gloves, and scarves", "Clean the humidifier",
                "Sort the holiday decorations", "Donate one bag"],
 }
 # 루프: (단계, 여기서 멈추면 -> 대책)
@@ -198,20 +201,20 @@ DISHES_LOOP = [("Use", "Keep one cup per person out"),
                ("Soak", "Fill the sink with hot water first"),
                ("Wash", "Set a 10-minute timer, stop when it rings"),
                ("Put away", "Unload while the kettle boils")]
-WEEKLY_ROTATION_SUB = "Plan it once here, tick it off on each Reset week. Missed one? Slide it to the next slot."   # 10-02 S8: 주마다 쪽과의 관계   # 같은 쪽 카드 "just the next slot" 과 같은 말 (10-01 재시험)
+WEEKLY_ROTATION_SUB = "Give each room a day here. Tick it off on each Reset week."   # 10-02 R1: 33쪽 = 계획 전용(미룬 일 칸은 주마다 쪽에만) -- S8 부제가 33쪽 체크 칸 · Slid 칸과 모순이었다   # 같은 쪽 카드 "just the next slot" 과 같은 말 (10-01 재시험)
 # 103쪽 Moving or big reset -- 미리 채운 항목 (2026-09-30 사용자: "미리 채운 항목 10~12개 + 빈 줄")
 # 빈 표였던 도구 쪽에 미리 채운 항목 (10-02 사용자, L11 "빈 쪽 시험" -- 106쪽 Moving 과 같은 방식: 예시 + 빈 줄).
 # 논리 정합성(5-7): 104 는 Energy menu 문구 그대로(L8), 99 는 방 카드 단계와 같은 물건(Keys -> Entry "key bowl", Mail -> "desk tray",
 # Remotes · chargers -> Living room), 100 은 다 쓰면 사는 것만(빗자루 · 변기솔 같은 도구는 뺀다), 101 은 카드의 회색 안내와 겹치지 않게
 PREFILL = {
-    "restock": ["Trash bags", "Dish soap", "Dishwasher tabs", "All-purpose spray", "Laundry detergent", "Toilet paper",
+    "restock": ["Trash bags", "Dish soap", "Dishwasher detergent", "All-purpose spray", "Laundry detergent", "Toilet paper",
                 "Paper towels", "Hand soap", "Sponges", "Wipes"],
     "where-things-live": ["Keys", "Mail", "Phone chargers", "Remotes", "Scissors", "Batteries", "Tape", "Spare bulbs",
                           "Reusable bags", "Pens"],
     "who-does-what": ["Dishes", "Laundry", "Trash and recycling", "Clean the bathroom", "Vacuum", "Change the sheets",
                       "Groceries", "Wipe the kitchen counter"],
     "guess-actual": ["Unload and reload the dishwasher", "Fold one basket sitting down", "Clean the toilet", "Change the sheets",
-                     "Vacuum the living room", "Take out one bag of trash", "Clear the kitchen counter", "Wipe the stovetop"],
+                     "Vacuum the living room", "Take out one bag of trash", "Clear the kitchen counter", "Wipe the stove"],
     "dopamine": [["One album, start to finish", "A playlist only for cleaning"],      # Soundtrack
                  ["An audiobook chapter", "A show you've seen before"],             # Something to listen to
                  ["Someone else in the room", "A friend tidying too"],              # Company
@@ -252,19 +255,19 @@ DOPAMINE = ("Cleaning dopamine menu", "What makes the boring part easier?",
              ("Make it a game", "beat the timer, one song per task")])
 TOOL_PAGES = {   # 제목, 부제 (칸만 있는 페이지)
     "body-doubling": ("Body doubling log", "Cleaning is easier with someone around."),
-    "wins": ("Wins log", "What you did, not what's left."),
+    "wins": ("Wins log", "What you did, not what's left. Full? Duplicate or reprint it."),   # 10-02 R4: 모든 길이 여기로 -- 한 장
     "guess-actual": ("Time guess vs actual", "The dishes took eight minutes, not an hour."),
     "where-things-live": ("Where things live", "No home for it, no way to put it away."),
     "restock": ("Restock list", "Buy it before it runs out."),
     "projects": ("Projects list", "Too big for one day? Write the first step only."),
     "big-reset": ("Moving or big reset", "One checklist for the big days."),
-    "kids-pets": ("Kids & pets tasks", "Jobs they can own. Pet care is one week per page: duplicate it or print a fresh copy."),   # 10-02 S9
+    "kids-pets": ("Kids & pets tasks", "Jobs they can own. Pet care is one week a page: duplicate or reprint."),   # 10-02 S9
     "who-does-what": ("Who does what", "Split it on paper before it turns into an argument."),
     "house-map": ("House map", "Tap a room. Ten minutes, then stop."),
     "energy": ("Energy menu", "Pick by battery and time, not by day. Tap a task to open it."),
     "monthly": ("Monthly deep clean", "Once a month. Any order."),
     "seasonal": ("Seasonal reset", "Four times a year."),
-    "daily": ("Daily reset", "Two small resets a day. One page is one week: duplicate it in your app or print a fresh copy."),   # 10-02 S9
+    "daily": ("Daily reset", "Two small resets a day. One week a page: duplicate or reprint."),   # 10-02 S9
 }
 WEEK_PAGE = ("Reset week {n}", "This week's rooms, one deep clean, and the wins.")
 
@@ -304,12 +307,13 @@ LABELS = {
     "card_link": "Back to the room card", "task": "Task", "last_done": "Last done", "room_name": "Room name",
     # 에너지·순환·주간
     "pick": "Today's pick", "pick_hint": "one is enough", "slid": "Slid to next week",
+    "pick_plan": "plan it on a battery day page",   # 10-02 R3: 6쪽 칸 -> 7~9쪽 링크
     "slid_hint": "no penalty, just the next slot",
     # slid_hint_short: Reset week 반쪽 카드용 (10-01 사용자: 원고 문구가 카드 끝을 넘어서)
     "slid_hint_short": "no penalty",
     # 10-01 사용자 (6단계 써 보기): 주간 Wins 칸 = 그 주 것(101쪽 Wins log 는 언제든) / 주간 날짜 칸 / 하루 쪽에 그 배터리 할 일
     "wins_hint": "this week", "wins_one_list": "every win goes on one list",   # 10-02 S7: 주마다 쪽 Wins 칸 -> Wins log 링크
-    "day_reuse": "Reuse it tomorrow: erase, duplicate, or reprint.",   # 10-02 S10
+    "day_reuse": "Reuse it: erase, duplicate, or reprint.",   # 10-02 S10
     "my_rooms": "My rooms", "week_of": "Week of", "from_menu": "From the Energy menu", "tap_one": "tap one",
     # 흑백판(종이)만: SOS 옆 쪽 번호, 10·40쪽 쪽 번호 규칙 (10-01 재시험, 인쇄파 구매자)
     "page_short": "p.", "deep_next": "Each deep clean list is the page after its room card.",
@@ -340,6 +344,9 @@ BANNED = re.compile(
 ALLOWED_BANNED = {START_HERE["note"]}
 FIRST_PERSON = re.compile(r"\b(I have ADHD|for myself|as someone with|my ADHD)\b", re.I)
 UK = re.compile(r"\b(colour|organis\w*|favourite|tidy up|rubbish|bin bags?|hoover\w*|washing up|flat)\b", re.I)
+# 한 나라에서만 쓰거나 뜻이 갈리는 미국말 (10-02 사용자) -- 영국 grill = 오븐 굽는 칸, Fall(계절) = 영국·호주는 Autumn,
+# air filter = 미국식 중앙 냉난방. 대문자 Fall 만(동사 fall 은 BANNED 쪽이 본다)
+US_ONLY = re.compile(r"\b(faucets?|dressers?|stovetops?|couch(?:es)?|pantr(?:y|ies)|grills?|air filters?|Fall)\b")
 # 남의 방법론 이름·고유 용어 (product4-content.md 7절 6)
 BORROWED = re.compile(r"\b(5 things|five things|care tasks|morally neutral|Fly ?Lady|KonMari|spark joy)\b", re.I)
 
@@ -427,6 +434,7 @@ def check():
     need(not bad, f"금지어(죄책감·의학) {bad[:3]}")
     need(not [t for _, t in texts if FIRST_PERSON.search(t)], "1인칭 당사자 표현")
     need(not [t for _, t in texts if UK.search(t)], f"영국식 표기 {[t for _, t in texts if UK.search(t)][:3]}")
+    need(not [t for _, t in texts if US_ONLY.search(t)], f"미국에서만 쓰는 말 {[t for _, t in texts if US_ONLY.search(t)][:3]}")
     need(not [t for _, t in texts if BORROWED.search(t)], f"남의 방법론 용어 {[t for _, t in texts if BORROWED.search(t)]}")
     return fails
 
