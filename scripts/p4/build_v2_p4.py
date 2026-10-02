@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.12"     # v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자)
+VER = "v0.13"     # v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -379,6 +379,10 @@ COPY_FIX = [
     (lambda k: k == "cover", "nine rooms, ten-minute resets", lambda: C.COVER_ITEMS[1][1]),     # v0.11 빈 방 둘째로 열 방
     # 할 일이 눌린다는 안내 (v0.11 재시험: "목록인 줄 알고 지나친다" 3명)
     (lambda k: k == "energy", "Pick by battery and time, not by day.", lambda: C.TOOL_PAGES["energy"][1]),
+    # "Vacuum one room" 은 아무 방인데 거실 카드로 갔다 -> 원고 "Vacuum the living room" (10-02 사용자, 구조 논리 S3).
+    # 7~9쪽 목록은 원고에서 만들어 이미 바뀌고, 6쪽 칸은 시안 글자라 여기서 (check_plan 1 이 v0.13 첫 빌드에서 잡음)
+    (lambda k: k == "energy", ">Vacuum one room<",
+     lambda: ">" + [t for t, _ in C.ENERGY[("Medium", 10)] if t.startswith("Vacuum")][0] + "<"),
 ]
 
 

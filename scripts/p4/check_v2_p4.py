@@ -282,7 +282,7 @@ def check(ver, tag):
 
 
 if __name__ == "__main__":
-    ver = sys.argv[1] if len(sys.argv) > 1 else "v0.12"
+    ver = sys.argv[1] if len(sys.argv) > 1 else "v0.13"
     total = 0
     for tag in ("color", "BW"):
         f = check(ver, tag)
