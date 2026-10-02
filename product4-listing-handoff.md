@@ -1,7 +1,7 @@
-# 상품 4 리스팅 사진 10장 + 핀터레스트 핀 6장 — 인수인계서 v0.4 (Claude Code → claude.ai/design)
+# 상품 4 리스팅 사진 10장 + 핀터레스트 핀 6장 — 인수인계서 v0.5 (Claude Code → claude.ai/design)
 
 **보내는 쪽:** Claude Code (`Prod 4. The ADHD Home Reset` 방, 2026-10-02) → **받는 쪽:** claude.ai/design
-**같이 올릴 묶음:** `output/prod4/handoff/listing-v0.4.zip` -- 이 문서(`00_HANDOFF.md`) + 판매 PDF 쪽 그림(`pages/`).
+**같이 올릴 묶음:** `output/prod4/handoff/listing-v0.5.zip` -- 이 문서(`00_HANDOFF.md`) + 판매 PDF 쪽 그림(`pages/`).
 **두 가지를 함께 맡긴다:** A. Etsy 리스팅 사진 10장(1~7절) · B. 핀터레스트 핀 6장(8절). 같은 상품이라 사실·금지 표현(5절)은 같다.
 묶음은 `python scripts/p4/handoff_listing_p4.py` 로 다시 만든다(판이 바뀌면 그 판 쪽으로).
 
@@ -19,7 +19,7 @@
 | 무엇 | ADHD 성인용 청소·집안 루틴 **디지털 플래너**. 하이퍼링크 PDF(iPad + Goodnotes/Notability) + 흑백 인쇄판 PDF, **파일 2개** |
 | 가격 | $8.99 (숍의 입구 가격 상품). 구매자: 미국·영국·아일랜드 |
 | Etsy 제목(초안) | `ADHD Cleaning Planner for iPad and Goodnotes, Printable Home Reset Checklist, Undated and Hyperlinked` |
-| 판 | 109쪽, 날짜 없음(undated), US Letter 세로. 이 묶음의 쪽 그림 = 판 **v0.15** (2쪽 = 새 순서도 시안 34e, 빈 표였던 도구 쪽에 예시 항목) |
+| 판 | 109쪽, 날짜 없음(undated), US Letter 세로. 이 묶음의 쪽 그림 = 판 **v0.16** (2쪽 = 새 순서도 시안 34e, 빈 표였던 도구 쪽에 예시 항목) |
 
 **구매자가 왜 사나 (사진이 전해야 할 것):** 청소 방법을 몰라서가 아니라 **시작·고르기·멈추기**가 막혀서다. 이 플래너는
 "오늘 기운과 남은 시간에 맞는 일 하나 고르기 → 방 하나 10분 → '이만하면 됐다'에서 멈춤, 벅차면 구조 모드"를 대신 정해 준다.
@@ -71,7 +71,7 @@
 
 ## 4. 10장 -- **무엇을 알려야 하나** (배치·연출은 디자인)
 
-쪽 번호는 판 v0.15 기준. 화면에 보여 주는 플래너 쪽은 **`pages/` 의 실제 쪽 그림만** 쓴다(5절 "사실만").
+쪽 번호는 판 v0.16 기준. 화면에 보여 주는 플래너 쪽은 **`pages/` 의 실제 쪽 그림만** 쓴다(5절 "사실만").
 
 | # | 파일 | 알려야 할 것 | 쓸 쪽 (`pages/`) | 제안 문구 (바꿔도 됨) |
 |---|---|---|---|---|

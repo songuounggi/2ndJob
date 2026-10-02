@@ -173,8 +173,9 @@ def main(ver):
     for k, body in secs.items():
         n = ids.index(k) + 1
         if re.fullmatch(r"w\d+", k):
-            if f'>Wins</span><span style="font-size:8.5px;color:#66716B">{C.LABELS["wins_hint"]}</span>' not in body:
-                fails.append(f"{n} {k}: Wins 옆 '{C.LABELS['wins_hint']}' 없음")
+            # 10-02 S7: 이긴 것은 103쪽 한 곳 -- 주마다 쪽 Wins 칸은 쓰는 줄 없이 Wins log 링크
+            if not re.search(r'<a href="#wins"[^>]*>' + re.escape(pages_p4.title_of("wins")), body) or 'left:108px;top:550px;width:194px"><div' in body:     # 옆 Slid 카드 줄(left 366)은 그대로
+                fails.append(f"{n} {k}: Wins 칸이 Wins log 링크가 아님 (S7 -- 같은 기록 두 곳)")
             if f'>{C.LABELS["week_of"].upper()}</span><div style="flex:1;box-sizing:border-box;height:22px;border-bottom:' not in body:
                 fails.append(f"{n} {k}: 날짜 칸(WEEK OF) 없음")
         elif k.startswith("day-"):
@@ -242,6 +243,19 @@ def main(ver):
         if miss:
             fails.append(f"{ids.index('start') + 1} start: Set up once 에서 가는 링크 없음 {miss} (L5 -- 그 쪽에 쓰게)")
 
+    # 13 구조 논리 S5 · S6 · S10 · S13 (10-02 사용자) -- 같은 기록 · 같은 말 두 곳 금지, 한 장짜리 "오늘" 쪽 다시 쓰기 안내
+    if "house-map" in secs and "LAST RESET" in secs["house-map"]:
+        fails.append(f"{ids.index('house-map') + 1} house-map: LAST RESET 칸 -- 마지막 리셋은 방 카드에만 (S5)")
+    deep_all = {t.lower() for r in C.ROOMS for t in r[5]}
+    dup = sorted(t for t in C.MONTHLY + [x for v in C.SEASONAL.values() for x in v] if t.lower() in deep_all)
+    if dup:
+        fails.append(f"34 · 35쪽 할 일이 방 깊은 청소 목록과 같음 {dup} (S6)")
+    for k in ["day-" + b for b in C.BATTERIES]:
+        if k in secs and H.escape(C.LABELS["day_reuse"]) not in secs[k] and C.LABELS["day_reuse"] not in secs[k]:
+            fails.append(f"{ids.index(k) + 1} {k}: 다시 쓰기 안내 없음 (S10)")
+    if "guests" in secs and C.LABELS["hide"] in secs["guests"]:
+        fails.append(f"{ids.index('guests') + 1} guests: '{C.LABELS['hide']}' -- 목록 줄과 같은 말 두 번 (S13)")
+
     print(f"상품 4 기획서 대조 {ver} -- 문구 {len(seen)}개, 쪽 {len(ids)}")
     if unused:
         print(f"  (참고) 판 어디에도 안 쓰인 공용 라벨 {len(unused)}: " + "; ".join(f"{w}:{t}" for w, t in unused))
@@ -254,4 +268,4 @@ def main(ver):
 
 
 if __name__ == "__main__":
-    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.15") else 0)
+    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.16") else 0)

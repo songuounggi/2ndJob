@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.15"     # v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.16"     # v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -144,7 +144,8 @@ def fill_day(page, key):
     t0, s0 = C.DAY_PAGES["Low"]
     t, s = C.DAY_PAGES[b]
     page = must_replace(page, f">{t0}<", f">{t}<", key)
-    return must_replace(page, f">{s0}<", f">{s}<", key)
+    # 부제 뒤 "다시 쓰기" 안내 (10-02 사용자, 구조 논리 S10 -- "오늘" 쪽이 배터리마다 한 장뿐)
+    return must_replace(page, f">{s0}<", f">{s} {C.LABELS['day_reuse']}<", key)
 
 
 def fill_loop(page, key):
@@ -304,7 +305,55 @@ def fill(page, key):
         return prefill_cards(page, key)
     if key in C.PREFILL:
         return prefill_table(page, key)
+    if key in ("monthly", "seasonal"):
+        return dedupe_lists(page, key)
+    if key == "guests":
+        return drop_guest_banner(page)
     return page
+
+
+# 시안 34 · 35쪽 목록(옛 원고) -> 원고. 방 깊은 청소 목록과 같은 일을 방에 없는 일로 바꿨다 (10-02 사용자, 구조 논리 S6)
+LIST_V1 = {
+    "monthly": ["Clean out the fridge", "Wipe inside the microwave", "Clean the dishwasher filter", "Run a washer cleaning cycle",
+                "Vacuum under the bed", "Wipe light switches and handles", "Wipe the baseboards", "Wash the shower curtain",
+                "Check the freezer", "Dust fans and vents", "Wash the trash cans", "Clear out one drawer"],
+    "seasonal": ["Clear out the entry closet", "Clean the fans", "Deep clean the oven", "Restock the car kit", "Wash the throw blankets"],
+}
+
+
+def dedupe_lists(page, key):
+    if key == "monthly":
+        pairs = [(a, b) for a, b in zip(LIST_V1["monthly"], C.MONTHLY) if a != b]
+    else:
+        new = {"Clear out the entry closet": C.SEASONAL["Spring"][3], "Clean the fans": C.SEASONAL["Summer"][0],
+               "Deep clean the oven": C.SEASONAL["Fall"][2], "Restock the car kit": C.SEASONAL["Fall"][3],
+               "Wash the throw blankets": C.SEASONAL["Winter"][1]}
+        pairs = [(a, new[a]) for a in LIST_V1["seasonal"]]
+    for a, b in pairs:
+        page = must_replace(page, f">{a}<", f">{H.escape(b)}<", key)
+    return page
+
+
+def drop_guest_banner(page):
+    """96쪽 아래 배너 "Everything else goes in one box." -- 목록 다섯째 줄 "Everything else into one box" 와 같은 말 (10-02 사용자, S13).
+    배너 자리가 빠지면 variant_bg 가 배경을 다시 굽는다(배너 번짐이 배경에 구워져 있다)"""
+    i = page.find('>Everything else goes in one box.</span></div>')
+    j = page.rfind('<div style="position:absolute;', 0, i)
+    if i < 0 or "background:transparent" not in page[j:i]:
+        raise SystemExit("[guests] 아래 배너를 못 찾음")
+    return page[:j] + page[i + len('>Everything else goes in one box.</span></div>'):]
+
+
+def house_map_no_dates(page):
+    """4쪽 타일의 LAST RESET 라벨 + 쓰는 줄을 뺀다 (10-02 사용자, S5 -- 마지막 리셋은 방 카드에만). 타일은 이름 + Go"""
+    pat = re.compile(r'<span style="margin-top:auto;font-size:7\.5px;font-weight:800;letter-spacing:0\.12em;color:#66716B">LAST RESET</span>'
+                     r'<div style="box-sizing:border-box;height:26px;border-bottom:0\.6px solid #E3E9E5"></div>')
+    page, n = pat.subn("", page)
+    if n != 9:
+        raise SystemExit(f"[house-map] LAST RESET 칸 {n} != 9")
+    # Go 가 아래에 붙도록 -- 빠진 라벨의 margin-top:auto 를 Go 에
+    return page.replace('<span style="align-self:flex-end;margin-top:10px;font-size:9px;font-weight:800">Go',
+                        '<span style="align-self:flex-end;margin-top:auto;font-size:9px;font-weight:800">Go')
 
 
 ROW_CSS = "height:26px;display:flex;align-items:center;justify-content:flex-start;font-size:10px;font-weight:400;color:#2C3631"   # = 106쪽 Moving 줄
@@ -343,13 +392,15 @@ COPY_FIX = [
     (lambda k: k == "sprint", "Stop when the last ring is done.", lambda: C.SPRINT[1].split(". ", 1)[1]),
     (lambda k: k == "monthly", "One a month. Any order.", lambda: C.TOOL_PAGES["monthly"][1]),
     (lambda k: k == "daily", "Once a day, one small thing.", lambda: C.TOOL_PAGES["daily"][1]),
-    (lambda k: k == "rotation", "Slide it to the next.", lambda: C.WEEKLY_ROTATION_SUB.split("? ", 1)[1]),
+    (lambda k: k == "rotation", "One room a day. Missed one? Slide it to the next.", lambda: C.WEEKLY_ROTATION_SUB),   # 10-02 S8
     (lambda k: k.startswith("day-"), "PICK THREE AT MOST", lambda: C.DAY_PAGE_CARDS[0][1].upper()),
     (lambda k: k == "cover", "nine rooms, ten-minute resets", lambda: C.COVER_ITEMS[1][1]),     # v0.11 빈 방 둘째로 열 방
     # 할 일이 눌린다는 안내 (v0.11 재시험: "목록인 줄 알고 지나친다" 3명)
     (lambda k: k == "energy", "Pick by battery and time, not by day.", lambda: C.TOOL_PAGES["energy"][1]),
     # "Vacuum one room" 은 아무 방인데 거실 카드로 갔다 -> 원고 "Vacuum the living room" (10-02 사용자, 구조 논리 S3).
     # 7~9쪽 목록은 원고에서 만들어 이미 바뀌고, 6쪽 칸은 시안 글자라 여기서 (check_plan 1 이 v0.13 첫 빌드에서 잡음)
+    (lambda k: k == "kids-pets", "Jobs they can own.", lambda: C.TOOL_PAGES["kids-pets"][1]),        # 10-02 S9 한 주 한 장
+    (lambda k: k == "doom", "One pile, fifteen minutes.", lambda: C.DOOM_PILE[1]),                     # 10-02 S12
     (lambda k: k == "energy", ">Vacuum one room<",
      lambda: ">" + [t for t, _ in C.ENERGY[("Medium", 10)] if t.startswith("Vacuum")][0] + "<"),
 ]
@@ -368,9 +419,20 @@ def additions(page, key):
     - 11~29쪽 방 카드 · 7~9쪽: "Wins log →" 알약 (10-02, 구조 논리 S2)
     그림자를 받는 카드·알약은 variant_bg 가 디자인 굽기 코드로 배경을 다시 굽는다"""
     if re.fullmatch(r"w\d+", key):
+        # Wins 칸 -> Wins log 링크 (10-02 사용자, 구조 논리 S7 -- 이긴 것은 103쪽 한 곳에. 순서도 · 구조 모드 · 루프 · 방 카드도 거기로).
+        # 쓰는 줄 4개 자리 전체가 링크(쓰는 칸이 없어 넘어갈 일이 없다)
         page = must_replace(page, '<span style="font-size:12px;font-weight:800">Wins</span>',
                             f'<span style="font-size:12px;font-weight:800">Wins</span><span style="{HINT_CSS}">'
-                            f'{C.LABELS["wins_hint"]}</span>', key)
+                            f'{C.LABELS["wins_one_list"]}</span>', key)
+        lines = re.search(r'<div style="position:absolute;left:108px;top:550px;width:194px">(?:<div [^>]*></div>){4}</div>', page)
+        if not lines:
+            raise SystemExit(f"[{key}] Wins 쓰는 줄 4개를 못 찾음")
+        link = (f'<a href="#wins" style="position:absolute;left:108px;top:550px;width:194px;height:104px;display:flex;'
+                f'align-items:center;justify-content:center;font-size:12px;font-weight:800">{H.escape(pages_p4.title_of("wins"))}'
+                f'<span style="margin-left:4px;color:#6E6490">→</span></a>')
+        page = page[:lines.start()] + link + page[lines.end():]
+        # 카드에 링크 하나뿐 -> 카드 전체를 누르게(README §7 · check_design J -- v0.16 첫 검수에서 가운데 글자만 눌려 52쪽 FAIL)
+        page = page[:page.rfind("</div>")] + '<a href="#wins" style="position:absolute;left:84px;top:512px;width:242px;height:160px"></a></div>'
         # 날짜 칸은 "This week's rooms" 카드 안, 제목과 같은 줄 오른쪽(148~170, 표 머리 176 위). 처음엔 카드 밖 바탕(라벤더)에
         # 두었더니 쓰는 줄이 안 보였다 -- 시안의 쓰는 줄은 늘 흰 카드 안이다
         field = (f'<div style="position:absolute;left:392px;top:148px;width:168px;height:22px;display:flex;align-items:flex-end;'
@@ -406,6 +468,7 @@ def additions(page, key):
         two = ('<div style="align-self:flex-end;margin-top:10px;display:flex;gap:12px;font-size:9px;font-weight:800">'
                + "".join(f'<a href="#{k}">{C.LABELS["room"]} {n[-1]}{go.group(1)}</a>' for k, n in C.MY_ROOMS) + '</div>')
         page = page[:i + go.start()] + two + page[i + go.end():]
+        page = house_map_no_dates(page)
     elif key == "rooms":
         # 10쪽 표에 My room 2 줄 (v0.11): 줄 26 그대로 아래로 하나 -- 가로선 하나 · 세로선 26 · 카드 292 -> 318(아래 18 유지)
         row = re.search(r'(<div style="position:absolute;left:108px;top:386px;[^"]*">)My room(</div>)'
@@ -629,7 +692,7 @@ def card_overlays(page, key):
     return page[:page.rfind("</div>")] + "".join(over) + "</div>"
 
 
-HOUSE_TILE_LINK_H = 98    # 타일 176 중 위 98 -- LAST RESET 라벨(타일 위에서 약 103)보다 위. check_design 이 겹침을 잰다
+HOUSE_TILE_LINK_H = 176   # 타일 전체 (10-02 S5: LAST RESET 쓰는 칸을 뺐다 -- v0.15 까지는 위 98 만, 쓰는 줄을 피해서)
 
 
 def norm_rail(page):

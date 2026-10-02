@@ -12,13 +12,13 @@
 절차·CLAUDE.md·메모리에 넣고 109쪽을 검토(아래 "5-7 구조 논리 검토" S1~S14). S1~S4·S14 반영해 **v0.13** 빌드, 전수검수 10개 통과.
 
 **집에서 순서대로:**
-1. `git pull` → `python -c "import pypdfium2, pikepdf"` → `python scripts/p4/build_v2_p4.py full` (v0.15 가 집 PC 에 생긴다. 검수는
-   `python scripts/p4/qa_p4.py v0.15`)
-2. ~~design 에 2쪽 순서도 맡기기~~ -- **끝 (10-02 회사 PC): 시안 받아 v0.14 에 넣고 전수검수.** 집에서는 1번 빌드가 최신 판(v0.15)을 만든다
-2-1. **리스팅 사진 10장 + 핀 6장도 design 에 맡긴다** (10-02 사용자) -- `output/prod4/handoff/listing-v0.4.zip` (판 v0.15 -- 3쪽 · 101쪽 미리 채움 반영) (집에서는 빌드 뒤 `python scripts/p4/handoff_listing_p4.py` 로 다시 만든다 -- 이미 있으면 멈춤). 설명서 = `product4-listing-handoff.md`. 디자인은 간섭하지 않고 크기 · 잘림 · 글자 크기 · 사실만 적었다. 우리 시안 draft-v0.6 은 참고 안 함(1MB 넘었다)
-3. **5-7 S5~S13 결정** (같은 기록 두 곳: 마지막 리셋 · 깊은 청소 · Wins / 한 주치 표 / 목차 순서 등 -- 아래 표)
+1. `git pull` → `python -c "import pypdfium2, pikepdf"` → `python scripts/p4/build_v2_p4.py full` (v0.16 이 집 PC 에 생긴다. 검수는
+   `python scripts/p4/qa_p4.py v0.16`)
+2. ~~design 에 2쪽 순서도 맡기기~~ -- **끝 (10-02 회사 PC): 시안 받아 v0.14 에 넣고 전수검수.** 집에서는 1번 빌드가 최신 판(v0.16)을 만든다
+2-1. **리스팅 사진 10장 + 핀 6장도 design 에 맡긴다** (10-02 사용자) -- `output/prod4/handoff/listing-v0.5.zip` (판 v0.16) (집에서는 빌드 뒤 `python scripts/p4/handoff_listing_p4.py` 로 다시 만든다 -- 이미 있으면 멈춤). 설명서 = `product4-listing-handoff.md`. 디자인은 간섭하지 않고 크기 · 잘림 · 글자 크기 · 사실만 적었다. 우리 시안 draft-v0.6 은 참고 안 함(1MB 넘었다)
+3. ~~5-7 S5~S13 결정~~ -- **끝 (10-02): v0.16 반영, S11 보류. 상품 4 기획 검토는 닫는다 -- 이후는 바뀐 쪽만 회귀 점검** (같은 기록 두 곳: 마지막 리셋 · 깊은 청소 · Wins / 한 주치 표 / 목차 순서 등 -- 아래 표)
 4. Claude: **L11 성인 눈높이 검토**(빈 노트보다 무엇을 더 해 주나 · 유치하지 않나) → 그다음 **상품 1 → 3 → 2 구조 논리 검토**(읽기만, `CLAUDE.md` 다음 할 일 5-7 행)
-5. 7단계 iPad: v0.15 -- 2쪽(새 순서도, 누르는 곳 6개), 3쪽(번호 대신 그림 · Set up once), 38 · 99 · 100 · 101 · 104쪽(미리 채운 줄), 11쪽 · 7쪽 아래 "Wins log →" 알약
+5. 7단계 iPad: v0.16 -- 4쪽(타일 전체 링크) · 41쪽(Wins log 링크) · 2쪽(새 순서도, 누르는 곳 6개), 3쪽(번호 대신 그림 · Set up once), 38 · 99 · 100 · 101 · 104쪽(미리 채운 줄), 11쪽 · 7쪽 아래 "Wins log →" 알약
 > 집 PC 방은 `CLAUDE.md` "다음 할 일" 1번(상품 3 스티커 ZIP)도 먼저 꺼낸다.
 
 ### 단계 (`PROCESS.md` 10단계)
@@ -28,8 +28,8 @@
 | 1 시장 조사 | **통과** -- 사용자가 H-a(청소·루틴, 입구 가격) 선택 (`product4-research.md`) |
 | 2 기획서 | **통과** -- 구조·결정 6건 + 문구 원고(`scripts/p4/p4_content.py`) 사용자 확인. **10-02 구조 논리(5-7)로 2·3쪽 다시** -- S1~S4 결정·반영, S5~S13 결정 대기 |
 | 3 디자인 | **통과** -- claude.ai/design 전체 시안 v1.0 (10-01, `design/prod4/the-adhd-home-reset-design-v1.0.zip`) + **2쪽 순서도 시안 v1.0 (10-02, 34e -- `design/prod4/the-adhd-home-reset-flow-v0.4-design-v1.0.zip`)** |
-| **4 제작** | **v0.15 (109쪽) 전체 빌드** -- v0.15 L11 빈 표 5장 미리 채움 · 3쪽(Start here) 아래 칸 "Set up once" / v0.14 2쪽 = design 순서도 시안 v1.0(34e) / v0.13 구조 논리 S1~S4(3쪽 번호 뺌 · Wins log 알약 · Vacuum the living room, 10-02) / v0.12 노트 세 종류 한 장씩, v0.11 은 110쪽, v0.10 은 108쪽, v0.1 → v0.9 는 옛 모양 |
-| **5 검수** | **v0.15 자동 검수 5-1~5-6 + 5-7 구조 논리(L1~L4 반영, L5~L11 결정 대기)** (10-02) -- 남은 것: 5-7 S5~S13 결정, L11 성인 눈높이 검토 |
+| **4 제작** | **v0.16 (109쪽) 전체 빌드** -- v0.16 구조 논리 S5~S13(S11 보류) / v0.15 L11 빈 표 5장 미리 채움 · 3쪽(Start here) 아래 칸 "Set up once" / v0.14 2쪽 = design 순서도 시안 v1.0(34e) / v0.13 구조 논리 S1~S4(3쪽 번호 뺌 · Wins log 알약 · Vacuum the living room, 10-02) / v0.12 노트 세 종류 한 장씩, v0.11 은 110쪽, v0.10 은 108쪽, v0.1 → v0.9 는 옛 모양 |
+| **5 검수** | **v0.16 자동 검수 5-1~5-6 + 5-7 구조 논리(L1~L4 반영, L5~L11 결정 대기)** (10-02) -- 남은 것: 5-7 S5~S13 결정, L11 성인 눈높이 검토 |
 | **6 직접 써 보기** | **통과 (10-01)** -- 구매자 역할 7명 자유 탐색 2번(v0.10 · v0.11) → 반드시 고침 0, 자동 검사 FAIL 0. 남은 것은 "나중에" 목록(아래). `PROCESS.md` 6절 "끝나는 조건" |
 | **7 iPad 검수** | **대기 -- 집에서 (iPad 가 집에 있다)** |
 | 8 리스팅 | 원고 초안 `listing-p4.md` (제작과 나란히). 결정 3건 대기 |
@@ -39,7 +39,7 @@
 
 | 순서 | 할 일 | 누가 · 어디서 |
 |---|---|---|
-| 1 | **7단계 iPad 확인 (필수)** -- GoodNotes 에서 v0.15 컬러판 넘기기(바둑판 렌더링·링크·탭), 흑백판 **한 장 실제 인쇄**(위쪽 쪽 번호·연한 선·체크 칸). 사용자 눈 검수도 이때 | 사용자, 집 (`Prod 4 ... (Home)`, `git pull` 후 `python scripts/p4/build_v2_p4.py full`) |
+| 1 | **7단계 iPad 확인 (필수)** -- GoodNotes 에서 v0.16 컬러판 넘기기(바둑판 렌더링·링크·탭), 흑백판 **한 장 실제 인쇄**(위쪽 쪽 번호·연한 선·체크 칸). 사용자 눈 검수도 이때 | 사용자, 집 (`Prod 4 ... (Home)`, `git pull` 후 `python scripts/p4/build_v2_p4.py full`) |
 | 2 | 7단계에서 나온 결함 고치기 + 그 결함을 재는 검사 붙이기(`PROCESS.md` 7절 "실기기에서만 보이는 결함") | Claude |
 | 3 | 8단계 리스팅 결정: 세일 22%($7.01)냐 23%($6.92)냐와 기간 · 제목 길이 · 설명 최종 확인 | 사용자 결정 |
 | 4 | **리스팅 사진 10장** -- 시안 draft-v0.6 완료(10-01, v0.12 109쪽), **사용자 확인 대기**. 폰 크기 점검 완료(10-02: 검색 썸네일 제목 16~19pt 읽힘 -- `listing-p4.md` 사진 절, `_phone_preview.png`) | Claude → 사용자 확인 |
@@ -173,15 +173,15 @@
 | S2 | L4 길 없음 | 11~29쪽 방 카드 10장, 7~9쪽 배터리 날 | 새 순서도는 "Ten minutes → Wins log" 인데 방 카드·배터리 날 쪽에 Wins log(103쪽)로 가는 길이 없다(루프·구조 모드·스프린트에는 있다) -- **반영 v0.13** -- 방 카드 10장 · 7~9쪽에 "Wins log →" 알약 (사용자 10-02) |
 | S3 | L3 글자≠도착 | 6, 8쪽 "Vacuum one room" | 아무 방이라는 말인데 17쪽 Living room 카드로 간다 -- **반영 v0.13** -- "Vacuum the living room" (사용자 10-02) |
 | S4 | L6 약속≠칸 | 2쪽 새 순서도 "Once a week -- Reset week: one room a day" | "한 주에 한 번" 과 "하루에 방 하나" 가 한 상자에. 인수인계서 v0.3 문구라 design 에 정정 필요 -- **반영** -- "Every week" (사용자 10-02, 인수인계서 v0.4) |
-| S5 | L5 두 곳 기록 | 4쪽 House map 타일 "LAST RESET" ↔ 방 카드 "Last reset" | 같은 방의 마지막 리셋을 두 쪽에 적는다 |
-| S6 | L5 두 곳 기록 | 12쪽 Kitchen deep clean ↔ 34쪽 Monthly (fridge · microwave · dishwasher filter), 26쪽 Car deep clean ↔ 35쪽 Seasonal (car kit), 41~92쪽 주마다 "One deep clean" | 깊은 청소가 네 곳. 같은 일이 두 목록에 LAST DONE / MONTH 칸을 따로 가짐 |
-| S7 | L5 두 곳 기록 | 41~92쪽 "Wins this week" ↔ 103쪽 Wins log | 이긴 것을 어디에 적나 |
-| S8 | L9 겹침 | 33쪽 Weekly rotation ↔ 41~92쪽 Reset week | 같은 "방 × 요일" 표. 33쪽이 한 번 정하는 계획이고 주마다 쪽이 체크인지 쪽에 안 적혀 있다 |
-| S9 | L7 수량 | 32쪽 Daily reset, 39쪽 Kids & pets tasks(Pet care 표) | 요일 체크 칸이 한 주치 한 장뿐 -- 52주 플래너 |
-| S10 | L7 수량 | 7~9쪽 배터리 날 | "Today I'll do" 쪽이 배터리마다 한 장 -- 날마다 지우고 쓰는 쪽인지 안 적혀 있다 |
-| S11 | L8 순서 | 5쪽 Index | Weeks(40쪽)가 Routines(31쪽)보다 먼저 -- 탭 순서·쪽 순서와 다르다 |
-| S12 | L6 약속≠칸 | 97쪽 Doom pile triage | "One pile, fifteen minutes" 인데 "Timer set for ___" 칸 (나중에 목록에 있던 것) |
-| S13 | L5 중복 | 96쪽 Guests | "Everything else into one box" 가 줄과 아래 문장에 두 번 (나중에 목록에 있던 것) |
+| S5 | L5 두 곳 기록 | 4쪽 House map 타일 "LAST RESET" ↔ 방 카드 "Last reset" | 같은 방의 마지막 리셋을 두 쪽에 적는다 -- **반영 v0.16**: 방 카드에만, 4쪽 타일은 이름 + Go(타일 전체 링크) (사용자 10-02) |
+| S6 | L5 두 곳 기록 | 12쪽 Kitchen deep clean ↔ 34쪽 Monthly (fridge · microwave · dishwasher filter), 26쪽 Car deep clean ↔ 35쪽 Seasonal (car kit), 41~92쪽 주마다 "One deep clean" | 깊은 청소가 네 곳. 같은 일이 두 목록에 LAST DONE / MONTH 칸을 따로 가짐 -- **반영 v0.16**: 34쪽 7개 · 35쪽 5개를 방에 없는 일로 (사용자 10-02) |
+| S7 | L5 두 곳 기록 | 41~92쪽 "Wins this week" ↔ 103쪽 Wins log | 이긴 것을 어디에 적나 -- **반영 v0.16**: 103쪽 한 곳, 주마다 쪽 Wins 칸은 Wins log 링크 (사용자 10-02) |
+| S8 | L9 겹침 | 33쪽 Weekly rotation ↔ 41~92쪽 Reset week | 같은 "방 × 요일" 표. 33쪽이 한 번 정하는 계획이고 주마다 쪽이 체크인지 쪽에 안 적혀 있다 -- **반영 v0.16**: 33쪽 부제 "Plan it once here, tick it off on each Reset week." |
+| S9 | L7 수량 | 32쪽 Daily reset, 39쪽 Kids & pets tasks(Pet care 표) | 요일 체크 칸이 한 주치 한 장뿐 -- 52주 플래너 -- **반영 v0.16**: 32 · 39쪽 부제에 "한 장 = 한 주, 복제하거나 다시 인쇄" |
+| S10 | L7 수량 | 7~9쪽 배터리 날 | "Today I'll do" 쪽이 배터리마다 한 장 -- 날마다 지우고 쓰는 쪽인지 안 적혀 있다 -- **반영 v0.16**: 7~9쪽 부제 뒤 "Reuse it tomorrow: erase, duplicate, or reprint." |
+| S11 | L8 순서 | 5쪽 Index | Weeks(40쪽)가 Routines(31쪽)보다 먼저 -- 탭 순서·쪽 순서와 다르다 -- **보류 (10-02)**: 목차가 두 칸이라 Weeks 를 Routines 밑으로 옮기면 오른쪽 칸이 26pt 넘친다 -- 디자인을 바꿔야 해서 그대로 |
+| S12 | L6 약속≠칸 | 97쪽 Doom pile triage | "One pile, fifteen minutes" 인데 "Timer set for ___" 칸 (나중에 목록에 있던 것) -- **반영 v0.16**: 부제 "One pile, one timer." |
+| S13 | L5 중복 | 96쪽 Guests | "Everything else into one box" 가 줄과 아래 문장에 두 번 (나중에 목록에 있던 것) -- **반영 v0.16**: 아래 배너를 뺌(배경 다시 구움) |
 | S14 | L1 순서 | 2쪽 새 순서도 | Energy menu 에서 고른 일이 루프(36, 37쪽)·깊은 청소 쪽으로 가면 "Stop at Done enough" 가 그 쪽에 없다 -- **반영** -- 시간을 갈래 상자로, 합친 뒤 "Do that one thing, then stop" (사용자 10-02) |
 
 ### L11 성인 눈높이 검토 (2026-10-02, v0.14) -- 사용자 결정 대기
@@ -305,7 +305,7 @@
 | 디자인 | **상품 1(v8.20) 모양 + 색만 바꿈** (5절 ④) -- iPad 확인된 모양이라 표본 iPad 확인은 권장 | `PROCESS.md` 4단계 |
 | 뷰어 안전 | 처음부터 `fast_paint` · `vector_dots` 방식 (그림자·번짐은 공유 PNG, 점은 벡터 원) | `RELEASE.md` 2절 |
 
-## 3. 페이지 지도 (109쪽 -- 쪽 번호는 v0.15 빌드 기준(v0.12 와 같음), `check_docs_p4.py` 가 대조)
+## 3. 페이지 지도 (109쪽 -- 쪽 번호는 v0.16 빌드 기준(v0.12 와 같음), `check_docs_p4.py` 가 대조)
 
 탭(**왼쪽** 레일) 6개 + **표지 빼고** 모든 페이지 오른쪽 위 `SOS` 칩:
 **HOME · ENERGY · ROOMS · ROUTINES · WEEKS · TOOLS**
@@ -343,7 +343,7 @@
 | 1 | 표지 | NEW | `The ADHD Home Reset` / `clean by energy, not by schedule` | → 2 |
 | 2 | **How it flows** (순서도) | NEW (09-30), **구조 바꿈 (10-02 사용자)** | 갈림 순서도: Open the planner → ◇How's today? → Doable: ◇How to pick? → Energy menu(6쪽, "By battery, 2 to 20 minutes") / House map(4쪽, "One room, ten minutes") → Do that one thing, then stop → Wins log / All too much: Rescue mode(94쪽) → Wins log · 따로 Every week(40쪽). 시간은 갈래마다 달라 갈래 상자에(10-02 사용자). 문구 `p4_content.FLOW`. **디자인 = design 회신 "순서도 시안 v1.0"(34e, 10-02 사용자 승인, `design/prod4/the-adhd-home-reset-flow-v0.4-design-v1.0.zip`) -- v0.14 부터.** v0.13 은 구조만 맞춘 임시 배치였다 | 링크 상자 6개 = 쪽 6개(3, 6, 4, 94, 103, 40쪽). 질문·갈래 이름·"Do that one thing" 은 링크 없음. 같은 쪽으로 가는 상자 금지 |
 | 3 | **Start here** | NEW, **번호 뺌 (10-02 사용자)** | 30초 사용법: 라벨 "Doable today? Pick one way in." 아래 By battery → Energy menu / By room → House map (둘 중 하나), 그리고 All too much? → Rescue. 번호(1, 2, 3) 자리는 그림(배터리 · 집 · 구명환) -- 차례가 아니라 갈림(2쪽 순서도와 같은 구조). "빈칸은 실패가 아니다" | 세 개 모두 / **아래 칸 = "Set up once" (v0.15, L11)**: The room that bugs me most · When my battery runs highest 쓰는 칸 + 빈 방 이름(27, 29쪽) · 짝 나누기(38쪽)로 가는 링크 -- 같은 기록 두 곳 금지(L5) |
-| 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(그림 아님, 칸). 방마다 "마지막 리셋: ___" 칸 | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) |
+| 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(그림 아님, 칸). 방마다 "마지막 리셋: ___" 칸 | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) / **v0.16: 타일의 LAST RESET 칸을 뺌 -- 마지막 리셋은 방 카드에만(S5), 타일 전체가 링크** |
 | 5 | Index | NEW | 전 페이지 목록 | 전 페이지 |
 
 ### 3-2. ENERGY (4)
@@ -351,7 +351,7 @@
 | # | 페이지 | 내용 |
 |---|---|---|
 | 6 | **Energy menu** (허브) | 3 × 4 격자: 배터리 Low / Medium / Full × 2 / 5 / 10 / 20분. 칸마다 할 일 2~3개(미리 채움, 4-1) + 빈 줄 1(`+`). 할 일 → **그 일이 있는 쪽**(방 카드 · 깊은 청소 · 빨래/설거지 루프 -- 10-01, 깊은 청소 목록에 있는 7개는 깊은 청소 쪽으로), 배터리 이름 → 그날 페이지 |
-| 7–9 | **Low / Medium / Full day** | 배터리별 한 장: 오늘 고른 것 3개 / 곁들일 것(음악·팟캐스트·body double) / 끝나고 나에게 줄 것 / "오늘은 이걸로 충분" 체크 |
+| 7–9 | **Low / Medium / Full day** | 배터리별 한 장: 오늘 고른 것 3개 / 곁들일 것(음악·팟캐스트·body double) / 끝나고 나에게 줄 것 / "오늘은 이걸로 충분" 체크 / v0.16 부제 뒤 다시 쓰기 안내(S10) |
 
 ### 3-3. ROOMS (21)
 
@@ -366,21 +366,21 @@
 | # | 페이지 | 구분 | 내용 |
 |---|---|---|---|
 | 31 | Routines index | NEW (10-01, 6단계 써 보기) | 루틴 8쪽 목록 -- ROUTINES 탭이 여기로 |
-| 32 | **Daily reset** | NEW | 아침 5분 / 저녁 10분 -- 고정 3개씩 + 빈 줄. "하루 한 번, 한 가지" |
-| 33 | **Weekly rotation** | P1 확장 | 요일 대신 **구역 순환**: 7칸에 방을 하나씩. 놓친 날은 다음 칸으로 밀 뿐(실패 칸 없음). **v0.7 은 방×요일 격자로 잘못 만들어짐 → v0.8 에서 기획서대로 (09-30 사용자)** |
-| 34 | **Monthly deep clean** | NEW | 12칸 × 할 일(냉장고·필터·침구 등 미리 채움) |
-| 35 | **Seasonal reset** | NEW | 봄·여름·가을·겨울 네 칸. 계절 옷장·창문·이불 |
+| 32 | **Daily reset** | NEW | 아침 5분 / 저녁 10분 -- 고정 3개씩 + 빈 줄. "하루 한 번, 한 가지" / v0.16 부제 "한 장 = 한 주" 안내(S9) |
+| 33 | **Weekly rotation** | P1 확장 | 요일 대신 **구역 순환**: 7칸에 방을 하나씩. 놓친 날은 다음 칸으로 밀 뿐(실패 칸 없음). **v0.7 은 방×요일 격자로 잘못 만들어짐 → v0.8 에서 기획서대로 (09-30 사용자)** / v0.16 부제: 여기서 한 번 짜고 주마다 쪽에서 체크(S8) |
+| 34 | **Monthly deep clean** | NEW | 12칸 × 할 일(냉장고·필터·침구 등 미리 채움) / **v0.16: 방 깊은 청소 목록과 같던 7개를 방에 없는 일로(S6)** -- `p4_content.MONTHLY` |
+| 35 | **Seasonal reset** | NEW | 봄·여름·가을·겨울 네 칸. 계절 옷장·창문·이불 / **v0.16: 겹치던 5개 교체(S6)** -- `p4_content.SEASONAL` |
 | 36 | **Laundry loop** | NEW | 세탁 → 건조 → 개기 → **제자리** 네 칸 **2×2 격자(1→4 번호)** -- 원형에서 변경(09-30 사용자, 5단계 검수). "어디서 멈추나" 체크 + 멈추는 곳 대책 |
 | 37 | **Dishes loop** | NEW | 쓰기 → 담그기 → 씻기 → **넣기**. 같은 형식. 두 루프 모두 아래 Wins log 로 |
 | 38 | **Who does what** | P1 확장 | 할 일 / 누가 / 얼마나 자주 / 순번 -- 상품 1 `chores` 에 순번(rotation) 칸 추가 -- **미리 채움 8줄 + 빈 줄 (v0.15, 10-02 사용자 L11)**: `p4_content.PREFILL` |
-| 39 | **Kids & pets tasks** | NEW | 나이별로 맡길 수 있는 일 칸(빈칸) + 반려동물 돌봄 체크 |
+| 39 | **Kids & pets tasks** | NEW | 나이별로 맡길 수 있는 일 칸(빈칸) + 반려동물 돌봄 체크 / v0.16 부제 "Pet care 는 한 주 한 장" 안내(S9) |
 
 ### 3-5. WEEKS (53)
 
 | # | 페이지 | 내용 |
 |---|---|---|
 | 40 | Weeks index | Week 1~52 → 각 주 |
-| 41–92 | **Reset week 1~52** (undated) | 이번 주 구역 순환 7칸(칸 이름 → House map) · 이번 주 한 가지(깊은 청소에서) · 빨래·설거지 루프 체크 · Wins 한 줄 · "다음 주로 넘기는 것" |
+| 41–92 | **Reset week 1~52** (undated) | 이번 주 구역 순환 7칸(칸 이름 → House map) · 이번 주 한 가지(깊은 청소에서) · 빨래·설거지 루프 체크 · Wins 한 줄 · "다음 주로 넘기는 것" / **v0.16: Wins 칸 = Wins log 링크(S7 -- 이긴 것은 103쪽 한 곳)** |
 
 52주로 결정 (2026-09-30 사용자, 5절 ③).
 
@@ -391,8 +391,8 @@
 | 93 | Tools index | NEW | |
 | 94 | **Rescue mode** | NEW | ③ 허브. 1 쓰레기 2 그릇 3 빨래 4 바닥의 것 제자리(아니면 "나중 상자") 5 표면 하나. **2 그릇 · 3 빨래 단계 끝 → 설거지 · 빨래 루프**(1·4·5 단계는 링크 없음 -- 내용이 맞는 곳이 없다, 10-01). 아래에 Sprint · Guests 로 가는 칸(6단계 추가) |
 | 95 | **15-minute sprint** | NEW | 타이머 링 3개(5분씩) + 각 5분에 한 일. 끝나면 Wins log 로 |
-| 96 | **Guests in 2 hours** | NEW | 손님 오기 전: 보이는 곳만. 현관·화장실·거실 순서 + 숨길 상자 하나. 방 이름으로 시작하는 줄 끝 → 로 그 방 카드(글자 전체가 아니라 → 만 -- 체크 상자와 떨어지게, 10-01) |
-| 97 | **Doom pile triage** | P3 | 더미 하나 → Keep / Toss / Belongs elsewhere / Needs action + 15분 |
+| 96 | **Guests in 2 hours** | NEW | 손님 오기 전: 보이는 곳만. 현관·화장실·거실 순서 + 숨길 상자 하나. 방 이름으로 시작하는 줄 끝 → 로 그 방 카드(글자 전체가 아니라 → 만 -- 체크 상자와 떨어지게, 10-01) / v0.16 아래 배너 뺌(S13) |
+| 97 | **Doom pile triage** | P3 | 더미 하나 → Keep / Toss / Belongs elsewhere / Needs action + 15분 / v0.16 부제 "One pile, one timer."(S12) |
 | 98 | **Declutter decisions** | NEW | 버릴까 망설일 때 질문 5개(마지막 사용·다시 살 수 있나·어디에 둘 건가…) |
 | 99 | **Where things live** | NEW | 물건 / 제자리 표 -- "제자리가 없으면 치울 수 없다" -- **미리 채움 10줄 (v0.15)**: 방 카드 단계와 같은 물건(Keys · Mail · chargers · remotes …) |
 | 100 | **Restock list** | NEW | 세제·휴지·봉투 등 소모품: 남은 양 칸 + 살 것 -- **미리 채움 10줄 (v0.15)**: 다 쓰면 사는 것만 |

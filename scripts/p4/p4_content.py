@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.11"   # v0.11 = L11 성인 눈높이(10-02 사용자): 빈 표 도구 쪽 5장 미리 채움(PREFILL), 3쪽 아래 칸 = 처음 한 번 쓰는 설정   # v0.10 = 구조 논리 검토(10-02 사용자): 3쪽 번호 빼고 갈림, "Vacuum the living room", "Every week", 순서도 시간은 갈래 상자로   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.12"   # v0.12 = 구조 논리 S5~S13(10-02 사용자): 월간 · 계절 겹침 교체, 33 · 32 · 39 · 97 부제, 7~9 다시 쓰기 안내, Wins 한 곳   # v0.11 = L11 성인 눈높이(10-02 사용자): 빈 표 도구 쪽 5장 미리 채움(PREFILL), 3쪽 아래 칸 = 처음 한 번 쓰는 설정   # v0.10 = 구조 논리 검토(10-02 사용자): 3쪽 번호 빼고 갈림, "Vacuum the living room", "Every week", 순서도 시간은 갈래 상자로   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -173,18 +173,20 @@ DAILY_RESET = {
     "Morning (5 min)": ["Pull up the covers", "Open the curtains", "Dishes from last night to the sink"],
     "Evening (10 min)": ["Load or soak the dishes", "Wipe the kitchen counter", "Set tomorrow's bag by the door"],
 }
-MONTHLY = ["Clean out the fridge", "Wipe inside the microwave", "Clean the dishwasher filter",
-           "Run a washer cleaning cycle", "Vacuum under the bed", "Wipe light switches and handles",
-           "Wipe the baseboards", "Wash the shower curtain", "Check the freezer", "Dust fans and vents",
+# 10-02 사용자(구조 논리 S6): 방 깊은 청소 목록과 같은 일 7개를 방에 없는 일로 -- 같은 일을 두 목록에서 따로 체크하지 않게.
+# 냉장고 · 전자레인지 · 식기세척기 필터는 12쪽, 세탁기 청소는 22쪽, 침대 밑은 16쪽, 스위치는 16쪽, 샤워 커튼은 14쪽에 그대로
+MONTHLY = ["Descale the coffee maker", "Clean the vacuum filter", "Replace the kitchen sponge",
+           "Wash the reusable bags", "Check the pantry dates", "Wipe the door handles",
+           "Wipe the baseboards", "Clean phone and laptop screens", "Check the freezer", "Dust fans and vents",
            "Wash the trash cans", "Clear out one drawer"]
-SEASONAL = {
+SEASONAL = {   # 10-02 사용자(S6): 방 목록 · 월간과 겹치던 5개를 바꿈 (entry closet · fans · oven · car kit · throw blankets)
     "Spring": ["Wash the windows inside", "Put away winter coats", "Wash the curtains",
-               "Clear out the entry closet", "Clean behind the fridge"],
-    "Summer": ["Clean the fans", "Wash the outdoor cushions", "Test the smoke alarms",
+               "Wash the window screens", "Clean behind the fridge"],
+    "Summer": ["Clean the grill or patio", "Wash the outdoor cushions", "Test the smoke alarms",
                "Clear out the freezer", "Donate one bag"],
-    "Fall": ["Wash bedding for winter", "Put away summer clothes", "Deep clean the oven",
-             "Restock the car kit", "Clear the gutters or ask for help"],
-    "Winter": ["Wipe salt off the entry floor", "Wash the throw blankets", "Clean the humidifier",
+    "Fall": ["Wash bedding for winter", "Put away summer clothes", "Clear one storage shelf",
+             "Change the air filter", "Clear the gutters or ask for help"],
+    "Winter": ["Wipe salt off the entry floor", "Wash hats, gloves, and scarves", "Clean the humidifier",
                "Sort the holiday decorations", "Donate one bag"],
 }
 # 루프: (단계, 여기서 멈추면 -> 대책)
@@ -196,7 +198,7 @@ DISHES_LOOP = [("Use", "Keep one cup per person out"),
                ("Soak", "Fill the sink with hot water first"),
                ("Wash", "Set a 10-minute timer, stop when it rings"),
                ("Put away", "Unload while the kettle boils")]
-WEEKLY_ROTATION_SUB = "One room a day. Missed one? Slide it to the next slot."   # 같은 쪽 카드 "just the next slot" 과 같은 말 (10-01 재시험)
+WEEKLY_ROTATION_SUB = "Plan it once here, tick it off on each Reset week. Missed one? Slide it to the next slot."   # 10-02 S8: 주마다 쪽과의 관계   # 같은 쪽 카드 "just the next slot" 과 같은 말 (10-01 재시험)
 # 103쪽 Moving or big reset -- 미리 채운 항목 (2026-09-30 사용자: "미리 채운 항목 10~12개 + 빈 줄")
 # 빈 표였던 도구 쪽에 미리 채운 항목 (10-02 사용자, L11 "빈 쪽 시험" -- 106쪽 Moving 과 같은 방식: 예시 + 빈 줄).
 # 논리 정합성(5-7): 104 는 Energy menu 문구 그대로(L8), 99 는 방 카드 단계와 같은 물건(Keys -> Entry "key bowl", Mail -> "desk tray",
@@ -242,7 +244,7 @@ GUESTS = ("Guests in 2 hours", "Only what they'll see.",
 DECLUTTER = ("Declutter decisions", "Stuck on keep or toss? Ask these.",
              ["When did I last use it?", "Would I buy it again today?", "Does it have a place here?",
               "Is it someone else's to return?", "Is it taking space I need?"])
-DOOM_PILE = ("Doom pile triage", "One pile, fifteen minutes.",
+DOOM_PILE = ("Doom pile triage", "One pile, one timer.",   # 10-02 S12: "15분"이라면서 타이머 칸이 있었다
              ["Keep here", "Toss", "Belongs elsewhere", "Needs action"])
 DOPAMINE = ("Cleaning dopamine menu", "What makes the boring part easier?",
             [("Soundtrack", "playlists that get you moving"), ("Something to listen to", "podcasts"),
@@ -256,13 +258,13 @@ TOOL_PAGES = {   # 제목, 부제 (칸만 있는 페이지)
     "restock": ("Restock list", "Buy it before it runs out."),
     "projects": ("Projects list", "Too big for one day? Write the first step only."),
     "big-reset": ("Moving or big reset", "One checklist for the big days."),
-    "kids-pets": ("Kids & pets tasks", "Jobs they can own."),
+    "kids-pets": ("Kids & pets tasks", "Jobs they can own. Pet care is one week per page: duplicate it or print a fresh copy."),   # 10-02 S9
     "who-does-what": ("Who does what", "Split it on paper before it turns into an argument."),
     "house-map": ("House map", "Tap a room. Ten minutes, then stop."),
     "energy": ("Energy menu", "Pick by battery and time, not by day. Tap a task to open it."),
     "monthly": ("Monthly deep clean", "Once a month. Any order."),
     "seasonal": ("Seasonal reset", "Four times a year."),
-    "daily": ("Daily reset", "Two small resets a day."),
+    "daily": ("Daily reset", "Two small resets a day. One page is one week: duplicate it in your app or print a fresh copy."),   # 10-02 S9
 }
 WEEK_PAGE = ("Reset week {n}", "This week's rooms, one deep clean, and the wins.")
 
@@ -306,7 +308,9 @@ LABELS = {
     # slid_hint_short: Reset week 반쪽 카드용 (10-01 사용자: 원고 문구가 카드 끝을 넘어서)
     "slid_hint_short": "no penalty",
     # 10-01 사용자 (6단계 써 보기): 주간 Wins 칸 = 그 주 것(101쪽 Wins log 는 언제든) / 주간 날짜 칸 / 하루 쪽에 그 배터리 할 일
-    "wins_hint": "this week", "my_rooms": "My rooms", "week_of": "Week of", "from_menu": "From the Energy menu", "tap_one": "tap one",
+    "wins_hint": "this week", "wins_one_list": "every win goes on one list",   # 10-02 S7: 주마다 쪽 Wins 칸 -> Wins log 링크
+    "day_reuse": "Reuse it tomorrow: erase, duplicate, or reprint.",   # 10-02 S10
+    "my_rooms": "My rooms", "week_of": "Week of", "from_menu": "From the Energy menu", "tap_one": "tap one",
     # 흑백판(종이)만: SOS 옆 쪽 번호, 10·40쪽 쪽 번호 규칙 (10-01 재시험, 인쇄파 구매자)
     "page_short": "p.", "deep_next": "Each deep clean list is the page after its room card.",
     "week_page": "Week N is on page {p} + N.", "week_rooms": "This week's rooms",
