@@ -12,14 +12,13 @@
 절차·CLAUDE.md·메모리에 넣고 109쪽을 검토(아래 "5-7 구조 논리 검토" S1~S14). S1~S4·S14 반영해 **v0.13** 빌드, 전수검수 10개 통과.
 
 **집에서 순서대로:**
-1. `git pull` → `python -c "import pypdfium2, pikepdf"` → `python scripts/p4/build_v2_p4.py full` (v0.13 이 집 PC 에 생긴다. 검수는
-   `python scripts/p4/qa_p4.py v0.13`)
-2. **design 에 2쪽 순서도 맡기기** -- `output/prod4/handoff/flow-v0.4.zip` 을 claude.ai/design 에 올린다(git 에 넣어 두었다).
-   설명서 = 묶음 안 `00_HANDOFF.md` = 저장소 `product4-design-handoff.md` v0.4. 시안이 오면 Claude 가 **2쪽만** 바꿔 v0.14 → 전수검수
-2-1. **리스팅 사진 10장 + 핀 6장도 design 에 맡긴다** (10-02 사용자) -- `output/prod4/handoff/listing-v0.2.zip` (집에서는 v0.13 빌드 뒤 `python scripts/p4/handoff_listing_p4.py` 로 다시 만든다 -- 이미 있으면 멈춤). 설명서 = `product4-listing-handoff.md`. 디자인은 간섭하지 않고 크기 · 잘림 · 글자 크기 · 사실만 적었다. 우리 시안 draft-v0.6 은 참고 안 함(1MB 넘었다)
+1. `git pull` → `python -c "import pypdfium2, pikepdf"` → `python scripts/p4/build_v2_p4.py full` (v0.14 가 집 PC 에 생긴다. 검수는
+   `python scripts/p4/qa_p4.py v0.14`)
+2. ~~design 에 2쪽 순서도 맡기기~~ -- **끝 (10-02 회사 PC): 시안 받아 v0.14 에 넣고 전수검수.** 집에서는 1번 빌드가 v0.14 를 만든다
+2-1. **리스팅 사진 10장 + 핀 6장도 design 에 맡긴다** (10-02 사용자) -- `output/prod4/handoff/listing-v0.3.zip` (2쪽 확정 판 v0.14) (집에서는 빌드 뒤 `python scripts/p4/handoff_listing_p4.py` 로 다시 만든다 -- 이미 있으면 멈춤). 설명서 = `product4-listing-handoff.md`. 디자인은 간섭하지 않고 크기 · 잘림 · 글자 크기 · 사실만 적었다. 우리 시안 draft-v0.6 은 참고 안 함(1MB 넘었다)
 3. **5-7 S5~S13 결정** (같은 기록 두 곳: 마지막 리셋 · 깊은 청소 · Wins / 한 주치 표 / 목차 순서 등 -- 아래 표)
 4. Claude: **L11 성인 눈높이 검토**(빈 노트보다 무엇을 더 해 주나 · 유치하지 않나) → 그다음 **상품 1 → 3 → 2 구조 논리 검토**(읽기만, `CLAUDE.md` 다음 할 일 5-7 행)
-5. 7단계 iPad: v0.13 으로 미리 볼 수 있는 곳 -- 3쪽(번호 대신 그림), 11쪽 · 7쪽 아래 "Wins log →" 알약. 2쪽은 시안 뒤에
+5. 7단계 iPad: v0.14 -- 2쪽(새 순서도, 누르는 곳 6개), 3쪽(번호 대신 그림), 11쪽 · 7쪽 아래 "Wins log →" 알약
 > 집 PC 방은 `CLAUDE.md` "다음 할 일" 1번(상품 3 스티커 ZIP)도 먼저 꺼낸다.
 
 ### 단계 (`PROCESS.md` 10단계)
@@ -28,9 +27,9 @@
 |---|---|
 | 1 시장 조사 | **통과** -- 사용자가 H-a(청소·루틴, 입구 가격) 선택 (`product4-research.md`) |
 | 2 기획서 | **통과** -- 구조·결정 6건 + 문구 원고(`scripts/p4/p4_content.py`) 사용자 확인. **10-02 구조 논리(5-7)로 2·3쪽 다시** -- S1~S4 결정·반영, S5~S13 결정 대기 |
-| 3 디자인 | **통과** -- claude.ai/design 전체 시안 v1.0 (10-01, `design/prod4/the-adhd-home-reset-design-v1.0.zip`). **2쪽만 다시 -- design 에 인수인계서 v0.4 보낼 차례** (10-02) |
-| **4 제작** | **v0.13 (109쪽) 전체 빌드** -- v0.13 구조 논리 S1~S4(2쪽 갈림 순서도 임시 배치 · 3쪽 번호 뺌 · Wins log 알약 · Vacuum the living room, 10-02), 2쪽은 design 시안이 오면 그 쪽만 / v0.12 노트 세 종류 한 장씩, v0.11 은 110쪽, v0.10 은 108쪽, v0.1 → v0.9 는 옛 모양 |
-| **5 검수** | **v0.13 자동 검수 5-1~5-6 + 5-7 구조 논리(L1~L4 반영, L5~L11 결정 대기)** (10-02) -- 남은 것: 5-7 S5~S13 결정, L11 성인 눈높이 검토 |
+| 3 디자인 | **통과** -- claude.ai/design 전체 시안 v1.0 (10-01, `design/prod4/the-adhd-home-reset-design-v1.0.zip`) + **2쪽 순서도 시안 v1.0 (10-02, 34e -- `design/prod4/the-adhd-home-reset-flow-v0.4-design-v1.0.zip`)** |
+| **4 제작** | **v0.14 (109쪽) 전체 빌드** -- v0.14 2쪽 = design 순서도 시안 v1.0(34e) / v0.13 구조 논리 S1~S4(3쪽 번호 뺌 · Wins log 알약 · Vacuum the living room, 10-02) / v0.12 노트 세 종류 한 장씩, v0.11 은 110쪽, v0.10 은 108쪽, v0.1 → v0.9 는 옛 모양 |
+| **5 검수** | **v0.14 자동 검수 5-1~5-6 + 5-7 구조 논리(L1~L4 반영, L5~L11 결정 대기)** (10-02) -- 남은 것: 5-7 S5~S13 결정, L11 성인 눈높이 검토 |
 | **6 직접 써 보기** | **통과 (10-01)** -- 구매자 역할 7명 자유 탐색 2번(v0.10 · v0.11) → 반드시 고침 0, 자동 검사 FAIL 0. 남은 것은 "나중에" 목록(아래). `PROCESS.md` 6절 "끝나는 조건" |
 | **7 iPad 검수** | **대기 -- 집에서 (iPad 가 집에 있다)** |
 | 8 리스팅 | 원고 초안 `listing-p4.md` (제작과 나란히). 결정 3건 대기 |
@@ -40,7 +39,7 @@
 
 | 순서 | 할 일 | 누가 · 어디서 |
 |---|---|---|
-| 1 | **7단계 iPad 확인 (필수)** -- GoodNotes 에서 v0.13 컬러판(2쪽은 시안 뒤 판) 넘기기(바둑판 렌더링·링크·탭), 흑백판 **한 장 실제 인쇄**(위쪽 쪽 번호·연한 선·체크 칸). 사용자 눈 검수도 이때 | 사용자, 집 (`Prod 4 ... (Home)`, `git pull` 후 `python scripts/p4/build_v2_p4.py full`) |
+| 1 | **7단계 iPad 확인 (필수)** -- GoodNotes 에서 v0.14 컬러판 넘기기(바둑판 렌더링·링크·탭), 흑백판 **한 장 실제 인쇄**(위쪽 쪽 번호·연한 선·체크 칸). 사용자 눈 검수도 이때 | 사용자, 집 (`Prod 4 ... (Home)`, `git pull` 후 `python scripts/p4/build_v2_p4.py full`) |
 | 2 | 7단계에서 나온 결함 고치기 + 그 결함을 재는 검사 붙이기(`PROCESS.md` 7절 "실기기에서만 보이는 결함") | Claude |
 | 3 | 8단계 리스팅 결정: 세일 22%($7.01)냐 23%($6.92)냐와 기간 · 제목 길이 · 설명 최종 확인 | 사용자 결정 |
 | 4 | **리스팅 사진 10장** -- 시안 draft-v0.6 완료(10-01, v0.12 109쪽), **사용자 확인 대기**. 폰 크기 점검 완료(10-02: 검색 썸네일 제목 16~19pt 읽힘 -- `listing-p4.md` 사진 절, `_phone_preview.png`) | Claude → 사용자 확인 |
@@ -288,7 +287,7 @@
 | 디자인 | **상품 1(v8.20) 모양 + 색만 바꿈** (5절 ④) -- iPad 확인된 모양이라 표본 iPad 확인은 권장 | `PROCESS.md` 4단계 |
 | 뷰어 안전 | 처음부터 `fast_paint` · `vector_dots` 방식 (그림자·번짐은 공유 PNG, 점은 벡터 원) | `RELEASE.md` 2절 |
 
-## 3. 페이지 지도 (109쪽 -- 쪽 번호는 v0.13 빌드 기준(v0.12 와 같음), `check_docs_p4.py` 가 대조)
+## 3. 페이지 지도 (109쪽 -- 쪽 번호는 v0.14 빌드 기준(v0.12 와 같음), `check_docs_p4.py` 가 대조)
 
 탭(**왼쪽** 레일) 6개 + **표지 빼고** 모든 페이지 오른쪽 위 `SOS` 칩:
 **HOME · ENERGY · ROOMS · ROUTINES · WEEKS · TOOLS**
@@ -324,7 +323,7 @@
 | # | 페이지 | 구분 | 내용 | 링크 |
 |---|---|---|---|---|
 | 1 | 표지 | NEW | `The ADHD Home Reset` / `clean by energy, not by schedule` | → 2 |
-| 2 | **How it flows** (순서도) | NEW (09-30), **구조 바꿈 (10-02 사용자)** | 갈림 순서도: Open the planner → ◇How's today? → Doable: ◇How to pick? → Energy menu(6쪽, "By battery, 2 to 20 minutes") / House map(4쪽, "One room, ten minutes") → Do that one thing, then stop → Wins log / All too much: Rescue mode(94쪽) → Wins log · 따로 Every week(40쪽). 시간은 갈래마다 달라 갈래 상자에(10-02 사용자). 문구 `p4_content.FLOW`. 디자인은 claude.ai/design 에 맡김(인수인계서 `product4-design-handoff.md` v0.4). v0.13 판 2쪽은 구조만 맞춘 임시 배치 -- 시안이 오면 그 쪽만 바꾼다 | 링크 상자 6개 = 쪽 6개(3, 6, 4, 94, 103, 40쪽). 질문·갈래 이름·"Do that one thing" 은 링크 없음. 같은 쪽으로 가는 상자 금지 |
+| 2 | **How it flows** (순서도) | NEW (09-30), **구조 바꿈 (10-02 사용자)** | 갈림 순서도: Open the planner → ◇How's today? → Doable: ◇How to pick? → Energy menu(6쪽, "By battery, 2 to 20 minutes") / House map(4쪽, "One room, ten minutes") → Do that one thing, then stop → Wins log / All too much: Rescue mode(94쪽) → Wins log · 따로 Every week(40쪽). 시간은 갈래마다 달라 갈래 상자에(10-02 사용자). 문구 `p4_content.FLOW`. **디자인 = design 회신 "순서도 시안 v1.0"(34e, 10-02 사용자 승인, `design/prod4/the-adhd-home-reset-flow-v0.4-design-v1.0.zip`) -- v0.14 부터.** v0.13 은 구조만 맞춘 임시 배치였다 | 링크 상자 6개 = 쪽 6개(3, 6, 4, 94, 103, 40쪽). 질문·갈래 이름·"Do that one thing" 은 링크 없음. 같은 쪽으로 가는 상자 금지 |
 | 3 | **Start here** | NEW, **번호 뺌 (10-02 사용자)** | 30초 사용법: 라벨 "Doable today? Pick one way in." 아래 By battery → Energy menu / By room → House map (둘 중 하나), 그리고 All too much? → Rescue. 번호(1, 2, 3) 자리는 그림(배터리 · 집 · 구명환) -- 차례가 아니라 갈림(2쪽 순서도와 같은 구조). "빈칸은 실패가 아니다" | 세 개 모두 |
 | 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(그림 아님, 칸). 방마다 "마지막 리셋: ___" 칸 | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) |
 | 5 | Index | NEW | 전 페이지 목록 | 전 페이지 |

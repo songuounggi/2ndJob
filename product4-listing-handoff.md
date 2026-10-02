@@ -1,7 +1,7 @@
-# 상품 4 리스팅 사진 10장 + 핀터레스트 핀 6장 — 인수인계서 v0.2 (Claude Code → claude.ai/design)
+# 상품 4 리스팅 사진 10장 + 핀터레스트 핀 6장 — 인수인계서 v0.3 (Claude Code → claude.ai/design)
 
 **보내는 쪽:** Claude Code (`Prod 4. The ADHD Home Reset` 방, 2026-10-02) → **받는 쪽:** claude.ai/design
-**같이 올릴 묶음:** `output/prod4/handoff/listing-v0.2.zip` -- 이 문서(`00_HANDOFF.md`) + 판매 PDF 쪽 그림(`pages/`).
+**같이 올릴 묶음:** `output/prod4/handoff/listing-v0.3.zip` -- 이 문서(`00_HANDOFF.md`) + 판매 PDF 쪽 그림(`pages/`).
 **두 가지를 함께 맡긴다:** A. Etsy 리스팅 사진 10장(1~7절) · B. 핀터레스트 핀 6장(8절). 같은 상품이라 사실·금지 표현(5절)은 같다.
 묶음은 `python scripts/p4/handoff_listing_p4.py` 로 다시 만든다(판이 바뀌면 그 판 쪽으로).
 
@@ -19,7 +19,7 @@
 | 무엇 | ADHD 성인용 청소·집안 루틴 **디지털 플래너**. 하이퍼링크 PDF(iPad + Goodnotes/Notability) + 흑백 인쇄판 PDF, **파일 2개** |
 | 가격 | $8.99 (숍의 입구 가격 상품). 구매자: 미국·영국·아일랜드 |
 | Etsy 제목(초안) | `ADHD Cleaning Planner for iPad and Goodnotes, Printable Home Reset Checklist, Undated and Hyperlinked` |
-| 판 | 109쪽, 날짜 없음(undated), US Letter 세로. 이 묶음의 쪽 그림 = 판 **v0.13** |
+| 판 | 109쪽, 날짜 없음(undated), US Letter 세로. 이 묶음의 쪽 그림 = 판 **v0.14** (2쪽 = 새 순서도 시안 34e 반영) |
 
 **구매자가 왜 사나 (사진이 전해야 할 것):** 청소 방법을 몰라서가 아니라 **시작·고르기·멈추기**가 막혀서다. 이 플래너는
 "오늘 기운과 남은 시간에 맞는 일 하나 고르기 → 방 하나 10분 → '이만하면 됐다'에서 멈춤, 벅차면 구조 모드"를 대신 정해 준다.
@@ -71,7 +71,7 @@
 
 ## 4. 10장 -- **무엇을 알려야 하나** (배치·연출은 디자인)
 
-쪽 번호는 판 v0.13 기준. 화면에 보여 주는 플래너 쪽은 **`pages/` 의 실제 쪽 그림만** 쓴다(5절 "사실만").
+쪽 번호는 판 v0.14 기준. 화면에 보여 주는 플래너 쪽은 **`pages/` 의 실제 쪽 그림만** 쓴다(5절 "사실만").
 
 | # | 파일 | 알려야 할 것 | 쓸 쪽 (`pages/`) | 제안 문구 (바꿔도 됨) |
 |---|---|---|---|---|
@@ -79,7 +79,7 @@
 | 02 | `02_energy` | 핵심 장치 ① **요일이 아니라 오늘 기운(Low · Medium · Full) × 시간(2 · 5 · 10 · 20분)** 으로 할 일을 고른다. 31개 할 일, 누르면 그 일이 있는 쪽으로 | 6쪽 Energy menu, 7쪽 Low battery day | Pick by battery, not by day |
 | 03 | `03_rooms` | 핵심 장치 ② **방마다 10분 순서 6단계 + "Done enough" 선** -- 여기까지 하면 멈춘다. 집 지도에서 방을 누른다 | 11쪽 Kitchen 카드, 4쪽 House map (12쪽 깊은 청소는 선택) | Ten minutes, then stop |
 | 04 | `04_rescue` | 핵심 장치 ③ **벅찰 때 구조 모드 다섯 단계**(Trash first → Gather the dishes → One basket of clothes → Clear a path → One surface). **표지 빼고 모든 쪽 오른쪽 위 SOS** 가 여기로 | 94쪽 Rescue mode + SOS 칩이 보이는 아무 쪽(예: 11쪽) | For when it is all too much |
-| 05 | `05_flow` | **한 장으로 보는 쓰는 법** -- 2쪽 순서도 | **2쪽 -- 지금 design 이 다시 그리는 중**(인수인계서 `product4-design-handoff.md` v0.4). 묶음의 2쪽 그림(`..._TEMP-layout-do-not-use.png`)은 **임시 배치**라 그대로 쓰지 말고, 새 2쪽 시안으로 | One page shows the whole system |
+| 05 | `05_flow` | **한 장으로 보는 쓰는 법** -- 2쪽 순서도 | 2쪽 How it flows -- **새 순서도(시안 34e)로 확정된 판**. 옛 2쪽(상자 9개)은 쓰지 않는다 | One page shows the whole system |
 | 06 | `06_tabs` | **어느 쪽에서든 한 번에** -- 왼쪽 탭 6개(Home · Energy · Rooms · Routines · Weeks · Tools), 섹션마다 색이 다르다, 5쪽 Index | 5쪽 Index + 섹션별 쪽: 3쪽(민트) · 11쪽(레몬) · 41쪽(라벤더) · 103쪽(아쿠아) | Every page is one tap away |
 | 07 | `07_print` | **두 번째 파일 = 흑백 인쇄판** -- 같은 109쪽, 회색조, 잉크 절약, US Letter(A4 는 맞춤 인쇄) | `pages/bw_*` (흑백 1, 6, 11, 41쪽) | Black & white for paper |
 | 08 | `08_weeks` | **52주 Reset week, 날짜 없음** -- 아무 주에서나 시작, 하루에 방 하나, 못 한 날은 다음 칸으로(밀린 것 없음) | 40쪽 Weeks, 41쪽 Reset week 1, 33쪽 Weekly rotation | Skip a week. Nothing to catch up on. |
@@ -120,7 +120,6 @@
 1. **10장** -- 2000 × 2000, PNG 또는 JPG, 각 1MB 이하, 파일 이름 `01_hero` ~ `10_files`
 2. **사진마다 들어간 글 목록** (5절)
 3. 가능하면 각 장의 **4:5(가로 200~1800) · 4:3(세로 250~1750) 잘린 모습** -- 없으면 받은 뒤 Claude Code 가 잘라서 확인한다
-4. 05 는 새 2쪽 시안이 확정된 뒤
 
 ## 7. 받은 뒤 Claude Code 가 하는 일
 

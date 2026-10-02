@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """상품 4 리스팅 사진 10장 + 핀 6장을 claude.ai/design 에 맡길 묶음 (product4-listing-handoff.md).
 
-    python scripts/p4/handoff_listing_p4.py [판, 기본 v0.13]
+    python scripts/p4/handoff_listing_p4.py [판, 기본 v0.14]
     -> output/prod4/handoff/<HANDOFF_VER>/ (00_HANDOFF.md + pages/*.png) + <HANDOFF_VER>.zip
 
 쪽 그림은 판매 PDF 를 그대로 렌더한다(2배, 1224 x 1584) -- 사진 속 화면은 실제 쪽만 쓰게. 쪽 목록 = 인수인계서 4절 · 8-3절.
@@ -21,8 +21,8 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 import pages_p4  # noqa: E402
 
-VER = sys.argv[1] if len(sys.argv) > 1 else "v0.13"
-HANDOFF_VER = "listing-v0.2"   # v0.2: 쪽 그림 이름을 쪽 제목으로(w1 -> reset-week-1), 2쪽은 _TEMP 표시 / v0.1: 첫 묶음(보내지 않음)
+VER = sys.argv[1] if len(sys.argv) > 1 else "v0.14"
+HANDOFF_VER = "listing-v0.3"   # v0.3: 판 v0.14 -- 2쪽이 design 순서도 시안으로 확정(임시 표시 뺌) / v0.2: 쪽 그림 이름을 쪽 제목으로(w1 -> reset-week-1), 2쪽은 _TEMP 표시 / v0.1: 첫 묶음(보내지 않음)
 DOC = os.path.join(ROOT, "product4-listing-handoff.md")
 OUT = os.path.join(ROOT, "output", "prod4", "handoff", HANDOFF_VER)
 
@@ -38,7 +38,7 @@ def slug(key):
     elif key.startswith("deep-") and t == key:
         t = key[5:] + " deep clean"
     s = re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-")
-    return s + "_TEMP-layout-do-not-use" if key == "flow" else s      # 2쪽은 design 이 다시 그리는 중 (인수인계서 4절 05)
+    return s
 
 
 def main():

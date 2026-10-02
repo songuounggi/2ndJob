@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.13"     # v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.14"     # v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -203,123 +203,32 @@ def week_bg(design, tpl):
     return mid, last
 
 
-FLOW_COL = {"mint": ("#7FB59C", "#537364"), "lemon": ("#E2BE3E", "#7D6A28"), "aqua": ("#2FB3C6", "#237581"),
-            "gray": ("#78837D", "#5F6B65")}
+# 2쪽 = design 회신 "순서도 시안 v1.0"(TURN 34 · 34e, 10-02 사용자 승인) -- 인수인계서 v0.4 의 갈림 순서도. 다른 37쪽은 v1.0 그대로.
+# 그림자는 design 이 배경 JPG 에 구워 보냈다(page2-bg.jpg) -- variant_bg 로 다시 굽지 않는다. v0.13 의 임시 배치(fill_flow · flow_bg)는 뺐다
+FLOW_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-flow-v0.4-design-v1.0.zip")
+FLOW_DIR = os.path.join(ROOT, "src", "p4_flow_design_v1.0")
+FLOW_DH = "design_handoff_flow_v0.4"
 
 
 def fill_flow(page):
-    """2쪽 순서도를 갈림 순서도로 다시 그린다 (10-02 사용자). 시안의 모양 -- 굵기 4 색 선 · 둥근 모서리 12 · 흰 테 점 ·
-    굵은 제목 11.5pt + 섹션 진한색 한 줄 8.5pt · → -- 은 그대로, 배치만 새 구조로. 제목·부제·탭·SOS·Open 알약(그림자가 배경에
-    구워져 있다)·Wins·Once a week 자리는 시안 그대로라 배경을 다시 굽지 않는다.
-        Open the planner -> ◇How's today? -> Doable: ◇How to pick? -> Energy menu | House map -> Ten minutes -> Wins log
-                                           -> All too much: Rescue mode -> Wins log ;  Once a week
-    질문·갈래 이름·멈춤 단계는 링크가 아니라 → 를 붙이지 않는다(README §7-2 "링크가 걸린 곳은 →")"""
-    F = C.FLOW
-    m, a, s, g = FLOW_COL["mint"], FLOW_COL["aqua"], FLOW_COL["lemon"], FLOW_COL["gray"]
-    esc = lambda t: H.escape(t, quote=False)
-    arrow = lambda c: f'<span style="margin-left:4px;color:{c}">→</span>'
-
-    def dot(x, y, c):
-        return f'<circle cx="{x}" cy="{y}" r="9" fill="#FFFFFF"></circle><circle cx="{x}" cy="{y}" r="5" fill="{c}"></circle>'
-
-    def diamond(x, y, c):
-        pts = lambda r: f"{x},{y - r} {x + r},{y} {x},{y + r} {x - r},{y}"
-        return f'<polygon points="{pts(12)}" fill="#FFFFFF"></polygon><polygon points="{pts(7)}" fill="{c}"></polygon>'
-
-    def label(x, y, w, title, sub, tone, align, link):
-        """점 옆 글자 상자 (시안 그대로: 높이 36, 제목 11.5/800 + 한 줄 8.5/700 진한색)"""
-        side = "flex-end;text-align:right" if align == "r" else "flex-start;text-align:left"
-        box = (f'style="position:absolute;left:{x}px;top:{y - 18}px;width:{w}px;height:36px;display:flex;flex-direction:column;'
-               f'justify-content:center;align-items:{side};gap:1px"')
-        inner = (f'<span style="font-size:11.5px;font-weight:800">{esc(title)}{arrow(tone) if link else ""}</span>'
-                 + (f'<span style="font-size:8.5px;font-weight:700;color:{tone}">{esc(sub)}</span>' if sub else ""))
-        return f'<a href="#" {box}>{inner}</a>' if link else f"<div {box}>{inner}</div>"
-
-    def small(x, y, w, text, tone, align, size=8.5, weight=700):
-        side = "right" if align == "r" else "left"
-        return (f'<div style="position:absolute;left:{x}px;top:{y - 7}px;width:{w}px;height:14px;line-height:14px;'
-                f'text-align:{side};font-size:{size}px;font-weight:{weight};color:{tone}">{esc(text)}</div>')
-
-    # 선: 시안 2쪽과 같은 굵기 4, 모서리 반지름 12. 가운데 x334, 왼쪽 x214, 오른쪽 x454, 합류 y520 -> Wins 점 y592
-    svg = ('<svg width="612" height="792" viewBox="0 0 612 792" style="position:absolute;left:0;top:0" fill="none" '
-           'stroke-linecap="round" stroke-linejoin="round" stroke-width="4">'
-           f'<path d="M334,174 V214" stroke="{g[0]}"></path>'
-           f'<path d="M334,214 V230 Q334,242 322,242 H226 Q214,242 214,254 V438" stroke="{m[0]}"></path>'
-           f'<path d="M214,318 Q214,330 226,330 H302 Q314,330 314,342 V414 Q314,426 302,426 H226 Q214,426 214,438" stroke="{s[0]}"></path>'
-           f'<path d="M214,438 V472" stroke="{s[0]}"></path>'
-           f'<path d="M214,472 V508 Q214,520 226,520 H322 Q334,520 334,532" stroke="{a[0]}"></path>'
-           f'<path d="M334,214 V230 Q334,242 346,242 H442 Q454,242 454,254 V508 Q454,520 442,520 H346 Q334,520 334,532 V580" stroke="{a[0]}"></path>'
-           '<circle cx="334" cy="706" r="15" stroke="#A393D8"></circle><g stroke="none">'
-           + diamond(334, 214, g[0]) + diamond(214, 300, m[0])
-           + dot(214, 378, m[0]) + dot(314, 378, s[0]) + dot(214, 472, s[0]) + dot(454, 378, a[0])
-           + '<circle cx="334" cy="592" r="16" fill="#FFFFFF"></circle><circle cx="334" cy="592" r="11.5" fill="#2FB3C6"></circle>'
-           '<circle cx="334" cy="691" r="8" fill="#FFFFFF"></circle><circle cx="334" cy="691" r="4.5" fill="#A393D8"></circle></g>'
-           '<path d="M329,592.5 l3.4,3.4 l6.2,-6.8" stroke="#FFFFFF" stroke-width="2.2"></path></svg>')
-    B = F["boxes"]
-    parts = [
-        f'<div style="position:absolute;left:352px;top:205px;height:18px;line-height:18px;font-size:11.5px;font-weight:800;'
-        f'color:{g[1]}">{esc(F["ask"]["today"])}</div>',
-        small(84, 264, 118, F["branch"]["ok"], m[1], "r", 9.5, 800),       # 갈래 이름 = 질문의 답이라 한 줄 설명보다 굵게
-        small(466, 264, 118, F["branch"]["sos"], a[1], "l", 9.5, 800),
-        f'<div style="position:absolute;left:84px;top:291px;width:114px;height:18px;line-height:18px;text-align:right;'
-        f'font-size:11.5px;font-weight:800;color:{m[1]}">{esc(F["ask"]["pick"])}</div>',
-        label(84, 378, 118, *B["energy"][:2], m[1], "r", True),
-        label(326, 378, 116, *B["room"][:2], s[1], "l", True),
-        label(84, 472, 118, *F["step"], s[1], "r", False),
-        label(466, 378, 118, *B["rescue"][:2], a[1], "l", True),
-        small(466, 404, 118, F["sos_note"], "#78837D", "l"),
-        # Wins log · Once a week -- 시안 2쪽 그대로
-        f'<a href="#" style="position:absolute;left:254px;top:574px;width:160px;height:86px;display:flex;flex-direction:column;'
-        f'align-items:center;justify-content:flex-end;gap:1px"><span style="font-size:19px;font-weight:800;letter-spacing:-0.01em">'
-        f'{esc(B["wins"][0])}{arrow(a[1])}</span><span style="font-size:9.5px;font-weight:800;color:{a[1]}">{esc(B["wins"][1])}</span></a>',
-        f'<a href="#" style="position:absolute;left:234px;top:680px;width:200px;height:94px;display:flex;flex-direction:column;'
-        f'align-items:center;justify-content:flex-end;gap:1px"><span style="font-size:11.5px;font-weight:800">{esc(B["weeks"][0])}'
-        f'{arrow("#6E6490")}</span><span style="font-size:8.5px;font-weight:700;color:#6E6490">{esc(B["weeks"][1])}</span></a>',
-    ]
-    i0 = page.index('<svg width="612" height="792"')
-    i1 = page.index("</svg>", i0) + len("</svg>")
-    page = page[:i0] + svg + page[i1:]
-    j = page.index(">" + B["open"][0])                  # Open 알약은 시안 그대로 두고 그 뒤 상자들을 새로
-    j = page.index("</a>", j) + len("</a>")
-    page = page[:j] + "".join(parts) + "</div>"
-    dots = [(214, 378), (314, 378), (214, 472), (454, 378)]
-    bg = os.path.relpath(flow_bg(dots, [(334, 214), (214, 300)]), os.path.join(ROOT, "src")).replace(os.sep, "/")
-    return re.sub(r'src="[^"]*/25-flow\.jpg"', 'src="' + bg + '"', page, count=1)
-
-
-# 시안 2쪽 배경의 점 그림자(흰 원 + 그림자)를 픽셀로 잰 값 (10-02). 카드 그림자 두 겹과 다르다 -- 시안 점 8개를 이 값으로 구우면
-# 원본과 점 둘레 평균 차이 0.16(카드 수치로 구우면 0.7~1.2). 빈 곳 차이 0.0
-FLOW_DOT_SHADOW = [[0.10, 8, 2]]
-FLOW_TPL_DOTS = [(214, 220), (214, 300), (214, 380), (214, 460), (454, 220), (454, 300)]
-
-
-def flow_bg(dots, diamonds):
-    """2쪽 배경을 새 점·◇ 자리로 다시 굽는다. 먼저 시안 점 자리로 구워 원본과 같은지(굽기 수치 검증), 그다음 새 자리.
-    Wins(r16) · Once a week(r8) 자리는 시안 그대로. 파일 이름에 자리 지문 -- 자리가 바뀌면 새 파일"""
-    import hashlib
-    import json
-    import bake_bg_p4 as K
-    disc = lambda c, r: dict(x=c[0] - r, y=c[1] - r, w=2 * r, h=2 * r, r=r, ban=False, s=FLOW_DOT_SHADOW)
-    side = 12 * 2 ** 0.5                                  # ◇ 반대각 12 = 한 변 17 짜리 정사각형을 45도
-    dia = lambda c: dict(x=c[0] - side / 2, y=c[1] - side / 2, w=side, h=side, r=0.5, ban=False, s=FLOW_DOT_SHADOW, rot=45)
-    keep = [disc((334, 592), 16), disc((334, 691), 8)]
-    tpl_rects = [disc(c, 9) for c in FLOW_TPL_DOTS] + keep      # Open 알약은 배경에 없다 -- 그림자는 card-shadow.png 한 장(README)
-    new_rects = [disc(c, 9) for c in dots] + [dia(c) for c in diamonds] + keep
-    gen = os.path.join(DESIGN_DIR, "generated")
-    orig = os.path.join(DESIGN_DIR, DH, "assets", "25-flow.jpg")
-    sig = hashlib.md5(json.dumps(new_rects, sort_keys=True).encode()).hexdigest()[:8]
-    name = f"p4-flow-{sig}.jpg"
-    out = os.path.join(gen, name)
-    if not os.path.exists(out):
-        check = os.path.join(gen, "p4-flow-tplcheck.jpg")
-        K.bake([(check, K.COLORS["mint"], 0, tpl_rects), (out, K.COLORS["mint"], 0, new_rects)])
-        d0 = K.mean_diff(orig, check)
-        d1 = K.masked_diff(orig, out, [r for r in new_rects if r not in tpl_rects] + [r for r in tpl_rects if r not in new_rects], pad=20)
-        print(f"   2쪽 배경 다시 굽기: 시안 자리로 구운 것과 원본 차이 {d0:.3f} · 새 배경의 바뀐 자리 밖 차이 {d1:.3f}")
-        if d0 > 0.1 or d1 > 0.1:
-            os.remove(out)
-            raise SystemExit(f"[flow] 다시 구운 배경이 원본과 다르다 (시안 자리 {d0:.3f}, 바뀐 자리 밖 {d1:.3f}) -- 굽기 수치를 확인")
-    return out
+    """시안 2쪽(page2_34e.html)의 <div data-page="2"> 덩어리를 그대로 쓴다. 그림 경로만 src/ 기준으로"""
+    html_path = os.path.join(FLOW_DIR, FLOW_DH, "page2_34e.html")
+    if not os.path.exists(html_path):
+        z = zipfile.ZipFile(FLOW_ZIP)
+        for i in z.infolist():
+            name = i.filename if i.flag_bits & 0x800 else i.filename.encode("cp437").decode("utf-8", "replace")
+            if name.endswith("/"):
+                continue
+            out = os.path.join(FLOW_DIR, name)
+            os.makedirs(os.path.dirname(out), exist_ok=True)
+            open(out, "wb").write(z.read(i))
+    h = open(html_path, encoding="utf-8").read()
+    i = h.index('<div data-page="2"')
+    div = element_at(h, i).replace(' data-page="2"', "", 1)
+    rel = os.path.relpath(os.path.join(FLOW_DIR, FLOW_DH, "assets"), os.path.join(ROOT, "src")).replace(os.sep, "/")
+    if div.count('src="assets/') != 2:
+        raise SystemExit("[flow] 시안 2쪽 그림이 배경 + Open 그림자 둘이 아니다")
+    return div.replace('src="assets/', f'src="{rel}/')
 
 
 START_ICON = {   # 3쪽 번호(1 · 2 · 3) 자리 그림 -- 28pt 원 안 14pt, 선 1.4, 섹션 진한색 (10-02 구조 논리 S1)
@@ -370,7 +279,6 @@ def fill(page, key):
 
 # 시안에 박힌 옛 문구 -> 원고의 새 문구 (10-01 사용자, 써 보기 6단계에서 문구 모순·오타). 새 문구는 원고에 있어야 한다
 COPY_FIX = [
-    (lambda k: k == "flow", "Tap any box to go there.", lambda: C.FLOW["sub"]),
     (lambda k: k == "sprint", "Stop when the last ring is done.", lambda: C.SPRINT[1].split(". ", 1)[1]),
     (lambda k: k == "monthly", "One a month. Any order.", lambda: C.TOOL_PAGES["monthly"][1]),
     (lambda k: k == "daily", "Once a day, one small thing.", lambda: C.TOOL_PAGES["daily"][1]),
@@ -901,7 +809,8 @@ def build(keys=None, bw=False):
         page = fill(page, k)
         page = copy_fix(page, k)
         page = additions(page, k)
-        page = variant_bg(page, k, rel_of, tpl[template_of(k)])
+        if k != "flow":                       # 2쪽은 design 이 그림자를 구운 배경을 보냈다
+            page = variant_bg(page, k, rel_of, tpl[template_of(k)])
         page = plan_links(page, k)
         page = norm_rail(page)
         page = linkify(page)

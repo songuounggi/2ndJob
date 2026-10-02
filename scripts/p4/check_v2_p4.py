@@ -43,6 +43,8 @@ REP = {"cover": "p001", "flow": "p002", "start": "p003", "house-map": "p004", "i
        "where-things-live": "p097", "restock": "p098", "dopamine": "p099", "body-doubling": "p100", "wins": "p101",
        "guess-actual": "p102", "projects": "p103", "big-reset": "p104", "notes-ruled": "p105", "notes-dots": "p106",
        "notes-blank": "p107"}
+# 2쪽은 design 순서도 시안 v1.0(10-02, 34e) 이 정답 -- v1.0 screenshots 의 2쪽은 옛 순서도라 비교하면 5.96 으로 걸린다(v0.14 첫 검수)
+FLOW_SHOT = os.path.join(ROOT, "src", "p4_flow_design_v1.0", "design_handoff_flow_v0.4", "page2_34e.png")
 DIFF_MAX = 3.5      # 같은 틀·같은 내용이면 글자 안티에일리어싱 차이로 1.4~2.9 (v0.10 표본 실측)
 # 기획서 링크 중 사용자 결정으로 뺀 것 (10-01, 써 보기 6단계) -- 이유는 product4-content.md 인계 절
 LOST_OK = {"rescue": {"kitchen", "house-map"},      # 92쪽 1 Trash first·4 Clear a path 링크 뺌 (내용과 안 맞는 곳)
@@ -267,7 +269,7 @@ def check(ver, tag):
         files = {f[:4]: f for f in os.listdir(SHOTS)}
         worst = []
         for key, sh in REP.items():
-            ref = Image.open(os.path.join(SHOTS, files[sh])).convert("L")
+            ref = Image.open(FLOW_SHOT if key == "flow" else os.path.join(SHOTS, files[sh])).convert("L")
             pix = doc[ids.index(key)].get_pixmap(matrix=pymupdf.Matrix(ref.width / 612, ref.width / 612))
             mine = Image.open(io.BytesIO(pix.tobytes("png"))).convert("L").resize(ref.size)
             hist = ImageChops.difference(ref, mine).histogram()
@@ -282,7 +284,7 @@ def check(ver, tag):
 
 
 if __name__ == "__main__":
-    ver = sys.argv[1] if len(sys.argv) > 1 else "v0.13"
+    ver = sys.argv[1] if len(sys.argv) > 1 else "v0.14"
     total = 0
     for tag in ("color", "BW"):
         f = check(ver, tag)
