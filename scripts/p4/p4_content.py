@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.9"   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.10"   # v0.10 = 구조 논리 검토(10-02 사용자): 3쪽 번호 빼고 갈림, "Vacuum the living room", "Every week", 순서도 시간은 갈래 상자로   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -27,9 +27,12 @@ COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
 START_HERE = {
     "title": "Start here",
     "sub": "Thirty seconds, then you're cleaning.",
+    # 10-02 사용자(구조 논리 S1): 1 · 2 · 3 번호는 "차례로 다 하라"로 읽혔다 -- 1·2 는 둘 중 하나, 3 은 벅찬 날 갈래(2쪽 순서도와 같은 구조).
+    # 번호 자리는 그림(배터리 · 집 · 구명환), 두 카드 위에 "할 만하면 하나를 고른다" 라벨
+    "pick": "Doable today? Pick one way in.",
     "steps": [
-        ("Check your battery", "Low, medium, or full? Pick a task that fits.", "energy"),
-        ("Pick one room", "Tap it on the house map. Ten minutes, then stop.", "house-map"),
+        ("By battery", "Low, medium, or full? Pick a task that fits.", "energy"),
+        ("By room", "Tap it on the house map. Ten minutes, then stop.", "house-map"),
         ("All too much?", "Tap SOS on any page. Rescue first, tidy later.", "rescue"),
     ],
     "note": "Blank boxes are normal. No streaks, no catching up.",
@@ -44,13 +47,13 @@ FLOW = {
     "branch": {"ok": "Doable", "sos": "All too much"},                  # 첫 질문의 두 갈래
     "boxes": {   # key: (제목, 한 줄, 링크 대상) -- 링크 상자만
         "open": ("Open the planner", "", "start"),
-        "energy": ("Energy menu", "By battery and minutes", "energy"),
-        "room": ("House map", "By room", "house-map"),
+        "energy": ("Energy menu", "By battery, 2 to 20 minutes", "energy"),
+        "room": ("House map", "One room, ten minutes", "house-map"),
         "rescue": ("Rescue mode", "Five steps, then stop", "rescue"),
         "wins": ("Wins log", "It counts", "wins"),
-        "weeks": ("Once a week", "Reset week: one room a day", "weeks"),
+        "weeks": ("Every week", "Reset week: one room a day", "weeks"),   # "Once a week" + "one room a day" 가 모순 (10-02, S4)
     },
-    "step": ("Ten minutes", "Stop at Done enough"),                     # 고른 뒤 할 일 -- 쪽이 아니라 링크 없음
+    "step": ("Do that one thing, then stop", ""),   # 두 갈래 공통 -- 쪽이 아니라 링크 없음. 시간은 갈래마다 다르다(6쪽 2~20분, 방 카드 10분)라 갈래 상자에 (10-02 사용자)
     "sos_note": "Or tap SOS on any page",
 }
 
@@ -140,7 +143,7 @@ ENERGY = {
     ("Medium", 2):  [("Wipe the stovetop", "kitchen"), ("Wipe the bathroom mirror", "bathroom")],
     ("Medium", 5):  [("Clear the kitchen counter", "kitchen"), ("Pull up the covers", "bedroom"),
                      ("Sweep the entry", "entry")],
-    ("Medium", 10): [("Clean the toilet", "bathroom"), ("Vacuum one room", "living"),
+    ("Medium", 10): [("Clean the toilet", "bathroom"), ("Vacuum the living room", "living"),   # "one room" 은 아무 방인데 거실 카드로 갔다 (10-02, 구조 논리 S3)
                      ("Put away one basket", "laundry-loop")],
     ("Medium", 20): [("Change the sheets", "deep-bedroom"), ("Clean out the fridge", "deep-kitchen")],
     ("Full", 2):    [("Take out the recycling", "kitchen"), ("Swap in fresh hand towels", "bathroom")],
@@ -317,9 +320,9 @@ def all_texts():
     out = [("cover", t) for t in COVER]
     out += [("flow", FLOW["title"]), ("flow", FLOW["sub"])] + [("flow", f"{a} {b}".strip()) for a, b, _ in FLOW["boxes"].values()]
     out += [("flow", t) for t in list(FLOW["ask"].values()) + list(FLOW["branch"].values())]
-    out += [("flow", " ".join(FLOW["step"])), ("flow", FLOW["sos_note"])]
+    out += [("flow", " ".join(FLOW["step"]).strip()), ("flow", FLOW["sos_note"])]
     out += [("start", START_HERE["title"]), ("start", START_HERE["sub"]), ("start", START_HERE["note"])]
-    out += [("start", a + " " + b) for a, b, _ in START_HERE["steps"]]
+    out += [("start", a + " " + b) for a, b, _ in START_HERE["steps"]] + [("start", START_HERE["pick"])]
     for key, name, steps, done, tools, deep in ROOMS:
         out += [(key, name), (key, done)] + [(key, s) for s in steps] + [(key, t) for t in tools] + [(key, d) for d in deep]
     out += [("energy", t) for v in ENERGY.values() for t, _ in v]

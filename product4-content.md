@@ -136,7 +136,7 @@
    ```
 3. **7단계 iPad 확인** -- 컬러판을 GoodNotes 로 열어 사용자가 본다:
    - 아무 쪽이나 빠르게 넘기기: 바둑판처럼 늦게 채워지지 않나
-   - 1쪽 제목 → 2쪽 → "Open the planner" → 3쪽 → "Check your battery" → 6쪽
+   - 1쪽 제목 → 2쪽 → "Open the planner" → 3쪽 → "By battery" → 6쪽
    - 아무 쪽 오른쪽 위 **SOS** → 94쪽 Rescue mode
    - 108쪽 Notes (dot grid): 점이 촘촘하고 또렷한가 (상품 1 에서 깨졌던 곳)
    - **스크롤이 첫 손짓에 바로 반응하나** (10-01 사용자 -- PC 에서 "두 번째에 반응" 을 겪음, PDF 쪽 원인은 못 찾음):
@@ -150,14 +150,14 @@
 
 ### 5-7 구조 논리 검토 (2026-10-02, v0.12 판 -- 2쪽은 새 순서도로 바뀐다고 가정) -- 사용자 결정 대기
 
-`PROCESS.md` 5-7 L1~L10 으로 109쪽을 읽은 결과. L1~L4 는 반드시 고침, 나머지는 결정.
+`PROCESS.md` 5-7 L1~L10 으로 109쪽을 읽은 결과. L1~L4 는 반드시 고침, 나머지는 결정. 성인 눈높이(L11) 검토는 다음에 따로.
 
 | # | 구분 | 쪽 | 무엇이 안 맞나 |
 |---|---|---|---|
-| S1 | L1 순서 | 3쪽 Start here | 1 Check your battery · 2 Pick one room · 3 All too much? 를 **번호로** -- 1·2 는 둘 중 하나, 3 은 벅찬 날 갈래. 2쪽에서 고친 결함과 같다. 2쪽과 역할도 겹친다(L9) |
-| S2 | L4 길 없음 | 11~29쪽 방 카드 10장, 7~9쪽 배터리 날 | 새 순서도는 "Ten minutes → Wins log" 인데 방 카드·배터리 날 쪽에 Wins log(103쪽)로 가는 길이 없다(루프·구조 모드·스프린트에는 있다) |
-| S3 | L3 글자≠도착 | 6, 8쪽 "Vacuum one room" | 아무 방이라는 말인데 17쪽 Living room 카드로 간다 |
-| S4 | L6 약속≠칸 | 2쪽 새 순서도 "Once a week -- Reset week: one room a day" | "한 주에 한 번" 과 "하루에 방 하나" 가 한 상자에. 인수인계서 v0.3 문구라 design 에 정정 필요 |
+| S1 | L1 순서 | 3쪽 Start here | 1 Check your battery · 2 Pick one room · 3 All too much? 를 **번호로** -- 1·2 는 둘 중 하나, 3 은 벅찬 날 갈래. 2쪽에서 고친 결함과 같다. 2쪽과 역할도 겹친다(L9) -- **반영 v0.13** -- 번호 대신 그림 + "Doable today? Pick one way in." (사용자 10-02) |
+| S2 | L4 길 없음 | 11~29쪽 방 카드 10장, 7~9쪽 배터리 날 | 새 순서도는 "Ten minutes → Wins log" 인데 방 카드·배터리 날 쪽에 Wins log(103쪽)로 가는 길이 없다(루프·구조 모드·스프린트에는 있다) -- **반영 v0.13** -- 방 카드 10장 · 7~9쪽에 "Wins log →" 알약 (사용자 10-02) |
+| S3 | L3 글자≠도착 | 6, 8쪽 "Vacuum one room" | 아무 방이라는 말인데 17쪽 Living room 카드로 간다 -- **반영 v0.13** -- "Vacuum the living room" (사용자 10-02) |
+| S4 | L6 약속≠칸 | 2쪽 새 순서도 "Once a week -- Reset week: one room a day" | "한 주에 한 번" 과 "하루에 방 하나" 가 한 상자에. 인수인계서 v0.3 문구라 design 에 정정 필요 -- **반영** -- "Every week" (사용자 10-02, 인수인계서 v0.4) |
 | S5 | L5 두 곳 기록 | 4쪽 House map 타일 "LAST RESET" ↔ 방 카드 "Last reset" | 같은 방의 마지막 리셋을 두 쪽에 적는다 |
 | S6 | L5 두 곳 기록 | 12쪽 Kitchen deep clean ↔ 34쪽 Monthly (fridge · microwave · dishwasher filter), 26쪽 Car deep clean ↔ 35쪽 Seasonal (car kit), 41~92쪽 주마다 "One deep clean" | 깊은 청소가 네 곳. 같은 일이 두 목록에 LAST DONE / MONTH 칸을 따로 가짐 |
 | S7 | L5 두 곳 기록 | 41~92쪽 "Wins this week" ↔ 103쪽 Wins log | 이긴 것을 어디에 적나 |
@@ -167,7 +167,7 @@
 | S11 | L8 순서 | 5쪽 Index | Weeks(40쪽)가 Routines(31쪽)보다 먼저 -- 탭 순서·쪽 순서와 다르다 |
 | S12 | L6 약속≠칸 | 97쪽 Doom pile triage | "One pile, fifteen minutes" 인데 "Timer set for ___" 칸 (나중에 목록에 있던 것) |
 | S13 | L5 중복 | 96쪽 Guests | "Everything else into one box" 가 줄과 아래 문장에 두 번 (나중에 목록에 있던 것) |
-| S14 | L1 순서 | 2쪽 새 순서도 | Energy menu 에서 고른 일이 루프(36, 37쪽)·깊은 청소 쪽으로 가면 "Stop at Done enough" 가 그 쪽에 없다 |
+| S14 | L1 순서 | 2쪽 새 순서도 | Energy menu 에서 고른 일이 루프(36, 37쪽)·깊은 청소 쪽으로 가면 "Stop at Done enough" 가 그 쪽에 없다 -- **반영** -- 시간을 갈래 상자로, 합친 뒤 "Do that one thing, then stop" (사용자 10-02) |
 
 ### 사용자 결정 대기
 
@@ -308,8 +308,8 @@
 | # | 페이지 | 구분 | 내용 | 링크 |
 |---|---|---|---|---|
 | 1 | 표지 | NEW | `The ADHD Home Reset` / `clean by energy, not by schedule` | → 2 |
-| 2 | **How it flows** (순서도) | NEW (09-30), **구조 바꿈 (10-02 사용자)** | 갈림 순서도: Open the planner → ◇How's today? → Doable: ◇How to pick? → Energy menu(6쪽) / House map(4쪽) → Ten minutes · Stop at Done enough → Wins log / All too much: Rescue mode(94쪽) → Wins log · 따로 Once a week(40쪽). 문구 `p4_content.FLOW`. 디자인은 claude.ai/design 에 맡김(인수인계서 `product4-design-handoff.md` v0.3). **v0.12 판은 옛 구조(상자 9개)** -- 시안이 오면 v0.13 | 링크 상자 6개 = 쪽 6개(3, 6, 4, 94, 103, 40쪽). 질문·갈래 이름·Ten minutes 는 링크 없음. 같은 쪽으로 가는 상자 금지 |
-| 3 | **Start here** | NEW | 30초 사용법 세 줄: ① 배터리 고르기 → Energy menu ② 방 고르기 → House map ③ 엉망이면 → Rescue. "빈칸은 실패가 아니다" | 세 개 모두 |
+| 2 | **How it flows** (순서도) | NEW (09-30), **구조 바꿈 (10-02 사용자)** | 갈림 순서도: Open the planner → ◇How's today? → Doable: ◇How to pick? → Energy menu(6쪽, "By battery, 2 to 20 minutes") / House map(4쪽, "One room, ten minutes") → Do that one thing, then stop → Wins log / All too much: Rescue mode(94쪽) → Wins log · 따로 Every week(40쪽). 시간은 갈래마다 달라 갈래 상자에(10-02 사용자). 문구 `p4_content.FLOW`. 디자인은 claude.ai/design 에 맡김(인수인계서 `product4-design-handoff.md` v0.4). v0.13 판 2쪽은 구조만 맞춘 임시 배치 -- 시안이 오면 그 쪽만 바꾼다 | 링크 상자 6개 = 쪽 6개(3, 6, 4, 94, 103, 40쪽). 질문·갈래 이름·"Do that one thing" 은 링크 없음. 같은 쪽으로 가는 상자 금지 |
+| 3 | **Start here** | NEW, **번호 뺌 (10-02 사용자)** | 30초 사용법: 라벨 "Doable today? Pick one way in." 아래 By battery → Energy menu / By room → House map (둘 중 하나), 그리고 All too much? → Rescue. 번호(1, 2, 3) 자리는 그림(배터리 · 집 · 구명환) -- 차례가 아니라 갈림(2쪽 순서도와 같은 구조). "빈칸은 실패가 아니다" | 세 개 모두 |
 | 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(그림 아님, 칸). 방마다 "마지막 리셋: ___" 칸 | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) |
 | 5 | Index | NEW | 전 페이지 목록 | 전 페이지 |
 

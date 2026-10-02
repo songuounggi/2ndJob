@@ -322,9 +322,35 @@ def flow_bg(dots, diamonds):
     return out
 
 
+START_ICON = {   # 3쪽 번호(1 · 2 · 3) 자리 그림 -- 28pt 원 안 14pt, 선 1.4, 섹션 진한색 (10-02 구조 논리 S1)
+    "energy": '<rect x="1.5" y="4" width="10" height="6.5" rx="1.5"/><path d="M13 6v2.5"/><path d="M3.5 6.2v2.2M5.7 6.2v2.2"/>',
+    "house-map": '<path d="M2 7.2 7 2.8l5 4.4V12H2z"/><path d="M5.8 12V9h2.4v3"/>',
+    "rescue": '<circle cx="7" cy="7" r="5.2"/><circle cx="7" cy="7" r="2.2"/><path d="M3.3 3.3 5.4 5.4M10.7 3.3 8.6 5.4M3.3 10.7l2.1-2.1M10.7 10.7 8.6 8.6"/>',
+}
+
+
+def fill_start(page):
+    """3쪽: 번호 원 안의 숫자를 그림으로, 카드 제목을 원고로, 첫 두 카드 위에 "Doable today? Pick one way in." 라벨.
+    카드 자리·모양은 시안 그대로라 배경을 다시 굽지 않는다"""
+    S = C.START_HERE
+    old = [("Check your battery", "energy"), ("Pick one room", "house-map"), ("All too much?", "rescue")]
+    for i, ((t0, tg), (t, _, tg2)) in enumerate(zip(old, S["steps"])):
+        if tg != tg2:
+            raise SystemExit(f"[start] 카드 {i + 1} 목적지가 원고와 다름: {tg} / {tg2}")
+        svg = (f'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" '
+               f'stroke-linecap="round" stroke-linejoin="round">{START_ICON[tg]}</svg>')
+        page = must_replace(page, f'justify-content:center">{i + 1}</span>', f'justify-content:center">{svg}</span>', "start")
+        page = must_replace(page, f'>{t0}</span>', f'>{H.escape(t)}</span>', "start")
+    label = (f'<div style="position:absolute;left:84px;top:119px;height:14px;line-height:14px;{LABEL_CSS}">'
+             f'{H.escape(S["pick"]).upper()}</div>')
+    return page[:page.rfind("</div>")] + label + "</div>"
+
+
 def fill(page, key):
     if key == "flow":
         return fill_flow(page)
+    if key == "start":
+        return fill_start(page)
     if key in dict(C.MY_ROOMS):          # 시안 27쪽 제목 "My room" -> "My room 1" / "My room 2" (v0.11)
         return must_replace(page, ">My room<", f">{dict(C.MY_ROOMS)[key]}<", key)
     if key in ROOM_OF and key != "kitchen":
@@ -365,7 +391,8 @@ def additions(page, key):
     """6단계 써 보기 뒤 사용자 결정(10-01)으로 시안에 더한 것. 모양은 시안에 이미 있는 요소를 그대로 쓴다.
     - 39~90쪽: Wins 제목 옆 "this week"(= Slid 의 "no penalty" 모양) · 제목 오른쪽 "WEEK OF ____" 날짜 칸
     - 7~9쪽: 마지막 카드 아래 "FROM THE ENERGY MENU" 카드 -- 그 배터리의 할 일을 분 별로(누르면 그 일이 있는 쪽)
-    - 11~27쪽 방 카드: 아래 왼쪽 "← Energy menu" 알약(= 7~9쪽 알약, 폭 100)
+    - 11~29쪽 방 카드: 아래 왼쪽 "← Energy menu" 알약(= 7~9쪽 알약, 폭 100)
+    - 11~29쪽 방 카드 · 7~9쪽: "Wins log →" 알약 (10-02, 구조 논리 S2)
     그림자를 받는 카드·알약은 variant_bg 가 디자인 굽기 코드로 배경을 다시 굽는다"""
     if re.fullmatch(r"w\d+", key):
         page = must_replace(page, '<span style="font-size:12px;font-weight:800">Wins</span>',
@@ -393,7 +420,7 @@ def additions(page, key):
                 f'display:flex;align-items:center;justify-content:flex-start;{LABEL_CSS}">{C.LABELS["from_menu"].upper()} · '
                 f'{C.LABELS["tap_one"].upper()}</div>'
                 + "".join(rows))
-        page = page[:page.rfind("</div>")] + card + "</div>"
+        page = page[:page.rfind("</div>")] + card + wins_pill(374, "#537364") + "</div>"
     elif key == "house-map":
         # 9번째 타일 = 빈 방 둘 (v0.11, 10-01 사용자) -- 타일 모양 그대로, 이름 "My rooms", Go 자리에 "Room 1 →" "Room 2 →"
         page = must_replace(page, '<span style="font-size:12.5px;font-weight:800">My room</span>',
@@ -439,8 +466,16 @@ def additions(page, key):
         pill = (f'<a href="#energy" style="position:absolute;left:84px;top:754px;width:100px;height:24px;border-radius:12px;'
                 f'display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800">'
                 f'<span style="margin-right:4px;color:#7D6A28">←</span>{H.escape(pages_p4.title_of("energy"))}</a>')
-        page = page[:page.rfind("</div>")] + pill + "</div>"
+        page = page[:page.rfind("</div>")] + pill + wins_pill(364, "#7D6A28") + "</div>"
     return page
+
+
+def wins_pill(left, arrow_col):
+    """"Wins log →" 알약 (10-02 사용자, 구조 논리 S2): 순서도가 "10분 하고 멈춤 → Wins log" 인데 방 카드·배터리 날 쪽에 길이 없었다.
+    모양 = 시안 루프 쪽(34쪽)의 Wins log 알약(아래 754 · 높이 24 · 모서리 12), 폭은 옆 알약과 같은 100. 그림자는 variant_bg 가 굽는다"""
+    return (f'<a href="#wins" style="position:absolute;left:{left}px;top:754px;width:100px;height:24px;border-radius:12px;'
+            f'display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800">'
+            f'{H.escape(pages_p4.title_of("wins"))}<span style="margin-left:4px;color:{arrow_col}">→</span></a>')
 
 
 def variant_bg(page, key, rel_of, tpl_html):

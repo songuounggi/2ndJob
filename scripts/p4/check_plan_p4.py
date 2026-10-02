@@ -226,6 +226,14 @@ def main(ver):
         if dup:
             fails.append(f"2 flow: 같은 쪽으로 가는 상자가 둘 이상 -- {', '.join(map(str, dup))}쪽 (구조 논리 L2)")
 
+    # 10 구조 논리 L4 (10-02 사용자, S2): 순서도 "그 하나만 하고 멈춤 → Wins log" -- 방 카드 10장 · 배터리 날 3장에서 Wins log 로 가는 길
+    for k in [r[0] for r in C.ROOMS] + [kk for kk, _ in C.MY_ROOMS] + ["day-" + b for b in C.BATTERIES]:
+        if k in secs and not re.search(r'<a href="#wins"[^>]*>[^<]*' + re.escape(pages_p4.title_of("wins")), secs[k]):
+            fails.append(f"{ids.index(k) + 1} {k}: Wins log 로 가는 알약 없음 (구조 논리 L4)")
+    # 11 구조 논리 L1 (10-02 사용자, S1): 3쪽 카드는 둘 중 하나(기운 / 방) + 벅찬 날 갈래라 1 · 2 · 3 번호를 매기지 않는다
+    if "start" in secs and re.search(r'justify-content:center">\d</span>', secs["start"]):
+        fails.append(f"{ids.index('start') + 1} start: 카드에 번호(1, 2, 3) -- 차례가 아니라 갈림이다 (구조 논리 L1)")
+
     print(f"상품 4 기획서 대조 {ver} -- 문구 {len(seen)}개, 쪽 {len(ids)}")
     if unused:
         print(f"  (참고) 판 어디에도 안 쓰인 공용 라벨 {len(unused)}: " + "; ".join(f"{w}:{t}" for w, t in unused))
