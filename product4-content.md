@@ -148,6 +148,27 @@
      괜찮은 수준. 링크: HOME → 5쪽(Index) 의도대로 유지 · 2쪽(How it flows)의 Done enough → 103쪽, All too much? → 94쪽 확인 · 순서도 "Room card" → "Pick a room"
      으로 바꿈 · 질문 상자와 행동 상자가 같은 쪽으로 가는 것은 그대로
 
+### 5-7 구조 논리 검토 (2026-10-02, v0.12 판 -- 2쪽은 새 순서도로 바뀐다고 가정) -- 사용자 결정 대기
+
+`PROCESS.md` 5-7 L1~L10 으로 109쪽을 읽은 결과. L1~L4 는 반드시 고침, 나머지는 결정.
+
+| # | 구분 | 쪽 | 무엇이 안 맞나 |
+|---|---|---|---|
+| S1 | L1 순서 | 3쪽 Start here | 1 Check your battery · 2 Pick one room · 3 All too much? 를 **번호로** -- 1·2 는 둘 중 하나, 3 은 벅찬 날 갈래. 2쪽에서 고친 결함과 같다. 2쪽과 역할도 겹친다(L9) |
+| S2 | L4 길 없음 | 11~29쪽 방 카드 10장, 7~9쪽 배터리 날 | 새 순서도는 "Ten minutes → Wins log" 인데 방 카드·배터리 날 쪽에 Wins log(103쪽)로 가는 길이 없다(루프·구조 모드·스프린트에는 있다) |
+| S3 | L3 글자≠도착 | 6, 8쪽 "Vacuum one room" | 아무 방이라는 말인데 17쪽 Living room 카드로 간다 |
+| S4 | L6 약속≠칸 | 2쪽 새 순서도 "Once a week -- Reset week: one room a day" | "한 주에 한 번" 과 "하루에 방 하나" 가 한 상자에. 인수인계서 v0.3 문구라 design 에 정정 필요 |
+| S5 | L5 두 곳 기록 | 4쪽 House map 타일 "LAST RESET" ↔ 방 카드 "Last reset" | 같은 방의 마지막 리셋을 두 쪽에 적는다 |
+| S6 | L5 두 곳 기록 | 12쪽 Kitchen deep clean ↔ 34쪽 Monthly (fridge · microwave · dishwasher filter), 26쪽 Car deep clean ↔ 35쪽 Seasonal (car kit), 41~92쪽 주마다 "One deep clean" | 깊은 청소가 네 곳. 같은 일이 두 목록에 LAST DONE / MONTH 칸을 따로 가짐 |
+| S7 | L5 두 곳 기록 | 41~92쪽 "Wins this week" ↔ 103쪽 Wins log | 이긴 것을 어디에 적나 |
+| S8 | L9 겹침 | 33쪽 Weekly rotation ↔ 41~92쪽 Reset week | 같은 "방 × 요일" 표. 33쪽이 한 번 정하는 계획이고 주마다 쪽이 체크인지 쪽에 안 적혀 있다 |
+| S9 | L7 수량 | 32쪽 Daily reset, 39쪽 Kids & pets tasks(Pet care 표) | 요일 체크 칸이 한 주치 한 장뿐 -- 52주 플래너 |
+| S10 | L7 수량 | 7~9쪽 배터리 날 | "Today I'll do" 쪽이 배터리마다 한 장 -- 날마다 지우고 쓰는 쪽인지 안 적혀 있다 |
+| S11 | L8 순서 | 5쪽 Index | Weeks(40쪽)가 Routines(31쪽)보다 먼저 -- 탭 순서·쪽 순서와 다르다 |
+| S12 | L6 약속≠칸 | 97쪽 Doom pile triage | "One pile, fifteen minutes" 인데 "Timer set for ___" 칸 (나중에 목록에 있던 것) |
+| S13 | L5 중복 | 96쪽 Guests | "Everything else into one box" 가 줄과 아래 문장에 두 번 (나중에 목록에 있던 것) |
+| S14 | L1 순서 | 2쪽 새 순서도 | Energy menu 에서 고른 일이 루프(36, 37쪽)·깊은 청소 쪽으로 가면 "Stop at Done enough" 가 그 쪽에 없다 |
+
 ### 사용자 결정 대기
 
 | # | 무엇 | 선택지 / 자료 |
