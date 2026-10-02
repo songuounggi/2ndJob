@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.14"     # v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.15"     # v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -252,7 +252,34 @@ def fill_start(page):
         page = must_replace(page, f'>{t0}</span>', f'>{H.escape(t)}</span>', "start")
     label = (f'<div style="position:absolute;left:84px;top:119px;height:14px;line-height:14px;{LABEL_CSS}">'
              f'{H.escape(S["pick"]).upper()}</div>')
+    page = start_setup(page)
     return page[:page.rfind("</div>")] + label + "</div>"
+
+
+def start_setup(page):
+    """3쪽 아래 카드: 옛 "The room that bugs me most" + 9줄 -> "Set up once" (10-02 사용자, L11). 카드 자리·크기는 시안 그대로.
+    쓰는 칸 둘(줄 하나씩) + 다른 쪽으로 가는 줄 둘 -- 빈 방 이름(27, 29쪽 Room name)과 짝 나누기(38쪽)는 그 쪽에 쓴다(L5 같은 기록 두 곳 금지)"""
+    title, hint, fields, links = C.START_HERE["setup"]
+    old = re.search(r'<div style="position:absolute;left:108px;top:496px;display:flex;gap:10px;align-items:baseline">'
+                    r'<span style="font-size:12px;font-weight:800">' + re.escape(C.START_PROMPT[0]) + r'</span>.*?</div>'
+                    r'<div style="position:absolute;left:108px;top:516px;width:452px">(?:<div [^>]*></div>){9}</div>', page)
+    if not old:
+        raise SystemExit("[start] 아래 카드(The room that bugs me most + 9줄)를 못 찾음")
+    head = lambda y, a, b, extra="": (f'<div style="position:absolute;left:108px;top:{y}px;width:452px;display:flex;gap:10px;'
+                                      f'align-items:baseline"><span style="font-size:10.5px;font-weight:800">{H.escape(a)}</span>'
+                                      f'<span style="font-size:8.5px;color:#66716B">{H.escape(b)}</span>{extra}</div>')
+    line = lambda y: (f'<div style="position:absolute;left:108px;top:{y}px;width:452px;box-sizing:border-box;height:26px;'
+                      f'border-bottom:0.6px solid #E3E9E5"></div>')
+    go = lambda k, t: f'<a href="#{k}">{H.escape(t)}<span style="margin-left:4px;color:#537364">→</span></a>'
+    rooms = "".join(go(k, f'{C.LABELS["room"]} {n[-1]}') for k, n in C.MY_ROOMS)
+    right = lambda inner: f'<span style="margin-left:auto;display:flex;gap:14px;font-size:9px;font-weight:800">{inner}</span>'
+    new = (f'<div style="position:absolute;left:108px;top:496px;display:flex;gap:10px;align-items:baseline">'
+           f'<span style="font-size:12px;font-weight:800">{H.escape(title)}</span><span style="font-size:8.5px;color:#66716B">{H.escape(hint)}</span></div>'
+           + head(526, *fields[0]) + line(538)
+           + head(588, *fields[1]) + line(600)
+           + head(660, *links[0], right(rooms))
+           + head(700, *links[1], right(go("who-does-what", pages_p4.title_of("who-does-what")))))
+    return page[:old.start()] + new + page[old.end():]
 
 
 def fill(page, key):
@@ -273,8 +300,42 @@ def fill(page, key):
     if re.fullmatch(r"w\d+", key):
         return fill_week(page, key)
     if key == "dopamine":       # 시안 "podcasts, audiobooks" 가 카드 오른쪽 끝을 넘었다 -> 원고를 줄임 (10-01 사용자)
-        return must_replace(page, ">podcasts, audiobooks<", f">{C.DOPAMINE[2][1][1]}<", key)
+        page = must_replace(page, ">podcasts, audiobooks<", f">{C.DOPAMINE[2][1][1]}<", key)
+        return prefill_cards(page, key)
+    if key in C.PREFILL:
+        return prefill_table(page, key)
     return page
+
+
+ROW_CSS = "height:26px;display:flex;align-items:center;justify-content:flex-start;font-size:10px;font-weight:400;color:#2C3631"   # = 106쪽 Moving 줄
+
+
+def prefill_table(page, key):
+    """빈 표 첫 칸에 원고 PREFILL 을 위에서부터 (10-02 사용자, L11 빈 쪽 시험). 줄 = 시안 표 줄(머리 아래 26pt 간격), 글자 = 106쪽 Moving 줄.
+    첫 칸 폭은 머리 라벨 폭 - 8(다음 칸과 떼기)"""
+    m = re.search(r'<div style="position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;height:22px;[^"]*'
+                  r'letter-spacing:0\.12em[^"]*">(ITEM|THING|TASK)</div>', page)
+    if not m:
+        raise SystemExit(f"[{key}] 표 머리를 못 찾음")
+    x, y, w = float(m.group(1)), float(m.group(2)) + 22, float(m.group(3)) - 8
+    rows = "".join(f'<div style="position:absolute;left:{x:g}px;top:{y + 26 * i:g}px;width:{w:g}px;{ROW_CSS}">{H.escape(t)}</div>'
+                   for i, t in enumerate(C.PREFILL[key]))
+    return page[:page.rfind("</div>")] + rows + "</div>"
+
+
+def prefill_cards(page, key):
+    """101쪽 카드 5장: 카드마다 줄 3개 중 위 두 줄에 예시, 셋째 줄은 빈 줄"""
+    empty = '<div style="box-sizing:border-box;height:26px;border-bottom:0.6px solid #E3E9E5"></div>'
+    blocks = list(re.finditer(r'(<div style="position:absolute;left:[\d.]+px;top:[\d.]+px;width:[\d.]+px">)((?:' + re.escape(empty) + r'){3})</div>', page))
+    if len(blocks) != len(C.PREFILL[key]):
+        raise SystemExit(f"[{key}] 카드 줄 묶음 {len(blocks)} != {len(C.PREFILL[key])}")
+    out, pos = [], 0
+    for b, ex in zip(blocks, C.PREFILL[key]):
+        rows = "".join(empty.replace('"></div>', f';display:flex;align-items:center;font-size:9.5px;color:#2C3631">{H.escape(t)}</div>')
+                       for t in ex) + empty
+        out.append(page[pos:b.start()] + b.group(1) + rows + "</div>")
+        pos = b.end()
+    return "".join(out) + page[pos:]
 
 
 # 시안에 박힌 옛 문구 -> 원고의 새 문구 (10-01 사용자, 써 보기 6단계에서 문구 모순·오타). 새 문구는 원고에 있어야 한다

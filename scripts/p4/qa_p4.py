@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """상품 4 검수 한 번에 (PROCESS.md 5단계 5-1~5-6 + 6단계 dogfood) -- Claude 가 매 빌드 뒤 돌린다.
 
-    python scripts/p4/qa_p4.py v0.14
+    python scripts/p4/qa_p4.py v0.15
 
 하나라도 FAIL 이면 사용자에게 "완료" 라고 보내지 않는다(PROCESS.md 5절 규칙).
 스크롤·렌더 속도(check_scroll_speed)도 여기서 컬러판·흑백판 둘 다 -- 10-01 사용자: "필수 검수로, 네가 검수하는 곳에".
@@ -14,7 +14,7 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-VER = sys.argv[1] if len(sys.argv) > 1 else "v0.14"
+VER = sys.argv[1] if len(sys.argv) > 1 else "v0.15"
 PDF = lambda t: os.path.join(ROOT, "output", "prod4", "planner", VER, f"home-reset_{VER}_{t}-FINAL.pdf")
 
 CHECKS = [

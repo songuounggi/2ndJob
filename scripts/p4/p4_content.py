@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.10"   # v0.10 = 구조 논리 검토(10-02 사용자): 3쪽 번호 빼고 갈림, "Vacuum the living room", "Every week", 순서도 시간은 갈래 상자로   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.11"   # v0.11 = L11 성인 눈높이(10-02 사용자): 빈 표 도구 쪽 5장 미리 채움(PREFILL), 3쪽 아래 칸 = 처음 한 번 쓰는 설정   # v0.10 = 구조 논리 검토(10-02 사용자): 3쪽 번호 빼고 갈림, "Vacuum the living room", "Every week", 순서도 시간은 갈래 상자로   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -30,6 +30,12 @@ START_HERE = {
     # 10-02 사용자(구조 논리 S1): 1 · 2 · 3 번호는 "차례로 다 하라"로 읽혔다 -- 1·2 는 둘 중 하나, 3 은 벅찬 날 갈래(2쪽 순서도와 같은 구조).
     # 번호 자리는 그림(배터리 · 집 · 구명환), 두 카드 위에 "할 만하면 하나를 고른다" 라벨
     "pick": "Doable today? Pick one way in.",
+    # 아래 칸 = 처음 한 번 쓰는 설정 (10-02 사용자, L11 -- 옛 "The room that bugs me most" 9줄). 같은 기록을 두 곳에 두지 않는다(L5):
+    # 빈 방 이름은 27, 29쪽 "Room name" 칸에, 짝 나누기는 38쪽에 -- 여기선 그 쪽으로 가는 링크만
+    "setup": ("Set up once", "the first time you open it",
+              [("The room that bugs me most", "start there next time"),
+               ("When my battery runs highest", "save the big jobs for then")],
+              [("Name your two rooms", "on their own pages"), ("Share the chores?", "split them on paper")]),
     "steps": [
         ("By battery", "Low, medium, or full? Pick a task that fits.", "energy"),
         ("By room", "Tap it on the house map. Ten minutes, then stop.", "house-map"),
@@ -192,6 +198,25 @@ DISHES_LOOP = [("Use", "Keep one cup per person out"),
                ("Put away", "Unload while the kettle boils")]
 WEEKLY_ROTATION_SUB = "One room a day. Missed one? Slide it to the next slot."   # 같은 쪽 카드 "just the next slot" 과 같은 말 (10-01 재시험)
 # 103쪽 Moving or big reset -- 미리 채운 항목 (2026-09-30 사용자: "미리 채운 항목 10~12개 + 빈 줄")
+# 빈 표였던 도구 쪽에 미리 채운 항목 (10-02 사용자, L11 "빈 쪽 시험" -- 106쪽 Moving 과 같은 방식: 예시 + 빈 줄).
+# 논리 정합성(5-7): 104 는 Energy menu 문구 그대로(L8), 99 는 방 카드 단계와 같은 물건(Keys -> Entry "key bowl", Mail -> "desk tray",
+# Remotes · chargers -> Living room), 100 은 다 쓰면 사는 것만(빗자루 · 변기솔 같은 도구는 뺀다), 101 은 카드의 회색 안내와 겹치지 않게
+PREFILL = {
+    "restock": ["Trash bags", "Dish soap", "Dishwasher tabs", "All-purpose spray", "Laundry detergent", "Toilet paper",
+                "Paper towels", "Hand soap", "Sponges", "Wipes"],
+    "where-things-live": ["Keys", "Mail", "Phone chargers", "Remotes", "Scissors", "Batteries", "Tape", "Spare bulbs",
+                          "Reusable bags", "Pens"],
+    "who-does-what": ["Dishes", "Laundry", "Trash and recycling", "Clean the bathroom", "Vacuum", "Change the sheets",
+                      "Groceries", "Wipe the kitchen counter"],
+    "guess-actual": ["Unload and reload the dishwasher", "Fold one basket sitting down", "Clean the toilet", "Change the sheets",
+                     "Vacuum the living room", "Take out one bag of trash", "Clear the kitchen counter", "Wipe the stovetop"],
+    "dopamine": [["One album, start to finish", "A playlist only for cleaning"],      # Soundtrack
+                 ["An audiobook chapter", "A show you've seen before"],             # Something to listen to
+                 ["Someone else in the room", "A friend tidying too"],              # Company
+                 ["A favorite drink", "Ten minutes of a show"],                     # Reward
+                 ["Done before the kettle boils", "Fill one bag, then stop"]],      # Make it a game
+}
+
 BIG_RESET = ["Book the date and the help", "Collect boxes, tape, and markers", "Pack one room a day",
              "Label every box by room", "Pack an open-first box", "Donate what you won't move",
              "Clear out the fridge and freezer", "Update your address everywhere", "Clean each room once it's empty",
@@ -344,6 +369,9 @@ def all_texts():
     out += [(k, t) for k, v in LOOP_PAGES.items() for t in v]
     out += [("daily", k) for k in DAILY_RESET] + [("seasonal", k) for k in SEASONAL]
     out += [("big-reset", t) for t in BIG_RESET]
+    out += [(k, t) for k, v in PREFILL.items() if k != "dopamine" for t in v] + [("dopamine", t) for v in PREFILL["dopamine"] for t in v]
+    st = START_HERE["setup"]
+    out += [("start", st[0]), ("start", st[1])] + [("start", f"{a} {b}") for a, b in st[2] + st[3]]
     return out
 
 

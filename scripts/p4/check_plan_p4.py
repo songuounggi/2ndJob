@@ -234,6 +234,14 @@ def main(ver):
     if "start" in secs and re.search(r'justify-content:center">\d</span>', secs["start"]):
         fails.append(f"{ids.index('start') + 1} start: 카드에 번호(1, 2, 3) -- 차례가 아니라 갈림이다 (구조 논리 L1)")
 
+    # 12 L11 · L5 (10-02 사용자): 3쪽 "Set up once" -- 빈 방 이름 · 짝 나누기는 그 쪽에 쓰게 링크로(같은 기록 두 곳 금지).
+    #    미리 채운 표 문구가 제 쪽에 있는지는 1(all_texts 의 PREFILL)이 본다
+    if "start" in secs:
+        need_links = [k for k, _ in C.MY_ROOMS] + ["who-does-what"]
+        miss = [k for k in need_links if f'href="#{k}"' not in secs["start"]]
+        if miss:
+            fails.append(f"{ids.index('start') + 1} start: Set up once 에서 가는 링크 없음 {miss} (L5 -- 그 쪽에 쓰게)")
+
     print(f"상품 4 기획서 대조 {ver} -- 문구 {len(seen)}개, 쪽 {len(ids)}")
     if unused:
         print(f"  (참고) 판 어디에도 안 쓰인 공용 라벨 {len(unused)}: " + "; ".join(f"{w}:{t}" for w, t in unused))
@@ -246,4 +254,4 @@ def main(ver):
 
 
 if __name__ == "__main__":
-    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.14") else 0)
+    sys.exit(1 if main(sys.argv[1] if len(sys.argv) > 1 else "v0.15") else 0)
