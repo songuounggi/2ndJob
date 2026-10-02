@@ -506,6 +506,9 @@ def howto():
                      + "".join(f"<u>{a}</u>" for a in apps) + "</div>")
     body = f"""{BLOBS}<div class="hw">
       <span class="kicker">HOW IT WORKS</span>
+      <!-- TODO(2026-10-03): "No app to install" 은 노트 앱이 필요한데도
+           아무 뷰어나 된다고 읽힌다. "No new app to learn" 으로 바꾼다.
+           이유와 교체 시점은 listing.md 맨 끝 "고칠 것 (보류)". -->
       <h1>No app to install</h1>
       <div class="sub">It is a hyperlinked PDF. It opens in the note app
         you already use.</div>

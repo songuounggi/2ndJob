@@ -286,3 +286,36 @@ Etsy는 할인 표시가 클릭률에 크게 작용합니다. 정가를 걸고 �
   효과가 확실합니다(`shop.md` 참조). 이 상품의 핵심 기능이 링크 이동이라
   정지 이미지로는 전달이 안 됩니다
 - Seller details — 이미 `Private individual` 로 맞게 되어 있습니다
+
+---
+
+## 고칠 것 (보류) — 리스팅 이미지 `08_howto` 의 `No app to install`
+
+**2026-10-03 사용자 지적.** 이미지 헤드라인이 `No app to install` 인데, 이 상품은
+GoodNotes·Notability 같은 **노트 앱이 필요하다.** 이미지 안에서는 부제와 2단계가
+앱 이름 다섯 개를 보여 주며 해명하지만, **헤드라인은 혼자 읽힌다.**
+
+원래 의도는 "우리 전용 앱을 깔아야 하는 상품이 아니다" 였고 그건 사실이다. 문제는
+**"아무 PDF 뷰어로나 열면 된다" 로 읽힌다**는 것이다. 이 파일 자체에
+`Some basic in-browser PDF viewers ignore internal links` 라고 적혀 있다 --
+iOS 파일·책 앱으로 열면 필기도 링크도 안 된다. 리뷰 0개 숍에서 별 2개 하나는 치명적이다.
+
+**바꿀 문구 (A안):**
+
+```
+HOW IT WORKS
+No new app to learn
+It is a hyperlinked PDF - it opens in the note app you already use,
+like GoodNotes or Notability.
+```
+
+`install` -> `learn` 한 단어다. **"깔 필요 없다"(틀릴 수 있다)** 가
+**"배울 필요 없다"(항상 참)** 가 된다. 주려던 안심은 그대로다.
+
+**언제:** **지금 하지 않는다.** 2026-09-30 에 핀 6장을 올려 효과를 2주간 재는 중이라
+리스팅을 건드리면 변수가 는다(`shop.md` 5-1 "한 번에 하나씩만 바꾼다"). 위험도 낮다 --
+제목에 `GoodNotes` 가 박혀 있어 그 앱이 없는 사람이 사러 올 확률이 낮고, 2건 팔리는 동안
+불만이 없었다. **2주 뒤 제목 실험할 때 리스팅 이미지와 함께 한 번에 교체한다.**
+
+소스는 `scripts/build_mockups.py` 의 `howto()`.
+
