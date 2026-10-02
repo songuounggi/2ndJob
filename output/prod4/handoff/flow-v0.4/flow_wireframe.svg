@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="612" height="792" viewBox="0 0 612 792" font-family="Arial, sans-serif">
+  <rect width="612" height="792" fill="#FFFFFF"/>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M1 1L9 5L1 9" fill="none" stroke="#222" stroke-width="1.6"/>
+    </marker>
+  </defs>
+  <text x="306" y="30" text-anchor="middle" font-size="16" font-weight="700" fill="#222">How it flows -- 2쪽 구조 v0.4 (선만, 디자인 전)</text>
+
+  <g fill="none" stroke="#222" stroke-width="1.6">
+    <!-- 시작 -> 질문 1 -->
+    <line x1="306" y1="76" x2="306" y2="103" marker-end="url(#ar)"/>
+    <!-- 질문 1 갈래 -->
+    <polyline points="231,135 170,135 170,226" marker-end="url(#ar)"/>
+    <polyline points="381,135 450,135 450,236" marker-end="url(#ar)"/>
+    <!-- 질문 2 갈래 -->
+    <polyline points="170,286 170,300 100,300 100,350" marker-end="url(#ar)"/>
+    <polyline points="170,300 245,300 245,350" marker-end="url(#ar)"/>
+    <!-- 두 고르기 -> 10분 -->
+    <polyline points="100,394 100,420 170,420 170,456" marker-end="url(#ar)"/>
+    <polyline points="245,394 245,420 170,420"/>
+    <!-- 10분 -> Wins / Rescue -> Wins -->
+    <polyline points="170,500 170,560 306,560 306,586" marker-end="url(#ar)"/>
+    <polyline points="450,296 450,560 306,560"/>
+  </g>
+
+  <!-- 링크 상자(실선) / 링크 아님(점선) / 질문(◇) -->
+  <g fill="#FFFFFF" stroke="#222" stroke-width="1.6">
+    <rect x="226" y="44" width="160" height="32" rx="16"/>
+    <polygon points="306,105 381,135 306,165 231,135"/>
+    <polygon points="170,228 245,257 170,286 95,257"/>
+    <rect x="30" y="352" width="140" height="42" rx="6"/>
+    <rect x="180" y="352" width="130" height="42" rx="6"/>
+    <rect x="70" y="458" width="200" height="42" rx="6" stroke-dasharray="5 4"/>
+    <rect x="375" y="238" width="150" height="58" rx="6"/>
+    <rect x="231" y="588" width="150" height="46" rx="6"/>
+    <rect x="206" y="680" width="200" height="46" rx="6"/>
+  </g>
+
+  <g fill="#222" font-size="12" text-anchor="middle">
+    <text x="306" y="65" font-weight="700">Open the planner → p.3</text>
+    <text x="306" y="132" font-weight="700">How's today?</text>
+    <text x="306" y="148" font-size="10" fill="#666">지금 어때?</text>
+    <text x="170" y="254" font-weight="700">How to pick?</text>
+    <text x="170" y="270" font-size="10" fill="#666">어떻게 고를까?</text>
+    <text x="100" y="370" font-weight="700">Energy menu → p.6</text>
+    <text x="100" y="385" font-size="10" fill="#666">By battery, 2 to 20 minutes</text>
+    <text x="245" y="370" font-weight="700">House map → p.4</text>
+    <text x="245" y="385" font-size="10" fill="#666">One room, ten minutes</text>
+    <text x="170" y="476" font-weight="700">Do that one thing, then stop</text>
+    <text x="170" y="491" font-size="10" fill="#666">(링크 없음 -- 두 갈래 공통)</text>
+    <text x="450" y="260" font-weight="700">Rescue mode → p.94</text>
+    <text x="450" y="275" font-size="10" fill="#666">Five steps, then stop</text>
+    <text x="450" y="288" font-size="10" fill="#666">Or tap SOS on any page</text>
+    <text x="306" y="608" font-weight="700">Wins log → p.103</text>
+    <text x="306" y="623" font-size="10" fill="#666">It counts</text>
+    <text x="306" y="700" font-weight="700">Every week → p.40</text>
+    <text x="306" y="715" font-size="10" fill="#666">Reset week: one room a day (따로 한 줄)</text>
+  </g>
+
+  <!-- 갈래 이름 -->
+  <g font-size="11" font-weight="700" fill="#222">
+    <text x="178" y="190">Doable</text>
+    <text x="178" y="204" font-size="10" font-weight="400" fill="#666">할 만하다</text>
+    <text x="442" y="190" text-anchor="end">All too much</text>
+    <text x="442" y="204" text-anchor="end" font-size="10" font-weight="400" fill="#666">너무 벅차다</text>
+  </g>
+
+  <!-- 범례 -->
+  <g font-size="10" fill="#444">
+    <rect x="40" y="752" width="26" height="14" rx="3" fill="none" stroke="#222" stroke-width="1.4"/>
+    <text x="72" y="763">누르면 그 쪽으로 (링크 6개 = 쪽 6개)</text>
+    <rect x="262" y="752" width="26" height="14" rx="3" fill="none" stroke="#222" stroke-width="1.4" stroke-dasharray="4 3"/>
+    <text x="294" y="763">링크 없음 (할 일)</text>
+    <polygon points="418,759 430,752 442,759 430,766" fill="none" stroke="#222" stroke-width="1.4"/>
+    <text x="448" y="763">질문 (링크 없음)</text>
+  </g>
+</svg>
