@@ -15,6 +15,28 @@ output/prod1/*
 # 만든 방법이 기록에 없어 다른 PC 에서 다시 뽑을 수 없다(2026-09-24).
 !output/prod1/listing_v815/
 
+# 리스팅 · 핀 이미지 최종본은 PC 사이를 따라가게 (2026-10-03 사용자: "맨땅에서 다시 만드는 것보다 받아서 고치는 게 낫다").
+# 어차피 Etsy · 핀터레스트에 공개되는 그림이다. 옛 시안(draft 묶음)은 올리지 않는다 -- 상품 3 listing 만 318MB.
+# PDF 는 git 에 넣지 않는다(판마다 통째로 역사에 쌓이고 되돌릴 수 없다) -- 저장소가 비공개가 된 뒤 GitHub Releases 로.
+!output/prod2/
+output/prod2/*
+!output/prod2/listing_student/
+!output/prod3/
+output/prod3/*
+!output/prod3/upload/
+output/prod3/upload/*
+!output/prod3/upload/listing-images-v0.55/
+!output/prod3/upload/listing-images-v0.56/
+!output/prod3/upload/listing-images-v0.60/
+!output/prod4/
+output/prod4/*
+!output/prod4/listing/
+output/prod4/listing/*
+!output/prod4/listing/draft-v0.6/
+!output/prod4/pinterest/
+output/prod4/pinterest/*
+!output/prod4/pinterest/draft-v0.2/
+
 # 검수용 임시 렌더
 scratch_*.png
 
@@ -27,3 +49,6 @@ __pycache__/
 # 작업까지 쓸어담은 적이 있다.
 scratchpad_*
 dom_tmp.html
+# 시안 폴더 안 _pages = 판매 PDF 쪽을 그대로 렌더한 그림 -- 저장소가 공개라 올리지 않는다(빌드 뒤 시안 스크립트가 다시 만든다)
+output/prod4/listing/draft-v0.6/_pages/
+output/prod4/pinterest/draft-v0.2/_pages/

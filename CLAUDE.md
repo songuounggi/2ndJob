@@ -130,6 +130,11 @@ $1~3 초저가 판에는 들어가지 않는다(수만 건 숍들의 자리, 고
   집 PC     C:\Users\sBrain\2ndJob
 ```
 
+> **저장소가 공개(public)다 -- 2026-10-03 확인 (로그인 없이 API 로 보임).** 스크립트 · 원고 · design 시안 zip 까지 누구나 받는다.
+> **비공개로 바꾸는 것은 사용자 몫**(GitHub Settings → Danger Zone → Change visibility). 바뀌기 전에는 **판매 PDF · 쪽 렌더 그림(_pages) ·
+> 쪽 그림이 든 design 전달 묶음을 git 에도 Releases 에도 올리지 않는다.** 리스팅 · 핀 이미지(어차피 공개되는 그림)만 git 에 있다(.gitignore 예외).
+> PDF 는 git 에 넣지 않는다 -- 판마다 통째로 역사에 쌓이고 되돌릴 수 없다. 비공개가 된 뒤 GitHub Releases 로(같은 날 사용자 결정)
+
 **Python 도 PC 마다 정해 둔다** (2026-09-24). 집 PC 에는 3.10·3.11 이 둘 다
 있어 PATH 순서가 바뀌자 패키지 없는 쪽이 잡혔다(`No module named pypdfium2`).
 
