@@ -287,7 +287,7 @@
 | # | 페이지 | 구분 | 내용 | 링크 |
 |---|---|---|---|---|
 | 1 | 표지 | NEW | `The ADHD Home Reset` / `clean by energy, not by schedule` | → 2 |
-| 2 | **How it flows** (순서도) | NEW (09-30) | 배터리 → Energy menu → 방 고르기("Pick a room" -- 10-02, 옛 "Room card") → Done enough → Wins / All too much? → Rescue → Wins / 매주 Reset week. 문구 `p4_content.FLOW` | 상자마다 그 페이지로. 질문 상자와 행동 상자가 같은 쪽으로 가는 것(Check your battery·Energy menu → 6쪽, All too much?·Rescue mode → 94쪽, Done enough·Wins log → 103쪽)은 의도 -- 어느 상자를 눌러도 반응 (10-02 사용자) |
+| 2 | **How it flows** (순서도) | NEW (09-30), **구조 바꿈 (10-02 사용자)** | 갈림 순서도: Open the planner → ◇How's today? → Doable: ◇How to pick? → Energy menu(6쪽) / House map(4쪽) → Ten minutes · Stop at Done enough → Wins log / All too much: Rescue mode(94쪽) → Wins log · 따로 Once a week(40쪽). 문구 `p4_content.FLOW`. 디자인은 claude.ai/design 에 맡김(인수인계서 `product4-design-handoff.md` v0.3). **v0.12 판은 옛 구조(상자 9개)** -- 시안이 오면 v0.13 | 링크 상자 6개 = 쪽 6개(3, 6, 4, 94, 103, 40쪽). 질문·갈래 이름·Ten minutes 는 링크 없음. 같은 쪽으로 가는 상자 금지 |
 | 3 | **Start here** | NEW | 30초 사용법 세 줄: ① 배터리 고르기 → Energy menu ② 방 고르기 → House map ③ 엉망이면 → Rescue. "빈칸은 실패가 아니다" | 세 개 모두 |
 | 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(그림 아님, 칸). 방마다 "마지막 리셋: ___" 칸 | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) |
 | 5 | Index | NEW | 전 페이지 목록 | 전 페이지 |

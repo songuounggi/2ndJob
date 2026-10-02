@@ -45,9 +45,9 @@ BAKE_JS = r"""async ({C, pg}) => {
  x.fillStyle=g;x.beginPath();x.arc(cx,cy,ry,0,Math.PI*2);x.fill();x.restore();
  if(pg.sos){x.save();x.shadowColor=hex(C.d,0.18);x.shadowBlur=6*K;x.shadowOffsetY=2*K;rr(548,30,36,18,9);x.fillStyle=C.t;x.fill();x.restore();}
  pg.rects.forEach(q=>{x.fillStyle=q.ban?C.w2:'#FFFFFF';
-  const pth=()=>{x.beginPath();x.roundRect(q.x*K,q.y*K,q.w*K,q.h*K,q.r*K);};
-  x.save();x.shadowColor='rgba(40,60,55,0.07)';x.shadowBlur=34*K;x.shadowOffsetY=14*K;pth();x.fill();x.restore();
-  x.save();x.shadowColor='rgba(40,60,55,0.07)';x.shadowBlur=4*K;x.shadowOffsetY=1*K;pth();x.fill();x.restore();
+  const pth=()=>{x.beginPath();if(q.rot){const cx=(q.x+q.w/2)*K,cy=(q.y+q.h/2)*K;x.translate(cx,cy);x.rotate(q.rot*Math.PI/180);x.translate(-cx,-cy);}
+   x.roundRect(q.x*K,q.y*K,q.w*K,q.h*K,q.r*K);};
+  (q.s||[[0.07,34,14],[0.07,4,1]]).forEach(s=>{x.save();x.shadowColor='rgba(40,60,55,'+s[0]+')';x.shadowBlur=s[1]*K;x.shadowOffsetY=s[2]*K;pth();x.fill();x.restore();});
   if(q.ban){x.save();pth();x.clip();const lg=x.createLinearGradient(q.x*K,0,(q.x+q.w)*K,0);lg.addColorStop(0,C.w1);lg.addColorStop(1,C.w2);x.fillStyle=lg;x.fillRect(q.x*K,q.y*K,q.w*K,q.h*K);
     const rg=x.createRadialGradient((q.x+q.w*0.8)*K,q.y*K,0,(q.x+q.w*0.8)*K,q.y*K,160*K);rg.addColorStop(0,'rgba(255,255,255,0.45)');rg.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=rg;x.fillRect(q.x*K,q.y*K,q.w*K,q.h*K);x.restore();}
  });

@@ -19,7 +19,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.8"   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.9"   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -35,20 +35,23 @@ START_HERE = {
     "note": "Blank boxes are normal. No streaks, no catching up.",
 }
 
-# 2쪽 순서도 (2026-09-30 사용자 제안). 칸마다 링크. 칸 문구는 Start here·페이지 이름에서 온다
+# 2쪽 순서도 (2026-09-30 사용자 제안, 10-02 갈림 순서도로 다시 -- 사용자).
+# 옛 판은 질문 상자와 답 상자가 같은 쪽으로 가는 쌍이 셋이고, 둘 중 하나인 "기운으로 / 방으로"를 한 줄로 이어 순서도가 아니었다.
+# 규칙: 질문(◇)·갈래 이름·멈춤 단계는 링크 없음. 링크 상자 하나 = 쪽 하나(같은 쪽으로 가는 상자 둘 금지 -- check_plan_p4 9)
 FLOW = {
-    "title": "How it flows", "sub": "Tap any step to go there.",
-    "boxes": {   # key: (제목, 한 줄, 링크 대상)
+    "title": "How it flows", "sub": "Start at the top. Tap a page name to go there.",
+    "ask": {"today": "How's today?", "pick": "How to pick?"},          # ◇ 질문 두 개
+    "branch": {"ok": "Doable", "sos": "All too much"},                  # 첫 질문의 두 갈래
+    "boxes": {   # key: (제목, 한 줄, 링크 대상) -- 링크 상자만
         "open": ("Open the planner", "", "start"),
-        "battery": ("Check your battery", "Low, medium, or full", "energy"),
-        "sos": ("All too much?", "Tap SOS on any page", "rescue"),
-        "energy": ("Energy menu", "Pick by minutes", "energy"),
+        "energy": ("Energy menu", "By battery and minutes", "energy"),
+        "room": ("House map", "By room", "house-map"),
         "rescue": ("Rescue mode", "Five steps, then stop", "rescue"),
-        "room": ("Pick a room", "Ten-minute reset", "house-map"),   # 방 카드 10장 -> 고르는 곳(집 지도). 3쪽 "Pick one room" 과 같은 말 (10-02 사용자)
-        "done": ("Done enough", "Stop there", "wins"),     # 끝낸 뒤 갈 곳 = 다음 칸 Wins log (10-01 사용자, 써 보기 6단계)
         "wins": ("Wins log", "It counts", "wins"),
         "weeks": ("Once a week", "Reset week: one room a day", "weeks"),
     },
+    "step": ("Ten minutes", "Stop at Done enough"),                     # 고른 뒤 할 일 -- 쪽이 아니라 링크 없음
+    "sos_note": "Or tap SOS on any page",
 }
 
 # ------------------------------------------------------------------- 방 --
@@ -313,6 +316,8 @@ def all_texts():
     """(어디, 문구) 전부"""
     out = [("cover", t) for t in COVER]
     out += [("flow", FLOW["title"]), ("flow", FLOW["sub"])] + [("flow", f"{a} {b}".strip()) for a, b, _ in FLOW["boxes"].values()]
+    out += [("flow", t) for t in list(FLOW["ask"].values()) + list(FLOW["branch"].values())]
+    out += [("flow", " ".join(FLOW["step"])), ("flow", FLOW["sos_note"])]
     out += [("start", START_HERE["title"]), ("start", START_HERE["sub"]), ("start", START_HERE["note"])]
     out += [("start", a + " " + b) for a, b, _ in START_HERE["steps"]]
     for key, name, steps, done, tools, deep in ROOMS:
