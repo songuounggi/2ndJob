@@ -120,7 +120,7 @@ def images():
                                 pad(P("flow"), 620, 760, 700, 2))))
     # 06 탭 여섯
     tabs = ["index", "rooms", "routines", "tools"]
-    out.append(("06_tabs", html("lavender", "SIX TABS", "Every page is one tap away",
+    out.append(("06_tabs", html("lavender", "SIX TABS", "Every section is one tap away",
                                 " · ".join(["Home", "Energy", "Rooms", "Routines", "Weeks", "Tools"]), [],
                                 "".join(pad(P(k, 1.8), 250 + i * 350, 860 + (i % 2) * 60, 380, 2 + i, "pad sm") for i, k in enumerate(tabs)))))
     # 07 흑백 인쇄판

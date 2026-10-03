@@ -106,8 +106,8 @@ For personal use. Please do not resell or redistribute the files.
 | 항목 | 값 |
 |---|---|
 | 정가 | **$8.99** |
-| 런칭 세일 | Etsy 세일은 **정수 %** 라 $6.99 딱 맞는 값이 없다 → **22% = $7.01** 또는 **23% = $6.92** (결정 필요) |
-| 기간 | 결정 필요 (상품 3 은 30일) |
+| 런칭 세일 | Etsy 세일은 **정수 %** 라 $6.99 딱 맞는 값이 없다 → **22% = $7.01** 또는 **23% = $6.92** (결정 필요 -- **Claude 추천 23% $6.92**: 맨 앞자리가 6 이라 "$7 밑"으로 읽히고, 원래 목표 $6.99 와 같은 쪽. $7.01 은 "$7 넘음"에 끝자리 .01 이 어색하다. 건당 순익 차이 약 $0.08) |
+| 기간 | **30일** (2026-10-03 사용자 결정 -- 상품 3 과 같게). 시작일 = 발행일 |
 
 ## 파일 — 2개 (Etsy 에서 파일명은 구매자에게 보이고 못 고친다, `shop.md` 5-5: 70자 이내, 영숫자·`.`·`_`·`-`)
 
@@ -117,6 +117,14 @@ For personal use. Please do not resell or redistribute the files.
 | 흑백 인쇄판 | `The-ADHD-Home-Reset-Printable-Black-and-White.pdf` | `…_BW-FINAL.pdf` |
 
 ## 리스팅 사진 — 10장 계획
+
+**▶ 최종 후보 (2026-10-03 집 PC): `output/prod4/listing/design-final-v1.1/01_hero.jpg ~ 10_files.jpg`** -- claude.ai/design 최종판
+(`Prod 4/The ADHD Home Reset 프로젝트.zip` -> `src/p4_listing_design/`, 인수인계 `00_HANDOFF.md`)을 `python scripts/p4/export_listing_p4.py` 로
+실제 브라우저 캡처(2000x2000, JPG q90, 장당 520~570KB). 검사 `python scripts/p4/check_listing_images_p4.py design-final-v1.1` PASS.
+design 원본 그대로 뽑은 것은 `design-final-v1.0`. **v1.1 에서 Claude 가 고친 것 -- 06 한 장만:** ① 큰 제목 `Every page is one tap away`
+-> **`Every section is one tap away`** (거짓이었다 -- 탭 한 번은 섹션까지, 106쪽 같은 쪽은 탭 -> 목록 두 번. 상품 2 에서도 같은 문구가 거짓으로
+걸렸다, `product2-listing.md`) ② 오른쪽 탭 목록 카드 안 여백 18->10 · 간격 22->12px -- TOOLS 줄이 PC 검색 4:3 자르기 아래(1750)를 넘었다(잉크 1773~1865).
+검사는 v1.0 에서 3개 FAIL(06 TOOLS 두 줄 · 금지 문구), v1.1 에서 PASS 확인. 나머지 9장은 v1.0 과 픽셀이 같다. 아래 draft-v0.6 은 지난 시안(기록)
 
 **시안 draft-v0.6 (10-01, 사용자 확인 대기 -- v0.5 와 같은 구성, 판 v0.12 109쪽으로 다시 찍음)**: `output/prod4/listing/draft-v0.6/01_hero.png ~ 10_files.png` (한눈에: `_contact_sheet.png`).
 `python scripts/p4/listing_images_p4.py` -- 판매 PDF v0.12 쪽을 렌더해 2000x2000 에 배치. 상품 1 대표 사진 틀(크림 바탕 · 배지 · 큰 제목 ·
@@ -135,7 +143,7 @@ For personal use. Please do not resell or redistribute the files.
 | 03 | `03_rooms` | Ten minutes, then stop |
 | 04 | `04_rescue` | For when it is all too much |
 | 05 | `05_flow` | One page shows the whole system |
-| 06 | `06_tabs` | Every page is one tap away |
+| 06 | `06_tabs` | ~~Every page is one tap away~~ (거짓 -- 최종은 Every section is one tap away) |
 | 07 | `07_print` | Black & white for paper |
 | 08 | `08_weeks` | Skip a week. Nothing to catch up on. |
 | 09 | `09_inside` | 109 pages, six sections |
