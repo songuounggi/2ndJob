@@ -152,7 +152,8 @@ def main(ver):
         for top, t in re.findall(r'<div style="position:absolute;left:[\d.]+px;top:([\d.]+)px;[^"]*">(\d{1,3})</div>', body):
             if top in tops:                                                          # 같은 줄(10·29·91쪽 표)
                 nums += 1
-                dest = [ids.index(h) + 1 for h in tops[top] if h in ids and not h.startswith("deep-")]
+                # 10쪽은 v0.18 부터 깊은 청소 번호 칸도 있다(10-03 A안) -- 어느 칸이 어느 번호인지는 15 에서 칸별로 잰다
+                dest = [ids.index(h) + 1 for h in tops[top] if h in ids and (k == "rooms" or not h.startswith("deep-"))]
                 if dest and int(t) not in dest:
                     fails.append(f"{ids.index(k) + 1} {k}: 번호 {t} 인데 그 줄 링크는 {dest}쪽")
     want = [ids.index(s) + 1 for s in ("energy", "rooms", "routines", "tools")]     # 섹션 첫 쪽 번호 (10-01 사용자)
@@ -292,6 +293,20 @@ def main(ver):
         got = re.findall(r'<a href="#([\w-]+)" class="mini-tile"', r)
         if got != ["weeks", "house-map"] or C.LABELS["then_weeks"] not in r:
             fails.append(f"{ids.index('rotation') + 1} rotation: 아래 Then 카드(Weeks · House map 칸) 없음 {got} (10-03 A안)")
+    if "rooms" in secs:     # 10쪽: 방 쪽 번호와 깊은 청소 쪽 번호가 각자 링크 옆에 (10-03 A안 -- PAGE 가 deep clean 옆이라 오해)
+        r = secs["rooms"]
+        bad = []
+        for key in [x[0] for x in C.ROOMS] + [x[0] for x in C.MY_ROOMS]:
+            top = re.search(r'<a href="#' + key + r'" style="position:absolute;left:108px;top:(\d+)px', r)
+            if not top:
+                bad.append(key); continue
+            t = top.group(1)
+            a = re.search(r'left:330px;top:' + t + r'px;[^"]*">(\d+)<', r)
+            b = re.search(r'left:510px;top:' + t + r'px;[^"]*">(\d+)<', r)
+            if not a or not b or int(a.group(1)) != ids.index(key) + 1 or int(b.group(1)) != ids.index("deep-" + key) + 1:
+                bad.append(key)
+        if bad or "M410,182" in r:
+            fails.append(f"{ids.index('rooms') + 1} rooms: 번호 두 칸(방 쪽 · 깊은 청소 쪽)이 아님 {bad[:3]} · 3열 왼쪽 선 {'M410,182' in r} (10-03 A안)")
     wk = [k for k in secs if re.fullmatch(r"w\d+", k)]
     nowin = [k for k in wk if 'href="#wins" class="mini-tile"' not in secs[k] or C.LABELS["wins_tile"] not in H.unescape(secs[k])]
     if nowin:

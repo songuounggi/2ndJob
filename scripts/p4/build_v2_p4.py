@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -617,6 +617,19 @@ def additions(page, key):
         page = must_replace(page, "M410,182 V408 M510,182 V408 ", "M410,182 V434 M510,182 V434 ", key)
         page = must_replace(page, "left:84px;top:138px;width:500px;height:292px;",
                             "left:84px;top:138px;width:500px;height:318px;", key)
+        # 10-03 사용자 A안: PAGE 가 deep clean 바로 옆이라 "deep clean 이 그 쪽" 으로 읽혔다(실제는 다음 쪽) -> 번호 두 칸
+        # ROOM | PAGE(방 카드) | DEEP CLEAN | PAGE(깊은 청소). 3열(DEEP CLEAN) 왼쪽 세로선은 뺀다 -- 대칭 (사용자)
+        page = re.sub(r'left:108px;top:(\d+)px;width:302px;', r'left:108px;top:\1px;width:222px;', page)   # ROOM 머리 · 방 이름 칸
+        hdr = re.search(r'<div style="position:absolute;left:510px;top:156px;width:50px;([^"]*)">PAGE</div>', page)
+        if not hdr:
+            raise SystemExit("[rooms] PAGE 머리를 못 찾음")
+        page = page.replace(hdr.group(0), f'<div style="position:absolute;left:330px;top:156px;width:50px;{hdr.group(1)}">PAGE</div>' + hdr.group(0))
+        nums = list(re.finditer(r'<div style="position:absolute;left:510px;top:(\d+)px;width:50px;([^"]*)">(\d+)</div>', page))
+        if len(nums) != len(C.ROOMS) + len(C.MY_ROOMS):
+            raise SystemExit(f"[rooms] 번호 칸 {len(nums)} != {len(C.ROOMS) + len(C.MY_ROOMS)}")
+        for m in reversed(nums):
+            page = page[:m.start()] + f'<div style="position:absolute;left:330px;top:{m.group(1)}px;width:50px;{m.group(2)}">{m.group(3)}</div>' + page[m.start():]
+        page = must_replace(page, "M410,182 V434 M510,182 V434 ", "M510,182 V434 ", key)
     elif key == "index":
         # 5쪽 목차 Rooms 칸에 My room 2 줄 (v0.11). 왼쪽 카드(628)는 위에서 흘러 채우는 구조라 줄 하나(20)가 들어간다
         row = re.search(r'(<a href="#" style="display:flex;justify-content:space-between;align-items:center;height:20px;'
@@ -786,13 +799,19 @@ def renumber(page, key, order):
         return (f'<a href="#{dest}"' + re.sub(r'(<span style="[^"]*">)(\d{1,3})(</span>)',
                                                  lambda x: x.group(1) + str(order.index(dest) + 1) + x.group(3), inner) + "</a>")
     page = re.sub(r'<a href="#([^"]+)"(.*?)</a>', in_link, page, flags=re.S)
-    tops = {}
+    tops, deeps = {}, {}
     for dest, top in re.findall(r'<a href="#([^"]+)" style="position:absolute;left:[\d.]+px;top:([\d.]+)px', page):
         if not dest.startswith("deep-") and dest in order:
             tops.setdefault(top, dest)
-    return re.sub(r'(<div style="position:absolute;left:[\d.]+px;top:([\d.]+)px;[^"]*">)(\d{1,3})(</div>)',
-                  lambda m: m.group(1) + str(order.index(tops[m.group(2)]) + 1) + m.group(4) if m.group(2) in tops else m.group(0),
-                  page)
+        elif dest.startswith("deep-") and dest in order:
+            deeps.setdefault(top, dest)
+
+    def num(m):
+        left, top = m.group(2), m.group(3)
+        if key == "rooms" and left == "510" and top in deeps:      # 10쪽 오른쪽 PAGE = 깊은 청소 쪽 (10-03 A안)
+            return m.group(1) + str(order.index(deeps[top]) + 1) + m.group(5)
+        return m.group(1) + str(order.index(tops[top]) + 1) + m.group(5) if top in tops else m.group(0)
+    return re.sub(r'(<div style="position:absolute;left:([\d.]+)px;top:([\d.]+)px;[^"]*">)(\d{1,3})(</div>)', num, page)
 
 
 def card_overlays(page, key):

@@ -9,11 +9,10 @@
 ### ▶▶ 10-03 집 PC -- v0.18 (빈 칸 채우기) · 리스팅 사진 확정
 
 **v0.18 = v0.17 + 시안과 달리 휑해진 4곳 채우기 (10-03 사용자가 iPad 에서 찾음, 안을 그림으로 고름):** 4쪽 House map B안(방 그림 + Done enough) ·
-Energy menu 의 Today's pick A안(배터리 날 옅은 칸 셋, 6쪽) · Weekly rotation 아래 Then 카드 A안(Weeks · House map, 33쪽) · Reset week 의 Wins 칸 A안(별 + Wins log, 41~92쪽) · Guests 아래 배너 되살림(96쪽, S13 되돌림). 검사 check_plan 15 (v0.17 에서 4개 FAIL 역검증).
+Energy menu 의 Today's pick A안(배터리 날 옅은 칸 셋, 6쪽) · Weekly rotation 아래 Then 카드 A안(Weeks · House map, 33쪽) · Reset week 의 Wins 칸 A안(별 + Wins log, 41~92쪽) · Guests 아래 배너 되살림(96쪽, S13 되돌림). Rooms 표 번호 두 칸(10쪽 -- ROOM · PAGE · DEEP CLEAN · PAGE, 3열 왼쪽 세로선 뺌. PAGE 가 deep clean 옆이라 "deep clean 이 방 카드 쪽"으로 읽혔다). 검사 check_plan 15 (v0.17 에서 4개 FAIL 역검증).
 비교 그림: `output/prod4/preview/housemap-options/` · `energy-options/` · `p33-p41-options/`, 시안 38장 대비 `output/prod4/preview/design-vs-v0.17/`.
 > **경위 기록:** v0.13~v0.17 의 구조 논리 수정(S5 · R3 · R1 · S7)이 쪽 모양을 바꿨는데 전·후 그림 없이 들어갔다 -- CLAUDE.md 에 규칙 추가(10-03).
-**남은 것:** 10쪽 Rooms 표 -- PAGE 번호(방 카드 쪽)가 "deep clean →" 옆에 있어 deep clean 이 그 쪽으로 가는 것처럼 읽힌다(실제는 다음 쪽). 안을 그려 사용자 확인 /
-iPad 7단계 / 리스팅 사진은 확정(`listing-p4.md` 사진 절, v1.2).
+**남은 것:** iPad 7단계 / 리스팅 사진은 확정(`listing-p4.md` 사진 절, v1.2).
 
 ### ▶▶ 집에서 바로 이어서 (2026-10-02 18:00 회사 PC 에서 멈춤)
 
