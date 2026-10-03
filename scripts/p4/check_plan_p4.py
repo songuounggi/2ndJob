@@ -310,6 +310,13 @@ def main(ver):
                 bad.append(key)
         if bad or "M510,182" in r or "M410,182" not in r:
             fails.append(f"{ids.index('rooms') + 1} rooms: 번호 두 칸(방 쪽 · 깊은 청소 쪽)이 아님 {bad[:3]} · 4열 왼쪽 선 {'M510,182' in r} (10-03 A안)")
+    # 흰 미니카드 그림자 그림(10-03): 흰 바탕 그림이라 미니카드보다 위로 올라가면 카드 머리글(Today's pick · Then · Wins)을 덮는다
+    # (첫 빌드에서 실제로 덮었다). 그림 윗변 = 미니카드 윗변 - 4 이내
+    for k, body in secs.items():
+        tile_tops = [int(t) for t in re.findall(r'class="(?:today|mini|setup)-tile" style="(?:border:[^;]*;)?position:absolute;left:\d+px;top:(\d+)px', body)]
+        for t in re.findall(r'class="tile-shadow" src="[^"]*" alt="" style="position:absolute;left:\d+px;top:(\d+)px', body):
+            if not any(tt - 4 <= int(t) <= tt for tt in tile_tops):
+                fails.append(f"{ids.index(k) + 1} {k}: 미니카드 그림자 그림이 미니카드 위로 올라가 머리글을 덮을 수 있다 (top {t}, 미니카드 {tile_tops})")
     wk = [k for k in secs if re.fullmatch(r"w\d+", k)]
     nowin = [k for k in wk if 'href="#wins" class="mini-tile"' not in secs[k] or C.LABELS["wins_tile"] not in H.unescape(secs[k])]
     if nowin:

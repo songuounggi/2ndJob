@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -284,7 +284,7 @@ def start_setup(page):
     # My rooms 칸은 갈 곳이 둘이라 칸 전체가 링크가 아니고 안에 Room 1 → · Room 2 → (누르는 것 하나 = 쪽 하나)
     ink, tint = "#537364", TODAY_TILE_BG
     field = lambda x, a, b: (f'<div class="setup-field" style="position:absolute;left:{x}px;top:522px;width:218px;height:86px;border-radius:10px;'
-                             f'background:#F3F6F4;box-sizing:border-box;padding:10px 12px;display:flex;flex-direction:column">'
+                             f'background:{TODAY_TILE_BG};box-sizing:border-box;padding:10px 12px;display:flex;flex-direction:column">'   # 10-03 사용자: 회색 -> 옅은 녹색
                              f'<div style="font-size:10px;font-weight:800">{H.escape(a)}</div>'
                              f'<div style="margin-top:2px;font-size:8px;color:#66716B">{H.escape(b)}</div>'
                              # 10-03 사용자: 적는 칸인데 쓸 줄이 없어 쓰는 곳인지 몰랐다 -> 칸 아래에 쓰는 줄 하나
@@ -294,15 +294,15 @@ def start_setup(page):
     arrow = f'<span style="margin-left:4px;color:{ink}">→</span>'
     tile_in = lambda k, a, b, arr: (f'{ic(k)}<span style="margin-top:6px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(a)}{arr}</span>'
                                     f'<span style="margin-top:2px;font-size:8.5px;font-weight:600;line-height:1.35;color:#66716B">{H.escape(b)}</span>')
-    box = f'top:624px;width:218px;height:120px;border-radius:12px;background:{tint};box-sizing:border-box;padding:12px;display:flex;flex-direction:column'
+    card3 = (84, 478, 500, 290)
     # "Room&nbsp;1": 보통 빈칸이면 화살표 묶음이 마지막 낱말 "1" 만 감싸 쪽 번호처럼 읽힌다(check_plan 4 가 1 != 27 로 걸었다)
     rooms = "".join(f'<a href="#{k}" style="white-space:nowrap">{C.LABELS["room"]}&nbsp;{n[-1]}{arrow}</a>' for k, n in C.MY_ROOMS)
     new = (f'<div style="position:absolute;left:108px;top:496px;display:flex;gap:10px;align-items:baseline">'
            f'<span style="font-size:12px;font-weight:800">{H.escape(title)}</span><span style="font-size:8.5px;color:#66716B">{H.escape(hint)}</span></div>'
            + field(108, *fields[0]) + field(342, *fields[1])
-           + f'<div class="setup-tile" style="position:absolute;left:108px;{box}">{tile_in("room", *links[0], "")}'
+           + tile_shadow([(108, 624, 218, 120), (342, 624, 218, 120)], card3) + f'<div class="setup-tile" style="{tile_style(108, 624, 218, 120)}">{tile_in("room", *links[0], "")}'
            + f'<span style="margin-top:auto;display:flex;gap:14px;font-size:9px;font-weight:800">{rooms}</span></div>'
-           + f'<a href="#who-does-what" class="setup-tile" style="position:absolute;left:342px;{box}">{tile_in("people", *links[1], arrow)}</a>')
+           + f'<a href="#who-does-what" class="setup-tile" style="{tile_style(342, 624, 218, 120)}">{tile_in("people", *links[1], arrow)}</a>')
     return page[:old.start()] + new + page[old.end():]
 
 
@@ -378,6 +378,7 @@ def rotation_plan_only(page):
             'box-sizing:border-box;"></div>'
             f'<div style="position:absolute;left:108px;top:438px;display:flex;gap:10px;align-items:baseline">'
             f'<span style="font-size:12px;font-weight:800">{C.LABELS["then"]}</span><span style="{HINT_CSS}">{C.LABELS["then_hint"]}</span></div>'
+            + tile_shadow([(108, 458, 218, 100), (342, 458, 218, 100)], (84, 420, 500, 160))
             + mini_tile("weeks", 108, 458, 218, 100, "cal", pages_p4.title_of("weeks"), C.LABELS["then_weeks"], "lavender")
             + mini_tile("house-map", 342, 458, 218, 100, "house", pages_p4.title_of("house-map"), C.TOOL_PAGES["house-map"][1], "lavender"))
     return page[:m.start()] + card + page[m.end():]
@@ -393,9 +394,8 @@ MINI_COLORS = {"lavender": ("#6E6490", "#F1EEF9")}     # (그림 · 화살표, �
 
 def mini_tile(href, x, y, w, h, icon, title, sub, col):
     """옅은 칸 링크 = 그림 + 쪽 이름 → + 한 줄 (10-03 사용자 A안 -- 6쪽 Today's pick 과 같은 모양). 칸 전체가 링크"""
-    ink, tint = MINI_COLORS[col]
-    return (f'<a href="#{href}" class="mini-tile" style="position:absolute;left:{x}px;top:{y}px;width:{w}px;height:{h}px;border-radius:12px;'
-            f'background:{tint};box-sizing:border-box;padding:12px;display:flex;flex-direction:column">'
+    ink, _ = MINI_COLORS[col]
+    return (f'<a href="#{href}" class="mini-tile" style="{tile_style(x, y, w, h)}">'
             f'<span class="mini-ic" style="line-height:0;color:{ink};opacity:.85"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" '
             f'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{MINI_ICON[icon]}</svg></span>'
             f'<span style="margin-top:8px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(title)}'
@@ -413,6 +413,49 @@ def battery_svg(n, size=30):
 TODAY_TILE_BG = "#EEF5F1"   # Energy 섹션 옅은 칸 (흑백판은 to_bw 가 흰 바탕 + 회색 테두리로)
 
 
+# 10-03 사용자: 옅은 색 미니카드 -> 흰 미니카드 + 옅은 그림자. 미니카드는 흰 카드 "안"에 있어 쪽 배경에 구운 그림자는 바깥 카드에 덮인다.
+# 그래서 흰 바탕 위에 미리 합성한 그림자 그림(투명도 없음 -- 소프트마스크 0, GoodNotes 바둑판 방지)을 미니카드 밑에 깐다.
+# 같은 크기·같은 자리 관계면 같은 파일(52쪽 Reset week 가 한 장을 쓴다). 그림은 바깥 카드 안쪽으로 잘라 카드 밖에 흰 네모가 생기지 않게.
+# 모양 = 미리보기 CSS 와 같게: 0 1px 2px rgba(40,60,55,.06), 0 8px 18px -8px rgba(40,60,55,.22)
+TILE_BG = "#FFFFFF"
+TILE_SHADOW_PAD = 26
+
+
+def tile_shadow(rects, card):
+    """카드 하나 안의 미니카드들 그림자를 한 장으로 (옆 미니카드의 흰 바탕이 서로를 덮지 않게).
+    위로는 4pt 만 -- 위쪽 머리글(Today's pick · Then · Wins)을 흰 바탕으로 덮었다(10-03 첫 빌드). 아래 · 옆은 카드 안쪽까지"""
+    from PIL import Image, ImageChops, ImageDraw, ImageFilter
+    cx, cy, cw, ch = card
+    x0 = max(min(r[0] for r in rects) - TILE_SHADOW_PAD, cx)
+    y0 = max(min(r[1] for r in rects) - 4, cy)
+    x1 = min(max(r[0] + r[2] for r in rects) + TILE_SHADOW_PAD, cx + cw)
+    y1 = min(max(r[1] + r[3] for r in rects) + TILE_SHADOW_PAD, cy + ch)
+    key = "_".join(f"{x - x0}-{y - y0}-{w}x{h}" for x, y, w, h in rects) + f"_{x1 - x0}x{y1 - y0}"
+    out = os.path.join(DESIGN_DIR, "generated", f"tile-shadow-{key}.png")
+    if not os.path.exists(out):
+        S = 1.5                                           # 1pt = 1.5px -- 흐린 그림자라 이것으로 충분. 4px 는 쪽마다 15~30ms 느렸다(10-03 실측)
+        W, Hh = int((x1 - x0) * S), int((y1 - y0) * S)
+        alpha = Image.new("L", (W, Hh), 0)
+        for x, y, w, h in rects:
+            for spread, dy, blur, a in ((0, 1, 1, 0.06), (-8, 8, 9, 0.22)):    # blur = CSS 흐림 반지름 / 2 (가우스 시그마)
+                m = Image.new("L", (W, Hh), 0)
+                ImageDraw.Draw(m).rounded_rectangle([((x - x0) - spread) * S, ((y - y0) - spread + dy) * S,
+                                                     ((x - x0) + w + spread) * S, ((y - y0) + h + spread + dy) * S],
+                                                    radius=max(1, 12 + spread) * S, fill=int(255 * a))
+                alpha = ImageChops.add(alpha, m.filter(ImageFilter.GaussianBlur(blur * S)))
+        col = Image.new("RGB", (W, Hh), (40, 60, 55))
+        Image.composite(col, Image.new("RGB", (W, Hh), (255, 255, 255)), alpha).save(out)
+    rel = os.path.relpath(out, os.path.join(ROOT, "src")).replace(os.sep, "/")
+    return (f'<img class="tile-shadow" src="{rel}" alt="" style="position:absolute;left:{x0}px;top:{y0}px;'
+            f'width:{x1 - x0}px;height:{y1 - y0}px">')
+
+
+def tile_style(x, y, w, h):
+    """흰 미니카드 style -- background 를 border-radius 앞에 둔다: bake_bg_p4.rects_of(쪽 배경 굽기 대상)에 잡히지 않게"""
+    return (f'position:absolute;left:{x}px;top:{y}px;width:{w}px;height:{h}px;background:{TILE_BG};border-radius:12px;'
+            f'box-sizing:border-box;padding:12px;display:flex;flex-direction:column')
+
+
 def energy_today_links(page):
     """6쪽 "Today's pick" 카드: 쓰는 줄 4개 -> 배터리 날 쪽 셋 (10-02 사용자, 재검수 R3 -- 오늘 고른 일은 7~9쪽 한 곳에).
     10-03 사용자 A안: 글자 링크 셋만 있어 휑했다 -> 옅은 칸 셋 = 배터리 그림 + 쪽 이름 → + 그 쪽 부제(7~9쪽과 같은 말). 칸 전체가 링크"""
@@ -420,11 +463,11 @@ def energy_today_links(page):
     m = re.search(r'<div style="position:absolute;left:108px;top:652px;width:452px">(?:<div [^>]*></div>){4}</div>', page)
     if not m:
         raise SystemExit("[energy] Today's pick 쓰는 줄 4개를 못 찾음")
-    tiles = ""
+    tiles = tile_shadow([(108 + i * 156, 652, 140, 104) for i in range(len(C.BATTERIES))], (84, 614, 500, 160))
     for i, b in enumerate(C.BATTERIES):
         title, sub = C.DAY_PAGES[b]
-        tiles += (f'<a href="#day-{b}" class="today-tile" style="position:absolute;left:{108 + i * 156}px;top:652px;width:140px;height:104px;'
-                  f'border-radius:12px;background:{TODAY_TILE_BG};box-sizing:border-box;padding:12px;display:flex;flex-direction:column">'
+        x = 108 + i * 156
+        tiles += (f'<a href="#day-{b}" class="today-tile" style="{tile_style(x, 652, 140, 104)}">'
                   f'<span class="today-ic" style="line-height:0;color:#537364;opacity:.85">{battery_svg(i + 1)}</span>'
                   f'<span style="margin-top:8px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(title)}'
                   f'<span style="margin-left:4px;color:#537364">→</span></span>'
@@ -571,7 +614,8 @@ def additions(page, key):
         if not lines:
             raise SystemExit(f"[{key}] Wins 쓰는 줄 4개를 못 찾음")
         # 10-03 사용자 A안: 가운데 글자 링크 하나라 칸이 휑했다 -> 옅은 칸(별 그림 + Wins log → + 103쪽 부제 앞 문장)
-        link = mini_tile("wins", 108, 552, 194, 100, "star", pages_p4.title_of("wins"), C.LABELS["wins_tile"], "lavender")
+        link = (tile_shadow([(108, 552, 194, 100)], (84, 512, 242, 160))
+                + mini_tile("wins", 108, 552, 194, 100, "star", pages_p4.title_of("wins"), C.LABELS["wins_tile"], "lavender"))
         page = page[:lines.start()] + link + page[lines.end():]
         # 카드에 링크 하나뿐 -> 카드 전체를 누르게(README §7 · check_design J -- v0.16 첫 검수에서 가운데 글자만 눌려 52쪽 FAIL)
         page = page[:page.rfind("</div>")] + '<a href="#wins" style="position:absolute;left:84px;top:512px;width:242px;height:160px"></a></div>'
@@ -1017,7 +1061,7 @@ def bw_cell(m):
     """쓰는 칸(체크 상자·동그라미 14, Last reset 칸): 흰 바탕 + 회색 테두리 -- 연회색 면은 인쇄하면 사라진다"""
     st = m.group(1)
     if (re.search(r"width:14px;height:14px;border-radius:(4\.5px|50%)", st) or re.search(r"^height:26px;border-radius:8px;", st)
-            or "width:218px;height:86px;border-radius:10px;background:#F3F6F4" in st):      # 3쪽 Set up once 적는 칸 (10-03 A안)
+            or "width:218px;height:86px;border-radius:10px;background:#EEF5F1" in st):      # 3쪽 Set up once 적는 칸 (10-03 A안)
         st = re.sub(r"background:#[0-9A-Fa-f]{6}", "background:#FFFFFF;border:0.6px solid #9A9A9A;box-sizing:border-box", st)
     return f'style="{st}"'
 
@@ -1026,6 +1070,7 @@ def to_bw(page, num):
     # 그림은 전부 뺀다(배경 JPG·구운 Reset week 배경·2쪽 그림자 PNG) -- 흑백판 = 배경 없이 + 카드 테두리 (10-01 사용자).
     # v0.10 첫 빌드는 시안 배경(25-*)만 골라 빼서 구운 주간 배경 51장이 흑백판 40~90쪽에 컬러로 남았다(써 보기 6단계에서 찾음)
     page = re.sub(r"<img\b[^>]*>", "", page)
+    page = re.sub(r'class="(today-tile|mini-tile|setup-tile)" style="', r'class="\1" style="border:0.6px solid #B4B4B4;', page)   # 흰 미니카드 (10-03)
     # 쪽 바탕(섹션 paper 4색)은 흰 종이로 -- 회색으로 바꾸면 245 로 쪽 전체를 칠해 잉크를 쓴다. v0.10 첫 빌드는 Home 민트만
     # 바꿔 나머지 99쪽 바탕이 회색이었다(써 보기 6단계, 리뷰어·인쇄파 구매자 역할이 찾음)
     for paper in ("#F3F7F4", "#F9F8F0", "#F7F6FA", "#F2F7F8"):
