@@ -305,8 +305,8 @@ def main(ver):
             b = re.search(r'left:510px;top:' + t + r'px;[^"]*">(\d+)<', r)
             if not a or not b or int(a.group(1)) != ids.index(key) + 1 or int(b.group(1)) != ids.index("deep-" + key) + 1:
                 bad.append(key)
-        if bad or "M410,182" in r:
-            fails.append(f"{ids.index('rooms') + 1} rooms: 번호 두 칸(방 쪽 · 깊은 청소 쪽)이 아님 {bad[:3]} · 3열 왼쪽 선 {'M410,182' in r} (10-03 A안)")
+        if bad or "M510,182" in r or "M410,182" not in r:
+            fails.append(f"{ids.index('rooms') + 1} rooms: 번호 두 칸(방 쪽 · 깊은 청소 쪽)이 아님 {bad[:3]} · 4열 왼쪽 선 {'M510,182' in r} (10-03 A안)")
     wk = [k for k in secs if re.fullmatch(r"w\d+", k)]
     nowin = [k for k in wk if 'href="#wins" class="mini-tile"' not in secs[k] or C.LABELS["wins_tile"] not in H.unescape(secs[k])]
     if nowin:

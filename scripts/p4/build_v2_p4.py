@@ -618,7 +618,7 @@ def additions(page, key):
         page = must_replace(page, "left:84px;top:138px;width:500px;height:292px;",
                             "left:84px;top:138px;width:500px;height:318px;", key)
         # 10-03 사용자 A안: PAGE 가 deep clean 바로 옆이라 "deep clean 이 그 쪽" 으로 읽혔다(실제는 다음 쪽) -> 번호 두 칸
-        # ROOM | PAGE(방 카드) | DEEP CLEAN | PAGE(깊은 청소). 3열(DEEP CLEAN) 왼쪽 세로선은 뺀다 -- 대칭 (사용자)
+        # ROOM | PAGE(방 카드) | DEEP CLEAN | PAGE(깊은 청소). 4열(오른쪽 PAGE) 왼쪽 세로선은 뺀다 -- 두 묶음이 대칭 (사용자)
         page = re.sub(r'left:108px;top:(\d+)px;width:302px;', r'left:108px;top:\1px;width:222px;', page)   # ROOM 머리 · 방 이름 칸
         hdr = re.search(r'<div style="position:absolute;left:510px;top:156px;width:50px;([^"]*)">PAGE</div>', page)
         if not hdr:
@@ -629,7 +629,7 @@ def additions(page, key):
             raise SystemExit(f"[rooms] 번호 칸 {len(nums)} != {len(C.ROOMS) + len(C.MY_ROOMS)}")
         for m in reversed(nums):
             page = page[:m.start()] + f'<div style="position:absolute;left:330px;top:{m.group(1)}px;width:50px;{m.group(2)}">{m.group(3)}</div>' + page[m.start():]
-        page = must_replace(page, "M410,182 V434 M510,182 V434 ", "M510,182 V434 ", key)
+        page = must_replace(page, "M410,182 V434 M510,182 V434 ", "M410,182 V434 ", key)   # 4열 왼쪽 선만 뺀다 -- (방 · 번호) | (깊은 청소 · 번호) 두 묶음
     elif key == "index":
         # 5쪽 목차 Rooms 칸에 My room 2 줄 (v0.11). 왼쪽 카드(628)는 위에서 흘러 채우는 구조라 줄 하나(20)가 들어간다
         row = re.search(r'(<a href="#" style="display:flex;justify-content:space-between;align-items:center;height:20px;'
