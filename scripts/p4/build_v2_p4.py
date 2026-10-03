@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 24(머리글 글자선) · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.19"     # v0.19: 표지 "Home Reset" 짙은 녹색 #2B5E49(리스팅 01 과 같게) · 아이콘 = 그 쪽 섹션 색 100%, 4쪽 그림 · 화살표 민트 (10-03 사용자) / v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 24(머리글 글자선) · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -289,7 +289,7 @@ def start_setup(page):
                              f'<div style="margin-top:2px;font-size:8px;color:#66716B">{H.escape(b)}</div>'
                              # 10-03 사용자: 적는 칸인데 쓸 줄이 없어 쓰는 곳인지 몰랐다 -> 칸 아래에 쓰는 줄 하나
                              f'<div class="setup-line" style="margin-top:auto;margin-bottom:4px;height:0;border-bottom:0.6px solid #D3DBD6"></div></div>')
-    ic = lambda k: (f'<span style="line-height:0;color:{ink};opacity:.85"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+    ic = lambda k: (f'<span class="setup-ic" style="line-height:0;color:{ink}"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
                     f'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{SETUP_ICON[k]}</svg></span>')
     arrow = f'<span style="margin-left:4px;color:{ink}">→</span>'
     tile_in = lambda k, a, b, arr: (f'{ic(k)}<span style="margin-top:6px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(a)}{arr}</span>'
@@ -396,7 +396,7 @@ def mini_tile(href, x, y, w, h, icon, title, sub, col):
     """옅은 칸 링크 = 그림 + 쪽 이름 → + 한 줄 (10-03 사용자 A안 -- 6쪽 Today's pick 과 같은 모양). 칸 전체가 링크"""
     ink, _ = MINI_COLORS[col]
     return (f'<a href="#{href}" class="mini-tile" style="{tile_style(x, y, w, h)}">'
-            f'<span class="mini-ic" style="line-height:0;color:{ink};opacity:.85"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" '
+            f'<span class="mini-ic" style="line-height:0;color:{ink}"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" '
             f'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{MINI_ICON[icon]}</svg></span>'
             f'<span style="margin-top:8px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(title)}'
             f'<span style="margin-left:4px;color:{ink}">→</span></span>'
@@ -431,6 +431,7 @@ def battery_svg(n, size=30):
             f'stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="17" height="11" rx="2.2"/><path d="M21.5 10v4"/>{bars}</svg>')
 
 
+TITLE_ACCENT = "#2B5E49"   # 표지 "Home Reset" (10-03 사용자 B안 -- 리스팅 사진 01 과 같게. "The ADHD" 는 검정 계열, CLAUDE.md 공통 디자인 규칙). 본문 글자에는 쓰지 않는다
 TODAY_TILE_BG = "#EEF5F1"   # Energy 섹션 옅은 칸 (흑백판은 to_bw 가 흰 바탕 + 회색 테두리로)
 
 
@@ -507,7 +508,7 @@ def energy_today_links(page):
         title, sub = C.DAY_PAGES[b]
         x = 108 + i * 156
         tiles += (f'<a href="#day-{b}" class="today-tile" style="{tile_style(x, 652, 140, 98)}">'
-                  f'<span class="today-ic" style="line-height:0;color:#537364;opacity:.85">{battery_svg(i + 1)}</span>'
+                  f'<span class="today-ic" style="line-height:0;color:#537364">{battery_svg(i + 1)}</span>'
                   f'<span style="margin-top:8px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(title)}'
                   f'<span style="margin-left:4px;color:#537364">→</span></span>'
                   f'<span style="margin-top:3px;font-size:8.5px;font-weight:600;line-height:1.35;color:#66716B">{H.escape(sub)}</span></a>')
@@ -548,7 +549,7 @@ HOUSE_ICON = {
     "car": '<path d="M4 15v-3l2-5h12l2 5v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M4 12h16"/><circle cx="8" cy="16.5" r="1.6"/><circle cx="16" cy="16.5" r="1.6"/>',
     "myroom": '<path d="M4 11 12 4l8 7v9H4z"/><path d="M12 10v6M9 13h6"/>',
 }
-HOUSE_ICON_COLOR = "#7D6A28"     # Rooms 섹션 글자용 진한 레몬 (Go 화살표와 같은 색), opacity .75
+HOUSE_ICON_COLOR = "#537364"     # HOME 섹션 글자용 진한 민트 -- 4쪽은 HOME 쪽이라 3 · 6쪽과 같게, Go 화살표도 (10-03 사용자 C안. v0.18 은 Rooms 레몬 #7D6A28 75%)
 
 
 def house_map_fill(page):
@@ -564,7 +565,7 @@ def house_map_fill(page):
                       if page.count(t) == 1), f'<span style="font-size:12.5px;font-weight:800">{name}</span></div>')   # & 가 날것 또는 &amp;
         if page.count(title) != 1:
             raise SystemExit(f"[house-map] 타일 제목 '{name}' {page.count(title)}개")
-        icon = (f'<div class="hm-ic" style="margin-top:12px;line-height:0;color:{HOUSE_ICON_COLOR};opacity:.75">'
+        icon = (f'<div class="hm-ic" style="margin-top:12px;line-height:0;color:{HOUSE_ICON_COLOR}">'
                 f'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" '
                 f'stroke-linecap="round" stroke-linejoin="round">{HOUSE_ICON[k]}</svg></div>')
         text = (f'<div style="margin-top:10px;font-size:7px;font-weight:800;letter-spacing:0.12em;color:#66716B">'
@@ -574,7 +575,11 @@ def house_map_fill(page):
         n += 1
     if n != 9:
         raise SystemExit(f"[house-map] 채운 타일 {n} != 9")
-    return page
+    # 화살표(Go 8 + Room 1 · Room 2)도 그림과 같은 민트 (10-03 사용자 -- 6쪽 배터리 그림 · 화살표가 같은 색이듯). 방 이름 앞 점은 Rooms 레몬 그대로
+    old = 'margin-left:4px;color:#7D6A28">→'      # 이 단계에서는 아직 글자 → (arrows() 가 나중에 SVG 로)
+    if page.count(old) != 10:
+        raise SystemExit(f"[house-map] 화살표 {page.count(old)} != 10")
+    return page.replace(old, f'margin-left:4px;color:{HOUSE_ICON_COLOR}">→')
 
 
 ROW_CSS = "height:26px;display:flex;align-items:center;justify-content:flex-start;font-size:10px;font-weight:400;color:#2C3631"   # = 106쪽 Moving 줄
@@ -827,7 +832,7 @@ def plan_links(page, key):
             page = must_replace(page, f">{nm}</div>",
                                 f'>{nm}<span style="margin-left:4px;color:{SECTION_D["rooms"]}">→</span></div>', key)
     elif key == "cover":
-        page = must_replace(page, ">The ADHD<br>Home Reset<", '><a href="#">The ADHD<br>Home Reset</a><', key)
+        page = must_replace(page, ">The ADHD<br>Home Reset<", f'><a href="#">The ADHD<br><span class="title-accent" style="color:{TITLE_ACCENT}">Home Reset</span></a><', key)
     elif re.fullmatch(r"w\d+", key):
         lab = H.escape(C.LABELS["week_rooms"], quote=False)
         page = must_replace(page, f">{lab}<", f'><a href="#">{lab}</a><', key)
@@ -1103,6 +1108,7 @@ def bw_cell(m):
 
 
 def to_bw(page, num):
+    page = page.replace(f'class="title-accent" style="color:{TITLE_ACCENT}"', 'class="title-accent"')   # 흑백판 표지 제목은 한 색(검정)
     # 그림은 전부 뺀다(배경 JPG·구운 Reset week 배경·2쪽 그림자 PNG) -- 흑백판 = 배경 없이 + 카드 테두리 (10-01 사용자).
     # v0.10 첫 빌드는 시안 배경(25-*)만 골라 빼서 구운 주간 배경 51장이 흑백판 40~90쪽에 컬러로 남았다(써 보기 6단계에서 찾음)
     page = re.sub(r"<img\b[^>]*>", "", page)

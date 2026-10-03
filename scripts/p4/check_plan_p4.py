@@ -383,6 +383,19 @@ def main(ver):
             mm = re.search(rf'<a href="#{k}" style="white-space:nowrap">.*?p\.(\d+)</span></a>', bw, re.S)
             if not mm or int(mm.group(1)) != ids.index(k) + 1:
                 fails.append(f"흑백판: 3쪽 {k} 링크에 쪽 번호가 없거나 틀림 (10-03)")
+    # 17 색 (10-03 사용자): 표지 "Home Reset" = #2B5E49(B안, 리스팅 01 과 같게) -- 흑백판은 한 색 / 아이콘 = 그 쪽 섹션 색, 옅게 하지 않음(C안) /
+    #    4쪽 방 그림 · 화살표 = HOME 민트 (v0.18 은 Rooms 레몬 75%)
+    if 'class="title-accent" style="color:#2B5E49">Home Reset' not in secs.get("cover", ""):
+        fails.append("1 cover: 표지 'Home Reset' 이 짙은 녹색 #2B5E49 가 아님 (10-03 B안)")
+    if os.path.exists(bw_src) and 'class="title-accent" style="color:' in bw:
+        fails.append("흑백판 1쪽: 표지 'Home Reset' 에 색이 남았다 -- 흑백판 제목은 한 색 (10-03)")
+    for k in ("start", "house-map", "energy", "rotation", "w1"):
+        faint = re.findall(r'class="(?:setup|hm|today|mini)-ic" style="[^"]*opacity:', secs.get(k, ""))
+        if faint:
+            fails.append(f"{ids.index(k) + 1} {k}: 아이콘이 옅다(opacity) {len(faint)}개 -- 섹션 색 그대로 (10-03 C안)")
+    hm = secs.get("house-map", "")
+    if len(re.findall(r'class="hm-ic" style="[^"]*color:#537364', hm)) != 9 or len(re.findall(r'color:#537364"><svg class="ar"', hm)) != 10:
+        fails.append(f"{ids.index('house-map') + 1} house-map: 방 그림 9 · 화살표 10 이 HOME 민트 #537364 가 아님 (10-03)")
     wk = [k for k in secs if re.fullmatch(r"w\d+", k)]
     nowin = [k for k in wk if 'href="#wins" class="mini-tile"' not in secs[k] or C.LABELS["wins_tile"] not in H.unescape(secs[k])]
     if nowin:
