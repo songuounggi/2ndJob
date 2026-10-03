@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 18 · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 24(머리글 글자선) · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -283,7 +283,7 @@ def start_setup(page):
     # 10-03 사용자 A안: 쓰는 줄 둘 + 링크 줄 둘이 섞여 서류 양식 같았다 -> 위 = 적는 칸 둘(회색 칸), 아래 = 그 쪽으로 가는 옅은 칸 둘.
     # My rooms 칸은 갈 곳이 둘이라 칸 전체가 링크가 아니고 안에 Room 1 → · Room 2 → (누르는 것 하나 = 쪽 하나)
     ink, tint = "#537364", TODAY_TILE_BG
-    field = lambda x, a, b: (f'<div class="setup-field" style="position:absolute;left:{x}px;top:522px;width:224px;height:86px;border-radius:10px;'
+    field = lambda x, a, b: (f'<div class="setup-field" style="position:absolute;left:{x}px;top:522px;width:218px;height:86px;border-radius:12px;'
                              f'background:{TODAY_TILE_BG};box-sizing:border-box;padding:10px 12px;display:flex;flex-direction:column">'   # 10-03 사용자: 회색 -> 옅은 녹색
                              f'<div style="font-size:10px;font-weight:800">{H.escape(a)}</div>'
                              f'<div style="margin-top:2px;font-size:8px;color:#66716B">{H.escape(b)}</div>'
@@ -299,10 +299,10 @@ def start_setup(page):
     rooms = "".join(f'<a href="#{k}" style="white-space:nowrap">{C.LABELS["room"]}&nbsp;{n[-1]}{arrow}</a>' for k, n in C.MY_ROOMS)
     new = (f'<div style="position:absolute;left:108px;top:496px;display:flex;gap:10px;align-items:baseline">'
            f'<span style="font-size:12px;font-weight:800">{H.escape(title)}</span><span style="font-size:8.5px;color:#66716B">{H.escape(hint)}</span></div>'
-           + field(102, *fields[0]) + field(342, *fields[1])   # 10-03 사용자: 미니카드와 같은 격자(좌우 18 · 사이 16)
-           + tile_shadow([(102, 624, 224, 126), (342, 624, 224, 126)], card3) + f'<div class="setup-tile" style="{tile_style(102, 624, 224, 126)}">{tile_in("room", *links[0], "")}'
+           + field(108, *fields[0]) + field(342, *fields[1])   # 10-03 사용자: 미니카드와 같은 격자(사방 24 = 머리글 글자선 · 사이 16)
+           + tile_shadow([(108, 624, 218, 120), (342, 624, 218, 120)], card3) + f'<div class="setup-tile" style="{tile_style(108, 624, 218, 120)}">{tile_in("room", *links[0], "")}'
            + f'<span style="margin-top:auto;display:flex;gap:14px;font-size:9px;font-weight:800">{rooms}</span></div>'
-           + f'<a href="#who-does-what" class="setup-tile" style="{tile_style(342, 624, 224, 126)}">{tile_in("people", *links[1], arrow)}</a>')
+           + f'<a href="#who-does-what" class="setup-tile" style="{tile_style(342, 624, 218, 120)}">{tile_in("people", *links[1], arrow)}</a>')
     return page[:old.start()] + new + page[old.end():]
 
 
@@ -378,9 +378,9 @@ def rotation_plan_only(page):
             'box-sizing:border-box;"></div>'
             f'<div style="position:absolute;left:108px;top:438px;display:flex;gap:10px;align-items:baseline">'
             f'<span style="font-size:12px;font-weight:800">{C.LABELS["then"]}</span><span style="{HINT_CSS}">{C.LABELS["then_hint"]}</span></div>'
-            + tile_shadow([(102, 458, 224, 104), (342, 458, 224, 104)], (84, 420, 500, 160))
-            + mini_tile("weeks", 102, 458, 224, 104, "cal", pages_p4.title_of("weeks"), C.LABELS["then_weeks"], "lavender")
-            + mini_tile("house-map", 342, 458, 224, 104, "house", pages_p4.title_of("house-map"), C.TOOL_PAGES["house-map"][1], "lavender"))
+            + tile_shadow([(108, 458, 218, 98), (342, 458, 218, 98)], (84, 420, 500, 160))
+            + mini_tile("weeks", 108, 458, 218, 98, "cal", pages_p4.title_of("weeks"), C.LABELS["then_weeks"], "lavender")
+            + mini_tile("house-map", 342, 458, 218, 98, "house", pages_p4.title_of("house-map"), C.TOOL_PAGES["house-map"][1], "lavender"))
     return page[:m.start()] + card + page[m.end():]
 
 
@@ -502,11 +502,11 @@ def energy_today_links(page):
     m = re.search(r'<div style="position:absolute;left:108px;top:652px;width:452px">(?:<div [^>]*></div>){4}</div>', page)
     if not m:
         raise SystemExit("[energy] Today's pick 쓰는 줄 4개를 못 찾음")
-    tiles = tile_shadow([(102 + i * 160, 652, 144, 104) for i in range(len(C.BATTERIES))], (84, 614, 500, 160))   # 좌우 · 아래 18
+    tiles = tile_shadow([(108 + i * 156, 652, 140, 98) for i in range(len(C.BATTERIES))], (84, 614, 500, 160))   # 사방 24 (10-03 사용자 B안)
     for i, b in enumerate(C.BATTERIES):
         title, sub = C.DAY_PAGES[b]
-        x = 102 + i * 160
-        tiles += (f'<a href="#day-{b}" class="today-tile" style="{tile_style(x, 652, 144, 104)}">'
+        x = 108 + i * 156
+        tiles += (f'<a href="#day-{b}" class="today-tile" style="{tile_style(x, 652, 140, 98)}">'
                   f'<span class="today-ic" style="line-height:0;color:#537364;opacity:.85">{battery_svg(i + 1)}</span>'
                   f'<span style="margin-top:8px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(title)}'
                   f'<span style="margin-left:4px;color:#537364">→</span></span>'
@@ -653,8 +653,8 @@ def additions(page, key):
         if not lines:
             raise SystemExit(f"[{key}] Wins 쓰는 줄 4개를 못 찾음")
         # 10-03 사용자 A안: 가운데 글자 링크 하나라 칸이 휑했다 -> 옅은 칸(별 그림 + Wins log → + 103쪽 부제 앞 문장)
-        link = (tile_shadow([(102, 552, 206, 102)], (84, 512, 242, 160))
-                + mini_tile("wins", 102, 552, 206, 102, "star", pages_p4.title_of("wins"), C.LABELS["wins_tile"], "lavender"))
+        link = (tile_shadow([(108, 552, 194, 96)], (84, 512, 242, 160))
+                + mini_tile("wins", 108, 552, 194, 96, "star", pages_p4.title_of("wins"), C.LABELS["wins_tile"], "lavender"))
         page = page[:lines.start()] + link + page[lines.end():]
         # 카드에 링크 하나뿐 -> 카드 전체를 누르게(README §7 · check_design J -- v0.16 첫 검수에서 가운데 글자만 눌려 52쪽 FAIL)
         page = page[:page.rfind("</div>")] + '<a href="#wins" style="position:absolute;left:84px;top:512px;width:242px;height:160px"></a></div>'
@@ -1097,7 +1097,7 @@ def bw_cell(m):
     """쓰는 칸(체크 상자·동그라미 14, Last reset 칸): 흰 바탕 + 회색 테두리 -- 연회색 면은 인쇄하면 사라진다"""
     st = m.group(1)
     if (re.search(r"width:14px;height:14px;border-radius:(4\.5px|50%)", st) or re.search(r"^height:26px;border-radius:8px;", st)
-            or "width:224px;height:86px;border-radius:10px;background:#EEF5F1" in st):      # 3쪽 Set up once 적는 칸 (10-03 A안)
+            or "width:218px;height:86px;border-radius:12px;background:#EEF5F1" in st):   # 모서리 = 미니카드와 같은 12 (10-03)      # 3쪽 Set up once 적는 칸 (10-03 A안)
         st = re.sub(r"background:#[0-9A-Fa-f]{6}", "background:#FFFFFF;border:0.6px solid #9A9A9A;box-sizing:border-box", st)
     return f'style="{st}"'
 

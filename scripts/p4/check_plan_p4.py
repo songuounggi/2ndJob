@@ -349,7 +349,7 @@ def main(ver):
     # Q3a 4쪽 My rooms 링크 = 다른 타일 Go 와 같은 아래 줄 (margin-top:auto)
     if "house-map" in secs and "align-self:flex-end;margin-top:auto;display:flex;gap:12px" not in secs["house-map"]:
         fails.append(f"{ids.index('house-map') + 1} house-map: My rooms 링크가 Go 와 같은 아래 줄이 아님 (10-03)")
-    # Q3b 미니카드 둘레 여백 = 18pt (좌 · 우 · 아래), 3쪽 적는 칸도 같은 격자
+    # Q3b 미니카드 둘레 여백 = 24pt (좌 · 우 · 아래 -- 카드 머리글 글자선과 같은 줄, 10-03 사용자 B안. 18pt 로 했다가 머리글과 어긋나고 옆 그림자가 잘렸다)
     for k, body in secs.items():
         cards = [tuple(float(v) for v in m) for m in re.findall(
             r'style="position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;height:([\d.]+)px;border-radius:16px;background:#FFFFFF', body)]
@@ -364,8 +364,13 @@ def main(ver):
             l = min(t[0] for t in inside) - cx
             r = cx + cw - max(t[0] + t[2] for t in inside)
             b = cy + ch - max(t[1] + t[3] for t in inside)
-            if (round(l), round(r), round(b)) != (18, 18, 18):
-                fails.append(f"{ids.index(k) + 1} {k}: 미니카드 둘레 여백 좌 {l:g} · 우 {r:g} · 아래 {b:g} != 18 (10-03)")
+            if (round(l), round(r), round(b)) != (24, 24, 24):
+                fails.append(f"{ids.index(k) + 1} {k}: 미니카드 둘레 여백 좌 {l:g} · 우 {r:g} · 아래 {b:g} != 24 (10-03 B안)")
+    # 같은 카드 안 미니카드 · 적는 칸 모서리 반지름이 같은가 (10-03: 3쪽 적는 칸 10 · 미니카드 12 로 달랐다)
+    if "start" in secs:
+        rr = set(re.findall(r'class="setup-(?:field|tile)" style="[^"]*?border-radius:([\d.]+)px', secs["start"]))
+        if len(rr) != 1:
+            fails.append(f"{ids.index('start') + 1} start: 적는 칸 · 미니카드 모서리 반지름이 다르다 {sorted(rr)} (10-03)")
     # Q3c 흑백판 미니카드에 쪽 번호 = 그 링크가 가는 쪽
     bw_src = src.replace("_full_color.html", "_full_BW.html")
     if os.path.exists(bw_src):
