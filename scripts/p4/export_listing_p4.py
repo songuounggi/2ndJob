@@ -25,6 +25,34 @@ from chrome_auto import launch  # noqa: E402
 HTML = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.join(
     ROOT, "src", "p4_listing_design", "design_handoff_listing_final", "Etsy Listing 10 - Final.dc.html")
 OUT_VER = sys.argv[2] if len(sys.argv) > 2 else "design-final-v1.0"
+LOOK = sys.argv[3] if len(sys.argv) > 3 else ""
+
+# 배경 밝기 (2026-10-03 사용자: "너무 어둡다, 밝고 화사하게"). 바탕 #F7F6F2(247) 위에 곱하기로 얹은 두 질감이 회색을 더해
+# 빈 바탕이 약 220 이 됐다 -- 종이 알갱이(색 0.2/0.3/0.28 · 알파 0.18) · 요철(opacity 0.3). 번짐(섹션 색) 은 색을 준다.
+# 질감 층 opacity 와 번짐 채도만 바꾼다 -- 글자 · 쪽 그림 · 알약 · 기기는 손대지 않는다.
+# 층은 계산된 스타일로 찾는다 -- support.js 가 화면을 다시 그려 style 글자가 바뀐다(속성 선택자는 0개를 찾았다)
+TAG_JS = """() => { let c = {wash: 0, grain: 0, relief: 0};
+  document.querySelectorAll('[data-screen-label]').forEach(fr => [...fr.children].forEach(d => {
+    const cs = getComputedStyle(d); if (cs.mixBlendMode !== 'multiply' || cs.position !== 'absolute') return;
+    const bs = cs.backgroundSize;
+    const k = bs.startsWith('2000px') ? 'wash' : bs.startsWith('320px') ? 'grain' : bs.startsWith('400px') ? 'relief' : null;
+    if (k) { d.dataset.bg = k; c[k]++; } })); return c; }"""
+LOOKS = {
+    "A": dict(grain=0.45, relief=0.12, wash="none", paper=None),                                  # 질감만 옅게
+    "B": dict(grain=0.45, relief=0.12, wash="saturate(1.45)", paper="#FBFAF6"),                   # + 번짐 색 진하게 · 바탕 조금 더 희게
+    "C": dict(grain=0.25, relief=0.0, wash="saturate(1.7) brightness(1.02)", paper="#FDFCF9"),    # 가장 밝고 화사하게
+}
+
+
+def look_css(name):
+    if not name:
+        return ""
+    v = LOOKS[name]
+    css = (f"[data-bg=grain]{{opacity:{v['grain']} !important}} [data-bg=relief]{{opacity:{v['relief']} !important}} "
+           f"[data-bg=wash]{{filter:{v['wash']}}}")
+    if v["paper"]:
+        css += f" [data-screen-label]{{background:{v['paper']} !important}}"
+    return css
 OUT = os.path.join(ROOT, "output", "prod4", "listing", OUT_VER)
 MAX_B = 1_000_000
 
@@ -73,6 +101,11 @@ def main():
         # 미리보기 축소 풀기 -- 각 장을 감싼 zoom 상자를 1 로
         page.evaluate("""() => document.querySelectorAll('[data-screen-label]').forEach(el => {
             let a = el.parentElement; a.style.zoom = '1'; a.style.borderRadius = '0'; a.style.boxShadow = 'none'; })""")
+        if LOOK:
+            n = page.evaluate(TAG_JS)
+            page.add_style_tag(content=look_css(LOOK))
+            if list(n.values()) != [10, 10, 10]:
+                raise SystemExit(f"배경 층을 10장 모두에서 못 찾았다: 번짐 · 알갱이 · 요철 = {n}")
         page.wait_for_timeout(1500)
         labels = page.eval_on_selector_all("[data-screen-label]", "els => els.map(e => e.dataset.screenLabel)")
         for lab in labels:

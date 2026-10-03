@@ -106,7 +106,7 @@ For personal use. Please do not resell or redistribute the files.
 | 항목 | 값 |
 |---|---|
 | 정가 | **$8.99** |
-| 런칭 세일 | Etsy 세일은 **정수 %** 라 $6.99 딱 맞는 값이 없다 → **22% = $7.01** 또는 **23% = $6.92** (결정 필요 -- **Claude 추천 23% $6.92**: 맨 앞자리가 6 이라 "$7 밑"으로 읽히고, 원래 목표 $6.99 와 같은 쪽. $7.01 은 "$7 넘음"에 끝자리 .01 이 어색하다. 건당 순익 차이 약 $0.08) |
+| 런칭 세일 | **23% → $6.92 확정 (2026-10-03 사용자).** Etsy 세일은 정수 % 라 $6.99 딱 맞는 값이 없다(22% = $7.01). 23% 는 맨 앞자리가 6 이라 "$7 밑"으로 읽히고 원래 목표 $6.99 와 같은 쪽, 건당 순익 차이 약 $0.08 |
 | 기간 | **30일** (2026-10-03 사용자 결정 -- 상품 3 과 같게). 시작일 = 발행일 |
 
 ## 파일 — 2개 (Etsy 에서 파일명은 구매자에게 보이고 못 고친다, `shop.md` 5-5: 70자 이내, 영숫자·`.`·`_`·`-`)
@@ -118,7 +118,8 @@ For personal use. Please do not resell or redistribute the files.
 
 ## 리스팅 사진 — 10장 계획
 
-**▶ 최종 후보 (2026-10-03 집 PC): `output/prod4/listing/design-final-v1.1/01_hero.jpg ~ 10_files.jpg`** -- claude.ai/design 최종판
+**▶ 최종 (2026-10-03 집 PC): `output/prod4/listing/design-final-v1.2/01_hero.jpg ~ 10_files.jpg`** -- v1.1 + **배경 밝게 (사용자: "너무 어둡다, 밝고 화사하게" -> 시안 A·B·C 중 C "가장 밝게")**: 종이 알갱이 opacity 0.25 · 요철 0 · 수채 번짐 saturate(1.7) brightness(1.02) · 종이 #FDFCF9. 빈 바탕 230 -> 248. 글자 · 쪽 그림 · 알약 · 기기는 그대로. `export_listing_p4.py <html> design-final-v1.2 C`, 검사 PASS, 장당 185~256KB, 줄무늬 없음. 비교 `output/prod4/listing/look-test/_compare_looks.jpg`.
+아래는 v1.1 기록 -- `design-final-v1.1/` -- claude.ai/design 최종판
 (`Prod 4/The ADHD Home Reset 프로젝트.zip` -> `src/p4_listing_design/`, 인수인계 `00_HANDOFF.md`)을 `python scripts/p4/export_listing_p4.py` 로
 실제 브라우저 캡처(2000x2000, JPG q90, 장당 520~570KB). 검사 `python scripts/p4/check_listing_images_p4.py design-final-v1.1` PASS.
 design 원본 그대로 뽑은 것은 `design-final-v1.0`. **v1.1 에서 Claude 가 고친 것 -- 06 한 장만:** ① 큰 제목 `Every page is one tap away`
