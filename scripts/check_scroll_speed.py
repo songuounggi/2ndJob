@@ -198,6 +198,24 @@ def report(r, label):
               ", ".join(f"p{p} {w[p - 1]:.0f}->{t:.0f}ms" for p, t in calm.items()) + " (다른 프로그램 부하, FAIL 아님)")
     if spikes:
         fails.append(f"F 두 번째 넘기기 (다시 재도 튀거나 {LIM['max_ms']}ms 넘는 쪽 {spikes[:5]})")
+    # G 새 큰 그림 (2026-10-04, 상품 4 iPad -- 쪽마다 다른 큰 배경 그림이 이어진 Tools 93~109쪽 넘김이 끊겼다, CLAUDE.md 500쪽 절 8).
+    #   아직 참고만(FAIL 아님): 바탕을 같이 쓰게 나누면 그림을 기억 안 하는 뷰어에선 오히려 느렸다 -- iPad A/B 로 기준을 정한 뒤 FAIL 로
+    pdf, seen, new = pikepdf.open(r["path"]), set(), []
+    for n, pg in enumerate(pdf.pages, 1):
+        got = False
+        for _, x in pg.obj.Resources.get("/XObject", {}).items():
+            if x.get("/Subtype") == "/Image" and int(x.Width) * int(x.Height) >= 500_000 and x.objgen not in seen:
+                seen.add(x.objgen)
+                got = True
+        if got:
+            new.append(n)
+    runs, cur = [], []
+    for p in new:
+        cur = cur + [p] if cur and p == cur[-1] + 1 else [p]
+        if len(cur) == 5:
+            runs.append(cur[0])
+    print(f"  G (참고) 새 큰 그림(0.5백만 픽셀 이상)이 처음 나오는 쪽: {len(new)}쪽 {new[:12]}{' ...' if len(new) > 12 else ''}"
+          f" · 5쪽 넘게 연달아 시작 {runs[:6] or '없음'}")
     return fails
 
 

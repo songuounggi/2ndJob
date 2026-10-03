@@ -47,7 +47,7 @@ Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
 **상품 4 — 제작 중, v0.22 (2026-10-04 집 PC: iPad GoodNotes 확인 -- 41~92쪽 Wins 링크는 안쪽 미니카드에만 / 10-03 밤: 표지 "Home Reset" 녹색 · 아이콘 섹션 색 · 4쪽 지도 쪽 레몬 · 3쪽 적는 칸 = 제목 + 줄 / v0.18 빈 칸 채우기: 4쪽 방 그림 + Done enough · 6쪽 배터리 날 칸 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 · 96쪽 배너 되살림 / v0.17 까지: 구조 논리 S1~S13 + 2쪽 design 순서도 + L11 + 전수 재검수 R1~R5 + 영어 치우침 정리). 리스팅 사진 10장 확정(`output/prod4/listing/design-final-v1.6/`), 세일 23% · 30일 확정.** The ADHD Home Reset -- 배터리×시간으로 고르는 청소·루틴
 플래너, **109쪽**(v0.11 빈 방 둘째 +2, v0.12 빈 노트 -1), 링크 PDF + 흑백 인쇄판, **입구 가격 $8.99**(가격 사다리). `PROCESS.md` 5·6단계 통과(v0.12)(구매자 역할 7명) → **사용자 눈 검수**, 7단계 iPad 확인은 집에서,
 8단계 리스팅 원고 초안(`listing-p4.md`). **인계·남은 결정은 `product4-content.md` 맨 앞 "지금 어디까지"** 가 한곳에 있다.
-판: `output/prod4/planner/v0.22/home-reset_v0.22_{color,BW}-FINAL.pdf` (output 은 git 밖 -- 다른 PC 는 다시 빌드).
+판: **출시 후보 `output/prod4/planner/v0.22/home-reset_v0.22_{color,BW}-FINAL.pdf`** (v0.23 = 배경 나누기 실험, iPad A/B 대기 -- `product4-content.md` 맨 앞) (output 은 git 밖 -- 다른 PC 는 다시 빌드).
 **이 PC 의 셸 도구는 `\\` 를 `\` 로 줄인다** -- heredoc 으로 파이썬·정규식의 백슬래시를 넘기지 말고 Edit 도구나 `chr(92)` 로(10-01, 정규식 두 번 깨짐).
 파이프라인 `scripts/p4/` 만(**`build_v2_p4.py full`** -- 시안 HTML 을 틀로. v0.9 까지는 `build_p4.py`). 방: 회사 `Prod 4. The ADHD Home Reset` / 집 `Prod 4. The ADHD Home Reset (Home)` (10-01 이름 확정으로 `Prod 4. Something` 에서 변경).
 
@@ -502,6 +502,18 @@ iPad 확인 대기 (2026-09-24).** 테마 플래그 `fast_paint`. v8.19: 502p, 1
 **남은 일:** ① iPad 에서 `output/prod1/ipad-test/` A/B 5장 비교 (PC 수치는 pdfium 이라
 GoodNotes 와 다를 수 있다) ② Prod 2 가 `build_planner.py` 작업을 끝낸 뒤
 `v8.19-undated` 로 반영. 상품 2 도 같은 그림자·bloom 을 쓴다.
+
+**8. 쪽마다 다른 큰 배경 그림은 넘김을 끊는다 -- 상품 4 (2026-10-04 사용자 iPad).** design 시안은 카드 그림자를 쪽 배경 JPG
+(1224x1584)에 구워 넣는다. 카드 배치가 쪽마다 다른 섹션(상품 4 HOME · ROUTINES · **TOOLS 93~109쪽**)은 배경이 17장 전부 따로라
+넘길 때마다 큰 그림을 새로 푼다 -- GoodNotes 에서 Tools 만 "뚝뚝" 끊겼고, 배경을 같이 쓰는 Weeks(52쪽 1장) · Rooms 는 매끄러웠다.
+pdf.js 두 번째 넘김 중앙: Tools 72ms vs Weeks 27ms. 교훈:
+- **디자인을 받을 때 "배경을 쪽마다 따로 굽는가"를 먼저 본다.** 섹션 바탕은 같이 쓰고, 쪽마다 다른 것(그림자)은 작게
+- 검사: `check_scroll_speed.py` G "새 큰 그림이 처음 나오는 쪽 수"(0.5백만 픽셀 이상). 상품 4 v0.22 40쪽, 섹션 바탕을 같이 쓰면 6쪽
+- **고치는 방법이 늘 빠른 것은 아니다.** 상품 4 v0.23 실험(섹션 바탕 + 그림자 조각, `scripts/p4/split_bg_p4.py`): 그림을 기억하는 뷰어
+  (pdf.js 구간 넘김)에서 Tools 66 -> 20ms, **기억하지 않는 뷰어(pdfium 쪽마다 새로)는 74 -> 106ms 로 오히려 느렸다.** GoodNotes 가 어느
+  쪽인지는 PC 에서 알 수 없다 -> **iPad A/B(`output/prod4/ipad-test/`) 없이 판매 판에 넣지 않는다**
+- **Chrome 은 인쇄할 때 그림 위치 · 크기를 96dpi 정수 픽셀(0.75pt)로 맞춘다.** 32pt 칸 그림은 64 -> 63.75pt, 128 -> 128.25pt 로 밀려
+  1px 어긋났다(그림자 이음매). 그림 조각을 이어 붙일 때는 위치 · 크기를 **3pt 의 배수**로
 
 ## 빌드가 Windows 계정을 잠근다 -- Chrome 은 반드시 `scripts/chrome_auto.py` 로 켠다 (2026-09-28)
 
