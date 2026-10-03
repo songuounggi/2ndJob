@@ -419,6 +419,7 @@ TODAY_TILE_BG = "#EEF5F1"   # Energy 섹션 옅은 칸 (흑백판은 to_bw 가 �
 # 모양 = 미리보기 CSS 와 같게: 0 1px 2px rgba(40,60,55,.06), 0 8px 18px -8px rgba(40,60,55,.22)
 TILE_BG = "#FFFFFF"
 TILE_SHADOW_PAD = 26
+CARD_RADIUS = 16      # 시안 카드 모서리 (README)
 
 
 def tile_shadow(rects, card):
@@ -446,8 +447,15 @@ def tile_shadow(rects, card):
         col = Image.new("RGB", (W, Hh), (40, 60, 55))
         Image.composite(col, Image.new("RGB", (W, Hh), (255, 255, 255)), alpha).save(out)
     rel = os.path.relpath(out, os.path.join(ROOT, "src")).replace(os.sep, "/")
+    # 그림이 바깥 카드 모서리에 닿으면 그 모서리를 카드와 같이 둥글게 자른다 -- 네모 흰 바탕이 카드의 둥근 아래 모서리를
+    # 덮었다(10-03 사용자가 41쪽에서 찾음, 3 · 6 · 33쪽도 같았다). 벡터 자르기라 소프트마스크가 생기지 않는다
+    rad = []
+    for side, hit in (("top-left", x0 == cx and y0 == cy), ("top-right", x1 == cx + cw and y0 == cy),
+                      ("bottom-left", x0 == cx and y1 == cy + ch), ("bottom-right", x1 == cx + cw and y1 == cy + ch)):
+        if hit:
+            rad.append(f"border-{side}-radius:{CARD_RADIUS}px")
     return (f'<img class="tile-shadow" src="{rel}" alt="" style="position:absolute;left:{x0}px;top:{y0}px;'
-            f'width:{x1 - x0}px;height:{y1 - y0}px">')
+            f'width:{x1 - x0}px;height:{y1 - y0}px{";" + ";".join(rad) if rad else ""}">')
 
 
 def tile_style(x, y, w, h):

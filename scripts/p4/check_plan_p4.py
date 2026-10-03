@@ -317,6 +317,19 @@ def main(ver):
         for t in re.findall(r'class="tile-shadow" src="[^"]*" alt="" style="position:absolute;left:\d+px;top:(\d+)px', body):
             if not any(tt - 4 <= int(t) <= tt for tt in tile_tops):
                 fails.append(f"{ids.index(k) + 1} {k}: 미니카드 그림자 그림이 미니카드 위로 올라가 머리글을 덮을 수 있다 (top {t}, 미니카드 {tile_tops})")
+    # 그림자 그림이 바깥 카드 아래 모서리까지 닿으면 그 모서리가 둥글어야 한다 -- 네모 흰 바탕이 카드의 둥근 모서리를 덮었다(10-03 41쪽)
+    for k, body in secs.items():
+        cards = [tuple(int(v) for v in m) for m in re.findall(
+            r'style="position:absolute;left:(\d+)px;top:(\d+)px;width:(\d+)px;height:(\d+)px;border-radius:16px;background:#FFFFFF', body)]
+        for m in re.finditer(r'class="tile-shadow" src="[^"]*" alt="" style="position:absolute;left:(\d+)px;top:(\d+)px;width:(\d+)px;height:(\d+)px([^"]*)"', body):
+            x, y, w, h = (int(v) for v in m.groups()[:4])
+            rest = m.group(5)
+            for cx, cy, cw, ch in cards:
+                if cx <= x and x + w <= cx + cw and cy <= y and y + h <= cy + ch:
+                    need = [s for s, hit in (("bottom-left", x == cx and y + h == cy + ch), ("bottom-right", x + w == cx + cw and y + h == cy + ch)) if hit]
+                    miss = [s for s in need if f"border-{s}-radius:16px" not in rest]
+                    if miss:
+                        fails.append(f"{ids.index(k) + 1} {k}: 미니카드 그림자 그림이 카드 모서리({', '.join(miss)})를 네모로 덮는다")
     wk = [k for k in secs if re.fullmatch(r"w\d+", k)]
     nowin = [k for k in wk if 'href="#wins" class="mini-tile"' not in secs[k] or C.LABELS["wins_tile"] not in H.unescape(secs[k])]
     if nowin:
