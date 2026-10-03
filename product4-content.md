@@ -16,7 +16,7 @@
    `python scripts/p4/qa_p4.py v0.17`)
 2. ~~design 에 2쪽 순서도 맡기기~~ -- **끝 (10-02 회사 PC): 시안 받아 v0.14 에 넣고 전수검수.** 집에서는 1번 빌드가 최신 판(v0.17)을 만든다
 2-1. **리스팅 사진 10장 + 핀 6장도 design 에 맡긴다** (10-02 사용자) -- `output/prod4/handoff/listing-v0.6.zip` (판 v0.17) (집에서는 빌드 뒤 `python scripts/p4/handoff_listing_p4.py` 로 다시 만든다 -- 이미 있으면 멈춤). 설명서 = `product4-listing-handoff.md`. 디자인은 간섭하지 않고 크기 · 잘림 · 글자 크기 · 사실만 적었다. 우리 시안 draft-v0.6 은 참고 안 함(1MB 넘었다)
-   **10-03 집 PC: design 이 감을 못 잡아 숍 기존 사진도 같이 넘긴다** (사용자) -- **`output/prod4/handoff/shop-refs-v0.2.zip`** (21MB, 원본 PNG):
+   **10-03 집 PC: design 이 감을 못 잡아 숍 기존 사진도 같이 넘긴다** (사용자) -- **`output/prod4/handoff/shop-refs-v0.3_1-prod1.zip` · `_2-prod2.zip` · `_3-prod3.zip`** (원본 PNG, 5.7 · 9.5 · 5.9MB -- v0.2 한 개 21MB 는 design 에 안 올라가 셋으로 나눔):
    상품 1 리스팅 10장 · 핀 6장, 상품 2 리스팅 10장, 상품 3 리스팅 10장(Etsy 판: 01 = v0.56, 02~10 = v0.55), 원고 4개(`listing.md` · `product2-listing.md` ·
    `listing-p3.md` · `pinterest.md`) + `00_README.md`(참고 범위 · 실패한 것 표). 전부 Etsy · 핀터레스트에 올린 그 파일.
    v0.1 은 상품 1 리스팅이 빠지고 JPG 였다 -- design 이 "원본이 없어 모르겠다" 고 해서 v0.2 (회사 PC 가 같은 날 리스팅 이미지를 git 에 올려 받았다)
