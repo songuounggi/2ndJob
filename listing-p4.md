@@ -1,6 +1,6 @@
 # 상품 4 리스팅 원고 — The ADHD Home Reset (초안, 2026-09-30)
 
-**상태: 초안 — 사용자 확정 전** (`PROCESS.md` 8단계, 제작과 나란히). 숫자는 **v0.21 판**(109쪽)과 맞춘다 -- 판이 바뀌면
+**상태: 초안 — 사용자 확정 전** (`PROCESS.md` 8단계, 제작과 나란히). 숫자는 **v0.22 판**(109쪽)과 맞춘다 -- 판이 바뀌면
 `python scripts/p4/check_listing_p4.py <버전>` 이 원고와 판을 다시 대조한다.
 기획 `product4-content.md`, 조사 `product4-research.md`, 가격 사다리 `CLAUDE.md`(입구 칸).
 
@@ -180,7 +180,7 @@ design 원본 그대로 뽑은 것은 `design-final-v1.0`. **v1.1 에서 Claude 
 | eight ready-made rooms · plus two blank cards / six-step | `ROOMS` 8(미리 채운 방, 6단계 + Done enough) + `MY_ROOMS` 2(빈 카드) -- 10-03 구조 논리 L10: "ten rooms, each with ..." 은 빈 방 둘까지 채워진 것처럼 읽혔다 |
 | 52 undated reset weeks | `w1`~`w52` |
 | Six tabs: Home, Energy, Rooms, Routines, Weeks, Tools | `build_p4.TABS` |
-| under 6 MB | 두 PDF 크기 상한. **v0.21 컬러 5.6MB · 흑백 4.1MB** (v0.10 은 5.0 · 3.5MB, v0.9 까지는 3.4~3.5MB 라 4 MB 였다) |
+| under 6 MB | 두 PDF 크기 상한. **v0.22 컬러 5.6MB · 흑백 4.1MB** (v0.10 은 5.0 · 3.5MB, v0.9 까지는 3.4~3.5MB 라 4 MB 였다) |
 | Rescue 다섯 단계 이름 | `RESCUE["steps"]` |
 | 도구 목록 | `pages_p4.TOOL_KEYS` 제목 |
 | 금지: 1인칭 당사자·의학적 주장·영국식 표기 | `p4_content` 의 검사 정규식 |

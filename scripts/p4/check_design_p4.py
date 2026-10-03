@@ -107,6 +107,7 @@ JS = r"""() => {
       const ins = links.filter(a => { const q = a.getBoundingClientRect(); return q.width && q.left >= r.left - 1 && q.right <= r.right + 1 && q.top >= r.top - 1 && q.bottom <= r.bottom + 1; });
       const hrefs = new Set(ins.map(a => a.getAttribute('href')));
       if (hrefs.size !== 1) return;
+      if (ins.some(a => /(mini|today|setup)-tile/.test(a.className))) return;   // 링크가 미니카드(카드 모양 버튼) -- 바깥 카드까지 덮지 않는다 (10-04)
       const writes = [...sec.querySelectorAll('span,div')].some(e => { const q = e.getBoundingClientRect(); const cs = getComputedStyle(e);
         return q.left >= r.left && q.right <= r.right && q.top >= r.top && q.bottom <= r.bottom && (Math.abs(q.width - 14) < .5 && Math.abs(q.height - 14) < .5 || parseFloat(cs.borderBottomWidth) > 0 && q.width > 60); });
       if (writes) return;

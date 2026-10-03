@@ -44,10 +44,10 @@ Etsy 숍 `SongAndParkStudio`, 2026-09-21 발행.
 (`scripts/p3/README.md`), 기획 `product3-content.md`·`product3-dated.md`, 원고 `listing-p3.md`. 스티커 실기기 확인은 아직.
 **다음 할 일: ② GoodNotes 스티커북(.collection)을 iPad 에서 만들어 ZIP 교체 -- 판매 0건일 때** (`listing-p3.md` "다음 할 일"). ① 리스팅 이미지 제목 키우기는 **2026-09-28 완료** -- 사진 10장 교체(v0.55 + 01 은 v0.56), `shop.md` 리스팅 이미지 #4. **01 회색 선 고친 v0.60 은 교체 대기** (`listing-p3.md`).
 
-**상품 4 — 제작 중, v0.21 (2026-10-03 밤 집 PC: 표지 "Home Reset" 녹색 · 아이콘 섹션 색 · 4쪽 지도 쪽 레몬 · 3쪽 적는 칸 = 제목 + 줄 / v0.18 빈 칸 채우기: 4쪽 방 그림 + Done enough · 6쪽 배터리 날 칸 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 · 96쪽 배너 되살림 / v0.17 까지: 구조 논리 S1~S13 + 2쪽 design 순서도 + L11 + 전수 재검수 R1~R5 + 영어 치우침 정리). 리스팅 사진 10장 확정(`output/prod4/listing/design-final-v1.6/`), 세일 23% · 30일 확정.** The ADHD Home Reset -- 배터리×시간으로 고르는 청소·루틴
+**상품 4 — 제작 중, v0.22 (2026-10-04 집 PC: iPad GoodNotes 확인 -- 41~92쪽 Wins 링크는 안쪽 미니카드에만 / 10-03 밤: 표지 "Home Reset" 녹색 · 아이콘 섹션 색 · 4쪽 지도 쪽 레몬 · 3쪽 적는 칸 = 제목 + 줄 / v0.18 빈 칸 채우기: 4쪽 방 그림 + Done enough · 6쪽 배터리 날 칸 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 · 96쪽 배너 되살림 / v0.17 까지: 구조 논리 S1~S13 + 2쪽 design 순서도 + L11 + 전수 재검수 R1~R5 + 영어 치우침 정리). 리스팅 사진 10장 확정(`output/prod4/listing/design-final-v1.6/`), 세일 23% · 30일 확정.** The ADHD Home Reset -- 배터리×시간으로 고르는 청소·루틴
 플래너, **109쪽**(v0.11 빈 방 둘째 +2, v0.12 빈 노트 -1), 링크 PDF + 흑백 인쇄판, **입구 가격 $8.99**(가격 사다리). `PROCESS.md` 5·6단계 통과(v0.12)(구매자 역할 7명) → **사용자 눈 검수**, 7단계 iPad 확인은 집에서,
 8단계 리스팅 원고 초안(`listing-p4.md`). **인계·남은 결정은 `product4-content.md` 맨 앞 "지금 어디까지"** 가 한곳에 있다.
-판: `output/prod4/planner/v0.21/home-reset_v0.21_{color,BW}-FINAL.pdf` (output 은 git 밖 -- 다른 PC 는 다시 빌드).
+판: `output/prod4/planner/v0.22/home-reset_v0.22_{color,BW}-FINAL.pdf` (output 은 git 밖 -- 다른 PC 는 다시 빌드).
 **이 PC 의 셸 도구는 `\\` 를 `\` 로 줄인다** -- heredoc 으로 파이썬·정규식의 백슬래시를 넘기지 말고 Edit 도구나 `chr(92)` 로(10-01, 정규식 두 번 깨짐).
 파이프라인 `scripts/p4/` 만(**`build_v2_p4.py full`** -- 시안 HTML 을 틀로. v0.9 까지는 `build_p4.py`). 방: 회사 `Prod 4. The ADHD Home Reset` / 집 `Prod 4. The ADHD Home Reset (Home)` (10-01 이름 확정으로 `Prod 4. Something` 에서 변경).
 

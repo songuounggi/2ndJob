@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.21"     # v0.21: 3쪽 적는 칸 = 칸 없이 제목 + 줄 1 (옅은 녹색 칸은 판 어디에도 없는 모양이었다, 10-03 사용자 A안) / v0.20: 4쪽 방 그림 · 화살표 다시 Rooms 레몬(100%) -- 지도 쪽은 가는 곳의 색(design 규칙, 10-03 사용자 B안) / v0.19: 표지 "Home Reset" 짙은 녹색 #2B5E49(리스팅 01 과 같게) · 아이콘 = 그 쪽 섹션 색 100%, 4쪽 그림 · 화살표 민트 (10-03 사용자) / v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 24(머리글 글자선) · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.22"     # v0.22: 41~92쪽 Wins 링크는 안쪽 미니카드에만 -- 바깥 카드 덮개 링크 뺌 (10-04 사용자 iPad) / v0.21: 3쪽 적는 칸 = 칸 없이 제목 + 줄 1 (옅은 녹색 칸은 판 어디에도 없는 모양이었다, 10-03 사용자 A안) / v0.20: 4쪽 방 그림 · 화살표 다시 Rooms 레몬(100%) -- 지도 쪽은 가는 곳의 색(design 규칙, 10-03 사용자 B안) / v0.19: 표지 "Home Reset" 짙은 녹색 #2B5E49(리스팅 01 과 같게) · 아이콘 = 그 쪽 섹션 색 100%, 4쪽 그림 · 화살표 민트 (10-03 사용자) / v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 24(머리글 글자선) · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -664,8 +664,8 @@ def additions(page, key):
         link = (tile_shadow([(108, 552, 194, 96)], (84, 512, 242, 160))
                 + mini_tile("wins", 108, 552, 194, 96, "star", pages_p4.title_of("wins"), C.LABELS["wins_tile"], "lavender"))
         page = page[:lines.start()] + link + page[lines.end():]
-        # 카드에 링크 하나뿐 -> 카드 전체를 누르게(README §7 · check_design J -- v0.16 첫 검수에서 가운데 글자만 눌려 52쪽 FAIL)
-        page = page[:page.rfind("</div>")] + '<a href="#wins" style="position:absolute;left:84px;top:512px;width:242px;height:160px"></a></div>'
+        # 바깥 카드 전체를 덮는 링크는 두지 않는다 -- 누르는 것은 안쪽 미니카드(그 자체가 카드 모양 버튼). v0.16~v0.21 은 v0.16 의 덮개 링크가
+        # 남아 미니카드 둘레 바닥 카드까지 눌렸다(10-04 사용자 iPad). check_design J 는 미니카드면 예외, check_plan 18 이 덮개를 잰다
         # 날짜 칸은 "This week's rooms" 카드 안, 제목과 같은 줄 오른쪽(148~170, 표 머리 176 위). 처음엔 카드 밖 바탕(라벤더)에
         # 두었더니 쓰는 줄이 안 보였다 -- 시안의 쓰는 줄은 늘 흰 카드 안이다
         field = (f'<div style="position:absolute;left:392px;top:148px;width:168px;height:22px;display:flex;align-items:flex-end;'

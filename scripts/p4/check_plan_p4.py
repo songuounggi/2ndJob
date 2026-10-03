@@ -409,6 +409,16 @@ def main(ver):
                for c in re.findall(r'color:(#[0-9A-Fa-f]{6})"><svg class="ar"', body)[:1] if c != dest_ink(t)]
         if bad:
             fails.append(f"{ids.index(k) + 1} {k}: 지도 쪽 화살표가 가는 곳 섹션 색이 아님 {bad[:3]} (10-03)")
+    # 18 미니카드를 감싼 카드에 덮개 링크 금지 (10-04 사용자 iPad -- 41~92쪽 Wins 바깥 카드 전체가 눌렸다, v0.16 S7 의 덮개가 남았다)
+    for k, body in secs.items():
+        tiles = [tuple(float(v) for v in m) for m in re.findall(
+            r'class="(?:today|mini|setup)-tile" style="(?:border:[^;]*;)?position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;height:([\d.]+)px', body)]
+        covers = [tuple(float(v) for v in m) for m in re.findall(
+            r'<a href="#[\w-]+" style="position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;height:([\d.]+)px"></a>', body)]
+        bad = [c for c in covers for t in tiles if c[0] <= t[0] and c[1] <= t[1] and t[0] + t[2] <= c[0] + c[2] and t[1] + t[3] <= c[1] + c[3]
+               and (c[2], c[3]) != (t[2], t[3])]
+        if bad:
+            fails.append(f"{ids.index(k) + 1} {k}: 미니카드를 감싼 덮개 링크 {bad[:1]} -- 링크는 미니카드에만 (10-04)")
     wk = [k for k in secs if re.fullmatch(r"w\d+", k)]
     nowin = [k for k in wk if 'href="#wins" class="mini-tile"' not in secs[k] or C.LABELS["wins_tile"] not in H.unescape(secs[k])]
     if nowin:
