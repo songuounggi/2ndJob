@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -267,6 +267,8 @@ def fill_start(page):
 # 3쪽 Set up once 줄 자리 (10-02 재검수 R5 -- 처음 29 / 62 / 72 / 40pt 로 제각각이었다). 제목 줄 끝 510 ~ 카드 아래 18 위(750) 사이에
 # 덩어리 4개(쓰는 칸 = 머리 16 + 줄 26, 링크 줄 = 16)를 같은 간격 31 로: 541 · 614 · 687 · 734 -- check_plan 14 가 간격을 잰다
 SETUP_Y = (541, 614, 687, 734)
+SETUP_ICON = {"room": '<path d="M4 11 12 4l8 7v9H4z"/><path d="M12 10v6M9 13h6"/>',
+              "people": '<circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2A4.5 4.5 0 0 1 21 18.5"/>'}
 
 
 def start_setup(page):
@@ -278,20 +280,26 @@ def start_setup(page):
                     r'<div style="position:absolute;left:108px;top:516px;width:452px">(?:<div [^>]*></div>){9}</div>', page)
     if not old:
         raise SystemExit("[start] 아래 카드(The room that bugs me most + 9줄)를 못 찾음")
-    head = lambda y, a, b, extra="": (f'<div style="position:absolute;left:108px;top:{y}px;width:452px;display:flex;gap:10px;'
-                                      f'align-items:baseline"><span style="font-size:10.5px;font-weight:800">{H.escape(a)}</span>'
-                                      f'<span style="font-size:8.5px;color:#66716B">{H.escape(b)}</span>{extra}</div>')
-    line = lambda y: (f'<div style="position:absolute;left:108px;top:{y}px;width:452px;box-sizing:border-box;height:26px;'
-                      f'border-bottom:0.6px solid #E3E9E5"></div>')
-    go = lambda k, t: f'<a href="#{k}">{H.escape(t)}<span style="margin-left:4px;color:#537364">→</span></a>'
-    rooms = "".join(go(k, f'{C.LABELS["room"]} {n[-1]}') for k, n in C.MY_ROOMS)
-    right = lambda inner: f'<span style="margin-left:auto;display:flex;gap:14px;font-size:9px;font-weight:800">{inner}</span>'
+    # 10-03 사용자 A안: 쓰는 줄 둘 + 링크 줄 둘이 섞여 서류 양식 같았다 -> 위 = 적는 칸 둘(회색 칸), 아래 = 그 쪽으로 가는 옅은 칸 둘.
+    # My rooms 칸은 갈 곳이 둘이라 칸 전체가 링크가 아니고 안에 Room 1 → · Room 2 → (누르는 것 하나 = 쪽 하나)
+    ink, tint = "#537364", TODAY_TILE_BG
+    field = lambda x, a, b: (f'<div class="setup-field" style="position:absolute;left:{x}px;top:522px;width:218px;height:86px;border-radius:10px;'
+                             f'background:#F3F6F4;box-sizing:border-box;padding:10px 12px"><div style="font-size:10px;font-weight:800">{H.escape(a)}</div>'
+                             f'<div style="margin-top:2px;font-size:8px;color:#66716B">{H.escape(b)}</div></div>')
+    ic = lambda k: (f'<span style="line-height:0;color:{ink};opacity:.85"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+                    f'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{SETUP_ICON[k]}</svg></span>')
+    arrow = f'<span style="margin-left:4px;color:{ink}">→</span>'
+    tile_in = lambda k, a, b, arr: (f'{ic(k)}<span style="margin-top:6px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(a)}{arr}</span>'
+                                    f'<span style="margin-top:2px;font-size:8.5px;font-weight:600;line-height:1.35;color:#66716B">{H.escape(b)}</span>')
+    box = f'top:624px;width:218px;height:120px;border-radius:12px;background:{tint};box-sizing:border-box;padding:12px;display:flex;flex-direction:column'
+    # "Room&nbsp;1": 보통 빈칸이면 화살표 묶음이 마지막 낱말 "1" 만 감싸 쪽 번호처럼 읽힌다(check_plan 4 가 1 != 27 로 걸었다)
+    rooms = "".join(f'<a href="#{k}" style="white-space:nowrap">{C.LABELS["room"]}&nbsp;{n[-1]}{arrow}</a>' for k, n in C.MY_ROOMS)
     new = (f'<div style="position:absolute;left:108px;top:496px;display:flex;gap:10px;align-items:baseline">'
            f'<span style="font-size:12px;font-weight:800">{H.escape(title)}</span><span style="font-size:8.5px;color:#66716B">{H.escape(hint)}</span></div>'
-           + head(SETUP_Y[0], *fields[0]) + line(SETUP_Y[0] + 16)
-           + head(SETUP_Y[1], *fields[1]) + line(SETUP_Y[1] + 16)
-           + head(SETUP_Y[2], *links[0], right(rooms))
-           + head(SETUP_Y[3], *links[1], right(go("who-does-what", pages_p4.title_of("who-does-what")))))
+           + field(108, *fields[0]) + field(342, *fields[1])
+           + f'<div class="setup-tile" style="position:absolute;left:108px;{box}">{tile_in("room", *links[0], "")}'
+           + f'<span style="margin-top:auto;display:flex;gap:14px;font-size:9px;font-weight:800">{rooms}</span></div>'
+           + f'<a href="#who-does-what" class="setup-tile" style="position:absolute;left:342px;{box}">{tile_in("people", *links[1], arrow)}</a>')
     return page[:old.start()] + new + page[old.end():]
 
 
@@ -1005,7 +1013,8 @@ BW_LINES = {"#D3DBD6": "#B4B4B4", "#E3E9E5": "#C2C2C2", "#ECF0ED": "#CCCCCC", "#
 def bw_cell(m):
     """쓰는 칸(체크 상자·동그라미 14, Last reset 칸): 흰 바탕 + 회색 테두리 -- 연회색 면은 인쇄하면 사라진다"""
     st = m.group(1)
-    if re.search(r"width:14px;height:14px;border-radius:(4\.5px|50%)", st) or re.search(r"^height:26px;border-radius:8px;", st):
+    if (re.search(r"width:14px;height:14px;border-radius:(4\.5px|50%)", st) or re.search(r"^height:26px;border-radius:8px;", st)
+            or "width:218px;height:86px;border-radius:10px;background:#F3F6F4" in st):      # 3쪽 Set up once 적는 칸 (10-03 A안)
         st = re.sub(r"background:#[0-9A-Fa-f]{6}", "background:#FFFFFF;border:0.6px solid #9A9A9A;box-sizing:border-box", st)
     return f'style="{st}"'
 

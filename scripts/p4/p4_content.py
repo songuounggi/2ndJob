@@ -20,7 +20,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-VERSION = "v0.14"   # v0.14 = 빈 칸 채우기(10-03 사용자): 4쪽 My rooms 문장, 33쪽 Then 카드, 41~92쪽 Wins 칸 문구   # v0.13 = 재검수 R1~R4(10-02 사용자): 33쪽 계획 전용 부제, 3쪽 "Pick one way in.", 6쪽 오늘 칸 -> 배터리 날 링크, Wins log 다시 쓰기 안내   # v0.12 = 구조 논리 S5~S13(10-02 사용자): 월간 · 계절 겹침 교체, 33 · 32 · 39 · 97 부제, 7~9 다시 쓰기 안내, Wins 한 곳   # v0.11 = L11 성인 눈높이(10-02 사용자): 빈 표 도구 쪽 5장 미리 채움(PREFILL), 3쪽 아래 칸 = 처음 한 번 쓰는 설정   # v0.10 = 구조 논리 검토(10-02 사용자): 3쪽 번호 빼고 갈림, "Vacuum the living room", "Every week", 순서도 시간은 갈래 상자로   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
+VERSION = "v0.14"   # v0.14 = 빈 칸 채우기(10-03 사용자): 4쪽 My rooms 문장, 33쪽 Then 카드, 41~92쪽 Wins 칸 문구, 3쪽 Set up once 칸 둘   # v0.13 = 재검수 R1~R4(10-02 사용자): 33쪽 계획 전용 부제, 3쪽 "Pick one way in.", 6쪽 오늘 칸 -> 배터리 날 링크, Wins log 다시 쓰기 안내   # v0.12 = 구조 논리 S5~S13(10-02 사용자): 월간 · 계절 겹침 교체, 33 · 32 · 39 · 97 부제, 7~9 다시 쓰기 안내, Wins 한 곳   # v0.11 = L11 성인 눈높이(10-02 사용자): 빈 표 도구 쪽 5장 미리 채움(PREFILL), 3쪽 아래 칸 = 처음 한 번 쓰는 설정   # v0.10 = 구조 논리 검토(10-02 사용자): 3쪽 번호 빼고 갈림, "Vacuum the living room", "Every week", 순서도 시간은 갈래 상자로   # v0.9 = 2쪽 순서도를 갈림 순서도로(질문 2개, 링크 상자 하나 = 쪽 하나 -- 10-02 사용자)   # v0.8 = Reset week 힌트 짧은 꼴 "no penalty"(반쪽 카드에 원고 문구가 넘침, 10-01 사용자)   # v0.7 v0.7 = Routines 목차 페이지 제목·부제(6단계 써 보기) -- 사용자 확인 전   # v0.6 = 103쪽 이사·대청소 체크리스트 12개(BIG_RESET) -- 사용자 확인 전   # v0.5 = 빌드 코드에 박혀 있던 문구 23개를 원고로(5-1 검수에서 찾음) -- 사용자 확인 전   # v0.4 v0.4 = 전체 빌드용 페이지 제목·부제·칸 이름(PAGE_TEXT) 추가 -- 사용자 확인 전   # v0.3 v0.3 = 2쪽 순서도(FLOW) 추가 (2026-09-30 사용자: 순서도 2쪽, Start here 3쪽)   # v0.2 v0.2 = 사용법 안내 70자 안으로, "behind" 금지어를 뜻(밀렸다)으로만   # v0.1 = 첫 원고 (2026-09-30)
 
 # --------------------------------------------------------------- 표지·사용법 --
 COVER = ("The ADHD Home Reset", "clean by energy, not by schedule")
@@ -36,7 +36,8 @@ START_HERE = {
     "setup": ("Set up once", "the first time you open it",
               [("The room that bugs me most", "start there next time"),
                ("When my battery runs highest", "save the big jobs for then")],
-              [("Name your two rooms", "on their own pages"), ("Share the chores?", "split them on paper")]),
+              # 10-03 사용자 A안: 아래 둘은 그 쪽으로 가는 옅은 칸 -- (칸 제목, 한 줄)
+              [("My rooms", "Name them, set the steps."), ("Who does what", "Share the chores? Split them on paper.")]),
     "steps": [
         ("By battery", "Low, medium, or full? Pick a task that fits.", "energy"),
         ("By room", "Tap it on the house map. Ten minutes, then stop.", "house-map"),

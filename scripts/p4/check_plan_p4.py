@@ -269,11 +269,13 @@ def main(ver):
         miss = [b for b in C.BATTERIES if f'href="#day-{b}"' not in e[e.find(C.LABELS["pick"]):]]
         if miss or 'left:108px;top:652px;width:452px"><div' in e:
             fails.append(f"{ids.index('energy') + 1} energy: Today's pick 이 쓰는 칸 -- 오늘 고른 일은 7~9쪽에만 (R3) {miss}")
-    if "start" in secs:
-        tops = [int(t) for t in re.findall(r'left:108px;top:(\d+)px;width:452px;display:flex;gap:10px', secs["start"])]
-        gaps = [b - a - h for a, b, h in zip(tops, tops[1:], (42, 42, 16))]
-        if len(tops) != 4 or max(gaps) - min(gaps) > 1:
-            fails.append(f"{ids.index('start') + 1} start: Set up once 줄 간격이 고르지 않다 {gaps} (R5)")
+    if "start" in secs:     # R5 줄 간격 -> 10-03 사용자 A안: 적는 칸 둘 + 옅은 칸 둘(My rooms 칸 안에 Room 1 · Room 2 링크)
+        st = secs["start"]
+        tile1 = re.search(r'<div class="setup-tile".*?</span></div>', st, re.S)
+        ok = (st.count('class="setup-field"') == 2 and st.count('class="setup-tile"') == 2 and tile1
+              and all(f'href="#{k}"' in tile1.group(0) for k, _ in C.MY_ROOMS) and '<a href="#who-does-what" class="setup-tile"' in st)
+        if not ok:
+            fails.append(f"{ids.index('start') + 1} start: Set up once 가 적는 칸 둘 + 옅은 칸 둘(Room 1 · Room 2 링크)이 아님 (10-03 A안)")
 
     # 15 빈 칸 채우기 (10-03 사용자 -- S5 · R3 로 쓰는 줄을 뺀 자리가 휑했다. 4쪽 B안 · 6쪽 A안)
     if "house-map" in secs:
