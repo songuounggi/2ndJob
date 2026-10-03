@@ -284,8 +284,11 @@ def start_setup(page):
     # My rooms 칸은 갈 곳이 둘이라 칸 전체가 링크가 아니고 안에 Room 1 → · Room 2 → (누르는 것 하나 = 쪽 하나)
     ink, tint = "#537364", TODAY_TILE_BG
     field = lambda x, a, b: (f'<div class="setup-field" style="position:absolute;left:{x}px;top:522px;width:218px;height:86px;border-radius:10px;'
-                             f'background:#F3F6F4;box-sizing:border-box;padding:10px 12px"><div style="font-size:10px;font-weight:800">{H.escape(a)}</div>'
-                             f'<div style="margin-top:2px;font-size:8px;color:#66716B">{H.escape(b)}</div></div>')
+                             f'background:#F3F6F4;box-sizing:border-box;padding:10px 12px;display:flex;flex-direction:column">'
+                             f'<div style="font-size:10px;font-weight:800">{H.escape(a)}</div>'
+                             f'<div style="margin-top:2px;font-size:8px;color:#66716B">{H.escape(b)}</div>'
+                             # 10-03 사용자: 적는 칸인데 쓸 줄이 없어 쓰는 곳인지 몰랐다 -> 칸 아래에 쓰는 줄 하나
+                             f'<div class="setup-line" style="margin-top:auto;margin-bottom:4px;height:0;border-bottom:0.6px solid #D3DBD6"></div></div>')
     ic = lambda k: (f'<span style="line-height:0;color:{ink};opacity:.85"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
                     f'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{SETUP_ICON[k]}</svg></span>')
     arrow = f'<span style="margin-left:4px;color:{ink}">→</span>'

@@ -272,7 +272,8 @@ def main(ver):
     if "start" in secs:     # R5 줄 간격 -> 10-03 사용자 A안: 적는 칸 둘 + 옅은 칸 둘(My rooms 칸 안에 Room 1 · Room 2 링크)
         st = secs["start"]
         tile1 = re.search(r'<div class="setup-tile".*?</span></div>', st, re.S)
-        ok = (st.count('class="setup-field"') == 2 and st.count('class="setup-tile"') == 2 and tile1
+        ok = (st.count('class="setup-field"') == 2 and st.count('class="setup-line"') == 2      # 적는 칸마다 쓰는 줄 (10-03 사용자)
+              and st.count('class="setup-tile"') == 2 and tile1
               and all(f'href="#{k}"' in tile1.group(0) for k, _ in C.MY_ROOMS) and '<a href="#who-does-what" class="setup-tile"' in st)
         if not ok:
             fails.append(f"{ids.index('start') + 1} start: Set up once 가 적는 칸 둘 + 옅은 칸 둘(Room 1 · Room 2 링크)이 아님 (10-03 A안)")
