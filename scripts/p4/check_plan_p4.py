@@ -366,11 +366,14 @@ def main(ver):
             b = cy + ch - max(t[1] + t[3] for t in inside)
             if (round(l), round(r), round(b)) != (24, 24, 24):
                 fails.append(f"{ids.index(k) + 1} {k}: 미니카드 둘레 여백 좌 {l:g} · 우 {r:g} · 아래 {b:g} != 24 (10-03 B안)")
-    # 같은 카드 안 미니카드 · 적는 칸 모서리 반지름이 같은가 (10-03: 3쪽 적는 칸 10 · 미니카드 12 로 달랐다)
+    # 3쪽 적는 칸 = 칸 없이 제목 + 쓰는 줄 (10-03 사용자 A안, v0.21 -- 옅은 녹색 칸은 판 어디에도 없는 모양이었다).
+    # design 의 적는 곳은 흰 카드 안 제목 + 줄(27쪽 Room name 등). 줄 색 = 다른 쪽 쓰는 줄 #E3E9E5
     if "start" in secs:
-        rr = set(re.findall(r'class="setup-(?:field|tile)" style="[^"]*?border-radius:([\d.]+)px', secs["start"]))
-        if len(rr) != 1:
-            fails.append(f"{ids.index('start') + 1} start: 적는 칸 · 미니카드 모서리 반지름이 다르다 {sorted(rr)} (10-03)")
+        st3 = secs["start"]
+        boxed = re.findall(r'class="setup-field" style="[^"]*(?:background|border-radius)', st3)
+        lines = re.findall(r'class="setup-line" style="[^"]*border-bottom:0.6px solid (#[0-9A-Fa-f]{6})', st3)
+        if boxed or lines != ["#E3E9E5"] * 2:
+            fails.append(f"{ids.index('start') + 1} start: 적는 칸이 칠한 칸이거나 줄 색이 다른 쪽과 다르다 (칸 {len(boxed)} · 줄 {lines}) (10-03 A안)")
     # Q3c 흑백판 미니카드에 쪽 번호 = 그 링크가 가는 쪽
     bw_src = src.replace("_full_color.html", "_full_BW.html")
     if os.path.exists(bw_src):

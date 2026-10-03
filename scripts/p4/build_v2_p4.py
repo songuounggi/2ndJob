@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.20"     # v0.20: 4쪽 방 그림 · 화살표 다시 Rooms 레몬(100%) -- 지도 쪽은 가는 곳의 색(design 규칙, 10-03 사용자 B안) / v0.19: 표지 "Home Reset" 짙은 녹색 #2B5E49(리스팅 01 과 같게) · 아이콘 = 그 쪽 섹션 색 100%, 4쪽 그림 · 화살표 민트 (10-03 사용자) / v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 24(머리글 글자선) · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.21"     # v0.21: 3쪽 적는 칸 = 칸 없이 제목 + 줄 1 (옅은 녹색 칸은 판 어디에도 없는 모양이었다, 10-03 사용자 A안) / v0.20: 4쪽 방 그림 · 화살표 다시 Rooms 레몬(100%) -- 지도 쪽은 가는 곳의 색(design 규칙, 10-03 사용자 B안) / v0.19: 표지 "Home Reset" 짙은 녹색 #2B5E49(리스팅 01 과 같게) · 아이콘 = 그 쪽 섹션 색 100%, 4쪽 그림 · 화살표 민트 (10-03 사용자) / v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 24(머리글 글자선) · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -283,12 +283,14 @@ def start_setup(page):
     # 10-03 사용자 A안: 쓰는 줄 둘 + 링크 줄 둘이 섞여 서류 양식 같았다 -> 위 = 적는 칸 둘(회색 칸), 아래 = 그 쪽으로 가는 옅은 칸 둘.
     # My rooms 칸은 갈 곳이 둘이라 칸 전체가 링크가 아니고 안에 Room 1 → · Room 2 → (누르는 것 하나 = 쪽 하나)
     ink, tint = "#537364", TODAY_TILE_BG
-    field = lambda x, a, b: (f'<div class="setup-field" style="position:absolute;left:{x}px;top:522px;width:218px;height:86px;border-radius:12px;'
-                             f'background:{TODAY_TILE_BG};box-sizing:border-box;padding:10px 12px;display:flex;flex-direction:column">'   # 10-03 사용자: 회색 -> 옅은 녹색
+    # 10-03 사용자 A안(v0.21): 칸을 칠하지 않는다 -- 옅은 녹색 칸은 판 어디에도 없는 모양이었다. design 의 적는 곳 = 흰 카드 안 제목 + 쓰는 줄
+    # (27쪽 Room name · 7쪽 After, I get · 41쪽 Slid to next week). 자리 · 폭은 아래 미니카드 두 열과 같다(108 · 342, 218)
+    field = lambda x, a, b: (f'<div class="setup-field" style="position:absolute;left:{x}px;top:522px;width:218px;height:86px;'
+                             f'box-sizing:border-box;padding:10px 0 0;display:flex;flex-direction:column">'
                              f'<div style="font-size:10px;font-weight:800">{H.escape(a)}</div>'
                              f'<div style="margin-top:2px;font-size:8px;color:#66716B">{H.escape(b)}</div>'
                              # 10-03 사용자: 적는 칸인데 쓸 줄이 없어 쓰는 곳인지 몰랐다 -> 칸 아래에 쓰는 줄 하나
-                             f'<div class="setup-line" style="margin-top:auto;margin-bottom:4px;height:0;border-bottom:0.6px solid #D3DBD6"></div></div>')
+                             f'<div class="setup-line" style="margin-top:auto;margin-bottom:4px;height:0;border-bottom:0.6px solid #E3E9E5"></div></div>')   # 줄 색 = 다른 쪽 쓰는 줄
     ic = lambda k: (f'<span class="setup-ic" style="line-height:0;color:{ink}"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
                     f'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{SETUP_ICON[k]}</svg></span>')
     arrow = f'<span style="margin-left:4px;color:{ink}">→</span>'
@@ -1103,7 +1105,7 @@ def bw_cell(m):
     """쓰는 칸(체크 상자·동그라미 14, Last reset 칸): 흰 바탕 + 회색 테두리 -- 연회색 면은 인쇄하면 사라진다"""
     st = m.group(1)
     if (re.search(r"width:14px;height:14px;border-radius:(4\.5px|50%)", st) or re.search(r"^height:26px;border-radius:8px;", st)
-            or "width:218px;height:86px;border-radius:12px;background:#EEF5F1" in st):   # 모서리 = 미니카드와 같은 12 (10-03)      # 3쪽 Set up once 적는 칸 (10-03 A안)
+            ):     # 3쪽 Set up once 적는 칸은 v0.21 부터 칸 없이 줄만 -- 흑백판도 다른 쪽 쓰는 줄과 같다
         st = re.sub(r"background:#[0-9A-Fa-f]{6}", "background:#FFFFFF;border:0.6px solid #9A9A9A;box-sizing:border-box", st)
     return f'style="{st}"'
 
