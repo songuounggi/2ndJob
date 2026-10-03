@@ -15,7 +15,13 @@
 모양: v0.22 대비 평균 0.03~0.19 단계, 카드 아래 경계 8x8 칸 최대 4~6 단계 남음(원인 미해결 -- 그림 합성 단계에서는 같다). **GoodNotes 가 그림을 기억하는지 PC 로는 모른다 ->
 iPad A/B: `output/prod4/ipad-test/A-v0.22-pages85-109.pdf` vs `B-v0.23-pages85-109.pdf`** 를 GoodNotes 에서 넘겨 보고, B 가 확실히 매끄러우면 경계 차이까지 고쳐 v0.24 로 Etsy 파일 교체.
 교훈 `CLAUDE.md` 500쪽 절 8, 검사 `check_scroll_speed.py` G(새 큰 그림 쪽 수, 참고).
-검수 에이전트 여섯(역할표 다섯 + 출시 감독)을 v0.22 에 돌림 -- 결과는 아래에 이어 적는다.
+**검수 에이전트 여섯 결과 (10-04 새벽, v0.22):** 디자인 · 선 · 구매자(별점 4.5, 링크 약 120개 눌러 봄) = 반드시 고침 0. 기획서 감독관 · 출시 감독 = 절차 · 문서 6~9건.
+구조 논리 = 반드시 2건 -> **사용자 결정 대기 (그림 `output/prod4/preview/release-fixes/_compare.jpg`):**
+① 깊은 청소 10쪽(12 · 14 · … · 30)에 Wins log 알약이 없다 -- 6쪽 할 일 31개 중 9개가 여기로 가는데 2쪽 순서도 "하나 하고 → Wins log" 길이 두 번 눌러야 있다(L4, 구매자 검수도 지적). 안: 방 카드처럼 "Wins log →" 알약 더함
+② 1쪽 표지 "Routines & weeks →" 가 31쪽 Routines 목록으로 가는데 목록에 Weeks 가 없다(L3, R9 미결). 안 A: 31쪽 목록에 Weeks 줄(40쪽) / 안 B: 표지 글자 "Routines" 로
+그 밖 사용자 결정: v0.22 로 낼지(Tools 끊김 -- iPad A/B 뒤) · 리스팅 제목(긴 안 / 짧은 안) · 흑백판 한 장 인쇄 확인 · 저장소 비공개(권장).
+Claude 할 일(출시 전): forecast.md #4 확정 · `output/prod4/upload/<판>/` Etsy 이름 파일 + 사진 JPG 10장만 따로 · 그 파일로 속도 최종 재검(다른 프로그램 끄고 -- 에이전트와 겹친 qa v0.22 는 렌더 · 속도 FAIL 2, 부하로 보임) · check_upload.py 에 상품 4 · 올린 날 shop.md 이력.
+나중에(기록): 표지 "ten rooms" vs 리스팅 "eight + two blank" · 33쪽 계획 표로 가는 길(Routines 탭뿐) · 루프 쪽 ← Energy menu 없음 · 94쪽 단계 체크 칸 · 102 · 105쪽 빈 표 · 구운 괘선 25.5/26.25pt 섞임(최대 0.375) · 흑백 선 회색 194 · listing-p4.md:79 "Slide it to the next slot" 판에 없는 말 · Notability 등 실기기 미확인 · 기획서 낡은 문구(297 · 418 · 487 · 362 · 477).
 
 ### ▶▶ 10-04 집 PC -- v0.22 (iPad GoodNotes 확인 -- Wins 링크)
 
