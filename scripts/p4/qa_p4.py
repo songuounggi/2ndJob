@@ -22,6 +22,7 @@ CHECKS = [
     ("5-4 원고 (글자 수 · 금지 표현 · 철자)", ["scripts/p4/p4_content.py"]),
     ("5-1·5-4 기획서 대조 · 인쇄된 번호 · 금지 표현", ["scripts/p4/check_plan_p4.py", VER]),
     ("5-2 디자인 (README 11절 · 탭 · 쓰는 칸 옆 링크 · 카드 전체)", ["scripts/p4/check_design_p4.py", VER]),
+    ("5-2 흰 미니카드 그림자 (경계 · 카드 모서리, 10-03)", ["scripts/p4/check_tile_shadow_p4.py", VER]),
     ("5-3 판 · 링크 · 흑백판", ["scripts/p4/check_v2_p4.py", VER]),
     ("5-5 렌더 (GoodNotes 위험 효과)  컬러", ["scripts/check_render.py", PDF("color")]),
     ("5-5 렌더 (GoodNotes 위험 효과)  흑백", ["scripts/check_render.py", PDF("BW")]),

@@ -427,9 +427,11 @@ def tile_shadow(rects, card):
     위로는 4pt 만 -- 위쪽 머리글(Today's pick · Then · Wins)을 흰 바탕으로 덮었다(10-03 첫 빌드). 아래 · 옆은 카드 안쪽까지"""
     from PIL import Image, ImageChops, ImageDraw, ImageFilter
     cx, cy, cw, ch = card
-    x0 = max(min(r[0] for r in rects) - TILE_SHADOW_PAD, cx)
+    # 옆으로는 카드 모서리 반지름만큼 안쪽에서 끝낸다 -- 카드 아래 모서리에 닿으면 네모 흰 바탕이 둥근 모서리를 덮는다(10-03 41쪽).
+    # 둥글게 자르기(clip)보다 싸다. 잘리는 곳의 그림자 진하기는 1단계 안팎
+    x0 = max(min(r[0] for r in rects) - TILE_SHADOW_PAD, cx + CARD_RADIUS)
     y0 = max(min(r[1] for r in rects) - 4, cy)
-    x1 = min(max(r[0] + r[2] for r in rects) + TILE_SHADOW_PAD, cx + cw)
+    x1 = min(max(r[0] + r[2] for r in rects) + TILE_SHADOW_PAD, cx + cw - CARD_RADIUS)
     y1 = min(max(r[1] + r[3] for r in rects) + TILE_SHADOW_PAD, cy + ch)
     key = "_".join(f"{x - x0}-{y - y0}-{w}x{h}" for x, y, w, h in rects) + f"_{x1 - x0}x{y1 - y0}"
     out = os.path.join(DESIGN_DIR, "generated", f"tile-shadow-{key}.png")
@@ -444,6 +446,14 @@ def tile_shadow(rects, card):
                                                      ((x - x0) + w + spread) * S, ((y - y0) + h + spread + dy) * S],
                                                     radius=max(1, 12 + spread) * S, fill=int(255 * a))
                 alpha = ImageChops.add(alpha, m.filter(ImageFilter.GaussianBlur(blur * S)))
+        # 좌우 끝 6pt 는 0 까지 서서히 -- 자른 경계에서 밝기가 3단계 끊겼다(10-03 실측, 흰 바탕이라 세로 선처럼 보일 수 있다)
+        ramp = Image.new("L", (W, 1), 255)
+        edge = int(6 * S)
+        for i in range(edge):
+            v = int(255 * i / edge)
+            ramp.putpixel((i, 0), v)
+            ramp.putpixel((W - 1 - i, 0), v)
+        alpha = ImageChops.multiply(alpha, ramp.resize((W, Hh)))
         col = Image.new("RGB", (W, Hh), (40, 60, 55))
         Image.composite(col, Image.new("RGB", (W, Hh), (255, 255, 255)), alpha).save(out)
     rel = os.path.relpath(out, os.path.join(ROOT, "src")).replace(os.sep, "/")
