@@ -132,7 +132,7 @@ run("5 손님 온다", "w20", [("SOS", "rescue"), ("Guests in 2 hours", "guests"
 run("6 같이 산다", "index", [("ROUTINES", "routines"), ("Who does what", "who-does-what"), ("ROUTINES", "routines"),
                           ("Kids", "kids-pets"), ("ROUTINES", "routines"), ("Weekly rotation", "rotation")])
 print("\n[빈틈 링크 -- 6단계에서 추가]")
-run("Energy -> 그날 페이지", "energy", [("Low", "day-Low")])
+run("Energy -> 그날 페이지", "energy", [("Low battery day", "day-Low")])   # 10-03: 줄 이름은 글자만, 길은 Today's pick 칸
 run("Guests -> 방 카드", "guests", [("Bathroom", "bathroom")])
 run("루프 -> Wins", "dishes-loop", [("Wins log", "wins")])
 

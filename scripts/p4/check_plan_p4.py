@@ -330,6 +330,54 @@ def main(ver):
                     miss = [s for s in need if f"border-{s}-radius:16px" not in rest]
                     if miss:
                         fails.append(f"{ids.index(k) + 1} {k}: 미니카드 그림자 그림이 카드 모서리({', '.join(miss)})를 네모로 덮는다")
+    # 16 10-03 사용자 결정(오른쪽 창으로 보며 고름)
+    # Q1 6쪽 줄 이름 Low / Medium / Full 은 글자만 -- 아래 Today's pick 칸이 같은 7~9쪽으로 간다(L2, 같은 곳으로 가는 것 둘)
+    if "energy" in secs:
+        e = secs["energy"]
+        dup = re.findall(r'<a href="#day-(\w+)" style="position:absolute;left:84px;', e)
+        if dup:
+            fails.append(f"{ids.index('energy') + 1} energy: 줄 이름 {dup} 가 링크 -- Today's pick 칸과 같은 쪽으로 가는 것 둘 (L2, 10-03)")
+    # Q2 Reset week 방 줄 수 = 33쪽 Weekly rotation 방 줄 수 (L7 -- 계획을 다 옮겨 적을 수 있게)
+    def room_rows(body, x1):
+        m = re.search(r'<path d="((?:M108,\d+ H' + str(x1) + r' )+)"', body)
+        return len(re.findall(r"M108,", m.group(1))) if m else 0
+    if "rotation" in secs:
+        plan = room_rows(secs["rotation"], 242)          # 33쪽 방 이름 줄 (x 108~242)
+        bad_w = [k for k in secs if re.fullmatch(r"w\d+", k) and room_rows(secs[k], 270) != plan]
+        if not plan or bad_w:
+            fails.append(f"Reset week 방 줄 수가 33쪽 Weekly rotation({plan}줄)과 다름 {bad_w[:3]} (L7, 10-03)")
+    # Q3a 4쪽 My rooms 링크 = 다른 타일 Go 와 같은 아래 줄 (margin-top:auto)
+    if "house-map" in secs and "align-self:flex-end;margin-top:auto;display:flex;gap:12px" not in secs["house-map"]:
+        fails.append(f"{ids.index('house-map') + 1} house-map: My rooms 링크가 Go 와 같은 아래 줄이 아님 (10-03)")
+    # Q3b 미니카드 둘레 여백 = 18pt (좌 · 우 · 아래), 3쪽 적는 칸도 같은 격자
+    for k, body in secs.items():
+        cards = [tuple(float(v) for v in m) for m in re.findall(
+            r'style="position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;height:([\d.]+)px;border-radius:16px;background:#FFFFFF', body)]
+        tiles = [tuple(float(v) for v in m) for m in re.findall(
+            r'class="(?:today|mini|setup)-tile" style="(?:border:[^;]*;)?position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;height:([\d.]+)px', body)]
+        tiles += [tuple(float(v) for v in m) for m in re.findall(
+            r'class="setup-field" style="position:absolute;left:([\d.]+)px;top:([\d.]+)px;width:([\d.]+)px;height:([\d.]+)px', body)]
+        for cx, cy, cw, ch in cards:
+            inside = [t for t in tiles if cx <= t[0] and t[0] + t[2] <= cx + cw and cy <= t[1] and t[1] + t[3] <= cy + ch]
+            if not inside:
+                continue
+            l = min(t[0] for t in inside) - cx
+            r = cx + cw - max(t[0] + t[2] for t in inside)
+            b = cy + ch - max(t[1] + t[3] for t in inside)
+            if (round(l), round(r), round(b)) != (18, 18, 18):
+                fails.append(f"{ids.index(k) + 1} {k}: 미니카드 둘레 여백 좌 {l:g} · 우 {r:g} · 아래 {b:g} != 18 (10-03)")
+    # Q3c 흑백판 미니카드에 쪽 번호 = 그 링크가 가는 쪽
+    bw_src = src.replace("_full_color.html", "_full_BW.html")
+    if os.path.exists(bw_src):
+        bw = open(bw_src, encoding="utf-8").read()
+        for m in re.finditer(r'<a href="#([\w-]+)" class="(?:today|mini|setup)-tile" style="[^"]*">(<span class="bw-pno"[^>]*>p\.(\d+)</span>)?', bw):
+            if not m.group(2) or int(m.group(3)) != ids.index(m.group(1)) + 1:
+                fails.append(f"흑백판: 미니카드 {m.group(1)} 에 쪽 번호가 없거나 틀림 ({m.group(3)}) (10-03)")
+                break
+        for k in [kk for kk, _ in C.MY_ROOMS]:
+            mm = re.search(rf'<a href="#{k}" style="white-space:nowrap">.*?p\.(\d+)</span></a>', bw, re.S)
+            if not mm or int(mm.group(1)) != ids.index(k) + 1:
+                fails.append(f"흑백판: 3쪽 {k} 링크에 쪽 번호가 없거나 틀림 (10-03)")
     wk = [k for k in secs if re.fullmatch(r"w\d+", k)]
     nowin = [k for k in wk if 'href="#wins" class="mini-tile"' not in secs[k] or C.LABELS["wins_tile"] not in H.unescape(secs[k])]
     if nowin:

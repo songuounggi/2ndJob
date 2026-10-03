@@ -40,9 +40,11 @@ def main():
             r'style="position:absolute;left:(\d+)px;top:(\d+)px;width:(\d+)px;height:(\d+)px;border-radius:16px;background:#FFFFFF', body)]
         for x, y, w, h in shadows:
             worst = 0
+            # 경계 바로 바깥(0.5pt)과 바로 안쪽(0.25pt) -- 그 사이가 끊김. 더 넓게 재면 미니카드 옆 그림자의 자연스러운 변화까지 센다
+            # (10-03: 미니카드가 경계에서 2pt 인 Reset week 에서 ±1pt 로 쟀더니 그림자 자체의 기울기 2단계를 끊김으로 셌다)
             for yy in range(y + 2, y + h - 1, 3):
-                for xx in (x, x + w):
-                    worst = max(worst, abs(im.getpixel(((xx - 1) * S, yy * S)) - im.getpixel(((xx + 1) * S, yy * S))))
+                for xx, out_, in_ in ((x, -2, 1), (x + w, 2, -2)):
+                    worst = max(worst, abs(im.getpixel((xx * S + out_, yy * S)) - im.getpixel((xx * S + in_, yy * S))))
             if worst > 1:
                 fails.append(f"{no} {k}: 그림자 그림 경계에서 밝기가 {worst}단계 끊긴다 (x {x} / {x + w})")
             for cx, cy, cw, ch in cards:

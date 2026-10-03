@@ -48,7 +48,8 @@ FLOW_SHOT = os.path.join(ROOT, "src", "p4_flow_design_v1.0", "design_handoff_flo
 DIFF_MAX = 3.5      # 같은 틀·같은 내용이면 글자 안티에일리어싱 차이로 1.4~2.9 (v0.10 표본 실측)
 # 사용자가 그림으로 보고 고른 모양 변경 (10-03) -- 시안에 없는 칸이라 차이가 커진다. 상한을 두어 그 밖의 어긋남은 계속 잡는다
 DIFF_OK = {"energy": 5.0,    # 6쪽 Today's pick 배터리 날 옅은 칸 셋(A안) -- v0.18 실측 4.41
-           "start": 5.3}    # 3쪽 Set up once 적는 칸 둘 + 옅은 칸 둘(A안) -- v0.18 실측 4.73
+           "start": 5.3,    # 3쪽 Set up once 적는 칸 둘 + 옅은 칸 둘(A안) -- v0.18 실측 4.73
+           "w1": 5.3}       # Reset week 방 8줄 · 아래 카드 52 내림(10-03 B안) -- v0.18 실측 4.57
 # 기획서 링크 중 사용자 결정으로 뺀 것 (10-01, 써 보기 6단계) -- 이유는 product4-content.md 인계 절
 LOST_OK = {"rescue": {"kitchen", "house-map"},      # 92쪽 1 Trash first·4 Clear a path 링크 뺌 (내용과 안 맞는 곳)
            "energy": {"car"}}                        # 6쪽 차 할 일 2개 -> 깊은 청소(deep-car) 로 (그 일이 있는 쪽)
