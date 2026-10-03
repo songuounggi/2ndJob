@@ -1,6 +1,6 @@
 # 상품 4 리스팅 원고 — The ADHD Home Reset (초안, 2026-09-30)
 
-**상태: 초안 — 사용자 확정 전** (`PROCESS.md` 8단계, 제작과 나란히). 숫자는 **v0.19 판**(109쪽)과 맞춘다 -- 판이 바뀌면
+**상태: 초안 — 사용자 확정 전** (`PROCESS.md` 8단계, 제작과 나란히). 숫자는 **v0.20 판**(109쪽)과 맞춘다 -- 판이 바뀌면
 `python scripts/p4/check_listing_p4.py <버전>` 이 원고와 판을 다시 대조한다.
 기획 `product4-content.md`, 조사 `product4-research.md`, 가격 사다리 `CLAUDE.md`(입구 칸).
 
@@ -118,7 +118,8 @@ For personal use. Please do not resell or redistribute the files.
 
 ## 리스팅 사진 — 10장 계획
 
-**▶ 최종 (2026-10-03 밤 집 PC): `output/prod4/listing/design-final-v1.4/01_hero.jpg ~ 10_files.jpg`** -- v1.3 과 같은 틀, 쪽 그림을 **v0.19** 로(01 아이패드 속 표지 · 10 컬러판 표지의 "Home Reset" 녹색 -- 사용자가 찾음, 3 · 4 · 6 · 33 · 41쪽 아이콘 색). `src/p4_listing_design/design_handoff_listing_v0.19/`, 검사 `check_listing_images_p4.py design-final-v1.4 v0.19` PASS.
+**▶ 최종 (2026-10-03 밤 집 PC): `output/prod4/listing/design-final-v1.5/01_hero.jpg ~ 10_files.jpg`** -- 쪽 그림 **v0.20**(4쪽 레몬 -- 01 · 09 에 4쪽이 들어 있다), `src/p4_listing_design/design_handoff_listing_v0.20/`, 검사 `check_listing_images_p4.py design-final-v1.5 v0.20` PASS.
+아래는 v1.4 기록 -- `design-final-v1.4/` -- v1.3 과 같은 틀, 쪽 그림을 **v0.19** 로(01 아이패드 속 표지 · 10 컬러판 표지의 "Home Reset" 녹색 -- 사용자가 찾음, 3 · 4 · 6 · 33 · 41쪽 아이콘 색). `src/p4_listing_design/design_handoff_listing_v0.19/`, 검사 `check_listing_images_p4.py design-final-v1.4 v0.19` PASS.
 아래는 v1.3 기록 -- `design-final-v1.3/` -- v1.2 와 같은 틀 · 같은 밝기, **쪽 그림만 판매 판 v0.18 로** (v1.2 는 v0.17 쪽 그림이라 4 · 6 · 33 · 41쪽 등이 판과 달랐다 -- 기획서 감독관). design 틀 HTML 은 손대지 않고 `pages/` 18장만 v0.18 에서 다시 렌더(scale 2, 1224x1584): `src/p4_listing_design/design_handoff_listing_v0.18/`. `export_listing_p4.py <html> design-final-v1.3 C`, 검사 `check_listing_images_p4.py design-final-v1.3 v0.18` PASS.
 아래는 v1.2 기록 -- `design-final-v1.2/` -- v1.1 + **배경 밝게 (사용자: "너무 어둡다, 밝고 화사하게" -> 시안 A·B·C 중 C "가장 밝게")**: 종이 알갱이 opacity 0.25 · 요철 0 · 수채 번짐 saturate(1.7) brightness(1.02) · 종이 #FDFCF9. 빈 바탕 230 -> 248. 글자 · 쪽 그림 · 알약 · 기기는 그대로. `export_listing_p4.py <html> design-final-v1.2 C`, 검사 PASS, 장당 185~256KB, 줄무늬 없음. 비교 `output/prod4/listing/look-test/_compare_looks.jpg`.
 아래는 v1.1 기록 -- `design-final-v1.1/` -- claude.ai/design 최종판
@@ -178,7 +179,7 @@ design 원본 그대로 뽑은 것은 `design-final-v1.0`. **v1.1 에서 Claude 
 | eight ready-made rooms · plus two blank cards / six-step | `ROOMS` 8(미리 채운 방, 6단계 + Done enough) + `MY_ROOMS` 2(빈 카드) -- 10-03 구조 논리 L10: "ten rooms, each with ..." 은 빈 방 둘까지 채워진 것처럼 읽혔다 |
 | 52 undated reset weeks | `w1`~`w52` |
 | Six tabs: Home, Energy, Rooms, Routines, Weeks, Tools | `build_p4.TABS` |
-| under 6 MB | 두 PDF 크기 상한. **v0.19 컬러 5.6MB · 흑백 4.1MB** (v0.10 은 5.0 · 3.5MB, v0.9 까지는 3.4~3.5MB 라 4 MB 였다) |
+| under 6 MB | 두 PDF 크기 상한. **v0.20 컬러 5.6MB · 흑백 4.1MB** (v0.10 은 5.0 · 3.5MB, v0.9 까지는 3.4~3.5MB 라 4 MB 였다) |
 | Rescue 다섯 단계 이름 | `RESCUE["steps"]` |
 | 도구 목록 | `pages_p4.TOOL_KEYS` 제목 |
 | 금지: 1인칭 당사자·의학적 주장·영국식 표기 | `p4_content` 의 검사 정규식 |

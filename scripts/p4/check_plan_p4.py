@@ -384,7 +384,7 @@ def main(ver):
             if not mm or int(mm.group(1)) != ids.index(k) + 1:
                 fails.append(f"흑백판: 3쪽 {k} 링크에 쪽 번호가 없거나 틀림 (10-03)")
     # 17 색 (10-03 사용자): 표지 "Home Reset" = #2B5E49(B안, 리스팅 01 과 같게) -- 흑백판은 한 색 / 아이콘 = 그 쪽 섹션 색, 옅게 하지 않음(C안) /
-    #    4쪽 방 그림 · 화살표 = HOME 민트 (v0.18 은 Rooms 레몬 75%)
+    #    4쪽 = 지도 쪽 -> 점 · 방 그림 · 화살표 = 가는 곳(Rooms) 레몬 (v0.20 -- v0.19 는 그림 · 화살표만 민트로 바꿔 레몬 점과 짝짝이)
     if 'class="title-accent" style="color:#2B5E49">Home Reset' not in secs.get("cover", ""):
         fails.append("1 cover: 표지 'Home Reset' 이 짙은 녹색 #2B5E49 가 아님 (10-03 B안)")
     if os.path.exists(bw_src) and 'class="title-accent" style="color:' in bw:
@@ -394,8 +394,18 @@ def main(ver):
         if faint:
             fails.append(f"{ids.index(k) + 1} {k}: 아이콘이 옅다(opacity) {len(faint)}개 -- 섹션 색 그대로 (10-03 C안)")
     hm = secs.get("house-map", "")
-    if len(re.findall(r'class="hm-ic" style="[^"]*color:#537364', hm)) != 9 or len(re.findall(r'color:#537364"><svg class="ar"', hm)) != 10:
-        fails.append(f"{ids.index('house-map') + 1} house-map: 방 그림 9 · 화살표 10 이 HOME 민트 #537364 가 아님 (10-03)")
+    if (len(re.findall(r'class="hm-ic" style="[^"]*color:#7D6A28', hm)) != 9 or len(re.findall(r'color:#7D6A28"><svg class="ar"', hm)) != 10
+            or len(re.findall(r'border-radius:50%;background:#E2BE3E"></span><span style="font-size:12.5px', hm)) != 9):
+        fails.append(f"{ids.index('house-map') + 1} house-map: 점 9 · 방 그림 9 · 화살표 10 이 같은 Rooms 레몬이 아님 (10-03 B안)")
+    # 지도 쪽(표지 목차 · 5쪽 Index · 4쪽 House map) 링크 화살표 = 가는 곳의 섹션 진한 색 (design 규칙, 10-03 사용자). 그 밖의 쪽은 그 쪽 섹션 색
+    first = [(ids.index(k), d) for k, d in (("cover", "#537364"), ("energy", "#537364"), ("rooms", "#7D6A28"),
+                                              ("routines", "#6E6490"), ("weeks", "#6E6490"), ("tools", "#237581"))]
+    dest_ink = lambda t: [d for i, d in first if ids.index(t) >= i][-1]
+    for k in ("cover", "index", "house-map"):
+        bad = [(t, c) for t, body in re.findall(r'<a href="#([\w-]+)"[^>]*>(.*?)</a>', secs.get(k, ""), re.S) if t in ids
+               for c in re.findall(r'color:(#[0-9A-Fa-f]{6})"><svg class="ar"', body)[:1] if c != dest_ink(t)]
+        if bad:
+            fails.append(f"{ids.index(k) + 1} {k}: 지도 쪽 화살표가 가는 곳 섹션 색이 아님 {bad[:3]} (10-03)")
     wk = [k for k in secs if re.fullmatch(r"w\d+", k)]
     nowin = [k for k in wk if 'href="#wins" class="mini-tile"' not in secs[k] or C.LABELS["wins_tile"] not in H.unescape(secs[k])]
     if nowin:

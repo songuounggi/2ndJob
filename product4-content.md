@@ -6,11 +6,19 @@
 
 **다른 방·다른 PC 는 여기부터 읽는다.** 이 절 아래의 긴 기록은 그날 무슨 일이 있었는지이고, 할 일은 여기에만 모았다.
 
-### ▶▶ 10-03 밤 집 PC -- v0.19 (색) · 리스팅 사진 v1.4
+### ▶▶ 10-03 밤 집 PC -- v0.20 (4쪽 색 되돌림) · 리스팅 사진 v1.5
+
+**v0.20 = v0.19 + 4쪽 House map 점 · 방 그림 · 화살표 전부 Rooms 레몬 #7D6A28, 그림 100%** (10-03 사용자 B안). v0.19 는 그림 · 화살표만 민트로 바꿔 레몬 점과 짝짝이였다.
+design 시안의 규칙(`CLAUDE.md` 링크 색 규칙 두 줄): **지도 쪽(표지 목차 · 2쪽 순서도 · 5쪽 Index · 4쪽 House map)은 가는 곳의 색, 그 밖의 쪽은 그 쪽 섹션 색.**
+v0.18 의 갈색은 이 규칙대로였고 75% 로 흐렸을 뿐이었다 -- Claude 가 C안 때 "섹션 색 하나로 정리" 라고 잘못 설명해 4쪽을 깨뜨렸다.
+검사 check_plan 17: 4쪽 점 9 · 그림 9 · 화살표 10 같은 레몬 + 지도 쪽 화살표 = 가는 곳 색(v0.19 에서 2건 FAIL 역검증). 그림 `output/prod4/preview/p4-dots/`.
+**리스팅 사진 = `output/prod4/listing/design-final-v1.5/`** (쪽 그림 v0.20, `src/p4_listing_design/design_handoff_listing_v0.20/`, 검사 PASS).
+
+### ▶▶ (기록) 10-03 밤 집 PC -- v0.19 (색) · 리스팅 사진 v1.4
 
 **v0.19 = v0.18 + 색 둘 (10-03 사용자, 그림으로 고름 -- `output/prod4/preview/cover-green/` · `icon-green/` · `v0.19-check/`):**
 ① 1쪽 표지 "Home Reset" = 짙은 녹색 **#2B5E49** (B안 -- 리스팅 사진 01 의 큰 제목과 같게, "The ADHD" 는 그대로 짙은 회색. 흑백판 표지는 한 색). 규칙은 `CLAUDE.md` 공통 디자인 규칙 -- 이 녹색은 본문 글자에 쓰지 않는다
-② 아이콘 = **그 쪽 섹션 색, 옅게 하지 않음**(C안): 3 · 6쪽 민트, 33 · 41~92쪽 라벤더(85% -> 100%). **4쪽 방 그림 9 + 화살표 10(Go · Room 1 · 2) = HOME 민트 #537364** (v0.18 은 Rooms 레몬 75% -- 4쪽만 "가는 쪽 색" 이라 제각각으로 보였다). 방 이름 앞 점은 Rooms 레몬 그대로
+② 아이콘 = **그 쪽 섹션 색, 옅게 하지 않음**(C안): 3 · 6쪽 민트, 33 · 41~92쪽 라벤더(85% -> 100%). 4쪽 방 그림 9 + 화살표 10 = HOME 민트 #537364 -- **v0.20 에서 되돌림(레몬 100%, 위 절)**
 검사 check_plan 17(v0.18 에서 6건 FAIL 역검증), check_v2 4쪽 시안 차이 허용 4.0(실측 3.54). 전수검수 `qa_p4.py v0.19` 13 중 12 OK -- 컬러 pdfium 상위5% 111ms 경계선만(v0.18 114~116 과 같은 수준).
 **리스팅 사진 = `output/prod4/listing/design-final-v1.4/`** -- v1.3 과 같은 틀, 쪽 그림 18장을 v0.19 에서 다시(`src/p4_listing_design/design_handoff_listing_v0.19/`). 01 아이패드 속 표지 · 10 컬러판 표지의 "Home Reset" 이 녹색, 3 · 4 · 6 · 33 · 41쪽 아이콘. 검사 `check_listing_images_p4.py design-final-v1.4 v0.19` PASS.
 **남은 것 -- 7단계 iPad (v0.19):** 아래 10-03 절 목록 + 1쪽 표지 녹색 · 4쪽 민트 그림 · 화살표.
@@ -55,21 +63,21 @@ Energy menu 의 Today's pick A안(배터리 날 미니카드 셋, 6쪽) · Weekl
 | 1 시장 조사 | **통과** -- 사용자가 H-a(청소·루틴, 입구 가격) 선택 (`product4-research.md`) |
 | 2 기획서 | **통과** -- 구조·결정 6건 + 문구 원고(`scripts/p4/p4_content.py`) 사용자 확인. **10-02 구조 논리(5-7)로 2·3쪽 다시** -- S1~S4 반영 v0.13, S5~S13 반영 v0.16(S11 보류), L11 반영 v0.15 |
 | 3 디자인 | **통과** -- claude.ai/design 전체 시안 v1.0 (10-01, `design/prod4/the-adhd-home-reset-design-v1.0.zip`) + **2쪽 순서도 시안 v1.0 (10-02, 34e -- `design/prod4/the-adhd-home-reset-flow-v0.4-design-v1.0.zip`)** |
-| **4 제작** | **v0.19 (109쪽) 전체 빌드** -- v0.19 표지 녹색 · 아이콘 섹션 색 100%(위 10-03 밤 절) / v0.18 휑한 곳 채우기 · 흰 미니카드 8개 · 10-03 오후 결정 ①~⑤(위 10-03 절) / v0.17 재검수 R1~R5 · 영어 치우침(R10) / v0.16 구조 논리 S5~S13(S11 보류) / v0.15 L11 빈 표 5장 미리 채움 · 3쪽(Start here) 아래 칸 "Set up once" / v0.14 2쪽 = design 순서도 시안 v1.0(34e) / v0.13 구조 논리 S1~S4(3쪽 번호 뺌 · Wins log 알약 · Vacuum the living room, 10-02) / v0.12 노트 세 종류 한 장씩, v0.11 은 110쪽, v0.10 은 108쪽, v0.1 → v0.9 는 옛 모양 |
-| **5 검수** | **v0.19 전수검수 (10-03 밤)** -- `qa_p4.py v0.19` 13개 중 12 OK(속도 경계선만) / v0.18 전수검수 -- `qa_p4.py v0.18` 13개 중 12 OK(컬러 pdfium 속도 경계선만) + 검수 에이전트 다섯(`PROCESS.md` 역할표). 5-7 S1~S14 · L11 · R1~R11 결정 끝 |
+| **4 제작** | **v0.20 (109쪽) 전체 빌드** -- v0.20 4쪽 레몬(지도 쪽 = 가는 곳 색) / v0.19 표지 녹색 · 아이콘 섹션 색 100%(위 10-03 밤 절) / v0.18 휑한 곳 채우기 · 흰 미니카드 8개 · 10-03 오후 결정 ①~⑤(위 10-03 절) / v0.17 재검수 R1~R5 · 영어 치우침(R10) / v0.16 구조 논리 S5~S13(S11 보류) / v0.15 L11 빈 표 5장 미리 채움 · 3쪽(Start here) 아래 칸 "Set up once" / v0.14 2쪽 = design 순서도 시안 v1.0(34e) / v0.13 구조 논리 S1~S4(3쪽 번호 뺌 · Wins log 알약 · Vacuum the living room, 10-02) / v0.12 노트 세 종류 한 장씩, v0.11 은 110쪽, v0.10 은 108쪽, v0.1 → v0.9 는 옛 모양 |
+| **5 검수** | **v0.20 전수검수 (10-03 밤)** -- `qa_p4.py v0.20` (결과는 위 절) / v0.19 -- 13개 중 12 OK(속도 경계선만) / v0.18 전수검수 -- `qa_p4.py v0.18` 13개 중 12 OK(컬러 pdfium 속도 경계선만) + 검수 에이전트 다섯(`PROCESS.md` 역할표). 5-7 S1~S14 · L11 · R1~R11 결정 끝 |
 | **6 직접 써 보기** | **통과 (10-01)** -- 구매자 역할 7명 자유 탐색 2번(v0.10 · v0.11) → 반드시 고침 0, 자동 검사 FAIL 0. 남은 것은 "나중에" 목록(아래). `PROCESS.md` 6절 "끝나는 조건" |
 | **7 iPad 검수** | **대기 -- 집에서 (iPad 가 집에 있다)** |
-| 8 리스팅 | 원고 `listing-p4.md` · 사진 10장 `design-final-v1.4` 확정 · 세일 23% 30일 확정(10-03). 남은 결정: 제목 · 설명 최종 확인 |
+| 8 리스팅 | 원고 `listing-p4.md` · 사진 10장 `design-final-v1.5` 확정 · 세일 23% 30일 확정(10-03). 남은 결정: 제목 · 설명 최종 확인 |
 | 9 출시 · 10 알리기 | 아직 |
 
 ### 출시까지 남은 일 (2026-10-01 -- PDF 는 1~6단계 통과, **아직 올리지 않는다**)
 
 | 순서 | 할 일 | 누가 · 어디서 |
 |---|---|---|
-| 1 | **7단계 iPad 확인 (필수)** -- GoodNotes 에서 **v0.19** 컬러판 넘기기(바둑판 렌더링·링크·탭), 흑백판 **한 장 실제 인쇄**(위쪽 쪽 번호·연한 선·체크 칸). 사용자 눈 검수도 이때 | 사용자, 집 (`Prod 4 ... (Home)`, `git pull` 후 `python scripts/p4/build_v2_p4.py full`) |
+| 1 | **7단계 iPad 확인 (필수)** -- GoodNotes 에서 **v0.20** 컬러판 넘기기(바둑판 렌더링·링크·탭), 흑백판 **한 장 실제 인쇄**(위쪽 쪽 번호·연한 선·체크 칸). 사용자 눈 검수도 이때 | 사용자, 집 (`Prod 4 ... (Home)`, `git pull` 후 `python scripts/p4/build_v2_p4.py full`) |
 | 2 | 7단계에서 나온 결함 고치기 + 그 결함을 재는 검사 붙이기(`PROCESS.md` 7절 "실기기에서만 보이는 결함") | Claude |
 | 3 | 8단계 리스팅 결정: 세일 **23% $6.92 · 30일 확정(10-03)** · 제목 길이 · 설명 최종 확인 | 사용자 결정 |
-| 4 | **리스팅 사진 10장** -- **10-03 확정: `output/prod4/listing/design-final-v1.4/` (JPG 10장 -- design 최종판 + 06 문구 · 잘림 수정 + 배경 가장 밝게(v1.2) + 쪽 그림을 판매 판으로(v1.3 = v0.18, **v1.4 = v0.19**)), 검사 `check_listing_images_p4.py design-final-v1.4 v0.19` PASS.** 06 만 Claude 가 고침(거짓 문구 · 잘림 -- `listing-p4.md` 사진 절). 이전: 시안 draft-v0.6 완료(10-01, v0.12 109쪽). 폰 크기 점검 완료(10-02: 검색 썸네일 제목 16~19pt 읽힘 -- `listing-p4.md` 사진 절, `_phone_preview.png`) | Claude → 사용자 확인 |
+| 4 | **리스팅 사진 10장** -- **10-03 확정: `output/prod4/listing/design-final-v1.5/` (v1.5 = 쪽 그림 v0.20)** -- 이전 `design-final-v1.4/` (JPG 10장 -- design 최종판 + 06 문구 · 잘림 수정 + 배경 가장 밝게(v1.2) + 쪽 그림을 판매 판으로(v1.3 = v0.18, **v1.4 = v0.19**)), 검사 `check_listing_images_p4.py design-final-v1.5 v0.20` PASS.** 06 만 Claude 가 고침(거짓 문구 · 잘림 -- `listing-p4.md` 사진 절). 이전: 시안 draft-v0.6 완료(10-01, v0.12 109쪽). 폰 크기 점검 완료(10-02: 검색 썸네일 제목 16~19pt 읽힘 -- `listing-p4.md` 사진 절, `_phone_preview.png`) | Claude → 사용자 확인 |
 | 5 | 9단계 출시: `forecast.md` 에 예상치 먼저(초안 #4 있음) · `RELEASE.md` 절차 · `output/prod4/upload/<최종 판>/` 에 Etsy 파일 이름으로(`listing-p4.md` 파일 이름 표) · **올릴 파일 그 자체로 `check_scroll_speed` · `check_render` 최종 재검**(고친 뒤 다시 느려지는 회귀 방지) | Claude + 사용자 |
 | 6 | 10단계 알리기: 핀터레스트 핀 -- **시안 6장 draft-v0.2 + 원고 초안 완료(10-02, `pinterest.md` 상품 4 절)**. 11월 손님맞이(96쪽 Guests) 시즌 대비 01_guests 를 출시 직후 먼저 | Claude + 사용자 |
 
@@ -352,7 +360,7 @@ Energy menu 의 Today's pick A안(배터리 날 미니카드 셋, 6쪽) · Weekl
 | 디자인 | **claude.ai/design 전체 시안 v1.0** (10-01, v0.10 부터) + 2쪽 순서도 시안 v1.0(34e). 처음 결정(09-30)은 "상품 1(v8.20) 모양 + 색만" -- 5절 ④ | `PROCESS.md` 4단계 |
 | 뷰어 안전 | 처음부터 `fast_paint` · `vector_dots` 방식 (그림자·번짐은 공유 PNG, 점은 벡터 원) | `RELEASE.md` 2절 |
 
-## 3. 페이지 지도 (109쪽 -- 쪽 번호는 v0.19 빌드 기준(v0.12 와 같음), `check_docs_p4.py` 가 대조)
+## 3. 페이지 지도 (109쪽 -- 쪽 번호는 v0.20 빌드 기준(v0.12 와 같음), `check_docs_p4.py` 가 대조)
 
 탭(**왼쪽** 레일) 6개 + **표지 빼고** 모든 페이지 오른쪽 위 `SOS` 칩:
 **HOME · ENERGY · ROOMS · ROUTINES · WEEKS · TOOLS**
@@ -390,7 +398,7 @@ Energy menu 의 Today's pick A안(배터리 날 미니카드 셋, 6쪽) · Weekl
 | 1 | 표지 | NEW | `The ADHD Home Reset` / `clean by energy, not by schedule` -- v0.19: "Home Reset" 짙은 녹색 #2B5E49(리스팅 01 과 같게, 10-03 사용자) | → 2 |
 | 2 | **How it flows** (순서도) | NEW (09-30), **구조 바꿈 (10-02 사용자)** | 갈림 순서도: Open the planner → ◇How's today? → Doable: ◇How to pick? → Energy menu(6쪽, "By battery, 2 to 20 minutes") / House map(4쪽, "One room, ten minutes") → Do that one thing, then stop → Wins log / All too much: Rescue mode(94쪽) → Wins log · 따로 Every week(40쪽). 시간은 갈래마다 달라 갈래 상자에(10-02 사용자). 문구 `p4_content.FLOW`. **디자인 = design 회신 "순서도 시안 v1.0"(34e, 10-02 사용자 승인, `design/prod4/the-adhd-home-reset-flow-v0.4-design-v1.0.zip`) -- v0.14 부터.** v0.13 은 구조만 맞춘 임시 배치였다 | 링크 상자 6개 = 쪽 6개(3, 6, 4, 94, 103, 40쪽). 질문·갈래 이름·"Do that one thing" 은 링크 없음. 같은 쪽으로 가는 상자 금지 |
 | 3 | **Start here** | NEW, **번호 뺌 (10-02 사용자)** | 30초 사용법: 라벨 "Pick one way in."(v0.17 R2 -- 처음엔 "Doable today? ...") 아래 By battery → Energy menu / By room → House map (둘 중 하나), 그리고 All too much? → Rescue. 번호(1, 2, 3) 자리는 그림(배터리 · 집 · 구명환) -- 차례가 아니라 갈림(2쪽 순서도와 같은 구조). "빈칸은 실패가 아니다" | 세 개 모두 / **아래 칸 = "Set up once" (v0.15, L11)**: The room that bugs me most · When my battery runs highest 쓰는 칸 + 빈 방 이름(27, 29쪽) · 짝 나누기(38쪽)로 가는 링크 -- 같은 기록 두 곳 금지(L5) / **v0.18 (10-03 사용자 A안)**: 적는 칸 둘(옅은 녹색 + 쓰는 줄) + 흰 미니카드 둘(My rooms -- Room 1 · Room 2, Who does what) |
-| 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(칸). v0.18: 타일마다 방 그림 + DONE ENOUGH + 그 방의 Done enough 문장, 9번째 My rooms 는 Room 1 · Room 2(링크는 Go 와 같은 아래 줄). 마지막 리셋은 방 카드에만(S5 -- 처음 기획의 타일 "마지막 리셋" 칸은 v0.16 에서 뺌) | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) / **v0.16: 타일의 LAST RESET 칸을 뺌 -- 마지막 리셋은 방 카드에만(S5), 타일 전체가 링크** / **v0.18 (10-03 사용자 B안): 타일 = 방 그림 + DONE ENOUGH + 그 방의 Done enough 문장**(인쇄된 안내라 두 곳 기록 아님), My rooms 는 "You set it on the room page." |
+| 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(칸). v0.18: 타일마다 방 그림 + DONE ENOUGH + 그 방의 Done enough 문장, 9번째 My rooms 는 Room 1 · Room 2(링크는 Go 와 같은 아래 줄). 색 = 지도 쪽이라 가는 곳(Rooms) 레몬 -- 점 · 그림 · 화살표(v0.20). 마지막 리셋은 방 카드에만(S5 -- 처음 기획의 타일 "마지막 리셋" 칸은 v0.16 에서 뺌) | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) / **v0.16: 타일의 LAST RESET 칸을 뺌 -- 마지막 리셋은 방 카드에만(S5), 타일 전체가 링크** / **v0.18 (10-03 사용자 B안): 타일 = 방 그림 + DONE ENOUGH + 그 방의 Done enough 문장**(인쇄된 안내라 두 곳 기록 아님), My rooms 는 "You set it on the room page." |
 | 5 | Index | NEW | 전 페이지 목록 | 전 페이지 |
 
 ### 3-2. ENERGY (4)
@@ -544,7 +552,7 @@ Energy menu 의 Today's pick A안(배터리 날 미니카드 셋, 6쪽) · Weekl
 
 | 항목 | 값 | 근거 |
 |---|---|---|
-| 쪽 수 | **109** (v0.19 실측) | 3절 |
-| 용량 | **컬러 5.6MB · 흑백 4.1MB** (v0.19 실측 5,563,930 / 4,120,463 B -- v0.9 는 3.4~3.5MB) | 20MB 상한과 거리가 멀다. 리스팅 "under 6 MB" |
+| 쪽 수 | **109** (v0.20 실측) | 3절 |
+| 용량 | **컬러 5.6MB · 흑백 4.1MB** (v0.20 실측 5,563,930 / 4,120,475 B -- v0.9 는 3.4~3.5MB) | 20MB 상한과 거리가 멀다. 리스팅 "under 6 MB" |
 | 제작 | 예상 2~3일 → **실제 하루**(09-30, v0.1 → v0.9) | 반복 페이지 1종, 고유 템플릿 약 45종 |
 | 판정 | 12월 말까지 조회 100 | `product4-research.md` 4절 |

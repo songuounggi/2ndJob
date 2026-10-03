@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.19"     # v0.19: 표지 "Home Reset" 짙은 녹색 #2B5E49(리스팅 01 과 같게) · 아이콘 = 그 쪽 섹션 색 100%, 4쪽 그림 · 화살표 민트 (10-03 사용자) / v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 24(머리글 글자선) · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.20"     # v0.20: 4쪽 방 그림 · 화살표 다시 Rooms 레몬(100%) -- 지도 쪽은 가는 곳의 색(design 규칙, 10-03 사용자 B안) / v0.19: 표지 "Home Reset" 짙은 녹색 #2B5E49(리스팅 01 과 같게) · 아이콘 = 그 쪽 섹션 색 100%, 4쪽 그림 · 화살표 민트 (10-03 사용자) / v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 · 10쪽 번호 두 칸 · 3쪽 Set up once 칸 · 미니카드 흰색 + 그림자, 3쪽 적는 칸 옅은 녹색 · 6쪽 줄 이름 글자만 · Reset week 방 8줄 · 미니카드 둘레 24(머리글 글자선) · 흑백 미니카드 쪽 번호 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -549,7 +549,9 @@ HOUSE_ICON = {
     "car": '<path d="M4 15v-3l2-5h12l2 5v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M4 12h16"/><circle cx="8" cy="16.5" r="1.6"/><circle cx="16" cy="16.5" r="1.6"/>',
     "myroom": '<path d="M4 11 12 4l8 7v9H4z"/><path d="M12 10v6M9 13h6"/>',
 }
-HOUSE_ICON_COLOR = "#537364"     # HOME 섹션 글자용 진한 민트 -- 4쪽은 HOME 쪽이라 3 · 6쪽과 같게, Go 화살표도 (10-03 사용자 C안. v0.18 은 Rooms 레몬 #7D6A28 75%)
+HOUSE_ICON_COLOR = "#7D6A28"     # Rooms 섹션 글자용 진한 레몬 = 방 이름 앞 점 · Go 화살표와 같은 색. 4쪽은 지도 쪽이라 "가는 곳의 색"
+                                 # (design 규칙 -- 표지 목차 · 2쪽 순서도 · 5쪽 Index 와 같다). v0.18 은 75% 로 흐려 갈색으로 보였고, v0.19 는 민트로 바꿔
+                                 # 레몬 점과 짝짝이가 됐다(10-03 사용자) -> v0.20 레몬 100%
 
 
 def house_map_fill(page):
@@ -575,11 +577,10 @@ def house_map_fill(page):
         n += 1
     if n != 9:
         raise SystemExit(f"[house-map] 채운 타일 {n} != 9")
-    # 화살표(Go 8 + Room 1 · Room 2)도 그림과 같은 민트 (10-03 사용자 -- 6쪽 배터리 그림 · 화살표가 같은 색이듯). 방 이름 앞 점은 Rooms 레몬 그대로
-    old = 'margin-left:4px;color:#7D6A28">→'      # 이 단계에서는 아직 글자 → (arrows() 가 나중에 SVG 로)
-    if page.count(old) != 10:
-        raise SystemExit(f"[house-map] 화살표 {page.count(old)} != 10")
-    return page.replace(old, f'margin-left:4px;color:{HOUSE_ICON_COLOR}">→')
+    # 화살표(Go 8 + Room 1 · Room 2)는 시안 그대로 레몬 = 그림과 같은 색 (check_plan 17 이 점 · 그림 · 화살표를 잰다)
+    if page.count(f'margin-left:4px;color:{HOUSE_ICON_COLOR}">→') != 10:      # 이 단계에서는 아직 글자 → (arrows() 가 나중에 SVG 로)
+        raise SystemExit("[house-map] 화살표 10 개가 그림과 같은 색이 아님")
+    return page
 
 
 ROW_CSS = "height:26px;display:flex;align-items:center;justify-content:flex-start;font-size:10px;font-weight:400;color:#2C3631"   # = 106쪽 Moving 줄
