@@ -138,6 +138,13 @@ $1~3 초저가 판에는 들어가지 않는다(수만 건 숍들의 자리, 고
 > **비공개로 바꾸는 것은 사용자 몫**(GitHub Settings → Danger Zone → Change visibility). 바뀌기 전에는 **판매 PDF · 쪽 렌더 그림(_pages) ·
 > 쪽 그림이 든 design 전달 묶음을 git 에도 Releases 에도 올리지 않는다.** 리스팅 · 핀 이미지(어차피 공개되는 그림)만 git 에 있다(.gitignore 예외).
 > PDF 는 git 에 넣지 않는다 -- 판마다 통째로 역사에 쌓이고 되돌릴 수 없다. 비공개가 된 뒤 GitHub Releases 로(같은 날 사용자 결정)
+>
+> **`.gitignore` 예외를 새로 열면 다른 PC 의 파일이 `git pull` 에 경고 없이 덮인다 (2026-10-03 집 PC 에서 겪음).** git 은 무시(ignore)
+> 하던 파일을 지킬 대상으로 보지 않는다. 회사 PC 가 `output/prod2/listing_student/` 를 올렸는데 **회사 PC 에 있던 것은 옛 판**(428쪽 ·
+> 33 templates · 10_notes 없음)이었고, 집 PC 의 **Etsy 에 올린 판**(437쪽 · 32 designs, 09-24 집 PC 제작)이 pull 한 번에 그것으로 바뀌었다.
+> `build_mockups_student.py student-v1.1` 로 다시 만들어 되돌렸다(10장 바이트 수 09-24 판과 일치). 그래서:
+> ① 결과물 폴더를 git 에 처음 넣기 전에 **그 파일이 Etsy 에 올린 판인지** 내용으로 확인한다(사진 속 쪽 수 · 장수 · `shop.md` 0-1절)
+> ② 다른 PC 에서 그런 커밋을 받기 전에 그 폴더를 먼저 따로 복사해 둔다
 
 **Python 도 PC 마다 정해 둔다** (2026-09-24). 집 PC 에는 3.10·3.11 이 둘 다
 있어 PATH 순서가 바뀌자 패키지 없는 쪽이 잡혔다(`No module named pypdfium2`).
