@@ -80,7 +80,7 @@
 | 03 | `03_rooms` | 핵심 장치 ② **방마다 10분 순서 6단계 + "Done enough" 선** -- 여기까지 하면 멈춘다. 집 지도에서 방을 누른다 | 11쪽 Kitchen 카드, 4쪽 House map (12쪽 깊은 청소는 선택) | Ten minutes, then stop |
 | 04 | `04_rescue` | 핵심 장치 ③ **벅찰 때 구조 모드 다섯 단계**(Trash first → Gather the dishes → One basket of clothes → Clear a path → One surface). **표지 빼고 모든 쪽 오른쪽 위 SOS** 가 여기로 | 94쪽 Rescue mode + SOS 칩이 보이는 아무 쪽(예: 11쪽) | For when it is all too much |
 | 05 | `05_flow` | **한 장으로 보는 쓰는 법** -- 2쪽 순서도 | 2쪽 How it flows -- **새 순서도(시안 34e)로 확정된 판**. 옛 2쪽(상자 9개)은 쓰지 않는다 | One page shows the whole system |
-| 06 | `06_tabs` | **어느 쪽에서든 섹션까지 한 번에** (쪽마다 한 번은 아니다 -- 10-03 정정) -- 왼쪽 탭 6개(Home · Energy · Rooms · Routines · Weeks · Tools), 섹션마다 색이 다르다, 5쪽 Index | 5쪽 Index + 섹션별 쪽: 3쪽(민트) · 11쪽(레몬) · 41쪽(라벤더) · 103쪽(아쿠아) | Every page is one tap away |
+| 06 | `06_tabs` | **어느 쪽에서든 섹션까지 한 번에** (쪽마다 한 번은 아니다 -- 10-03 정정) -- 왼쪽 탭 6개(Home · Energy · Rooms · Routines · Weeks · Tools), 섹션마다 색이 다르다, 5쪽 Index | 5쪽 Index + 섹션별 쪽: 3쪽(민트) · 11쪽(레몬) · 41쪽(라벤더) · 103쪽(아쿠아) | Every section is one tap away ("Every page" 는 거짓 -- 10-03 정정) |
 | 07 | `07_print` | **두 번째 파일 = 흑백 인쇄판** -- 같은 109쪽, 회색조, 잉크 절약, US Letter(A4 는 맞춤 인쇄) | `pages/bw_*` (흑백 1, 6, 11, 41쪽) | Black & white for paper |
 | 08 | `08_weeks` | **52주 Reset week, 날짜 없음** -- 아무 주에서나 시작, 하루에 방 하나, 못 한 날은 다음 칸으로(밀린 것 없음) | 40쪽 Weeks, 41쪽 Reset week 1, 33쪽 Weekly rotation | Skip a week. Nothing to catch up on. |
 | 09 | `09_inside` | **안에 든 것 전체** -- 109쪽, 6구역. 도구(15-minute sprint · Guests in 2 hours · Wins log · Cleaning dopamine menu …) | 4, 6, 11, 32, 36, 96, 101, 103쪽 등 | 109 pages, six sections |
@@ -98,7 +98,7 @@
 | six-step, ten-minute | 방마다 6단계 · 10분 |
 | 52 undated reset weeks | 날짜 없는 주 52장 |
 | Six tabs | Home · Energy · Rooms · Routines · Weeks · Tools |
-| 2 files / under 6 MB | 링크 PDF 5.0MB · 흑백 3.6MB |
+| 2 files / under 6 MB | 링크 PDF 5.6MB · 흑백 4.1MB (v0.18) |
 | Hyperlinked | 탭 · SOS · 쪽 사이 링크는 진짜 PDF 링크 (Goodnotes · Notability · Xodo · Acrobat 에서 동작) |
 | Undated · No streaks | 날짜 없음, 연속 기록 없음, "Blank boxes are normal" |
 
