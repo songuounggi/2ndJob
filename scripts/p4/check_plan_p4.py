@@ -174,7 +174,8 @@ def main(ver):
         n = ids.index(k) + 1
         if re.fullmatch(r"w\d+", k):
             # 10-02 S7: 이긴 것은 103쪽 한 곳 -- 주마다 쪽 Wins 칸은 쓰는 줄 없이 Wins log 링크
-            if not re.search(r'<a href="#wins"[^>]*>' + re.escape(pages_p4.title_of("wins")), body) or 'left:108px;top:550px;width:194px"><div' in body:     # 옆 Slid 카드 줄(left 366)은 그대로
+            win_txt = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", t)) for t in re.findall(r'<a href="#wins"[^>]*>(.*?)</a>', body, re.S)]
+            if not any(pages_p4.title_of("wins") in t for t in win_txt) or 'left:108px;top:550px;width:194px"><div' in body:     # 옆 Slid 카드 줄(left 366)은 그대로
                 fails.append(f"{n} {k}: Wins 칸이 Wins log 링크가 아님 (S7 -- 같은 기록 두 곳)")
             if f'>{C.LABELS["week_of"].upper()}</span><div style="flex:1;box-sizing:border-box;height:22px;border-bottom:' not in body:
                 fails.append(f"{n} {k}: 날짜 칸(WEEK OF) 없음")
@@ -253,8 +254,9 @@ def main(ver):
     for k in ["day-" + b for b in C.BATTERIES]:
         if k in secs and H.escape(C.LABELS["day_reuse"]) not in secs[k] and C.LABELS["day_reuse"] not in secs[k]:
             fails.append(f"{ids.index(k) + 1} {k}: 다시 쓰기 안내 없음 (S10)")
-    if "guests" in secs and C.LABELS["hide"] in secs["guests"]:
-        fails.append(f"{ids.index('guests') + 1} guests: '{C.LABELS['hide']}' -- 목록 줄과 같은 말 두 번 (S13)")
+    # S13 은 10-03 사용자 결정으로 되돌림 -- 96쪽 배너는 강조 문장(쓰는 칸 아님), 빼니 휑했다. 이제는 있어야 한다
+    if "guests" in secs and C.LABELS["hide"] not in H.unescape(secs["guests"]):
+        fails.append(f"{ids.index('guests') + 1} guests: 아래 배너 '{C.LABELS['hide']}' 없음 (10-03 되살림)")
 
     # 14 재검수 R1~R5 (10-02 사용자, 처음부터 전수 재검수에서 -- R1·R2 는 그날 고치다 만든 모순)
     if "rotation" in secs and C.LABELS["slid"] in secs["rotation"]:
@@ -271,6 +273,29 @@ def main(ver):
         gaps = [b - a - h for a, b, h in zip(tops, tops[1:], (42, 42, 16))]
         if len(tops) != 4 or max(gaps) - min(gaps) > 1:
             fails.append(f"{ids.index('start') + 1} start: Set up once 줄 간격이 고르지 않다 {gaps} (R5)")
+
+    # 15 빈 칸 채우기 (10-03 사용자 -- S5 · R3 로 쓰는 줄을 뺀 자리가 휑했다. 4쪽 B안 · 6쪽 A안)
+    if "house-map" in secs:
+        hm = H.unescape(secs["house-map"])
+        miss = [r[1] for r in C.ROOMS if r[3] not in hm] + ([C.LABELS["my_rooms"]] if C.LABELS["my_rooms_done"] not in hm else [])
+        icons = hm.count('class="hm-ic"')
+        if miss or icons != len(C.ROOMS) + 1:
+            fails.append(f"{ids.index('house-map') + 1} house-map: 타일에 방 그림 + Done enough 문장 없음 {miss} · 그림 {icons} (10-03 B안)")
+    if "energy" in secs:
+        e = H.unescape(secs["energy"])
+        tiles = re.findall(r'<a href="#day-(\w+)" class="today-tile".*?</a>', e, re.S)
+        bad = [b for b in C.BATTERIES if b not in tiles or C.DAY_PAGES[b][1] not in e]
+        if bad:
+            fails.append(f"{ids.index('energy') + 1} energy: Today's pick 배터리 날 칸(그림 + 쪽 이름 + 부제) 없음 {bad} (10-03 A안)")
+    if "rotation" in secs:
+        r = H.unescape(secs["rotation"])
+        got = re.findall(r'<a href="#([\w-]+)" class="mini-tile"', r)
+        if got != ["weeks", "house-map"] or C.LABELS["then_weeks"] not in r:
+            fails.append(f"{ids.index('rotation') + 1} rotation: 아래 Then 카드(Weeks · House map 칸) 없음 {got} (10-03 A안)")
+    wk = [k for k in secs if re.fullmatch(r"w\d+", k)]
+    nowin = [k for k in wk if 'href="#wins" class="mini-tile"' not in secs[k] or C.LABELS["wins_tile"] not in H.unescape(secs[k])]
+    if nowin:
+        fails.append(f"Reset week {len(nowin)}쪽: Wins 칸이 옅은 칸(별 그림 + Wins log + 한 줄)이 아님 {nowin[:3]} (10-03 A안)")
 
     print(f"상품 4 기획서 대조 {ver} -- 문구 {len(seen)}개, 쪽 {len(ids)}")
     if unused:

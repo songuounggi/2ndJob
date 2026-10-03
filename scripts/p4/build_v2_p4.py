@@ -33,7 +33,7 @@ from chrome_auto import CHROME, chrome_args    # noqa: E402
 DESIGN_ZIP = os.path.join(ROOT, "design", "prod4", "the-adhd-home-reset-design-v1.0.zip")
 DESIGN_DIR = os.path.join(ROOT, "src", "p4_design_v1.0")          # src/ 는 git 밖 -- 빌드 때 압축을 푼다
 DH = "design_handoff_adhd_home_reset"
-VER = "v0.17"     # v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
+VER = "v0.18"     # v0.18: 4쪽 타일 = 방 그림 + Done enough 문장 (10-03 사용자 B안 -- LAST RESET 을 뺀 타일이 휑했다) · 6쪽 Today's pick = 배터리 날 칸 셋 · 33쪽 Then 카드 · 41~92쪽 Wins 칸 (A안) · 96쪽 아래 배너 되살림 / v0.17: 재검수 R1~R5 -- 33쪽 계획 전용, 3쪽 라벨 · 간격, 6쪽 오늘 칸 -> 7~9쪽 링크, Wins log 다시 쓰기 (10-02) / v0.16: 구조 논리 S5~S13(S11 목차 순서는 틀이 안 돼 보류) (10-02) / v0.15: L11 -- 빈 표 도구 쪽 5장 미리 채움, 3쪽 아래 "Set up once" (10-02) / v0.14: 2쪽 = design 순서도 시안 v1.0(34e, 10-02) / v0.10: 디자인 v1.0 첫 전체 빌드(108쪽) / v0.11: 빈 방 카드 둘째로 110쪽 / v0.12: 노트 세 종류 한 장씩 109쪽 (10-01 사용자) / v0.13: 구조 논리 S1~S4 -- 2쪽 갈림 순서도(design 시안 전 임시 배치), 3쪽 번호 뺌, Wins log 알약 (10-02 사용자)
 
 # 쪽 key -> 대표 쪽 번호 (README §9, reference/틀_목록.md)
 TEMPLATE = {"cover": 1, "flow": 2, "start": 3, "house-map": 4, "index": 5, "energy": 6, "rooms": 10, "myroom": 27, "myroom-2": 27,
@@ -323,8 +323,8 @@ def fill(page, key):
         return rotation_plan_only(page)
     if key == "energy":
         return energy_today_links(page)
-    if key == "guests":
-        return drop_guest_banner(page)
+    # 96쪽 아래 배너는 되살림 (10-03 사용자): S13 에서 목록 줄과 같은 말이라 뺐지만 쓰는 칸이 아니라 강조 문장 -- 두 곳 기록이 아니고,
+    # 빼니 아래가 휑했다. drop_guest_banner 는 기록으로 남긴다(부르지 않음)
     return page
 
 
@@ -362,21 +362,63 @@ def rotation_plan_only(page):
                   r'<div style="position:absolute;left:108px;top:458px;width:452px">(?:<div [^>]*></div>){4}</div>', page)
     if not m:
         raise SystemExit("[rotation] Slid to next week 카드를 못 찾음")
-    return page[:m.start()] + page[m.end():]
+    # 10-03 사용자 A안: 빈 자리가 휑했다 -> 같은 자리(그림자도 시안 그대로)에 "Then" 카드 = 계획이 이어지는 두 쪽
+    card = ('<div style="position:absolute;left:84px;top:420px;width:500px;height:160px;border-radius:16px;background:#FFFFFF;'
+            'box-sizing:border-box;"></div>'
+            f'<div style="position:absolute;left:108px;top:438px;display:flex;gap:10px;align-items:baseline">'
+            f'<span style="font-size:12px;font-weight:800">{C.LABELS["then"]}</span><span style="{HINT_CSS}">{C.LABELS["then_hint"]}</span></div>'
+            + mini_tile("weeks", 108, 458, 218, 100, "cal", pages_p4.title_of("weeks"), C.LABELS["then_weeks"], "lavender")
+            + mini_tile("house-map", 342, 458, 218, 100, "house", pages_p4.title_of("house-map"), C.TOOL_PAGES["house-map"][1], "lavender"))
+    return page[:m.start()] + card + page[m.end():]
+
+
+MINI_ICON = {
+    "star": '<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19.5l1-5.8-4.2-4.1 5.8-.8z"/>',
+    "cal": '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M8.5 14.5l2 2 4-4"/>',
+    "house": '<path d="M4 11 12 4l8 7v9H4z"/><path d="M10 20v-5h4v5"/>',
+}
+MINI_COLORS = {"lavender": ("#6E6490", "#F1EEF9")}     # (그림 · 화살표, 옅은 칸) -- Energy 는 TODAY_TILE_BG
+
+
+def mini_tile(href, x, y, w, h, icon, title, sub, col):
+    """옅은 칸 링크 = 그림 + 쪽 이름 → + 한 줄 (10-03 사용자 A안 -- 6쪽 Today's pick 과 같은 모양). 칸 전체가 링크"""
+    ink, tint = MINI_COLORS[col]
+    return (f'<a href="#{href}" class="mini-tile" style="position:absolute;left:{x}px;top:{y}px;width:{w}px;height:{h}px;border-radius:12px;'
+            f'background:{tint};box-sizing:border-box;padding:12px;display:flex;flex-direction:column">'
+            f'<span class="mini-ic" style="line-height:0;color:{ink};opacity:.85"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" '
+            f'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{MINI_ICON[icon]}</svg></span>'
+            f'<span style="margin-top:8px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(title)}'
+            f'<span style="margin-left:4px;color:{ink}">→</span></span>'
+            f'<span style="margin-top:3px;font-size:8.5px;font-weight:600;line-height:1.35;color:#66716B">{H.escape(sub)}</span></a>')
+
+
+def battery_svg(n, size=30):
+    """배터리 그림: 칸 n 개 (1 Low / 2 Medium / 3 Full) -- 6쪽 Today's pick (10-03 사용자 A안)"""
+    bars = "".join(f'<rect x="{4.2 + i * 4.6:g}" y="8.2" width="3.4" height="7.6" rx="0.8" fill="currentColor" stroke="none"/>' for i in range(n))
+    return (f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" '
+            f'stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="17" height="11" rx="2.2"/><path d="M21.5 10v4"/>{bars}</svg>')
+
+
+TODAY_TILE_BG = "#EEF5F1"   # Energy 섹션 옅은 칸 (흑백판은 to_bw 가 흰 바탕 + 회색 테두리로)
 
 
 def energy_today_links(page):
-    """6쪽 "Today's pick" 카드: 쓰는 줄 4개 -> 배터리 날 쪽 링크 셋 (10-02 사용자, 재검수 R3 -- 오늘 고른 일은 7~9쪽 한 곳에)"""
+    """6쪽 "Today's pick" 카드: 쓰는 줄 4개 -> 배터리 날 쪽 셋 (10-02 사용자, 재검수 R3 -- 오늘 고른 일은 7~9쪽 한 곳에).
+    10-03 사용자 A안: 글자 링크 셋만 있어 휑했다 -> 옅은 칸 셋 = 배터리 그림 + 쪽 이름 → + 그 쪽 부제(7~9쪽과 같은 말). 칸 전체가 링크"""
     page = must_replace(page, f'>{C.LABELS["pick_hint"]}</span>', f'>{H.escape(C.LABELS["pick_plan"])}</span>', "energy")
     m = re.search(r'<div style="position:absolute;left:108px;top:652px;width:452px">(?:<div [^>]*></div>){4}</div>', page)
     if not m:
         raise SystemExit("[energy] Today's pick 쓰는 줄 4개를 못 찾음")
-    links = "".join(f'<a href="#day-{b}" style="display:flex;align-items:center;font-size:11px;font-weight:800">'
-                    f'{H.escape(pages_p4.title_of("day-" + b))}<span style="margin-left:4px;color:#537364">→</span></a>'
-                    for b in C.BATTERIES)
-    row = (f'<div style="position:absolute;left:108px;top:652px;width:452px;height:104px;display:flex;align-items:center;'
-           f'justify-content:space-between">{links}</div>')
-    return page[:m.start()] + row + page[m.end():]
+    tiles = ""
+    for i, b in enumerate(C.BATTERIES):
+        title, sub = C.DAY_PAGES[b]
+        tiles += (f'<a href="#day-{b}" class="today-tile" style="position:absolute;left:{108 + i * 156}px;top:652px;width:140px;height:104px;'
+                  f'border-radius:12px;background:{TODAY_TILE_BG};box-sizing:border-box;padding:12px;display:flex;flex-direction:column">'
+                  f'<span class="today-ic" style="line-height:0;color:#537364;opacity:.85">{battery_svg(i + 1)}</span>'
+                  f'<span style="margin-top:8px;font-size:11px;font-weight:800;white-space:nowrap">{H.escape(title)}'
+                  f'<span style="margin-left:4px;color:#537364">→</span></span>'
+                  f'<span style="margin-top:3px;font-size:8.5px;font-weight:600;line-height:1.35;color:#66716B">{H.escape(sub)}</span></a>')
+    return page[:m.start()] + tiles + page[m.end():]
 
 
 def drop_guest_banner(page):
@@ -399,6 +441,47 @@ def house_map_no_dates(page):
     # Go 가 아래에 붙도록 -- 빠진 라벨의 margin-top:auto 를 Go 에
     return page.replace('<span style="align-self:flex-end;margin-top:10px;font-size:9px;font-weight:800">Go',
                         '<span style="align-self:flex-end;margin-top:auto;font-size:9px;font-weight:800">Go')
+
+
+# 4쪽 타일의 방 그림 (24 x 24 선 그림, 10-03 사용자 B안). 흑백판은 to_bw 가 색을 회색으로
+HOUSE_ICON = {
+    "kitchen": '<path d="M4 10h16v7a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M2 10h20M9 7h6M12 4v3"/>',
+    "bathroom": '<path d="M3 12h18v2a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M6 12V6a2 2 0 0 1 4 0M7 19l-1 2M17 19l1 2"/>',
+    "bedroom": '<path d="M3 18V8M21 18v-5H3"/><path d="M3 13h18M6 13v-2a1.5 1.5 0 0 1 1.5-1.5H10a1.5 1.5 0 0 1 1.5 1.5v2"/>',
+    "living": '<path d="M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/><path d="M3 13a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v5H3z"/><path d="M5 18v2M19 18v2"/>',
+    "entry": '<path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="14.5" cy="12" r="0.9"/>',
+    "laundry": '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4.5"/><path d="M7 6.5h2"/>',
+    "desk": '<rect x="5" y="5" width="14" height="9" rx="1"/><path d="M3 18h18M9 14l-1 4M15 14l1 4"/>',
+    "car": '<path d="M4 15v-3l2-5h12l2 5v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M4 12h16"/><circle cx="8" cy="16.5" r="1.6"/><circle cx="16" cy="16.5" r="1.6"/>',
+    "myroom": '<path d="M4 11 12 4l8 7v9H4z"/><path d="M12 10v6M9 13h6"/>',
+}
+HOUSE_ICON_COLOR = "#7D6A28"     # Rooms 섹션 글자용 진한 레몬 (Go 화살표와 같은 색), opacity .75
+
+
+def house_map_fill(page):
+    """4쪽 타일 빈자리 (10-03 사용자 -- LAST RESET 을 뺀 뒤 타일이 휑했다, B안): 방 그림 + DONE ENOUGH + 그 방의 Done enough 문장.
+    Done enough 는 방 카드에 인쇄된 문장을 그대로 -- 쓰는 칸이 아니라 같은 기록 두 곳(S5)이 아니다. 누르기 전에 끝이 어디인지 보고 고른다"""
+    done = {r[0]: r[3] for r in C.ROOMS}
+    names = {r[1]: r[0] for r in C.ROOMS}
+    names[C.LABELS["my_rooms"]] = "myroom"
+    done["myroom"] = C.LABELS["my_rooms_done"]
+    n = 0
+    for name, k in names.items():
+        title = next((t for t in (f'<span style="font-size:12.5px;font-weight:800">{x}</span></div>' for x in (H.escape(name), name))
+                      if page.count(t) == 1), f'<span style="font-size:12.5px;font-weight:800">{name}</span></div>')   # & 가 날것 또는 &amp;
+        if page.count(title) != 1:
+            raise SystemExit(f"[house-map] 타일 제목 '{name}' {page.count(title)}개")
+        icon = (f'<div class="hm-ic" style="margin-top:12px;line-height:0;color:{HOUSE_ICON_COLOR};opacity:.75">'
+                f'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" '
+                f'stroke-linecap="round" stroke-linejoin="round">{HOUSE_ICON[k]}</svg></div>')
+        text = (f'<div style="margin-top:10px;font-size:7px;font-weight:800;letter-spacing:0.12em;color:#66716B">'
+                f'{C.LABELS["done"].upper()}</div>'
+                f'<div style="margin-top:3px;font-size:9.5px;font-weight:700;line-height:1.35;color:#2C3631">{H.escape(done[k])}</div>')
+        page = page.replace(title, title + icon + text)
+        n += 1
+    if n != 9:
+        raise SystemExit(f"[house-map] 채운 타일 {n} != 9")
+    return page
 
 
 ROW_CSS = "height:26px;display:flex;align-items:center;justify-content:flex-start;font-size:10px;font-weight:400;color:#2C3631"   # = 106쪽 Moving 줄
@@ -476,9 +559,8 @@ def additions(page, key):
         lines = re.search(r'<div style="position:absolute;left:108px;top:550px;width:194px">(?:<div [^>]*></div>){4}</div>', page)
         if not lines:
             raise SystemExit(f"[{key}] Wins 쓰는 줄 4개를 못 찾음")
-        link = (f'<a href="#wins" style="position:absolute;left:108px;top:550px;width:194px;height:104px;display:flex;'
-                f'align-items:center;justify-content:center;font-size:12px;font-weight:800">{H.escape(pages_p4.title_of("wins"))}'
-                f'<span style="margin-left:4px;color:#6E6490">→</span></a>')
+        # 10-03 사용자 A안: 가운데 글자 링크 하나라 칸이 휑했다 -> 옅은 칸(별 그림 + Wins log → + 103쪽 부제 앞 문장)
+        link = mini_tile("wins", 108, 552, 194, 100, "star", pages_p4.title_of("wins"), C.LABELS["wins_tile"], "lavender")
         page = page[:lines.start()] + link + page[lines.end():]
         # 카드에 링크 하나뿐 -> 카드 전체를 누르게(README §7 · check_design J -- v0.16 첫 검수에서 가운데 글자만 눌려 52쪽 FAIL)
         page = page[:page.rfind("</div>")] + '<a href="#wins" style="position:absolute;left:84px;top:512px;width:242px;height:160px"></a></div>'
@@ -518,6 +600,7 @@ def additions(page, key):
                + "".join(f'<a href="#{k}">{C.LABELS["room"]} {n[-1]}{go.group(1)}</a>' for k, n in C.MY_ROOMS) + '</div>')
         page = page[:i + go.start()] + two + page[i + go.end():]
         page = house_map_no_dates(page)
+        page = house_map_fill(page)
     elif key == "rooms":
         # 10쪽 표에 My room 2 줄 (v0.11): 줄 26 그대로 아래로 하나 -- 가로선 하나 · 세로선 26 · 카드 292 -> 318(아래 18 유지)
         row = re.search(r'(<div style="position:absolute;left:108px;top:386px;[^"]*">)My room(</div>)'
@@ -919,6 +1002,7 @@ def to_bw(page, num):
     # 인쇄용 (10-01 사용자, 써 보기 6단계 인쇄파): 선 한 단계 진하게 / 쓰는 칸 테두리 / 쪽 번호(표지 빼고)
     for a, b in BW_LINES.items():
         page = page.replace(f"solid {a}", f"solid {b}").replace(f'stroke="{a}"', f'stroke="{b}"')
+    page = page.replace(f'class="hm-ic" style="margin-top:12px;line-height:0;color:{HOUSE_ICON_COLOR}', 'class="hm-ic" style="margin-top:12px;line-height:0;color:#6B6B6B')   # 4쪽 방 그림
     page = re.sub(r'style="([^"]*)"', bw_cell, page)
     if num > 1:
         # 쪽 번호 자리 = 위쪽 가운데, 이동 경로·SOS 와 같은 줄(top 35). v0.11 첫 판은 아래 772 라 종이 끝에서 4~6mm --

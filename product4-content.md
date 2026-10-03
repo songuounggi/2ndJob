@@ -6,6 +6,15 @@
 
 **다른 방·다른 PC 는 여기부터 읽는다.** 이 절 아래의 긴 기록은 그날 무슨 일이 있었는지이고, 할 일은 여기에만 모았다.
 
+### ▶▶ 10-03 집 PC -- v0.18 (빈 칸 채우기) · 리스팅 사진 확정
+
+**v0.18 = v0.17 + 시안과 달리 휑해진 4곳 채우기 (10-03 사용자가 iPad 에서 찾음, 안을 그림으로 고름):** 4쪽 House map B안(방 그림 + Done enough) ·
+Energy menu 의 Today's pick A안(배터리 날 옅은 칸 셋, 6쪽) · Weekly rotation 아래 Then 카드 A안(Weeks · House map, 33쪽) · Reset week 의 Wins 칸 A안(별 + Wins log, 41~92쪽) · Guests 아래 배너 되살림(96쪽, S13 되돌림). 검사 check_plan 15 (v0.17 에서 4개 FAIL 역검증).
+비교 그림: `output/prod4/preview/housemap-options/` · `energy-options/` · `p33-p41-options/`, 시안 38장 대비 `output/prod4/preview/design-vs-v0.17/`.
+> **경위 기록:** v0.13~v0.17 의 구조 논리 수정(S5 · R3 · R1 · S7)이 쪽 모양을 바꿨는데 전·후 그림 없이 들어갔다 -- CLAUDE.md 에 규칙 추가(10-03).
+**남은 것:** 10쪽 Rooms 표 -- PAGE 번호(방 카드 쪽)가 "deep clean →" 옆에 있어 deep clean 이 그 쪽으로 가는 것처럼 읽힌다(실제는 다음 쪽). 안을 그려 사용자 확인 /
+iPad 7단계 / 리스팅 사진은 확정(`listing-p4.md` 사진 절, v1.2).
+
 ### ▶▶ 집에서 바로 이어서 (2026-10-02 18:00 회사 PC 에서 멈춤)
 
 **오늘 한 일:** 2쪽 순서도가 기획부터 엉터리였다(같은 쪽으로 가는 상자 세 쌍) → **구조 논리 검사(`PROCESS.md` 5-7, L1~L11)** 를
@@ -188,7 +197,7 @@
 | S10 | L7 수량 | 7~9쪽 배터리 날 | "Today I'll do" 쪽이 배터리마다 한 장 -- 날마다 지우고 쓰는 쪽인지 안 적혀 있다 -- **반영 v0.16**: 7~9쪽 부제 뒤 "Reuse it tomorrow: erase, duplicate, or reprint." |
 | S11 | L8 순서 | 5쪽 Index | Weeks(40쪽)가 Routines(31쪽)보다 먼저 -- 탭 순서·쪽 순서와 다르다 -- **보류 (10-02)**: 목차가 두 칸이라 Weeks 를 Routines 밑으로 옮기면 오른쪽 칸이 26pt 넘친다 -- 디자인을 바꿔야 해서 그대로 |
 | S12 | L6 약속≠칸 | 97쪽 Doom pile triage | "One pile, fifteen minutes" 인데 "Timer set for ___" 칸 (나중에 목록에 있던 것) -- **반영 v0.16**: 부제 "One pile, one timer." |
-| S13 | L5 중복 | 96쪽 Guests | "Everything else into one box" 가 줄과 아래 문장에 두 번 (나중에 목록에 있던 것) -- **반영 v0.16**: 아래 배너를 뺌(배경 다시 구움) |
+| S13 | L5 중복 | 96쪽 Guests | "Everything else into one box" 가 줄과 아래 문장에 두 번 (나중에 목록에 있던 것) -- **반영 v0.16**: 아래 배너를 뺌(배경 다시 구움) -- **10-03 사용자: 되살림(v0.18)**. 쓰는 칸이 아니라 강조 문장이라 두 곳 기록이 아니고, 빼니 휑했다 |
 | S14 | L1 순서 | 2쪽 새 순서도 | Energy menu 에서 고른 일이 루프(36, 37쪽)·깊은 청소 쪽으로 가면 "Stop at Done enough" 가 그 쪽에 없다 -- **반영** -- 시간을 갈래 상자로, 합친 뒤 "Do that one thing, then stop" (사용자 10-02) |
 
 ### L11 성인 눈높이 검토 (2026-10-02, v0.14) -- 사용자 결정 대기
@@ -370,14 +379,14 @@
 | 1 | 표지 | NEW | `The ADHD Home Reset` / `clean by energy, not by schedule` | → 2 |
 | 2 | **How it flows** (순서도) | NEW (09-30), **구조 바꿈 (10-02 사용자)** | 갈림 순서도: Open the planner → ◇How's today? → Doable: ◇How to pick? → Energy menu(6쪽, "By battery, 2 to 20 minutes") / House map(4쪽, "One room, ten minutes") → Do that one thing, then stop → Wins log / All too much: Rescue mode(94쪽) → Wins log · 따로 Every week(40쪽). 시간은 갈래마다 달라 갈래 상자에(10-02 사용자). 문구 `p4_content.FLOW`. **디자인 = design 회신 "순서도 시안 v1.0"(34e, 10-02 사용자 승인, `design/prod4/the-adhd-home-reset-flow-v0.4-design-v1.0.zip`) -- v0.14 부터.** v0.13 은 구조만 맞춘 임시 배치였다 | 링크 상자 6개 = 쪽 6개(3, 6, 4, 94, 103, 40쪽). 질문·갈래 이름·"Do that one thing" 은 링크 없음. 같은 쪽으로 가는 상자 금지 |
 | 3 | **Start here** | NEW, **번호 뺌 (10-02 사용자)** | 30초 사용법: 라벨 "Doable today? Pick one way in." 아래 By battery → Energy menu / By room → House map (둘 중 하나), 그리고 All too much? → Rescue. 번호(1, 2, 3) 자리는 그림(배터리 · 집 · 구명환) -- 차례가 아니라 갈림(2쪽 순서도와 같은 구조). "빈칸은 실패가 아니다" | 세 개 모두 / **아래 칸 = "Set up once" (v0.15, L11)**: The room that bugs me most · When my battery runs highest 쓰는 칸 + 빈 방 이름(27, 29쪽) · 짝 나누기(38쪽)로 가는 링크 -- 같은 기록 두 곳 금지(L5) |
-| 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(그림 아님, 칸). 방마다 "마지막 리셋: ___" 칸 | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) / **v0.16: 타일의 LAST RESET 칸을 뺌 -- 마지막 리셋은 방 카드에만(S5), 타일 전체가 링크** |
+| 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(그림 아님, 칸). 방마다 "마지막 리셋: ___" 칸 | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) / **v0.16: 타일의 LAST RESET 칸을 뺌 -- 마지막 리셋은 방 카드에만(S5), 타일 전체가 링크** / **v0.18 (10-03 사용자 B안): 타일 = 방 그림 + DONE ENOUGH + 그 방의 Done enough 문장**(인쇄된 안내라 두 곳 기록 아님), My rooms 는 "You set it on the room page." |
 | 5 | Index | NEW | 전 페이지 목록 | 전 페이지 |
 
 ### 3-2. ENERGY (4)
 
 | # | 페이지 | 내용 |
 |---|---|---|
-| 6 | **Energy menu** (허브) | 3 × 4 격자: 배터리 Low / Medium / Full × 2 / 5 / 10 / 20분. 칸마다 할 일 2~3개(미리 채움, 4-1) + 빈 줄 1(`+`). 할 일 → **그 일이 있는 쪽**(방 카드 · 깊은 청소 · 빨래/설거지 루프 -- 10-01, 깊은 청소 목록에 있는 7개는 깊은 청소 쪽으로), 배터리 이름 → 그날 페이지 |
+| 6 | **Energy menu** (허브) | 3 × 4 격자: 배터리 Low / Medium / Full × 2 / 5 / 10 / 20분. 칸마다 할 일 2~3개(미리 채움, 4-1) + 빈 줄 1(`+`). 할 일 → **그 일이 있는 쪽**(방 카드 · 깊은 청소 · 빨래/설거지 루프 -- 10-01, 깊은 청소 목록에 있는 7개는 깊은 청소 쪽으로), 배터리 이름 → 그날 페이지 / **v0.18 (10-03 사용자 A안): Today's pick = 옅은 칸 셋(배터리 그림 1·2·3칸 + 쪽 이름 → + 7~9쪽 부제), 칸 전체가 링크** |
 | 7–9 | **Low / Medium / Full day** | 배터리별 한 장: 오늘 고른 것 3개 / 곁들일 것(음악·팟캐스트·body double) / 끝나고 나에게 줄 것 / "오늘은 이걸로 충분" 체크 / v0.16 부제 뒤 다시 쓰기 안내(S10) |
 
 ### 3-3. ROOMS (21)
@@ -394,7 +403,7 @@
 |---|---|---|---|
 | 31 | Routines index | NEW (10-01, 6단계 써 보기) | 루틴 8쪽 목록 -- ROUTINES 탭이 여기로 |
 | 32 | **Daily reset** | NEW | 아침 5분 / 저녁 10분 -- 고정 3개씩 + 빈 줄. "하루 한 번, 한 가지" / v0.16 부제 "한 장 = 한 주" 안내(S9) |
-| 33 | **Weekly rotation** | P1 확장 | 요일 대신 **구역 순환**: 7칸에 방을 하나씩. 놓친 날은 다음 칸으로 밀 뿐(실패 칸 없음). **v0.7 은 방×요일 격자로 잘못 만들어짐 → v0.8 에서 기획서대로 (09-30 사용자)** / v0.16 부제: 여기서 한 번 짜고 주마다 쪽에서 체크(S8) |
+| 33 | **Weekly rotation** | P1 확장 | 요일 대신 **구역 순환**: 7칸에 방을 하나씩. 놓친 날은 다음 칸으로 밀 뿐(실패 칸 없음). **v0.7 은 방×요일 격자로 잘못 만들어짐 → v0.8 에서 기획서대로 (09-30 사용자)** / v0.16 부제: 여기서 한 번 짜고 주마다 쪽에서 체크(S8) / **v0.18 (10-03 사용자 A안): 아래 빈 자리(Slid 카드 자리)에 Then 카드 = Weeks → · House map → 옅은 칸 둘** |
 | 34 | **Monthly deep clean** | NEW | 12칸 × 할 일(냉장고·필터·침구 등 미리 채움) / **v0.16: 방 깊은 청소 목록과 같던 7개를 방에 없는 일로(S6)** -- `p4_content.MONTHLY` |
 | 35 | **Seasonal reset** | NEW | 봄·여름·가을·겨울 네 칸. 계절 옷장·창문·이불 / **v0.16: 겹치던 5개 교체(S6)** -- `p4_content.SEASONAL` |
 | 36 | **Laundry loop** | NEW | 세탁 → 건조 → 개기 → **제자리** 네 칸 **2×2 격자(1→4 번호)** -- 원형에서 변경(09-30 사용자, 5단계 검수). "어디서 멈추나" 체크 + 멈추는 곳 대책 |
@@ -407,7 +416,7 @@
 | # | 페이지 | 내용 |
 |---|---|---|
 | 40 | Weeks index | Week 1~52 → 각 주 |
-| 41–92 | **Reset week 1~52** (undated) | 이번 주 구역 순환 7칸(칸 이름 → House map) · 이번 주 한 가지(깊은 청소에서) · 빨래·설거지 루프 체크 · Wins 한 줄 · "다음 주로 넘기는 것" / **v0.16: Wins 칸 = Wins log 링크(S7 -- 이긴 것은 103쪽 한 곳)** |
+| 41–92 | **Reset week 1~52** (undated) | 이번 주 구역 순환 7칸(칸 이름 → House map) · 이번 주 한 가지(깊은 청소에서) · 빨래·설거지 루프 체크 · Wins 한 줄 · "다음 주로 넘기는 것" / **v0.16: Wins 칸 = Wins log 링크(S7 -- 이긴 것은 103쪽 한 곳)** / **v0.18 (10-03 사용자 A안): Wins 칸 = 옅은 칸(별 그림 + Wins log → + "What you did, not what's left.")** |
 
 52주로 결정 (2026-09-30 사용자, 5절 ③).
 
