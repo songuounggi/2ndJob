@@ -58,7 +58,7 @@ WHAT YOU GET
 THREE THINGS A CHORE CHART DOES NOT DO
 
 • Energy menu — 31 tasks sorted by battery (low, medium, full) and time (2, 5, 10, 20 minutes)
-• Room reset cards — ten rooms, each with a six-step, ten-minute order and a "done enough" line so you know when to stop
+• Room reset cards — eight ready-made rooms, each with a six-step, ten-minute order and a "done enough" line so you know when to stop, plus two blank cards for rooms you set up yourself
 • Rescue mode — for when it is all too much: trash first, gather the dishes, one basket of clothes, clear a path, one surface. An SOS button on every page after the cover takes you there
 
 WHAT'S INSIDE
@@ -173,7 +173,7 @@ design 원본 그대로 뽑은 것은 `design-final-v1.0`. **v1.1 에서 Claude 
 |---|---|
 | 109 pages (두 파일 모두) | PDF 쪽 수 (v0.12 -- v0.10 108 · v0.11 110) |
 | 31 tasks | `p4_content.ENERGY` 개수 |
-| ten rooms / six-step | `ROOMS` 8 + My room 1·2 (v0.11), 방마다 6단계 |
+| eight ready-made rooms · plus two blank cards / six-step | `ROOMS` 8(미리 채운 방, 6단계 + Done enough) + `MY_ROOMS` 2(빈 카드) -- 10-03 구조 논리 L10: "ten rooms, each with ..." 은 빈 방 둘까지 채워진 것처럼 읽혔다 |
 | 52 undated reset weeks | `w1`~`w52` |
 | Six tabs: Home, Energy, Rooms, Routines, Weeks, Tools | `build_p4.TABS` |
 | under 6 MB | 두 PDF 크기 상한. v0.10(디자인 시안 판) 컬러 5.0MB · 흑백 3.5MB -- v0.9 까지는 3.4~3.5MB 라 4 MB 였다 (10-01) |

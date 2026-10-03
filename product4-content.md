@@ -377,7 +377,7 @@ Energy menu 의 Today's pick A안(배터리 날 옅은 칸 셋, 6쪽) · Weekly 
 |---|---|---|---|---|
 | 1 | 표지 | NEW | `The ADHD Home Reset` / `clean by energy, not by schedule` | → 2 |
 | 2 | **How it flows** (순서도) | NEW (09-30), **구조 바꿈 (10-02 사용자)** | 갈림 순서도: Open the planner → ◇How's today? → Doable: ◇How to pick? → Energy menu(6쪽, "By battery, 2 to 20 minutes") / House map(4쪽, "One room, ten minutes") → Do that one thing, then stop → Wins log / All too much: Rescue mode(94쪽) → Wins log · 따로 Every week(40쪽). 시간은 갈래마다 달라 갈래 상자에(10-02 사용자). 문구 `p4_content.FLOW`. **디자인 = design 회신 "순서도 시안 v1.0"(34e, 10-02 사용자 승인, `design/prod4/the-adhd-home-reset-flow-v0.4-design-v1.0.zip`) -- v0.14 부터.** v0.13 은 구조만 맞춘 임시 배치였다 | 링크 상자 6개 = 쪽 6개(3, 6, 4, 94, 103, 40쪽). 질문·갈래 이름·"Do that one thing" 은 링크 없음. 같은 쪽으로 가는 상자 금지 |
-| 3 | **Start here** | NEW, **번호 뺌 (10-02 사용자)** | 30초 사용법: 라벨 "Doable today? Pick one way in." 아래 By battery → Energy menu / By room → House map (둘 중 하나), 그리고 All too much? → Rescue. 번호(1, 2, 3) 자리는 그림(배터리 · 집 · 구명환) -- 차례가 아니라 갈림(2쪽 순서도와 같은 구조). "빈칸은 실패가 아니다" | 세 개 모두 / **아래 칸 = "Set up once" (v0.15, L11)**: The room that bugs me most · When my battery runs highest 쓰는 칸 + 빈 방 이름(27, 29쪽) · 짝 나누기(38쪽)로 가는 링크 -- 같은 기록 두 곳 금지(L5) |
+| 3 | **Start here** | NEW, **번호 뺌 (10-02 사용자)** | 30초 사용법: 라벨 "Pick one way in."(v0.17 R2 -- 처음엔 "Doable today? ...") 아래 By battery → Energy menu / By room → House map (둘 중 하나), 그리고 All too much? → Rescue. 번호(1, 2, 3) 자리는 그림(배터리 · 집 · 구명환) -- 차례가 아니라 갈림(2쪽 순서도와 같은 구조). "빈칸은 실패가 아니다" | 세 개 모두 / **아래 칸 = "Set up once" (v0.15, L11)**: The room that bugs me most · When my battery runs highest 쓰는 칸 + 빈 방 이름(27, 29쪽) · 짝 나누기(38쪽)로 가는 링크 -- 같은 기록 두 곳 금지(L5) |
 | 4 | **House map** | NEW | 집 평면을 **방 타일 9개**로(그림 아님, 칸). 방마다 "마지막 리셋: ___" 칸 | 타일 → 각 방 카드 (타일 위쪽 전체를 누른다, LAST RESET 쓰는 줄은 빼고 -- 10-01) / **v0.16: 타일의 LAST RESET 칸을 뺌 -- 마지막 리셋은 방 카드에만(S5), 타일 전체가 링크** / **v0.18 (10-03 사용자 B안): 타일 = 방 그림 + DONE ENOUGH + 그 방의 Done enough 문장**(인쇄된 안내라 두 곳 기록 아님), My rooms 는 "You set it on the room page." |
 | 5 | Index | NEW | 전 페이지 목록 | 전 페이지 |
 
@@ -426,7 +426,7 @@ Energy menu 의 Today's pick A안(배터리 날 옅은 칸 셋, 6쪽) · Weekly 
 | 93 | Tools index | NEW | |
 | 94 | **Rescue mode** | NEW | ③ 허브. 1 쓰레기 2 그릇 3 빨래 4 바닥의 것 제자리(아니면 "나중 상자") 5 표면 하나. **2 그릇 · 3 빨래 단계 끝 → 설거지 · 빨래 루프**(1·4·5 단계는 링크 없음 -- 내용이 맞는 곳이 없다, 10-01). 아래에 Sprint · Guests 로 가는 칸(6단계 추가) |
 | 95 | **15-minute sprint** | NEW | 타이머 링 3개(5분씩) + 각 5분에 한 일. 끝나면 Wins log 로 |
-| 96 | **Guests in 2 hours** | NEW | 손님 오기 전: 보이는 곳만. 현관·화장실·거실 순서 + 숨길 상자 하나. 방 이름으로 시작하는 줄 끝 → 로 그 방 카드(글자 전체가 아니라 → 만 -- 체크 상자와 떨어지게, 10-01) / v0.16 아래 배너 뺌(S13) |
+| 96 | **Guests in 2 hours** | NEW | 손님 오기 전: 보이는 곳만. 현관·화장실·거실 순서 + 숨길 상자 하나. 방 이름으로 시작하는 줄 끝 → 로 그 방 카드(글자 전체가 아니라 → 만 -- 체크 상자와 떨어지게, 10-01) / v0.16 아래 배너 뺌(S13) -> **v0.18 되살림 (10-03 사용자)** -- 강조 문장이라 두 곳 기록이 아니다 |
 | 97 | **Doom pile triage** | P3 | 더미 하나 → Keep / Toss / Belongs elsewhere / Needs action + 15분 / v0.16 부제 "One pile, one timer."(S12) |
 | 98 | **Declutter decisions** | NEW | 버릴까 망설일 때 질문 5개(마지막 사용·다시 살 수 있나·어디에 둘 건가…) |
 | 99 | **Where things live** | NEW | 물건 / 제자리 표 -- "제자리가 없으면 치울 수 없다" -- **미리 채움 10줄 (v0.15)**: 방 카드 단계와 같은 물건(Keys · Mail · chargers · remotes …) |

@@ -62,8 +62,13 @@ low = desc.lower()
 need(all(n == pages["color"] for n in pages.values()), f"두 파일 쪽 수가 다름 {pages}")
 need(f"{pages['color']} pages" in desc, f"설명 쪽 수 != 판 {pages['color']}")
 need(f"{sum(len(v) for v in C.ENERGY.values())} tasks" in desc, "Energy 할 일 개수 불일치")
-n_rooms = len(C.ROOMS) + len(C.MY_ROOMS)
-need({9: "nine", 10: "ten"}.get(n_rooms, str(n_rooms)) + " rooms" in low, f"방 개수 불일치 ({n_rooms})")
+WORDS = {1: "one", 2: "two", 8: "eight", 9: "nine", 10: "ten"}
+# 10-03 구조 논리 에이전트(L10): "ten rooms, each with a six-step ... and a done enough line" 은 그 한 줄만 읽으면 거짓이었다 --
+# My room 1 · 2 는 순서와 Done enough 가 빈칸이다. 미리 채운 방 수(ROOMS) 와 빈 방 수(MY_ROOMS) 를 따로 말해야 한다
+need(f"{WORDS.get(len(C.ROOMS), len(C.ROOMS))} ready-made rooms" in low, f"미리 채운 방 개수 불일치 ({len(C.ROOMS)})")
+need(re.search(rf"plus {WORDS.get(len(C.MY_ROOMS))} blank cards? for rooms? you set up yourself", low),
+     f"빈 방 카드 {len(C.MY_ROOMS)}개를 따로 말하지 않음")
+need(not re.search(r"\b(ten|nine)\s+rooms,\s+each with", low), "방 전체를 '각각 순서 · done enough 가 있는' 것처럼 말함 (빈 방 둘은 빈칸)")
 need(all(len(r[2]) == 6 for r in C.ROOMS) and "six-step" in low, "방 카드 6단계 불일치")
 # 이름을 직접 붙이는 방 개수 = MY_ROOMS -- v0.11 에서 둘이 됐는데 "one room you name yourself" 가 남아 있었다(재시험 리뷰어)
 named = re.search(r"(\w+) rooms? you name yourself", low)
